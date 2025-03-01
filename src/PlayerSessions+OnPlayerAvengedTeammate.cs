@@ -4,7 +4,7 @@ namespace Challenges
 {
     public partial class Challenges : BasePlugin
     {
-        private HookResult EventPlayerAvengedTeammate(EventPlayerAvengedTeammate @event, GameEventInfo info)
+        private HookResult OnPlayerAvengedTeammate(EventPlayerAvengedTeammate @event, GameEventInfo info)
         {
             CCSPlayerController? avenger = @event.AvengerId;
             CCSPlayerController? victim = @event.AvengedPlayerId;
