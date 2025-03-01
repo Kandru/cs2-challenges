@@ -30,6 +30,7 @@ namespace Challenges
             RegisterEventHandler<EventPlayerDeath>(OnPlayerDeath);
             RegisterEventHandler<EventPlayerJump>(OnPlayerJump);
             RegisterEventHandler<EventPlayerBlind>(OnPlayerBlind);
+            RegisterEventHandler<EventPlayerAvengedTeammate>(OnPlayerAvengedTeammate);
             // print message if hot reload
             if (hotReload)
             {
@@ -55,6 +56,7 @@ namespace Challenges
             DeregisterEventHandler<EventPlayerDeath>(OnPlayerDeath);
             DeregisterEventHandler<EventPlayerJump>(OnPlayerJump);
             DeregisterEventHandler<EventPlayerBlind>(OnPlayerBlind);
+            DeregisterEventHandler<EventPlayerAvengedTeammate>(OnPlayerAvengedTeammate);
             // save config(s)
             Config.Update();
             SavePlayerConfigs();
