@@ -761,7 +761,8 @@
                 {
                     "name": "New Name",
                     "slug": "new_name",
-                    "description": "The new name of the player"
+                    "description": "The new name of the player",
+                    "type": "string"
                 },
                 {
                     "name": "Old Name",
