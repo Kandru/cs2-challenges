@@ -13,72 +13,72 @@ Information: this is currently NOT ready for implementation by other plugins. DO
 
 ## Feature Road Map
 
-[ ] Easy Webinterface to create your own Challenges
-[X] Looking through all game events to decide which to add
-[X] Event PlayerKill
-[X] Event PlayerDeath
-[X] Event PlayerJump
-[X] Event PlayerBlind
-[X] Event PlayerAvengedTeammate
-[X] Event PlayerChangename
-[X] Event PlayerChat
-[ ] Event PlayerDecal
-[ ] Event PlayerFalldamage
-[ ] Event PlayerFootstep
-[ ] Event PlayerGivenC4
-[ ] Event PlayerHintmessage
-[ ] Event PlayerHurt
-[ ] Event PlayerPing
-[ ] Event PlayerPingStop
-[ ] Event PlayerRadio
-[ ] Event PlayerResetVote
-[ ] Event PlayerScore
-[ ] Event PlayerSound
-[ ] Event PlayerTeam
-[ ] Event AchievementEarned
-[ ] Event AddPlayerSonarIcon
-[ ] Event AmmoPickup
-[ ] Event BombAbortdefuse
-[ ] Event BombAbortplant
-[ ] Event BombBegindefuse
-[ ] Event BombBeginplant
-[ ] Event BombDefused
-[ ] Event BombDropped
-[ ] Event BombExploded
-[ ] Event BombPickup
-[ ] Event BombPlanted
-[ ] Event BotTakeover
-[ ] Event BreakBreakable
-[ ] Event BreakProp
-[ ] Event BulletDamage
-[ ] Event DefuserDropped
-[ ] Event DefuserPickup
-[ ] Event DoorClosed
-[ ] Event DoorOpen
-[ ] Event EnterBombzone
-[ ] Event EnterBuyzone
-[ ] Event EnterRescueZone
-[ ] Event ExitBombzone
-[ ] Event ExitBuyzone
-[ ] Event ExitRescueZone
-[ ] Event GrenadeBounce
-[ ] Event HostageFollows
-[ ] Event HostageHurt
-[ ] Event HostageKilled
-[ ] Event HostageRescued
-[ ] Event HostageRescuedAll
-[ ] Event HostageStopsFollowing
-[ ] Event InspectWeapon
-[ ] Event ItemPickup
-[ ] Event ItemPurchase
-[ ] Event TeamScore
-[ ] Event VipEscaped
-[ ] Event VipKilled
-[ ] Event WeaponFireOnEmpty
-[ ] Event WeaponReload
-[ ] Event WeaponZoom
-[ ] Event WeaponZoomRifle
-[ ] Add ability to hide challenge updates on a per challenge basis (e.g. hiding how many times an event needs to occure until finished)
+- [ ] Easy Webinterface to create your own Challenges
+- [x] Looking through all game events to decide which to add
+- [x] Event PlayerKill
+- [x] Event PlayerDeath
+- [x] Event PlayerJump
+- [x] Event PlayerBlind
+- [x] Event PlayerAvengedTeammate
+- [x] Event PlayerChangename
+- [x] Event PlayerChat
+- [ ] Event PlayerDecal
+- [ ] Event PlayerFalldamage
+- [ ] Event PlayerFootstep
+- [ ] Event PlayerGivenC4
+- [ ] Event PlayerHintmessage
+- [ ] Event PlayerHurt
+- [ ] Event PlayerPing
+- [ ] Event PlayerPingStop
+- [ ] Event PlayerRadio
+- [ ] Event PlayerResetVote
+- [ ] Event PlayerScore
+- [ ] Event PlayerSound
+- [ ] Event PlayerTeam
+- [ ] Event AchievementEarned
+- [ ] Event AddPlayerSonarIcon
+- [ ] Event AmmoPickup
+- [ ] Event BombAbortdefuse
+- [ ] Event BombAbortplant
+- [ ] Event BombBegindefuse
+- [ ] Event BombBeginplant
+- [ ] Event BombDefused
+- [ ] Event BombDropped
+- [ ] Event BombExploded
+- [ ] Event BombPickup
+- [ ] Event BombPlanted
+- [ ] Event BotTakeover
+- [ ] Event BreakBreakable
+- [ ] Event BreakProp
+- [ ] Event BulletDamage
+- [ ] Event DefuserDropped
+- [ ] Event DefuserPickup
+- [ ] Event DoorClosed
+- [ ] Event DoorOpen
+- [ ] Event EnterBombzone
+- [ ] Event EnterBuyzone
+- [ ] Event EnterRescueZone
+- [ ] Event ExitBombzone
+- [ ] Event ExitBuyzone
+- [ ] Event ExitRescueZone
+- [ ] Event GrenadeBounce
+- [ ] Event HostageFollows
+- [ ] Event HostageHurt
+- [ ] Event HostageKilled
+- [ ] Event HostageRescued
+- [ ] Event HostageRescuedAll
+- [ ] Event HostageStopsFollowing
+- [ ] Event InspectWeapon
+- [ ] Event ItemPickup
+- [ ] Event ItemPurchase
+- [ ] Event TeamScore
+- [ ] Event VipEscaped
+- [ ] Event VipKilled
+- [ ] Event WeaponFireOnEmpty
+- [ ] Event WeaponReload
+- [ ] Event WeaponZoom
+- [ ] Event WeaponZoomRifle
+- [ ] Add ability to hide challenge updates on a per challenge basis (e.g. hiding how many times an event needs to occure until finished)
 
 ## Plugin Installation
 
