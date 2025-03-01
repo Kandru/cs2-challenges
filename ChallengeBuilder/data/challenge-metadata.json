@@ -770,6 +770,47 @@
                     "type": "string"
                 }
             ]
+        },
+        "player_chat": {
+            "name": "Player chat message",
+            "rules": [
+                {
+                    "name": "Is during Round?",
+                    "slug": "isduringround",
+                    "description": "If the event happened during the round",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Player Name",
+                    "slug": "player",
+                    "description": "The name of the player",
+                    "type": "string"
+                },
+                {
+                    "name": "Player is Bot?",
+                    "slug": "player_isbot",
+                    "description": "If the player is a bot",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Player Team",
+                    "slug": "player_team",
+                    "description": "The team name of the player",
+                    "type": "string"
+                },
+                {
+                    "name": "Team Chat?",
+                    "slug": "teamonly",
+                    "description": "If the player used team caht",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Text Message",
+                    "slug": "text",
+                    "description": "The text message",
+                    "type": "string"
+                }
+            ]
         }
     },
     "operators": [

@@ -21,7 +21,7 @@ Information: this is currently NOT ready for implementation by other plugins. DO
 [X] Event PlayerBlind
 [X] Event PlayerAvengedTeammate
 [X] Event PlayerChangename
-[ ] Event PlayerChat
+[X] Event PlayerChat
 [ ] Event PlayerDecal
 [ ] Event PlayerFalldamage
 [ ] Event PlayerFootstep
