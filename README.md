@@ -20,7 +20,7 @@ Information: this is currently NOT ready for implementation by other plugins. DO
 [X] Event PlayerJump
 [X] Event PlayerBlind
 [X] Event PlayerAvengedTeammate
-[ ] Event PlayerChangename
+[X] Event PlayerChangename
 [ ] Event PlayerChat
 [ ] Event PlayerDecal
 [ ] Event PlayerFalldamage
