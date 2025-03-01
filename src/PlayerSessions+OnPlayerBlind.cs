@@ -14,8 +14,22 @@ namespace Challenges
                 || !_playerConfigs.ContainsKey(attacker.NetworkIDString)
                 || victim == null
                 || !victim.IsValid) return HookResult.Continue;
-            // check for challenge
-            CheckChallengeGoal(attacker, "player_blind", new Dictionary<string, string>
+            // check attacker for challenge
+            CheckChallengeGoal(attacker, "player_has_blinded", new Dictionary<string, string>
+            {
+                { "isduringround", _isDuringRound.ToString() },
+                { "isteamflash", (attacker.TeamNum == victim.TeamNum).ToString() },
+                { "isselfflash", (attacker == victim).ToString() },
+                { "attacker", attacker.PlayerName },
+                { "attacker_isbot", attacker.IsBot.ToString() },
+                { "attacker_team", attacker.Team.ToString() },
+                { "victim", victim.PlayerName },
+                { "victim_isbot", victim.IsBot.ToString() },
+                { "victim_team", victim.Team.ToString() },
+                { "blindduration", @event.BlindDuration.ToString() }
+            });
+            // check victim for challenge
+            CheckChallengeGoal(victim, "player_got_blinded", new Dictionary<string, string>
             {
                 { "isduringround", _isDuringRound.ToString() },
                 { "isteamflash", (attacker.TeamNum == victim.TeamNum).ToString() },

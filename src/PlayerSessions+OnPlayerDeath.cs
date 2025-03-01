@@ -53,7 +53,7 @@ namespace Challenges
                     { "weaponitemid", @event.WeaponItemid }
                 });
             }
-            // check for attacker goal
+            // check attacker for challenge
             CheckChallengeGoal(attacker, "player_kill", new Dictionary<string, string>
             {
                 { "isduringround", _isDuringRound.ToString() },
@@ -81,7 +81,7 @@ namespace Challenges
                 { "weapon", @event.Weapon },
                 { "weaponitemid", @event.WeaponItemid }
             });
-            // check for victim goal
+            // check victim for challenge
             CheckChallengeGoal(attacker, "player_death", new Dictionary<string, string>
             {
                 { "isduringround", _isDuringRound.ToString() },

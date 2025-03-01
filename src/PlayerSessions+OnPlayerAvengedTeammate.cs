@@ -14,8 +14,21 @@ namespace Challenges
                 || !_playerConfigs.ContainsKey(avenger.NetworkIDString)
                 || victim == null
                 || !victim.IsValid) return HookResult.Continue;
-            // check for challenge
-            CheckChallengeGoal(avenger, "player_avenged_teammate", new Dictionary<string, string>
+            // check avenger for challenge
+            CheckChallengeGoal(avenger, "player_has_avenged_teammate", new Dictionary<string, string>
+            {
+                { "isduringround", _isDuringRound.ToString() },
+                { "isteamflash", (avenger.TeamNum == victim.TeamNum).ToString() },
+                { "isselfflash", (avenger == victim).ToString() },
+                { "avenger", avenger.PlayerName },
+                { "avenger_isbot", avenger.IsBot.ToString() },
+                { "avenger_team", avenger.Team.ToString() },
+                { "victim", victim.PlayerName },
+                { "victim_isbot", victim.IsBot.ToString() },
+                { "victim_team", victim.Team.ToString() },
+            });
+            // check victim for challenge
+            CheckChallengeGoal(victim, "player_got_avenged_teammate", new Dictionary<string, string>
             {
                 { "isduringround", _isDuringRound.ToString() },
                 { "isteamflash", (avenger.TeamNum == victim.TeamNum).ToString() },
