@@ -18,8 +18,7 @@ namespace Challenges
             CheckChallengeGoal(avenger, "player_has_avenged_teammate", new Dictionary<string, string>
             {
                 { "isduringround", _isDuringRound.ToString() },
-                { "isteamflash", (avenger.TeamNum == victim.TeamNum).ToString() },
-                { "isselfflash", (avenger == victim).ToString() },
+                { "isselfavenged", (avenger == victim).ToString() },
                 { "avenger", avenger.PlayerName },
                 { "avenger_isbot", avenger.IsBot.ToString() },
                 { "avenger_team", avenger.Team.ToString() },
@@ -31,8 +30,7 @@ namespace Challenges
             CheckChallengeGoal(victim, "player_got_avenged_teammate", new Dictionary<string, string>
             {
                 { "isduringround", _isDuringRound.ToString() },
-                { "isteamflash", (avenger.TeamNum == victim.TeamNum).ToString() },
-                { "isselfflash", (avenger == victim).ToString() },
+                { "isselfavenged", (avenger == victim).ToString() },
                 { "avenger", avenger.PlayerName },
                 { "avenger_isbot", avenger.IsBot.ToString() },
                 { "avenger_team", avenger.Team.ToString() },
