@@ -1,0 +1,17 @@
+{
+    "core.hotreload": "{green}[Challenges] {default}Hot-Reloaded!",
+    "core.unload": "[Challenges] Unloaded Challenges Plugin!",
+    "core.defaultconfig": "[Challenges] Found no map-specific configuration for {mapName}, using default one!",
+    "core.noconfig": "[Challenges] No map-specific configuration for {mapName} or default one found. Skipping!",
+    "core.faultyconfig": "[Challenges] Faulty configuration {config}! Skipping! Make sure to fix it because a default config will be generated and a backup configuration will be kept: {error}",
+    "core.config": "[Challenges] Configuration loaded!",
+    "core.disabled": "[Challenges] {default}Challenges is disabled!",
+    "core.debugprint": "[Challenges]{red}[DEBUG] {default}{message}",
+    "command.notalive": "[Challenges] you need to be alive to see your stats.",
+    "command.nochallenges": "[Challenges] no active challenges.",
+    "command.showgui": "[Challenges] {default}Opened challenges popup",
+    "command.hidegui": "[Challenges] {default}Closed challenges popup",
+    "challenges.progress": "{default}Challenge Progress: {green}{challenge}",
+    "challenges.completed.user": "{default}Challenge Completed: {green}{challenge}",
+    "challenges.completed.other": "{green}{player} {default}completed challenge: {green}{challenge}"
+}

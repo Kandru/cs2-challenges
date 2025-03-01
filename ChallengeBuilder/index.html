@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Challenge Builder</title>
+        <meta name="description"
+              content="Build and manage your challenges easily with Challenge Builder.">
+        <meta name="keywords" content="challenge, builder, manage, tasks, points">
+        <link href="./css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="./css/style.css">
+    </head>
+    <body class="bg-dark text-light">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">Challenge Builder</a>
+                <button class="navbar-toggler"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#navbarNav"
+                        aria-controls="navbarNav"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <button id="download-challenges" class="btn btn-success me-2">Download Challenges</button>
+                        </li>
+                        <li class="nav-item">
+                            <input type="file"
+                                   id="upload-challenges"
+                                   accept=".json"
+                                   class="form-control bg-dark text-light">
+                        </li>
+                        <li class="nav-item">
+                            <a target="_blank"
+                               href="https://github.com/Kandru/cs2-challenges"
+                               class="btn btn-info ms-2">GitHub</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class="container mt-5">
+            <h1 class="mb-4">Build your challenges</h1>
+            <form id="challenge-form" class="mb-4">
+                <div class="mb-3">
+                    <label for="type" class="form-label">Type:</label>
+                    <select id="type" name="type" class="form-select bg-dark text-light"></select>
+                    <small id="typeHelp" class="form-text text-light">Choose the type your challenge will be based on</small>
+                </div>
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title:</label>
+                    <input type="text"
+                           id="title"
+                           name="title"
+                           class="form-control bg-dark text-light">
+                    <small id="titleHelp" class="form-text text-light">Enter a title for your challenge. You can use {count} and {total} to show the progress</small>
+                </div>
+                <div class="mb-3">
+                    <label for="slug" class="form-label">Slug:</label>
+                    <input type="text"
+                           id="slug"
+                           name="slug"
+                           class="form-control bg-dark text-light">
+                    <small id="slugHelp" class="form-text text-light">Unique identifier for the challenge (only alphanumeric, without spaces)</small>
+                </div>
+                <div class="mb-3">
+                    <label for="points" class="form-label">Points:</label>
+                    <input type="number"
+                           id="points"
+                           name="points"
+                           class="form-control bg-dark text-light"
+                           value="0">
+                    <small id="typeHelp" class="form-text text-light">Points a player will get awarded upon completion</small>
+                </div>
+                <div class="mb-3">
+                    <label for="amount" class="form-label">Amount:</label>
+                    <input type="number"
+                           id="amount"
+                           name="amount"
+                           class="form-control bg-dark text-light"
+                           value="0">
+                    <small id="typeHelp" class="form-text text-light">How many times a player must solve this challenge for completion</small>
+                </div>
+                <div id="rules-container" class="mb-3"></div>
+                <button type="button" id="add-rule" class="btn btn-secondary mb-3">Add Rule</button>
+                <button type="button" id="save-challenge" class="btn btn-primary mb-3">Save Challenge</button>
+            </form>
+            <h2 class="mb-3">Your Challenges</h2>
+            <ul id="challenges-list" class="list-group mb-3">
+            </ul>
+        </div>
+        <script src="./jquery-3.7.1.min.js"></script>
+        <script src="./bootstrap.bundle.min.js"></script>
+        <script src="./js/scripts.js"></script>
+    </body>
+</html>

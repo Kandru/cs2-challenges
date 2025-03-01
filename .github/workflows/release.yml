@@ -1,0 +1,113 @@
+name: Build Release
+
+env:
+  REPOSITORY_FOLDER: "src" # subfolder with source code
+  PLUGIN_NAME: "Challenges" # main file of the project
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/Version.cs' # only on change of the file with the version number string in it
+  workflow_dispatch:
+
+# job to create a new release
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Get Repository Name
+      run: echo "REPOSITORY_NAME=`basename ${{ github.repository }}`" >> $GITHUB_ENV
+  
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0  # Fetch all history for all branches and tags
+
+    - name: Get Current Project Version Number From Version.cs
+      id: get_version
+      run: |
+        version=$(grep -oP '(?<=ModuleVersion => ")[^"]*' ${{ env.REPOSITORY_FOLDER }}/Version.cs)
+        echo "version=$version" >> $GITHUB_ENV
+
+    - name: Get Current Release Version Number
+      id: get_latest_release
+      run: |
+        latest_release=$(curl -s -H "Authorization: token ${{ secrets.UPLOAD_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r .tag_name)
+        echo "latest_release=$latest_release" >> $GITHUB_ENV
+
+    - name: Compare Versions
+      id: compare_versions
+      run: |
+        if [ "${{ env.version }}" != "${{ env.latest_release }}" ]; then
+          echo "new_version=true" >> $GITHUB_ENV
+        else
+          echo "new_version=false" >> $GITHUB_ENV
+        fi
+
+    - name: Install .NET
+      uses: actions/setup-dotnet@v2
+      if: env.new_version == 'true'
+      with:
+        dotnet-version: '8.0.x'
+  
+    - name: Install Dependencies
+      if: env.new_version == 'true'
+      run: dotnet restore
+
+    - name: Build ${{ env.REPOSITORY_NAME }}
+      if: env.new_version == 'true'
+      run: dotnet publish -c Release
+
+    - name: Prepare ${{ env.REPOSITORY_NAME }}.info
+      if: env.new_version == 'true'
+      run: |
+        echo "version: ${{ env.version }}" > /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_FOLDER }}/bin/Release/net8.0/publish/${{ env.PLUGIN_NAME }}.info
+        echo "repository: https://github.com/${{ github.repository }}" >> /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_FOLDER }}/bin/Release/net8.0/publish/${{ env.PLUGIN_NAME }}.info
+
+    - name: Prepare Release
+      if: env.new_version == 'true'
+      run: |
+        mv /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_FOLDER }}/bin/Release/net8.0/publish/ /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_FOLDER }}/bin/Release/net8.0/${{ env.PLUGIN_NAME }}/
+
+    - name: Compress Release
+      if: env.new_version == 'true'
+      run: cd /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_FOLDER }}/bin/Release/net8.0 && zip -r /home/runner/work/${{ env.REPOSITORY_NAME }}-release-${{ env.version }}.zip ${{ env.PLUGIN_NAME }}
+
+    - name: Build Release Notes
+      if: env.new_version == 'true'
+      id: get_release_notes
+      run: |
+        if git describe --tags --abbrev=0 HEAD^ >/dev/null 2>&1; then
+          last_tag=$(git describe --tags --abbrev=0 HEAD^)
+        else
+          last_tag=$(git rev-list --max-parents=0 HEAD)
+        fi
+        release_notes=$(git log --pretty=format:"[%h](https://github.com/${{ github.repository }}/commit/%H) - %s (%an)" $last_tag..HEAD | sed '/^\s*$/d')
+        echo "$release_notes" > /home/runner/work/release_notes.md
+
+    - name: Add Release on Github
+      id: create_release
+      if: env.new_version == 'true'
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.UPLOAD_TOKEN }}
+      with:
+        tag_name: ${{ env.version }}
+        release_name: ${{ env.version }}
+        body_path: /home/runner/work/release_notes.md
+        draft: false
+        prerelease: false
+
+    - name: Upload ${{ env.REPOSITORY_NAME }}-release-${{ env.version }}.zip
+      if: env.new_version == 'true'
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.UPLOAD_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: /home/runner/work/${{ env.REPOSITORY_NAME }}-release-${{ env.version }}.zip
+        asset_name: ${{ env.REPOSITORY_NAME }}-release-${{ env.version }}.zip
+        asset_content_type: application/zip

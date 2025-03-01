@@ -1,0 +1,557 @@
+{
+    "version": "0.0.26",
+    "types": {
+        "kill": {
+            "name": "Player kills someone",
+            "rules": [
+                {
+                    "name": "Is during Round?",
+                    "slug": "isduringround",
+                    "description": "If the event happened during the round",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Is Teamkill?",
+                    "slug": "isteamkill",
+                    "description": "If the attacker killed a teammate",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Is Selfkill?",
+                    "slug": "isselfkill",
+                    "description": "If the attacker killed himself",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Attacker Name",
+                    "slug": "attacker",
+                    "description": "The name of the attacker",
+                    "type": "string"
+                },
+                {
+                    "name": "Attacker is Bot?",
+                    "slug": "attacker_isbot",
+                    "description": "If the attacker is a bot",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Attacker Team",
+                    "slug": "attacker_team",
+                    "description": "The team name of the attacker",
+                    "type": "string"
+                },
+                {
+                    "name": "Victim Name",
+                    "slug": "victim",
+                    "description": "The name of the victim",
+                    "type": "string"
+                },
+                {
+                    "name": "Victim is Bot?",
+                    "slug": "victim_isbot",
+                    "description": "If the victim is a bot",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Victim Team",
+                    "slug": "victim_team",
+                    "description": "The team name of the victim",
+                    "type": "string"
+                },
+                {
+                    "name": "Assisted Flash?",
+                    "slug": "assistedflash",
+                    "description": "If the victim was flashed by the assistent",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Attacker is blind?",
+                    "slug": "attackerblind",
+                    "description": "If the attacker was blind",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Attacker in the air?",
+                    "slug": "attackerinair",
+                    "description": "If the attacker was in the air",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Distance to victim",
+                    "slug": "distance",
+                    "description": "The distance between the attacker and the victim",
+                    "type": "number"
+                },
+                {
+                    "name": "Damage to Armor",
+                    "slug": "dmgarmor",
+                    "description": "The damage dealt to the armor of the victim",
+                    "type": "number"
+                },
+                {
+                    "name": "Damage to Health",
+                    "slug": "dmghealth",
+                    "description": "The damage dealt to the health of the victim",
+                    "type": "number"
+                },
+                {
+                    "name": "Attacker dominated victim?",
+                    "slug": "dominated",
+                    "description": "If the attacker dominated the victim",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Headshot?",
+                    "slug": "headshot",
+                    "description": "If the attacker killed the victim with a headshot",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Hitgroup",
+                    "slug": "hitgroup",
+                    "description": "The hitgroup where the victim got hit",
+                    "type": "number"
+                },
+                {
+                    "name": "Noscope?",
+                    "slug": "noscope",
+                    "description": "If the attacker killed the victim without scoping",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Penetrated?",
+                    "slug": "penetrated",
+                    "description": "If the attacker's bullet penetrated the victim",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Revenge?",
+                    "slug": "revenge",
+                    "description": "If the attacker killed the victim as a revenge",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Through Smoke?",
+                    "slug": "thrusmoke",
+                    "description": "If the attacker killed the victim through smoke",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Weapon Name",
+                    "slug": "weapon",
+                    "description": "The name of the weapon used by the attacker",
+                    "type": "string"
+                },
+                {
+                    "name": "Weapon Item ID",
+                    "slug": "weaponitemid",
+                    "description": "The item id of the weapon used by the attacker",
+                    "type": "string"
+                }
+            ]
+        },
+        "kill_assist": {
+            "name": "Player assists a kill",
+            "rules": [
+                {
+                    "name": "Is during Round?",
+                    "slug": "isduringround",
+                    "description": "If the event happened during the round",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Is Teamkill?",
+                    "slug": "isteamkill",
+                    "description": "If the attacker killed a teammate",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Is Selfkill?",
+                    "slug": "isselfkill",
+                    "description": "If the attacker killed himself",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Attacker Name",
+                    "slug": "attacker",
+                    "description": "The name of the attacker",
+                    "type": "string"
+                },
+                {
+                    "name": "Attacker is Bot?",
+                    "slug": "attacker_isbot",
+                    "description": "If the attacker is a bot",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Attacker Team",
+                    "slug": "attacker_team",
+                    "description": "The team name of the attacker",
+                    "type": "string"
+                },
+                {
+                    "name": "Assister Name",
+                    "slug": "assister",
+                    "description": "The name of the assister",
+                    "type": "string"
+                },
+                {
+                    "name": "Assister is Bot?",
+                    "slug": "assister_isbot",
+                    "description": "If the assister is a bot",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Assister Team",
+                    "slug": "assister_team",
+                    "description": "The team name of the assister",
+                    "type": "string"
+                },
+                {
+                    "name": "Victim Name",
+                    "slug": "victim",
+                    "description": "The name of the victim",
+                    "type": "string"
+                },
+                {
+                    "name": "Victim is Bot?",
+                    "slug": "victim_isbot",
+                    "description": "If the victim is a bot",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Victim Team",
+                    "slug": "victim_team",
+                    "description": "The team name of the victim",
+                    "type": "string"
+                },
+                {
+                    "name": "Assisted Flash?",
+                    "slug": "assistedflash",
+                    "description": "If the victim was flashed by the assistent",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Attacker is blind?",
+                    "slug": "attackerblind",
+                    "description": "If the attacker was blind",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Attacker in the air?",
+                    "slug": "attackerinair",
+                    "description": "If the attacker was in the air",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Distance to victim",
+                    "slug": "distance",
+                    "description": "The distance between the attacker and the victim",
+                    "type": "number"
+                },
+                {
+                    "name": "Damage to Armor",
+                    "slug": "dmgarmor",
+                    "description": "The damage dealt to the armor of the victim",
+                    "type": "number"
+                },
+                {
+                    "name": "Damage to Health",
+                    "slug": "dmghealth",
+                    "description": "The damage dealt to the health of the victim",
+                    "type": "number"
+                },
+                {
+                    "name": "Attacker dominated victim?",
+                    "slug": "dominated",
+                    "description": "If the attacker dominated the victim",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Headshot?",
+                    "slug": "headshot",
+                    "description": "If the attacker killed the victim with a headshot",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Hitgroup",
+                    "slug": "hitgroup",
+                    "description": "The hitgroup where the victim got hit",
+                    "type": "number"
+                },
+                {
+                    "name": "Noscope?",
+                    "slug": "noscope",
+                    "description": "If the attacker killed the victim without scoping",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Penetrated?",
+                    "slug": "penetrated",
+                    "description": "If the attacker's bullet penetrated the victim",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Revenge?",
+                    "slug": "revenge",
+                    "description": "If the attacker killed the victim as a revenge",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Through Smoke?",
+                    "slug": "thrusmoke",
+                    "description": "If the attacker killed the victim through smoke",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Weapon Name",
+                    "slug": "weapon",
+                    "description": "The name of the weapon used by the attacker",
+                    "type": "string"
+                },
+                {
+                    "name": "Weapon Item ID",
+                    "slug": "weaponitemid",
+                    "description": "The item id of the weapon used by the attacker",
+                    "type": "string"
+                }
+            ]
+        },
+        "death": {
+            "name": "Player died",
+            "rules": [
+                {
+                    "name": "Is during Round?",
+                    "slug": "isduringround",
+                    "description": "If the event happened during the round",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Is Teamkill?",
+                    "slug": "isteamkill",
+                    "description": "If the attacker killed a teammate",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Is Selfkill?",
+                    "slug": "isselfkill",
+                    "description": "If the attacker killed himself",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Attacker Name",
+                    "slug": "attacker",
+                    "description": "The name of the attacker",
+                    "type": "string"
+                },
+                {
+                    "name": "Attacker is Bot?",
+                    "slug": "attacker_isbot",
+                    "description": "If the attacker is a bot",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Attacker Team",
+                    "slug": "attacker_team",
+                    "description": "The team name of the attacker",
+                    "type": "string"
+                },
+                {
+                    "name": "Victim Name",
+                    "slug": "victim",
+                    "description": "The name of the victim",
+                    "type": "string"
+                },
+                {
+                    "name": "Victim is Bot?",
+                    "slug": "victim_isbot",
+                    "description": "If the victim is a bot",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Victim Team",
+                    "slug": "victim_team",
+                    "description": "The team name of the victim",
+                    "type": "string"
+                },
+                {
+                    "name": "Assisted Flash?",
+                    "slug": "assistedflash",
+                    "description": "If the victim was flashed by the assistent",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Attacker is blind?",
+                    "slug": "attackerblind",
+                    "description": "If the attacker was blind",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Attacker in the air?",
+                    "slug": "attackerinair",
+                    "description": "If the attacker was in the air",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Distance to victim",
+                    "slug": "distance",
+                    "description": "The distance between the attacker and the victim",
+                    "type": "number"
+                },
+                {
+                    "name": "Damage to Armor",
+                    "slug": "dmgarmor",
+                    "description": "The damage dealt to the armor of the victim",
+                    "type": "number"
+                },
+                {
+                    "name": "Damage to Health",
+                    "slug": "dmghealth",
+                    "description": "The damage dealt to the health of the victim",
+                    "type": "number"
+                },
+                {
+                    "name": "Attacker dominated victim?",
+                    "slug": "dominated",
+                    "description": "If the attacker dominated the victim",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Headshot?",
+                    "slug": "headshot",
+                    "description": "If the attacker killed the victim with a headshot",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Hitgroup",
+                    "slug": "hitgroup",
+                    "description": "The hitgroup where the victim got hit",
+                    "type": "number"
+                },
+                {
+                    "name": "Noscope?",
+                    "slug": "noscope",
+                    "description": "If the attacker killed the victim without scoping",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Penetrated?",
+                    "slug": "penetrated",
+                    "description": "If the attacker's bullet penetrated the victim",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Revenge?",
+                    "slug": "revenge",
+                    "description": "If the attacker killed the victim as a revenge",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Through Smoke?",
+                    "slug": "thrusmoke",
+                    "description": "If the attacker killed the victim through smoke",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Weapon Name",
+                    "slug": "weapon",
+                    "description": "The name of the weapon used by the attacker",
+                    "type": "string"
+                },
+                {
+                    "name": "Weapon Item ID",
+                    "slug": "weaponitemid",
+                    "description": "The item id of the weapon used by the attacker",
+                    "type": "string"
+                }
+            ]
+        },
+        "jump": {
+            "name": "Player jumps",
+            "rules": [
+                {
+                    "name": "Is during Round?",
+                    "slug": "isduringround",
+                    "description": "If the event happened during the round",
+                    "type": "checkbox"
+                }
+            ]
+        },
+        "blind": {
+            "name": "Player gets blinded",
+            "rules": [
+                {
+                    "name": "Is during Round?",
+                    "slug": "isduringround",
+                    "description": "If the event happened during the round",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Is Teamflash?",
+                    "slug": "isteamflash",
+                    "description": "If the attacker flashed a teammate",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Is Selfflash?",
+                    "slug": "isselfflash",
+                    "description": "If the attacker flashed himself",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Attacker Name",
+                    "slug": "attacker",
+                    "description": "The name of the attacker",
+                    "type": "string"
+                },
+                {
+                    "name": "Attacker is Bot?",
+                    "slug": "attacker_isbot",
+                    "description": "If the attacker is a bot",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Attacker Team",
+                    "slug": "attacker_team",
+                    "description": "The team name of the attacker",
+                    "type": "string"
+                },
+                {
+                    "name": "Victim Name",
+                    "slug": "victim",
+                    "description": "The name of the victim",
+                    "type": "string"
+                },
+                {
+                    "name": "Victim is Bot?",
+                    "slug": "victim_isbot",
+                    "description": "If the victim is a bot",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Victim Team",
+                    "slug": "victim_team",
+                    "description": "The team name of the victim",
+                    "type": "string"
+                },
+                {
+                    "name": "Duration of blindness",
+                    "slug": "blindduration",
+                    "description": "The duration of the blindness in seconds",
+                    "type": "number"
+                }
+            ]
+        }
+    },
+    "operators": [
+        "==",
+        "!=",
+        "<",
+        ">",
+        "<=",
+        ">=",
+        "bool==",
+        "bool!=",
+        "contains"
+    ]
+}

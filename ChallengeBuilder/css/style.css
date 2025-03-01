@@ -1,0 +1,36 @@
+/* Add your custom styles here */
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.rule {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.rule select,
+.rule input {
+    margin-right: 10px;
+}
+
+.rule button {
+    margin-left: auto;
+}
+
+.bg-dark .form-control,
+.bg-dark .form-select {
+    background-color: #343a40;
+    color: #fff;
+}
+
+.bg-dark .form-control::placeholder,
+.bg-dark .form-select::placeholder {
+    color: #6c757d;
+}
+
+input[type="checkbox"] {
+    width: 2em;
+    height: 2em;
+}
