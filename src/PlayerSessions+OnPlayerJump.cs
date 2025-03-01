@@ -13,7 +13,7 @@ namespace Challenges
                 || player.IsBot
                 || !_playerConfigs.ContainsKey(player.NetworkIDString)) return HookResult.Continue;
             // jump challenge ahead
-            CheckChallengeGoal(player, "jump", new Dictionary<string, string> {
+            CheckChallengeGoal(player, "player_jump", new Dictionary<string, string> {
                 { "isduringround", _isDuringRound.ToString() }
             });
             return HookResult.Continue;

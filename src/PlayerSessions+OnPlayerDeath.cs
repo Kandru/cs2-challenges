@@ -22,7 +22,7 @@ namespace Challenges
                 && !assister.IsBot
                 && _playerConfigs.ContainsKey(assister.NetworkIDString))
             {
-                CheckChallengeGoal(assister, "kill_assist", new Dictionary<string, string>
+                CheckChallengeGoal(assister, "player_kill_assist", new Dictionary<string, string>
                 {
                     { "isduringround", _isDuringRound.ToString() },
                     { "isteamkill", (attacker.TeamNum == victim.TeamNum).ToString() },
@@ -54,7 +54,7 @@ namespace Challenges
                 });
             }
             // check for attacker goal
-            CheckChallengeGoal(attacker, "kill", new Dictionary<string, string>
+            CheckChallengeGoal(attacker, "player_kill", new Dictionary<string, string>
             {
                 { "isduringround", _isDuringRound.ToString() },
                 { "isteamkill", (attacker.TeamNum == victim.TeamNum).ToString() },
@@ -82,7 +82,7 @@ namespace Challenges
                 { "weaponitemid", @event.WeaponItemid }
             });
             // check for victim goal
-            CheckChallengeGoal(attacker, "death", new Dictionary<string, string>
+            CheckChallengeGoal(attacker, "player_death", new Dictionary<string, string>
             {
                 { "isduringround", _isDuringRound.ToString() },
                 { "isteamkill", (attacker.TeamNum == victim.TeamNum).ToString() },

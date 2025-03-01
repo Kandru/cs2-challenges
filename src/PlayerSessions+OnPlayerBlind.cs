@@ -15,7 +15,7 @@ namespace Challenges
                 || victim == null
                 || !victim.IsValid) return HookResult.Continue;
             // check for challenge
-            CheckChallengeGoal(attacker, "blind", new Dictionary<string, string>
+            CheckChallengeGoal(attacker, "player_blind", new Dictionary<string, string>
             {
                 { "isduringround", _isDuringRound.ToString() },
                 { "isteamflash", (attacker.TeamNum == victim.TeamNum).ToString() },
