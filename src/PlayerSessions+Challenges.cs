@@ -81,7 +81,8 @@ namespace Challenges
 
         private void CheckChallengeGoal(CCSPlayerController player, string type, Dictionary<string, string> data)
         {
-            if (player == null
+            if (!Config.Enabled
+                || player == null
                 || !player.IsValid
                 || player.IsBot) return;
             // check if user exists

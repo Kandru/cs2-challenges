@@ -10,7 +10,7 @@ namespace Challenges
     {
         private void ShowGuiOnRoundStart()
         {
-            if (!_isDuringRound || !Config.GUI.ShowOnRoundStart) return;
+            if (!Config.Enabled || !_isDuringRound || !Config.GUI.ShowOnRoundStart) return;
             int freezeTime = 0;
             ConVar? mpFreezeTime = ConVar.Find("mp_freezetime");
             if (mpFreezeTime != null)
@@ -40,7 +40,7 @@ namespace Challenges
 
         private void ShowGuiOnSpawn(CCSPlayerController player)
         {
-            if (!Config.GUI.ShowAfterRespawn) return;
+            if (!Config.Enabled || !Config.GUI.ShowAfterRespawn) return;
             if (player == null
                 || !player.IsValid
                 || player.IsBot
@@ -59,7 +59,8 @@ namespace Challenges
 
         private void ShowGui(CCSPlayerController player, float duration = 10.0f)
         {
-            if (player == null
+            if (!Config.Enabled
+                || player == null
                 || !player.IsValid
                 || !_playerConfigs.ContainsKey(player.NetworkIDString)
                 || player.PlayerPawn == null
@@ -154,7 +155,8 @@ namespace Challenges
 
         private void UpdateGui(CCSPlayerController player, string message)
         {
-            if (player == null
+            if (!Config.Enabled
+                || player == null
                 || !player.IsValid
                 || !_playerHudPersonalChallenges.ContainsKey(player.NetworkIDString)
                 || _playerHudPersonalChallenges[player.NetworkIDString] == null
