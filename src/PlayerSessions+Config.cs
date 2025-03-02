@@ -24,6 +24,13 @@ namespace Challenges
         [JsonPropertyName("menu_backgroundfactor")] public float BackgroundFactor { get; set; } = 1f;
     }
 
+    public class PluginConfigNotifications
+    {
+        [JsonPropertyName("notify_player_on_challenge_progress")] public bool NotifyPlayerOnChallengeProgress { get; set; } = true;
+        [JsonPropertyName("notify_player_on_challenge_complete")] public bool NotifyPlayerOnChallengeComplete { get; set; } = true;
+        [JsonPropertyName("notify_other_on_challenge_complete")] public bool NotifyOtherOnChallengeComplete { get; set; } = true;
+    }
+
     public class PluginConfig : BasePluginConfig
     {
         // disabled
@@ -32,6 +39,8 @@ namespace Challenges
         [JsonPropertyName("debug")] public bool Debug { get; set; } = false;
         // challenges
         [JsonPropertyName("gui")] public PluginConfigGUI GUI { get; set; } = new();
+        // notifications
+        [JsonPropertyName("notifications")] public PluginConfigNotifications Notifications { get; set; } = new();
     }
 
     public partial class Challenges : BasePlugin, IPluginConfig<PluginConfig>

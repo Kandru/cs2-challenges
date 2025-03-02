@@ -191,30 +191,33 @@ namespace Challenges
                     {
                         DebugPrint($"user {player.NetworkIDString} has completed challenge {kvp.Key}");
                         // notify user about completion
-                        player.PrintToChat(
-                            Localizer["challenges.completed.user"]
-                                .Value
-                                .Replace("{challenge}", kvp.Value.Title)
-                        );
+                        if (Config.Notifications.NotifyPlayerOnChallengeComplete)
+                            player.PrintToChat(
+                                Localizer["challenges.completed.user"]
+                                    .Value
+                                    .Replace("{challenge}", kvp.Value.Title)
+                            );
                         // notify other players about completion
-                        SendGlobalChatMessage(
-                            message: Localizer["challenges.completed.other"]
-                                .Value
-                                .Replace("{challenge}", kvp.Value.Title),
-                            player: player
-                        );
+                        if (Config.Notifications.NotifyOtherOnChallengeComplete)
+                            SendGlobalChatMessage(
+                                message: Localizer["challenges.completed.other"]
+                                    .Value
+                                    .Replace("{challenge}", kvp.Value.Title),
+                                player: player
+                            );
                         // TODO: add interface for other plugins
                     }
                     else
                     {
                         // notify user about progress
-                        player.PrintToChat(
-                            Localizer["challenges.progress"]
-                                .Value
-                                .Replace("{challenge}", kvp.Value.Title
-                                    .Replace("{total}", kvp.Value.Amount.ToString())
-                                    .Replace("{count}", _playerConfigs[player.NetworkIDString].Challenges[kvp.Key].Amount.ToString()))
-                        );
+                        if (Config.Notifications.NotifyPlayerOnChallengeProgress)
+                            player.PrintToChat(
+                                Localizer["challenges.progress"]
+                                    .Value
+                                    .Replace("{challenge}", kvp.Value.Title
+                                        .Replace("{total}", kvp.Value.Amount.ToString())
+                                        .Replace("{count}", _playerConfigs[player.NetworkIDString].Challenges[kvp.Key].Amount.ToString()))
+                            );
                         // TODO: add interface for other plugins
                     }
                     // show challenges gui if enabled
