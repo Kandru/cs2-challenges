@@ -27,8 +27,7 @@ Information: this is currently NOT ready for implementation by other plugins. DO
 - [X] Event PlayerFootstep
 - [X] Event PlayerGivenC4
 - [X] Event PlayerHurt
-- [ ] Event PlayerPing
-- [ ] Event PlayerPingStop
+- [X] Event PlayerPing
 - [ ] Event PlayerRadio
 - [ ] Event PlayerResetVote
 - [ ] Event PlayerScore
