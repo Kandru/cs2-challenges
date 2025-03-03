@@ -39,6 +39,7 @@ namespace Challenges
             RegisterEventHandler<EventPlayerGivenC4>(OnPlayerGivenC4);
             RegisterEventHandler<EventPlayerHurt>(OnPlayerHurt);
             RegisterEventHandler<EventPlayerPing>(OnPlayerPing);
+            RegisterEventHandler<EventPlayerRadio>(OnPlayerRadio);
             // print message if hot reload
             if (hotReload)
             {
@@ -73,6 +74,7 @@ namespace Challenges
             DeregisterEventHandler<EventPlayerGivenC4>(OnPlayerGivenC4);
             DeregisterEventHandler<EventPlayerHurt>(OnPlayerHurt);
             DeregisterEventHandler<EventPlayerPing>(OnPlayerPing);
+            DeregisterEventHandler<EventPlayerRadio>(OnPlayerRadio);
             // save config(s)
             Config.Update();
             SavePlayerConfigs();

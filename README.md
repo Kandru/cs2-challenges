@@ -28,7 +28,7 @@ Information: this is currently NOT ready for implementation by other plugins. DO
 - [X] Event PlayerGivenC4
 - [X] Event PlayerHurt
 - [X] Event PlayerPing
-- [ ] Event PlayerRadio
+- [X] Event PlayerRadio
 - [ ] Event PlayerResetVote
 - [ ] Event PlayerScore
 - [ ] Event PlayerSound
