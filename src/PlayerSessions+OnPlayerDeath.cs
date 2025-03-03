@@ -82,7 +82,7 @@ namespace Challenges
                 { "weaponitemid", @event.WeaponItemid }
             });
             // check victim for challenge
-            CheckChallengeGoal(attacker, "player_death", new Dictionary<string, string>
+            CheckChallengeGoal(victim, "player_death", new Dictionary<string, string>
             {
                 { "isduringround", _isDuringRound.ToString() },
                 { "isteamkill", (attacker.TeamNum == victim.TeamNum).ToString() },
