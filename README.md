@@ -31,6 +31,7 @@ Information: this is currently NOT ready for implementation by other plugins. DO
 - [X] Event PlayerRadio
 - [X] Event PlayerScore
 - [X] Event PlayerSound
+- [X] Event PlayerSpawned
 - [ ] Event PlayerTeam
 - [ ] Event AchievementEarned
 - [ ] Event AddPlayerSonarIcon
