@@ -29,8 +29,7 @@ Information: this is currently NOT ready for implementation by other plugins. DO
 - [X] Event PlayerHurt
 - [X] Event PlayerPing
 - [X] Event PlayerRadio
-- [ ] Event PlayerResetVote
-- [ ] Event PlayerScore
+- [X] Event PlayerScore
 - [ ] Event PlayerSound
 - [ ] Event PlayerTeam
 - [ ] Event AchievementEarned
