@@ -23,7 +23,7 @@ Information: this is currently NOT ready for implementation by other plugins. DO
 - [x] Event PlayerChangename
 - [x] Event PlayerChat
 - [X] Event PlayerDecal
-- [ ] Event PlayerFalldamage
+- [X] Event PlayerFalldamage
 - [ ] Event PlayerFootstep
 - [ ] Event PlayerGivenC4
 - [ ] Event PlayerHintmessage
