@@ -22,7 +22,7 @@ Information: this is currently NOT ready for implementation by other plugins. DO
 - [x] Event PlayerAvengedTeammate
 - [x] Event PlayerChangename
 - [x] Event PlayerChat
-- [ ] Event PlayerDecal
+- [X] Event PlayerDecal
 - [ ] Event PlayerFalldamage
 - [ ] Event PlayerFootstep
 - [ ] Event PlayerGivenC4

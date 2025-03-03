@@ -33,6 +33,7 @@ namespace Challenges
             RegisterEventHandler<EventPlayerAvengedTeammate>(OnPlayerAvengedTeammate);
             RegisterEventHandler<EventPlayerChangename>(OnPlayerChangename);
             RegisterEventHandler<EventPlayerChat>(OnPlayerChat);
+            RegisterEventHandler<EventPlayerDecal>(OnPlayerDecal);
             // print message if hot reload
             if (hotReload)
             {
@@ -61,6 +62,7 @@ namespace Challenges
             DeregisterEventHandler<EventPlayerAvengedTeammate>(OnPlayerAvengedTeammate);
             DeregisterEventHandler<EventPlayerChangename>(OnPlayerChangename);
             DeregisterEventHandler<EventPlayerChat>(OnPlayerChat);
+            DeregisterEventHandler<EventPlayerDecal>(OnPlayerDecal);
             // save config(s)
             Config.Update();
             SavePlayerConfigs();
