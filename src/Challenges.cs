@@ -35,6 +35,7 @@ namespace Challenges
             RegisterEventHandler<EventPlayerChat>(OnPlayerChat);
             RegisterEventHandler<EventPlayerDecal>(OnPlayerDecal);
             RegisterEventHandler<EventPlayerFalldamage>(OnPlayerFalldamage);
+            RegisterEventHandler<EventPlayerFootstep>(OnPlayerFootstep);
             // print message if hot reload
             if (hotReload)
             {
@@ -65,6 +66,7 @@ namespace Challenges
             DeregisterEventHandler<EventPlayerChat>(OnPlayerChat);
             DeregisterEventHandler<EventPlayerDecal>(OnPlayerDecal);
             DeregisterEventHandler<EventPlayerFalldamage>(OnPlayerFalldamage);
+            DeregisterEventHandler<EventPlayerFootstep>(OnPlayerFootstep);
             // save config(s)
             Config.Update();
             SavePlayerConfigs();

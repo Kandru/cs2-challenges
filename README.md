@@ -24,7 +24,7 @@ Information: this is currently NOT ready for implementation by other plugins. DO
 - [x] Event PlayerChat
 - [X] Event PlayerDecal
 - [X] Event PlayerFalldamage
-- [ ] Event PlayerFootstep
+- [X] Event PlayerFootstep
 - [ ] Event PlayerGivenC4
 - [ ] Event PlayerHintmessage
 - [ ] Event PlayerHurt
