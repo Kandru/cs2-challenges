@@ -971,8 +971,8 @@
                 }
             ]
         },
-        "player_hurt": {
-            "name": "Player gets hurt",
+        "player_hurt_attacker": {
+            "name": "Player hurts someone",
             "rules": [
                 {
                     "name": "Is during Round?",
@@ -990,12 +990,6 @@
                     "name": "Is Selfdamage?",
                     "slug": "isselfdamage",
                     "description": "If the attacker hurt himself",
-                    "type": "checkbox"
-                },
-                {
-                    "name": "Player is Attacker?",
-                    "slug": "isattacker",
-                    "description": "If the player of this challenge is the attacker",
                     "type": "checkbox"
                 },
                 {
@@ -1017,10 +1011,99 @@
                     "type": "string"
                 },
                 {
-                    "name": "Player is Victim?",
-                    "slug": "isvictim",
-                    "description": "If the player of this challenge is the victim",
+                    "name": "Victim Name",
+                    "slug": "victim",
+                    "description": "The name of the victim",
+                    "type": "string"
+                },
+                {
+                    "name": "Victim is Bot?",
+                    "slug": "victim_isbot",
+                    "description": "If the victim is a bot",
                     "type": "checkbox"
+                },
+                {
+                    "name": "Victim Team",
+                    "slug": "victim_team",
+                    "description": "The team name of the victim",
+                    "type": "string"
+                },
+                {
+                    "name": "Damage to Armor",
+                    "slug": "dmgarmor",
+                    "description": "The damage dealt to the armor of the victim",
+                    "type": "number"
+                },
+                {
+                    "name": "Damage to Health",
+                    "slug": "dmghealth",
+                    "description": "The damage dealt to the health of the victim",
+                    "type": "number"
+                },
+                {
+                    "name": "Health of Victim",
+                    "slug": "health",
+                    "description": "The new health value of the victim",
+                    "type": "number"
+                },
+                {
+                    "name": "Armot of Victim",
+                    "slug": "armor",
+                    "description": "The new armor value of the victim",
+                    "type": "number"
+                },
+                {
+                    "name": "Hitgroup",
+                    "slug": "hitgroup",
+                    "description": "The hitgroup where the victim got hit",
+                    "type": "number"
+                },
+                {
+                    "name": "Weapon Name",
+                    "slug": "weapon",
+                    "description": "The name of the weapon used by the attacker",
+                    "type": "string"
+                }
+            ]
+        },
+        "player_hurt_victim": {
+            "name": "Player gets hurt",
+            "rules": [
+                {
+                    "name": "Is during Round?",
+                    "slug": "isduringround",
+                    "description": "If the event happened during the round",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Is Teamdamage?",
+                    "slug": "isteamdamage",
+                    "description": "If the attacker hurt a teammate",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Is Selfdamage?",
+                    "slug": "isselfdamage",
+                    "description": "If the attacker hurt himself",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Attacker Name",
+                    "slug": "attacker",
+                    "description": "The name of the attacker",
+                    "type": "string"
+                },
+                {
+                    "name": "Attacker is Bot?",
+                    "slug": "attacker_isbot",
+                    "description": "If the attacker is a bot",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Attacker Team",
+                    "slug": "attacker_team",
+                    "description": "The team name of the attacker",
+                    "type": "string"
                 },
                 {
                     "name": "Victim Name",
