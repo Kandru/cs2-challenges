@@ -32,7 +32,7 @@ Information: this is currently NOT ready for implementation by other plugins. DO
 - [X] Event PlayerScore
 - [X] Event PlayerSound
 - [X] Event PlayerSpawned
-- [ ] Event PlayerTeam
+- [X] Event PlayerTeam
 - [ ] Event AchievementEarned
 - [ ] Event AddPlayerSonarIcon
 - [ ] Event AmmoPickup

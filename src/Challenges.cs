@@ -43,6 +43,7 @@ namespace Challenges
             RegisterEventHandler<EventPlayerScore>(OnPlayerScore);
             RegisterEventHandler<EventPlayerSound>(OnPlayerSound);
             RegisterEventHandler<EventPlayerSpawned>(OnPlayerSpawned);
+            RegisterEventHandler<EventPlayerTeam>(OnPlayerTeam);
             // print message if hot reload
             if (hotReload)
             {
@@ -81,6 +82,7 @@ namespace Challenges
             DeregisterEventHandler<EventPlayerScore>(OnPlayerScore);
             DeregisterEventHandler<EventPlayerSound>(OnPlayerSound);
             DeregisterEventHandler<EventPlayerSpawned>(OnPlayerSpawned);
+            DeregisterEventHandler<EventPlayerTeam>(OnPlayerTeam);
             // save config(s)
             Config.Update();
             SavePlayerConfigs();
