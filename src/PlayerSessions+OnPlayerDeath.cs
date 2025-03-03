@@ -11,7 +11,6 @@ namespace Challenges
             CCSPlayerController? victim = @event.Userid;
             if (attacker == null
                 || !attacker.IsValid
-                || attacker.IsBot
                 || victim == null
                 || !victim.IsValid) return HookResult.Continue;
             // hide GUI for victim

@@ -10,7 +10,6 @@ namespace Challenges
             CCSPlayerController? player = Utilities.GetPlayerFromUserid(@event.Userid);
             if (player == null
                 || !player.IsValid
-                || player.IsBot
                 || !_playerConfigs.ContainsKey(player.NetworkIDString)) return HookResult.Continue;
             // check avenger for challenge
             CheckChallengeGoal(player, "player_chat", new Dictionary<string, string>

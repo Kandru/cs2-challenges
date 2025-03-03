@@ -10,7 +10,6 @@ namespace Challenges
             CCSPlayerController? victim = @event.Userid;
             if (attacker == null
                 || !attacker.IsValid
-                || attacker.IsBot
                 || !_playerConfigs.ContainsKey(attacker.NetworkIDString)
                 || victim == null
                 || !victim.IsValid) return HookResult.Continue;

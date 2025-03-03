@@ -9,10 +9,7 @@ namespace Challenges
             CCSPlayerController? player = @event.Userid;
             if (player == null
                 || !player.IsValid
-                || player.IsBot
-                || !_playerConfigs.ContainsKey(player.NetworkIDString)
-                || player == null
-                || !player.IsValid) return HookResult.Continue;
+                || !_playerConfigs.ContainsKey(player.NetworkIDString)) return HookResult.Continue;
             // check avenger for challenge
             CheckChallengeGoal(player, "player_changed_name", new Dictionary<string, string>
             {

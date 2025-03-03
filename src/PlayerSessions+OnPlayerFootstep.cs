@@ -9,7 +9,6 @@ namespace Challenges
             CCSPlayerController? player = @event.Userid;
             if (player == null
                 || !player.IsValid
-                || player.IsBot
                 || !_playerConfigs.ContainsKey(player.NetworkIDString)) return HookResult.Continue;
             // check avenger for challenge
             CheckChallengeGoal(player, "player_footstep", new Dictionary<string, string>
