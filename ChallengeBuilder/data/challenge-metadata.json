@@ -41,6 +41,24 @@
                     "type": "string"
                 },
                 {
+                    "name": "Assister Name",
+                    "slug": "assister",
+                    "description": "The name of the assister",
+                    "type": "string"
+                },
+                {
+                    "name": "Assister is Bot?",
+                    "slug": "assister_isbot",
+                    "description": "If the assister is a bot",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Assister Team",
+                    "slug": "assister_team",
+                    "description": "The team name of the assister",
+                    "type": "string"
+                },
+                {
                     "name": "Victim Name",
                     "slug": "victim",
                     "description": "The name of the victim",
@@ -354,6 +372,24 @@
                     "name": "Attacker Team",
                     "slug": "attacker_team",
                     "description": "The team name of the attacker",
+                    "type": "string"
+                },
+                {
+                    "name": "Assister Name",
+                    "slug": "assister",
+                    "description": "The name of the assister",
+                    "type": "string"
+                },
+                {
+                    "name": "Assister is Bot?",
+                    "slug": "assister_isbot",
+                    "description": "If the assister is a bot",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Assister Team",
+                    "slug": "assister_team",
+                    "description": "The team name of the assister",
                     "type": "string"
                 },
                 {

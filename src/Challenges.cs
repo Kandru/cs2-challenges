@@ -34,6 +34,7 @@ namespace Challenges
             RegisterEventHandler<EventPlayerChangename>(OnPlayerChangename);
             RegisterEventHandler<EventPlayerChat>(OnPlayerChat);
             RegisterEventHandler<EventPlayerDecal>(OnPlayerDecal);
+            RegisterEventHandler<EventPlayerFalldamage>(OnPlayerFalldamage);
             // print message if hot reload
             if (hotReload)
             {
@@ -63,6 +64,7 @@ namespace Challenges
             DeregisterEventHandler<EventPlayerChangename>(OnPlayerChangename);
             DeregisterEventHandler<EventPlayerChat>(OnPlayerChat);
             DeregisterEventHandler<EventPlayerDecal>(OnPlayerDecal);
+            DeregisterEventHandler<EventPlayerFalldamage>(OnPlayerFalldamage);
             // save config(s)
             Config.Update();
             SavePlayerConfigs();
