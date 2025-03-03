@@ -4,5 +4,20 @@
 			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {
+		"files.exclude": {
+			"**/.git/objects/**": true,
+		},
+		"files.watcherExclude": {
+			"**/.git/objects/**": true,
+			"**/.git/subtree-cache/**": true,
+			"**/bin/**": true
+		},
+		"search.exclude": {
+			"**/bin/**": true,
+			"**/.git/objects/**": true,
+			"**/.git/subtree-cache/**": true
+		},
+		"search.followSymlinks": false
+	}
 }
