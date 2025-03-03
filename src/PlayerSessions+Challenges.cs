@@ -79,14 +79,12 @@ namespace Challenges
             }
         }
 
-        private void CheckChallengeGoal(CCSPlayerController player, string type, Dictionary<string, string> data)
+        private void CheckChallengeGoal(CCSPlayerController? player, string type, Dictionary<string, string> data)
         {
             if (!Config.Enabled
                 || player == null
                 || !player.IsValid
-                || player.IsBot) return;
-            // check if user exists
-            if (!_playerConfigs.ContainsKey(player.NetworkIDString)) return;
+                || !_playerConfigs.ContainsKey(player.NetworkIDString)) return;
             // check if we have a running challenge
             if (_currentChallenge.Challenges.Count == 0)
             {
