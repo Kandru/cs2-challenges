@@ -26,7 +26,7 @@ Information: this is currently NOT ready for implementation by other plugins. DO
 - [X] Event PlayerFalldamage
 - [X] Event PlayerFootstep
 - [X] Event PlayerGivenC4
-- [ ] Event PlayerHurt
+- [X] Event PlayerHurt
 - [ ] Event PlayerPing
 - [ ] Event PlayerPingStop
 - [ ] Event PlayerRadio

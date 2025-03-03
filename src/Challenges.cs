@@ -37,6 +37,7 @@ namespace Challenges
             RegisterEventHandler<EventPlayerFalldamage>(OnPlayerFalldamage);
             RegisterEventHandler<EventPlayerFootstep>(OnPlayerFootstep);
             RegisterEventHandler<EventPlayerGivenC4>(OnPlayerGivenC4);
+            RegisterEventHandler<EventPlayerHurt>(OnPlayerHurt);
             // print message if hot reload
             if (hotReload)
             {
@@ -69,6 +70,7 @@ namespace Challenges
             DeregisterEventHandler<EventPlayerFalldamage>(OnPlayerFalldamage);
             DeregisterEventHandler<EventPlayerFootstep>(OnPlayerFootstep);
             DeregisterEventHandler<EventPlayerGivenC4>(OnPlayerGivenC4);
+            DeregisterEventHandler<EventPlayerHurt>(OnPlayerHurt);
             // save config(s)
             Config.Update();
             SavePlayerConfigs();
