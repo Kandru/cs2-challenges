@@ -1,4 +1,7 @@
-﻿using CounterStrikeSharp.API.Core;
+﻿using ChallengesShared;
+using ChallengesShared.Events;
+using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Core.Capabilities;
 using CounterStrikeSharp.API.Modules.Extensions;
 
 namespace Challenges
@@ -8,6 +11,7 @@ namespace Challenges
         public override string ModuleName => "Challenges";
         public override string ModuleAuthor => "Kalle <kalle@kandru.de>";
 
+        private static PluginCapability<IChallengesEventSender> ChallengesEventSenderCapability { get; } = new("challenges_plugin:event_sender");
         private readonly Random _random = new Random(Guid.NewGuid().GetHashCode());
         private bool _isDuringRound = false;
 

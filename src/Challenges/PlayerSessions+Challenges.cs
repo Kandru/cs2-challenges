@@ -1,3 +1,4 @@
+using ChallengesShared.Events;
 using CounterStrikeSharp.API.Core;
 
 namespace Challenges
@@ -204,7 +205,14 @@ namespace Challenges
                                     .Replace("{challenge}", kvp.Value.Title),
                                 player: player
                             );
-                        // TODO: add interface for other plugins
+                        // send event to other plugins
+                        ChallengesEventSenderCapability.Get()?.TriggerEvent(new PlayerCompletedChallengeEvent(player, new Dictionary<string, string>
+                        {
+                            { "title", kvp.Value.Title },
+                            { "type", kvp.Value.Type },
+                            { "points", kvp.Value.Points.ToString() },
+                            { "amount", kvp.Value.Amount.ToString() },
+                        }));
                     }
                     else
                     {
@@ -217,7 +225,15 @@ namespace Challenges
                                         .Replace("{total}", kvp.Value.Amount.ToString())
                                         .Replace("{count}", _playerConfigs[player.NetworkIDString].Challenges[kvp.Key].Amount.ToString()))
                             );
-                        // TODO: add interface for other plugins
+                        // send event to other plugins
+                        ChallengesEventSenderCapability.Get()?.TriggerEvent(new PlayerProgressedChallengeEvent(player, new Dictionary<string, string>
+                        {
+                            { "title", kvp.Value.Title },
+                            { "type", kvp.Value.Type },
+                            { "points", kvp.Value.Points.ToString() },
+                            { "current_amount", _playerConfigs[player.NetworkIDString].Challenges[kvp.Key].Amount.ToString() },
+                            { "total_amount", kvp.Value.Amount.ToString() },
+                        }));
                     }
                     // show challenges gui if enabled
                     if (Config.GUI.ShowOnChallengeUpdate)

@@ -1,3 +1,5 @@
-﻿namespace ChallengesShared.Events;
+﻿using CounterStrikeSharp.API.Core;
 
-public record PlayerCompletedChallengeEvent() : IChallengesEvent;
+namespace ChallengesShared.Events;
+
+public record PlayerCompletedChallengeEvent(CCSPlayerController Player, Dictionary<string, string> Data) : IChallengesEvent;
