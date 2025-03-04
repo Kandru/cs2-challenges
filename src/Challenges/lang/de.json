@@ -7,6 +7,7 @@
     "core.config": "[Spielsitzung] Konfiguration geladen!",
     "core.disabled": "[Spielsitzung] {default}Spielsitzung ist deaktiviert!",
     "core.debugprint": "[Spielsitzung]{red}[DEBUG] {default}{message}",
+    "core.event.trigger.error": "[Spielsitzung] {red}Fehler beim Auslösen des Ereignisses {eventName}: {error}",
     "command.notalive": "[Challenges] Du musst am Leben sein um deine Statistik einzusehen.",
     "command.nochallenges": "[Spielsitzung] Keine aktiven Herausforderungen.",
     "command.showgui": "[Spielsitzung] {default}Herausforderungsfenster geöffnet",

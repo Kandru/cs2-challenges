@@ -10,7 +10,7 @@ namespace Challenges
         public override string ModuleName => "Challenges";
         public override string ModuleAuthor => "Kalle <kalle@kandru.de>";
 
-        private static PluginCapability<IChallengesEventSender> ChallengesEventSenderCapability { get; } = new("challenges_plugin:event_sender");
+        private static PluginCapability<IChallengesEventSender> ChallengesEvents { get; } = new("challenges:events");
         private readonly Random _random = new Random(Guid.NewGuid().GetHashCode());
         private bool _isDuringRound = false;
 
@@ -47,6 +47,9 @@ namespace Challenges
             RegisterEventHandler<EventPlayerSound>(OnPlayerSound);
             RegisterEventHandler<EventPlayerSpawned>(OnPlayerSpawned);
             RegisterEventHandler<EventPlayerTeam>(OnPlayerTeam);
+            // initialize custom events
+            var customEventsSender = new CustomEventsSender();
+            //Capabilities.RegisterPluginCapability(ChallengesEvents, () => customEventsSender);
             // print message if hot reload
             if (hotReload)
             {

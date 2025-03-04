@@ -206,7 +206,7 @@ namespace Challenges
                                 player: player
                             );
                         // send event to other plugins
-                        ChallengesEventSenderCapability.Get()?.TriggerEvent(new PlayerCompletedChallengeEvent(player, new Dictionary<string, string>
+                        TriggerEvent(new PlayerCompletedChallengeEvent(player, new Dictionary<string, string>
                         {
                             { "title", kvp.Value.Title },
                             { "type", kvp.Value.Type },
@@ -226,7 +226,7 @@ namespace Challenges
                                         .Replace("{count}", _playerConfigs[player.NetworkIDString].Challenges[kvp.Key].Amount.ToString()))
                             );
                         // send event to other plugins
-                        ChallengesEventSenderCapability.Get()?.TriggerEvent(new PlayerProgressedChallengeEvent(player, new Dictionary<string, string>
+                        TriggerEvent(new PlayerProgressedChallengeEvent(player, new Dictionary<string, string>
                         {
                             { "title", kvp.Value.Title },
                             { "type", kvp.Value.Type },

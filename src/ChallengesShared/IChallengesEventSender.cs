@@ -5,6 +5,6 @@ namespace ChallengesShared;
 
 public interface IChallengesEventSender
 {
-    public event EventHandler<IChallengesEvent> ChallengesPluginEventHandlers;
+    public event EventHandler<IChallengesEvent> Events;
     public void TriggerEvent(IChallengesEvent @event);
 }

@@ -1,3 +1,4 @@
+using ChallengesShared.Events;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Modules.Commands;
@@ -39,6 +40,22 @@ namespace Challenges
                 }
             else
                 command.ReplyToCommand(Localizer["command.notalive"]);
+        }
+
+        [ConsoleCommand("test", "test")]
+        [CommandHelper(whoCanExecute: CommandUsage.CLIENT_ONLY, minArgs: 0, usage: "!c")]
+        public void CommandTest(CCSPlayerController player, CommandInfo command)
+        {
+            command.ReplyToCommand("Test command executed");
+            // send event to other plugins
+            TriggerEvent(new PlayerCompletedChallengeEvent(player, new Dictionary<string, string>
+            {
+                { "title", "Test Title" },
+                { "type", "Test Value" },
+                { "points", "100" },
+                { "amount", "5" },
+            }));
+            command.ReplyToCommand("Test event sent");
         }
     }
 }
