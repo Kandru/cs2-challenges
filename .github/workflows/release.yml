@@ -29,7 +29,7 @@ jobs:
     - name: Get Current Project Version Number From Version.cs
       id: get_version
       run: |
-        version=$(grep -oP '(?<=ModuleVersion => ")[^"]*' ${{ env.REPOSITORY_FOLDER }}/Version.cs)
+        version=$(grep -oP '(?<=ModuleVersion => ")[^"]*' ${{ env.REPOSITORY_FOLDER }}/${{ env.PLUGIN_NAME }}/Version.cs)
         echo "version=$version" >> $GITHUB_ENV
 
     - name: Get Current Release Version Number
@@ -64,17 +64,17 @@ jobs:
     - name: Prepare ${{ env.REPOSITORY_NAME }}.info
       if: env.new_version == 'true'
       run: |
-        echo "version: ${{ env.version }}" > /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_FOLDER }}/bin/Release/net8.0/publish/${{ env.PLUGIN_NAME }}.info
-        echo "repository: https://github.com/${{ github.repository }}" >> /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_FOLDER }}/bin/Release/net8.0/publish/${{ env.PLUGIN_NAME }}.info
+        echo "version: ${{ env.version }}" > /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_FOLDER }}/${{ env.PLUGIN_NAME }}/bin/Release/net8.0/publish/${{ env.PLUGIN_NAME }}.info
+        echo "repository: https://github.com/${{ github.repository }}" >> /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_FOLDER }}/${{ env.PLUGIN_NAME }}/bin/Release/net8.0/publish/${{ env.PLUGIN_NAME }}.info
 
     - name: Prepare Release
       if: env.new_version == 'true'
       run: |
-        mv /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_FOLDER }}/bin/Release/net8.0/publish/ /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_FOLDER }}/bin/Release/net8.0/${{ env.PLUGIN_NAME }}/
+        mv /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_FOLDER }}/${{ env.PLUGIN_NAME }}/bin/Release/net8.0/publish/ /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_FOLDER }}/${{ env.PLUGIN_NAME }}/bin/Release/net8.0/${{ env.PLUGIN_NAME }}/
 
     - name: Compress Release
       if: env.new_version == 'true'
-      run: cd /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_FOLDER }}/bin/Release/net8.0 && zip -r /home/runner/work/${{ env.REPOSITORY_NAME }}-release-${{ env.version }}.zip ${{ env.PLUGIN_NAME }}
+      run: cd /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_FOLDER }}/${{ env.PLUGIN_NAME }}/bin/Release/net8.0 && zip -r /home/runner/work/${{ env.REPOSITORY_NAME }}-release-${{ env.version }}.zip ${{ env.PLUGIN_NAME }}
 
     - name: Build Release Notes
       if: env.new_version == 'true'
