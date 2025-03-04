@@ -3,6 +3,7 @@ name: Build Release
 env:
   REPOSITORY_FOLDER: "src" # subfolder with source code
   PLUGIN_NAME: "Challenges" # main file of the project
+  SHARED_NAME: "ChallengesShared" # main file of the project
 
 on:
   push:
@@ -70,11 +71,19 @@ jobs:
     - name: Prepare Release
       if: env.new_version == 'true'
       run: |
+        mkdir -p /home/runner/work/zipfile/
+        mkdir -p /home/runner/work/zipfile/plugins/
+        mkdir -p /home/runner/work/zipfile/shared/
         mv /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_FOLDER }}/${{ env.PLUGIN_NAME }}/bin/Release/net8.0/publish/ /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_FOLDER }}/${{ env.PLUGIN_NAME }}/bin/Release/net8.0/${{ env.PLUGIN_NAME }}/
+        mv /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_FOLDER }}/${{ env.PLUGIN_NAME }}/bin/Release/net8.0/${{ env.PLUGIN_NAME }} /home/runner/work/zipfile/plugins/
+        mv /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_FOLDER }}/${{ env.SHARED_NAME }}/bin/Release/net8.0/publish/ /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.SHARED_NAME }}/${{ env.REPOSITORY_FOLDER }}/${{ env.PLUGIN_NAME }}/bin/Release/net8.0/${{ env.PLUGIN_NAME }}/
+        mv /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.SHARED_NAME }}/${{ env.REPOSITORY_FOLDER }}/${{ env.PLUGIN_NAME }}/bin/Release/net8.0/${{ env.PLUGIN_NAME }} /home/runner/work/zipfile/shared/
 
     - name: Compress Release
       if: env.new_version == 'true'
-      run: cd /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_FOLDER }}/${{ env.PLUGIN_NAME }}/bin/Release/net8.0 && zip -r /home/runner/work/${{ env.REPOSITORY_NAME }}-release-${{ env.version }}.zip ${{ env.PLUGIN_NAME }}
+      run: |
+        cd /home/runner/work/zipfile/
+        zip -r /home/runner/work/zipfile/${{ env.REPOSITORY_NAME }}-release-${{ env.version }}.zip plugins shared
 
     - name: Build Release Notes
       if: env.new_version == 'true'
@@ -108,6 +117,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.UPLOAD_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: /home/runner/work/${{ env.REPOSITORY_NAME }}-release-${{ env.version }}.zip
+        asset_path: /home/runner/work/zipfile/${{ env.REPOSITORY_NAME }}-release-${{ env.version }}.zip
         asset_name: ${{ env.REPOSITORY_NAME }}-release-${{ env.version }}.zip
         asset_content_type: application/zip
