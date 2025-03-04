@@ -76,7 +76,7 @@ jobs:
         mkdir -p /home/runner/work/zipfile/shared/
         mv /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_FOLDER }}/${{ env.PLUGIN_NAME }}/bin/Release/net8.0/publish/ /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_FOLDER }}/${{ env.PLUGIN_NAME }}/bin/Release/net8.0/${{ env.PLUGIN_NAME }}/
         mv /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_FOLDER }}/${{ env.PLUGIN_NAME }}/bin/Release/net8.0/${{ env.PLUGIN_NAME }} /home/runner/work/zipfile/plugins/
-        mv /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_FOLDER }}/${{ env.SHARED_NAME }}/bin/Release/net8.0/publish/ /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.SHARED_NAME }}/${{ env.REPOSITORY_FOLDER }}/${{ env.PLUGIN_NAME }}/bin/Release/net8.0/${{ env.PLUGIN_NAME }}/
+        mv /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_FOLDER }}/${{ env.SHARED_NAME }}/bin/Release/net8.0/publish/ /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_FOLDER }}/${{ env.SHARED_NAME }}/bin/Release/net8.0/${{ env.SHARED_NAME }}/
         mv /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_FOLDER }}/${{ env.SHARED_NAME }}/bin/Release/net8.0/${{ env.SHARED_NAME }} /home/runner/work/zipfile/shared/
 
     - name: Compress Release
