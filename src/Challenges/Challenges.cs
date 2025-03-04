@@ -49,7 +49,7 @@ namespace Challenges
             RegisterEventHandler<EventPlayerTeam>(OnPlayerTeam);
             // initialize custom events
             var customEventsSender = new CustomEventsSender();
-            //Capabilities.RegisterPluginCapability(ChallengesEvents, () => customEventsSender);
+            Capabilities.RegisterPluginCapability(ChallengesEvents, () => customEventsSender);
             // print message if hot reload
             if (hotReload)
             {
