@@ -10,7 +10,7 @@ on:
     branches:
       - main
     paths:
-      - 'src/Version.cs' # only on change of the file with the version number string in it
+      - 'src/Challenges/Version.cs' # only on change of the file with the version number string in it
   workflow_dispatch:
 
 # job to create a new release
