@@ -30,9 +30,35 @@ namespace ExampleEventListenerPlugin
             ChallengesEvents.Get()!.Events -= OnChallengesEvent;
         }
 
+        // you can test this with the command `sendtestchallengeevent` in the game console (requires @css/root permissions)
         private void OnChallengesEvent(object? sender, IChallengesEvent @event)
         {
             Console.WriteLine("==== Example Event Listener Plugin got a new event! ====");
+            Console.WriteLine($"Event: {@event.GetType().Name}");
+            if (@event is PlayerCompletedChallengeEvent playerCompletedChallenge)
+            {
+                // CCSPlayerController
+                Console.WriteLine($"Player: {playerCompletedChallenge.Player.PlayerName}");
+                // specific challenge data (can be totally custom, you NEED custom challenge data for YOUR plugin)
+                // data is ALWAYS string -> cast it to the correct type on your own!
+                // make sure to have a fallback in place and notify player in case of invalid data
+                foreach (var data in playerCompletedChallenge.Data)
+                {
+                    Console.WriteLine($"{data.Key} = {data.Value}");
+                }
+            }
+            else if (@event is PlayerProgressedChallengeEvent playerProgressedChallenge)
+            {
+                // CCSPlayerController
+                Console.WriteLine($"Player: {playerProgressedChallenge.Player.PlayerName}");
+                // specific challenge data (can be totally custom, you NEED custom challenge data for YOUR plugin)
+                // data is ALWAYS string -> cast it to the correct type on your own!
+                // make sure to have a fallback in place and notify player in case of invalid data
+                foreach (var data in playerProgressedChallenge.Data)
+                {
+                    Console.WriteLine($"{data.Key} = {data.Value}");
+                }
+            }
         }
     }
 }

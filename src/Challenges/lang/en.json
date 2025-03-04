@@ -8,6 +8,7 @@
     "core.disabled": "[Challenges] {default}Challenges is disabled!",
     "core.debugprint": "[Challenges]{red}[DEBUG] {default}{message}",
     "core.event.trigger.error": "[Challenges] {red}Error while triggering event {eventName}: {error}",
+    "core.event.trigger": "[Challenges] Triggered event {eventName}",
     "command.notalive": "[Challenges] you need to be alive to see your stats.",
     "command.nochallenges": "[Challenges] no active challenges.",
     "command.showgui": "[Challenges] {default}Opened challenges popup",

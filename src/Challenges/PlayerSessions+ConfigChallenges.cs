@@ -21,8 +21,8 @@ namespace Challenges
     {
         [JsonPropertyName("title")] public string Title { get; set; } = "";
         [JsonPropertyName("type")] public string Type { get; set; } = "";
-        [JsonPropertyName("points")] public int Points { get; set; } = 0;
         [JsonPropertyName("amount")] public int Amount { get; set; } = 0;
+        [JsonPropertyName("data")] public Dictionary<string, string> Data { get; set; } = new Dictionary<string, string>();
         [JsonPropertyName("rules")] public List<ChallengesBlueprintRules> Rules { get; set; } = [];
     }
 

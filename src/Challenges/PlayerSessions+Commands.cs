@@ -1,6 +1,7 @@
 using ChallengesShared.Events;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
+using CounterStrikeSharp.API.Modules.Admin;
 using CounterStrikeSharp.API.Modules.Commands;
 
 namespace Challenges
@@ -42,20 +43,31 @@ namespace Challenges
                 command.ReplyToCommand(Localizer["command.notalive"]);
         }
 
-        [ConsoleCommand("test", "test")]
-        [CommandHelper(whoCanExecute: CommandUsage.CLIENT_ONLY, minArgs: 0, usage: "!c")]
+        [ConsoleCommand("sendtestchallengeevent", "sends a test challenge event to listening plugins for testing purposes <3")]
+        [RequiresPermissions("@css/root")]
+        [CommandHelper(whoCanExecute: CommandUsage.CLIENT_ONLY, minArgs: 0, usage: "!sendtestchallengeevent")]
         public void CommandTest(CCSPlayerController player, CommandInfo command)
         {
-            command.ReplyToCommand("Test command executed");
-            // send event to other plugins
-            TriggerEvent(new PlayerCompletedChallengeEvent(player, new Dictionary<string, string>
+            if (_currentChallenge.Challenges.Count == 0)
             {
-                { "title", "Test Title" },
-                { "type", "Test Value" },
-                { "points", "100" },
-                { "amount", "5" },
-            }));
-            command.ReplyToCommand("Test event sent");
+                command.ReplyToCommand(Localizer["command.nochallenges"]);
+                return;
+            }
+            // send event to other plugins
+            Dictionary<string, string> data = new();
+            // get first challenge and use as test data
+            var challenge = _currentChallenge.Challenges.ElementAt(0);
+            data.Add("title", challenge.Value.Title);
+            data.Add("type", challenge.Value.Type);
+            data.Add("amount", challenge.Value.Amount.ToString());
+            // iterate through Data
+            foreach (var kvp in challenge.Value.Data)
+            {
+                data.Add(kvp.Key, kvp.Value);
+            }
+            TriggerEvent(new PlayerCompletedChallengeEvent(player, data));
+            command.ReplyToCommand(Localizer["core.event.trigger"].Value
+                .Replace("{eventName}", nameof(PlayerCompletedChallengeEvent)));
         }
     }
 }

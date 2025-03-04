@@ -142,7 +142,7 @@ namespace Challenges
 
         private void LoadChallenges()
         {
-            string challengesPath = Path.Combine(Path.GetDirectoryName(Config.GetConfigPath()) ?? "./", "challenges.json");
+            string challengesPath = Path.Combine(Path.GetDirectoryName(Config.GetConfigPath()) ?? "./", "challenge_blueprints.json");
             DebugPrint($"Loading challenges");
             if (Path.Exists(challengesPath))
             {
@@ -164,7 +164,7 @@ namespace Challenges
 
         private void SaveChallenges()
         {
-            string challengesPath = Path.Combine(Path.GetDirectoryName(Config.GetConfigPath()) ?? "./", "challenges.json");
+            string challengesPath = Path.Combine(Path.GetDirectoryName(Config.GetConfigPath()) ?? "./", "challenge_blueprints.json");
             DebugPrint($"Saving challenges");
             var jsonString = JsonSerializer.Serialize(_playerChallenges, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(challengesPath, jsonString);

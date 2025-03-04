@@ -16,8 +16,8 @@ namespace Challenges
     {
         public string Title { get; set; } = "";
         public string Type { get; set; } = "";
-        public int Points { get; set; } = 0;
         public int Amount { get; set; } = 0;
+        public Dictionary<string, string> Data { get; set; } = new Dictionary<string, string>();
         public List<ChallengesBlueprintRules> Rules { get; set; } = [];
     }
 
@@ -68,8 +68,8 @@ namespace Challenges
                                 {
                                     Title = _playerChallenges.Blueprints[challenge].Title,
                                     Type = _playerChallenges.Blueprints[challenge].Type,
-                                    Points = _playerChallenges.Blueprints[challenge].Points,
                                     Amount = _playerChallenges.Blueprints[challenge].Amount,
+                                    Data = _playerChallenges.Blueprints[challenge].Data,
                                     Rules = _playerChallenges.Blueprints[challenge].Rules
                                 }
                             );
@@ -206,13 +206,16 @@ namespace Challenges
                                 player: player
                             );
                         // send event to other plugins
-                        TriggerEvent(new PlayerCompletedChallengeEvent(player, new Dictionary<string, string>
+                        Dictionary<string, string> eventData = [];
+                        data.Add("title", kvp.Value.Title);
+                        data.Add("type", kvp.Value.Type);
+                        data.Add("amount", kvp.Value.Amount.ToString());
+                        // iterate through Data
+                        foreach (var kvp2 in kvp.Value.Data)
                         {
-                            { "title", kvp.Value.Title },
-                            { "type", kvp.Value.Type },
-                            { "points", kvp.Value.Points.ToString() },
-                            { "amount", kvp.Value.Amount.ToString() },
-                        }));
+                            data.Add(kvp2.Key, kvp2.Value);
+                        }
+                        TriggerEvent(new PlayerCompletedChallengeEvent(player, eventData));
                     }
                     else
                     {
@@ -226,14 +229,17 @@ namespace Challenges
                                         .Replace("{count}", _playerConfigs[player.NetworkIDString].Challenges[kvp.Key].Amount.ToString()))
                             );
                         // send event to other plugins
-                        TriggerEvent(new PlayerProgressedChallengeEvent(player, new Dictionary<string, string>
+                        Dictionary<string, string> eventData = [];
+                        data.Add("title", kvp.Value.Title);
+                        data.Add("type", kvp.Value.Type);
+                        data.Add("current_amount", _playerConfigs[player.NetworkIDString].Challenges[kvp.Key].Amount.ToString());
+                        data.Add("total_amount", kvp.Value.Amount.ToString());
+                        // iterate through Data
+                        foreach (var kvp2 in kvp.Value.Data)
                         {
-                            { "title", kvp.Value.Title },
-                            { "type", kvp.Value.Type },
-                            { "points", kvp.Value.Points.ToString() },
-                            { "current_amount", _playerConfigs[player.NetworkIDString].Challenges[kvp.Key].Amount.ToString() },
-                            { "total_amount", kvp.Value.Amount.ToString() },
-                        }));
+                            data.Add(kvp2.Key, kvp2.Value);
+                        }
+                        TriggerEvent(new PlayerProgressedChallengeEvent(player, eventData));
                     }
                     // show challenges gui if enabled
                     if (Config.GUI.ShowOnChallengeUpdate)
