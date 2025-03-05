@@ -42,9 +42,13 @@ namespace ExampleEventListenerPlugin
                 // specific challenge data (can be totally custom, you NEED custom challenge data for YOUR plugin)
                 // data is ALWAYS string -> cast it to the correct type on your own!
                 // make sure to have a fallback in place and notify player in case of invalid data
-                foreach (var data in playerCompletedChallenge.Data)
+                foreach (var kvp in playerCompletedChallenge.Data)
                 {
-                    Console.WriteLine($"{data.Key} = {data.Value}");
+                    Console.WriteLine($"Plugin: {kvp.Key}");
+                    foreach (var data in kvp.Value)
+                    {
+                        Console.WriteLine($"-> {data.Key} = {data.Value}");
+                    }
                 }
             }
             else if (@event is PlayerProgressedChallengeEvent playerProgressedChallenge)
@@ -54,9 +58,13 @@ namespace ExampleEventListenerPlugin
                 // specific challenge data (can be totally custom, you NEED custom challenge data for YOUR plugin)
                 // data is ALWAYS string -> cast it to the correct type on your own!
                 // make sure to have a fallback in place and notify player in case of invalid data
-                foreach (var data in playerProgressedChallenge.Data)
+                foreach (var kvp in playerProgressedChallenge.Data)
                 {
-                    Console.WriteLine($"{data.Key} = {data.Value}");
+                    Console.WriteLine($"Plugin: {kvp.Key}");
+                    foreach (var data in kvp.Value)
+                    {
+                        Console.WriteLine($"-> {data.Key} = {data.Value}");
+                    }
                 }
             }
         }
