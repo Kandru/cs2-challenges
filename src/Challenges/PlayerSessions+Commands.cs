@@ -54,18 +54,24 @@ namespace Challenges
                 return;
             }
             // send event to other plugins
-            Dictionary<string, string> data = new();
             // get first challenge and use as test data
             var challenge = _currentChallenge.Challenges.ElementAt(0);
-            data.Add("title", challenge.Value.Title);
-            data.Add("type", challenge.Value.Type);
-            data.Add("amount", challenge.Value.Amount.ToString());
-            // iterate through Data
-            foreach (var kvp in challenge.Value.Data)
+            var eventData = new Dictionary<string, Dictionary<string, string>>
             {
-                data.Add(kvp.Key, kvp.Value);
+                ["info"] = new Dictionary<string, string>
+                {
+                    { "title", challenge.Value.Title },
+                    { "type", challenge.Value.Type },
+                    { "current_amount", _playerConfigs[player.NetworkIDString].Challenges[challenge.Key].Amount.ToString() },
+                    { "total_amount", challenge.Value.Amount.ToString() }
+                }
+            };
+            // iterate through Data
+            foreach (var kvp2 in challenge.Value.Data)
+            {
+                eventData.Add(kvp2.Key, kvp2.Value);
             }
-            TriggerEvent(new PlayerCompletedChallengeEvent(player, data));
+            TriggerEvent(new PlayerCompletedChallengeEvent(player, eventData));
             command.ReplyToCommand(Localizer["core.event.trigger"].Value
                 .Replace("{eventName}", nameof(PlayerCompletedChallengeEvent)));
         }

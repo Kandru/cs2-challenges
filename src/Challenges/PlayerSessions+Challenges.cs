@@ -17,7 +17,7 @@ namespace Challenges
         public string Title { get; set; } = "";
         public string Type { get; set; } = "";
         public int Amount { get; set; } = 0;
-        public Dictionary<string, string> Data { get; set; } = new Dictionary<string, string>();
+        public Dictionary<string, Dictionary<string, string>> Data { get; set; } = new Dictionary<string, Dictionary<string, string>>();
         public List<ChallengesBlueprintRules> Rules { get; set; } = [];
     }
 
@@ -206,14 +206,19 @@ namespace Challenges
                                 player: player
                             );
                         // send event to other plugins
-                        Dictionary<string, string> eventData = [];
-                        data.Add("title", kvp.Value.Title);
-                        data.Add("type", kvp.Value.Type);
-                        data.Add("amount", kvp.Value.Amount.ToString());
+                        var eventData = new Dictionary<string, Dictionary<string, string>>
+                        {
+                            ["info"] = new Dictionary<string, string>
+                            {
+                                { "title", kvp.Value.Title },
+                                { "type", kvp.Value.Type },
+                                { "amount", kvp.Value.Amount.ToString() }
+                            }
+                        };
                         // iterate through Data
                         foreach (var kvp2 in kvp.Value.Data)
                         {
-                            data.Add(kvp2.Key, kvp2.Value);
+                            eventData.Add(kvp2.Key, kvp2.Value);
                         }
                         TriggerEvent(new PlayerCompletedChallengeEvent(player, eventData));
                     }
@@ -229,15 +234,20 @@ namespace Challenges
                                         .Replace("{count}", _playerConfigs[player.NetworkIDString].Challenges[kvp.Key].Amount.ToString()))
                             );
                         // send event to other plugins
-                        Dictionary<string, string> eventData = [];
-                        data.Add("title", kvp.Value.Title);
-                        data.Add("type", kvp.Value.Type);
-                        data.Add("current_amount", _playerConfigs[player.NetworkIDString].Challenges[kvp.Key].Amount.ToString());
-                        data.Add("total_amount", kvp.Value.Amount.ToString());
+                        var eventData = new Dictionary<string, Dictionary<string, string>>
+                        {
+                            ["info"] = new Dictionary<string, string>
+                            {
+                                { "title", kvp.Value.Title },
+                                { "type", kvp.Value.Type },
+                                { "current_amount", _playerConfigs[player.NetworkIDString].Challenges[kvp.Key].Amount.ToString() },
+                                { "total_amount", kvp.Value.Amount.ToString() }
+                            }
+                        };
                         // iterate through Data
                         foreach (var kvp2 in kvp.Value.Data)
                         {
-                            data.Add(kvp2.Key, kvp2.Value);
+                            eventData.Add(kvp2.Key, kvp2.Value);
                         }
                         TriggerEvent(new PlayerProgressedChallengeEvent(player, eventData));
                     }
