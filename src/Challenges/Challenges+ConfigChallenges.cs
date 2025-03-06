@@ -31,7 +31,7 @@ namespace Challenges
 
     public class ChallengesConfig
     {
-        [JsonPropertyName("schedule")] public Dictionary<string, ChallengesSchedule> Schedule { get; set; } = [];
+        [JsonPropertyName("schedule")] public Dictionary<string, ChallengesSchedule> Schedules { get; set; } = [];
         [JsonPropertyName("blueprints")] public Dictionary<string, ChallengesBlueprint> Blueprints { get; set; } = [];
     }
 

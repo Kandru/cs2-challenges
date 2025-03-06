@@ -150,34 +150,60 @@ namespace Challenges
 
         private void LoadChallenges()
         {
-            string challengesPath = Path.Combine(Path.GetDirectoryName(Config.GetConfigPath()) ?? "./", "challenge_blueprints.json");
             DebugPrint($"Loading challenges");
-            if (Path.Exists(challengesPath))
+            string blueprintsPath = Path.Combine(Path.GetDirectoryName(Config.GetConfigPath()) ?? "./", "blueprints/");
+            string schedulesPath = Path.Combine(Path.GetDirectoryName(Config.GetConfigPath()) ?? "./", "schedules.json");
+            // create new and empty challenges config
+            _playerChallenges = new();
+            // load all blueprints
+            if (Path.Exists(blueprintsPath))
             {
-                try
+                foreach (string file in Directory.GetFiles(blueprintsPath, "*.json"))
                 {
-                    var jsonString = File.ReadAllText(challengesPath);
-                    _playerChallenges = JsonSerializer.Deserialize<ChallengesConfig>(jsonString) ?? new();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(Localizer["core.faultyconfig"].Value
-                        .Replace("{config}", challengesPath)
-                        .Replace("{error}", e.Message));
+                    try
+                    {
+                        var jsonString = File.ReadAllText(file);
+                        var challenges = JsonSerializer.Deserialize<Dictionary<string, ChallengesBlueprint>>(jsonString);
+                        if (challenges != null)
+                        {
+                            foreach (var kvp in challenges)
+                            {
+                                _playerChallenges.Blueprints.Add(
+                                    $"{Path.GetFileNameWithoutExtension(file).ToLower()}_{kvp.Key}",
+                                    kvp.Value
+                                );
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(Localizer["core.faultyconfig"].Value
+                            .Replace("{config}", file)
+                            .Replace("{error}", e.Message));
+                    }
                 }
             }
             else
             {
-                SaveChallenges();
+                // create folder
+                Directory.CreateDirectory(blueprintsPath);
             }
-        }
-
-        private void SaveChallenges()
-        {
-            string challengesPath = Path.Combine(Path.GetDirectoryName(Config.GetConfigPath()) ?? "./", "challenge_blueprints.json");
-            DebugPrint($"Saving challenges");
-            var jsonString = JsonSerializer.Serialize(_playerChallenges, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText(challengesPath, jsonString);
+            // load all schedules
+            if (Path.Exists(schedulesPath))
+            {
+                var jsonString = File.ReadAllText(schedulesPath);
+                var schedules = JsonSerializer.Deserialize<Dictionary<string, ChallengesSchedule>>(jsonString);
+                if (schedules != null)
+                {
+                    _playerChallenges.Schedules = schedules;
+                }
+            }
+            else
+            {
+                DebugPrint($"Creating empty schedules json");
+                var jsonString = JsonSerializer.Serialize(_playerChallenges.Schedules, new JsonSerializerOptions { WriteIndented = true });
+                File.WriteAllText(schedulesPath, jsonString);
+            }
         }
 
         public void OnConfigParsed(PluginConfig config)

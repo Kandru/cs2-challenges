@@ -14,10 +14,10 @@ namespace Challenges
             // reset current challenge
             _currentChallenge = new RunningChallengeSchedule();
             // check if we have a new challenge
-            if (_playerChallenges.Schedule.Count == 0
+            if (_playerChallenges.Schedules.Count == 0
                 || _playerChallenges.Blueprints.Count == 0) return;
             // iterate through all schedules
-            foreach (var kvp in _playerChallenges.Schedule)
+            foreach (var kvp in _playerChallenges.Schedules)
             {
                 if (DateTime.TryParse(kvp.Value.StartDate, out DateTime startDate)
                     && DateTime.TryParse(kvp.Value.EndDate, out DateTime endDate)
@@ -48,6 +48,10 @@ namespace Challenges
                                 challenge,
                                 _playerChallenges.Blueprints[challenge]
                             );
+                        }
+                        else
+                        {
+                            DebugPrint($"couldn't find blueprint {challenge} for challenge {kvp.Key}");
                         }
                     }
                     break;
