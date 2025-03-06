@@ -29,5 +29,12 @@ namespace Challenges
                     entry.PrintToChat(message);
             }
         }
+
+        private long GetUnixTimestamp(DateTime? currentTime = null)
+        {
+            if (currentTime == null)
+                currentTime = DateTime.UtcNow;
+            return ((DateTimeOffset)currentTime).ToUnixTimeSeconds();
+        }
     }
 }

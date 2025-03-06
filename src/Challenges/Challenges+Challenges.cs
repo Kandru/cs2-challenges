@@ -51,6 +51,7 @@ namespace Challenges
                                     Title = _playerChallenges.Blueprints[challenge].Title,
                                     Type = _playerChallenges.Blueprints[challenge].Type,
                                     Amount = _playerChallenges.Blueprints[challenge].Amount,
+                                    Cooldown = _playerChallenges.Blueprints[challenge].Cooldown,
                                     Data = _playerChallenges.Blueprints[challenge].Data,
                                     Rules = _playerChallenges.Blueprints[challenge].Rules
                                 }
@@ -96,6 +97,13 @@ namespace Challenges
                     && _playerConfigs[player.NetworkIDString].Challenges[kvp.Key].Amount >= kvp.Value.Amount)
                 {
                     DebugPrint($"user {player.NetworkIDString} has already completed challenge {kvp.Key}");
+                    continue;
+                }
+                // check if the user can attend the challenge because of a possible cooldown
+                if (_playerConfigs[player.NetworkIDString].Challenges.ContainsKey(kvp.Key)
+                    && _playerConfigs[player.NetworkIDString].Challenges[kvp.Key].LastUpdate + kvp.Value.Cooldown > GetUnixTimestamp())
+                {
+                    DebugPrint($"user {player.NetworkIDString} has cooldown for challenge {kvp.Key}");
                     continue;
                 }
                 // check if the user has complied with the rules of the challenge
@@ -161,12 +169,14 @@ namespace Challenges
                         _playerConfigs[player.NetworkIDString].Challenges.Add(kvp.Key, new PlayerConfigChallenges
                         {
                             ScheduleKey = _currentChallenge.Key,
-                            Amount = 1
+                            Amount = 1,
+                            LastUpdate = GetUnixTimestamp() + kvp.Value.Cooldown
                         });
                     }
                     else
                     {
                         _playerConfigs[player.NetworkIDString].Challenges[kvp.Key].Amount++;
+                        _playerConfigs[player.NetworkIDString].Challenges[kvp.Key].LastUpdate = GetUnixTimestamp() + kvp.Value.Cooldown;
                     }
                     // check if the user has completed the challenge
                     if (_playerConfigs[player.NetworkIDString].Challenges[kvp.Key].Amount >= kvp.Value.Amount)
@@ -194,7 +204,8 @@ namespace Challenges
                             {
                                 { "title", kvp.Value.Title },
                                 { "type", kvp.Value.Type },
-                                { "amount", kvp.Value.Amount.ToString() }
+                                { "amount", kvp.Value.Amount.ToString() },
+                                { "cooldown", kvp.Value.Cooldown.ToString() }
                             }
                         };
                         // iterate through Data
@@ -223,7 +234,8 @@ namespace Challenges
                                 { "title", kvp.Value.Title },
                                 { "type", kvp.Value.Type },
                                 { "current_amount", _playerConfigs[player.NetworkIDString].Challenges[kvp.Key].Amount.ToString() },
-                                { "total_amount", kvp.Value.Amount.ToString() }
+                                { "total_amount", kvp.Value.Amount.ToString() },
+                                { "cooldown", kvp.Value.Cooldown.ToString() }
                             }
                         };
                         // iterate through Data
