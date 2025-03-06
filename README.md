@@ -45,7 +45,7 @@ Information: this is currently NOT ready for implementation by other plugins. DO
 - [X] Event BombExploded
 - [X] Event BombPickup
 - [X] Event BombPlanted
-- [ ] Event BotTakeover
+- [X] Event BotTakeover
 - [ ] Event BreakBreakable
 - [ ] Event BreakProp
 - [ ] Event BulletDamage
