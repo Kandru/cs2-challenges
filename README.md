@@ -38,7 +38,7 @@ Information: this is currently NOT ready for implementation by other plugins. DO
 - [X] Event AmmoPickup
 - [X] Event BombAbortdefuse
 - [X] Event BombAbortplant
-- [ ] Event BombBegindefuse
+- [X] Event BombBegindefuse
 - [ ] Event BombBeginplant
 - [ ] Event BombDefused
 - [ ] Event BombDropped
