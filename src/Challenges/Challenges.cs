@@ -70,6 +70,8 @@ namespace Challenges
 
         private void RegisterListeners()
         {
+            // remove old listeners
+            RemoveListeners();
             // player events
             var challengeTypes = _currentSchedule.Challenges.Select(c => c.Value.Type).ToList();
             if (challengeTypes.Contains("player_kill_assist")

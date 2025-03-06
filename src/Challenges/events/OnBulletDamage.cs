@@ -9,7 +9,7 @@ namespace Challenges
             CCSPlayerController? attacker = @event.Attacker;
             CCSPlayerController? victim = @event.Victim;
             if (attacker != null && !_playerConfigs.ContainsKey(attacker.NetworkIDString)
-                && victim != null && !_playerConfigs.ContainsKey(victim.NetworkIDString)) return HookResult.Continue;
+                || victim != null && !_playerConfigs.ContainsKey(victim.NetworkIDString)) return HookResult.Continue;
             // hide GUI for victim
             if (victim != null && victim.IsValid) HideGui(victim);
             // create challenge data
