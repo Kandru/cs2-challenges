@@ -161,7 +161,7 @@ namespace Challenges
                             foreach (var kvp in challenges)
                             {
                                 _availableChallenges.Blueprints.Add(
-                                    $"{Path.GetFileNameWithoutExtension(file).ToLower()}_{kvp.Key}",
+                                    $"{Path.GetFileNameWithoutExtension(file).ToLower()}.{kvp.Key}",
                                     kvp.Value
                                 );
                             }
