@@ -46,15 +46,7 @@ namespace Challenges
                             DebugPrint($"found blueprint {challenge} for challenge {kvp.Key}");
                             _currentChallenge.Challenges.Add(
                                 challenge,
-                                new RunningChallengeBlueprints
-                                {
-                                    Title = _playerChallenges.Blueprints[challenge].Title,
-                                    Type = _playerChallenges.Blueprints[challenge].Type,
-                                    Amount = _playerChallenges.Blueprints[challenge].Amount,
-                                    Cooldown = _playerChallenges.Blueprints[challenge].Cooldown,
-                                    Data = _playerChallenges.Blueprints[challenge].Data,
-                                    Rules = _playerChallenges.Blueprints[challenge].Rules
-                                }
+                                _playerChallenges.Blueprints[challenge]
                             );
                         }
                     }
@@ -183,14 +175,14 @@ namespace Challenges
                     {
                         DebugPrint($"user {player.NetworkIDString} has completed challenge {kvp.Key}");
                         // notify user about completion
-                        if (Config.Notifications.NotifyPlayerOnChallengeComplete)
+                        if (Config.Notifications.NotifyPlayerOnChallengeComplete && kvp.Value.AnnounceCompletion)
                             player.PrintToChat(
                                 Localizer["challenges.completed.user"]
                                     .Value
                                     .Replace("{challenge}", kvp.Value.Title)
                             );
                         // notify other players about completion
-                        if (Config.Notifications.NotifyOtherOnChallengeComplete)
+                        if (Config.Notifications.NotifyOtherOnChallengeComplete && kvp.Value.AnnounceCompletion)
                             SendGlobalChatMessage(
                                 message: Localizer["challenges.completed.other"]
                                     .Value
@@ -218,7 +210,7 @@ namespace Challenges
                     else
                     {
                         // notify user about progress
-                        if (Config.Notifications.NotifyPlayerOnChallengeProgress)
+                        if (Config.Notifications.NotifyPlayerOnChallengeProgress && kvp.Value.AnnounceProgress)
                             player.PrintToChat(
                                 Localizer["challenges.progress"]
                                     .Value
