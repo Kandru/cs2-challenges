@@ -9,7 +9,8 @@
 
 This plugin allow to create Challenges for players. Challenges are tasks a player has to achieve in a given amount of time (e.g. daily, weekly, monthly). Each task can be defined around an event that happens in the game. For example, when a user kills somebody, you can create a Challenge that counts how many times this has happened with a headshot at a minimum distance of 15 meters. If it has happen 3 times, the player has the challenge finished successfully. Another CounterstrikeSharp plugin can then be notified to do something with it. This plugin only provides the interface for further actions after a challenge has been completed. It does not grant special items on its own.
 
-Information: this is currently NOT ready for implementation by other plugins. DO NOT USE right now :)
+> [!PLEASE NOTE]
+> This plugin is currently NOT ready for implementation by other plugins. DO NOT USE right now! Star this repository and look for updates.
 
 ## Documentation
 
@@ -82,12 +83,14 @@ Information: this is currently NOT ready for implementation by other plugins. DO
 - [X] Add ability to load multiple challenge blueprints to allow custom plugins to create their own without the need to modify the examples
 - [ ] Add ability to spawn custom props on the map as a challenge (e.g. spawning them on AI path ways and players can walk over them to consume them)
 - [ ] Add ability to see and use challenges after bot takeover
+- [ ] Optimize challenge save per user (json is not optimized)
 
 ## Plugin Installation
 
 1. Download and extract the latest release from the [GitHub releases page](https://github.com/Kandru/cs2-challenges/releases/).
 2. Move the "Challenges" folder to the `/addons/counterstrikesharp/configs/plugins/` directory of your gameserver.
-3. Restart the server.
+3. Move the "ChallengesShared" folder to the `/addons/counterstrikesharp/configs/shared/` directory of your gameserver.
+4. Restart the server.
 
 ## Plugin Update
 
@@ -95,7 +98,13 @@ Simply overwrite all plugin files and they will be reloaded automatically or jus
 
 ## Commands
 
-There is currently no client-side command.
+### !challenges / !c
+
+This activates the challenges GUI when the player is alive. The state of the popup is saved as a user preference.
+
+### !sendtestchallengeevent
+
+This needs permission *@css/root* to work. Sends the first found Challenge for the current user to all plugins. Useful for testing purposes when creating a custom listener in your own plugin for this Challenge-Plugin.
 
 ## Configuration
 
@@ -103,7 +112,30 @@ This plugin automatically creates a readable JSON configuration file. This confi
 
 ```json
 {
-
+  "enabled": true,
+  "debug": false,
+  "gui": {
+    "show_on_round_start": true,
+    "on_round_start_duration": 3,
+    "show_after_respawn": true,
+    "after_respawn_duration": 5,
+    "show_on_challenge_update": true,
+    "on_challenge_update_duration": 5,
+    "menu_display_maximum": 4,
+    "menu_font_size": 28,
+    "menu_font_name": "Arial Black Standard",
+    "menu_font_color": "#ffffff",
+    "menu_pos_x": 3.6,
+    "menu_pos_y": 4,
+    "menu_background": true,
+    "menu_backgroundfactor": 1
+  },
+  "notifications": {
+    "notify_player_on_challenge_progress": true,
+    "notify_player_on_challenge_complete": true,
+    "notify_other_on_challenge_complete": true
+  },
+  "ConfigVersion": 1
 }
 ```
 
