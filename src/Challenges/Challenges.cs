@@ -82,6 +82,7 @@ namespace Challenges
             RegisterEventHandler<EventHostageStopsFollowing>(OnHostageStopsFollowing);
             RegisterEventHandler<EventInspectWeapon>(OnInspectWeapon);
             RegisterEventHandler<EventItemPickup>(OnItemPickup);
+            RegisterEventHandler<EventItemPurchase>(OnItemPurchase);
             // initialize custom events
             var customEventsSender = new CustomEventsSender();
             Capabilities.RegisterPluginCapability(ChallengesEvents, () => customEventsSender);
@@ -159,6 +160,7 @@ namespace Challenges
             DeregisterEventHandler<EventHostageStopsFollowing>(OnHostageStopsFollowing);
             DeregisterEventHandler<EventInspectWeapon>(OnInspectWeapon);
             DeregisterEventHandler<EventItemPickup>(OnItemPickup);
+            DeregisterEventHandler<EventItemPurchase>(OnItemPurchase);
             // save config(s)
             Config.Update();
             SavePlayerConfigs();

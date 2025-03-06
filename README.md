@@ -67,7 +67,7 @@ Information: this is currently NOT ready for implementation by other plugins. DO
 - [X] Event HostageStopsFollowing
 - [X] Event InspectWeapon
 - [X] Event ItemPickup
-- [ ] Event ItemPurchase
+- [X] Event ItemPurchase
 - [ ] Event TeamScore
 - [ ] Event VipEscaped
 - [ ] Event VipKilled
