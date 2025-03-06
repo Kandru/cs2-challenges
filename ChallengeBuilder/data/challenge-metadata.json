@@ -1949,6 +1949,89 @@
                     "type": "number"
                 }
             ]
+        },
+        "bullet_damage_given": {
+            "name": "Player gave bullet damage",
+            "rules": [
+                {
+                    "name": "Is during Round?",
+                    "slug": "isduringround",
+                    "description": "If the event happened during the round",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Is Teamdamage?",
+                    "slug": "isteamdamage",
+                    "description": "If the attacker damaged a teammate",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Is Selfdamage?",
+                    "slug": "isselfdamage",
+                    "description": "If the attacker damaged himself",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Attacker Name",
+                    "slug": "attacker",
+                    "description": "The name of the attacker",
+                    "type": "string"
+                },
+                {
+                    "name": "Attacker is Bot?",
+                    "slug": "attacker_isbot",
+                    "description": "If the attacker is a bot",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Attacker Team",
+                    "slug": "attacker_team",
+                    "description": "The team name of the attacker",
+                    "type": "string"
+                },
+                {
+                    "name": "Victim Name",
+                    "slug": "victim",
+                    "description": "The name of the victim",
+                    "type": "string"
+                },
+                {
+                    "name": "Victim is Bot?",
+                    "slug": "victim_isbot",
+                    "description": "If the victim is a bot",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Victim Team",
+                    "slug": "victim_team",
+                    "description": "The team name of the victim",
+                    "type": "string"
+                },
+                {
+                    "name": "Attacker in the air?",
+                    "slug": "attackerinair",
+                    "description": "If the attacker was in the air",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Distance to victim",
+                    "slug": "distance",
+                    "description": "The distance between the attacker and the victim",
+                    "type": "number"
+                },
+                {
+                    "name": "Noscope?",
+                    "slug": "noscope",
+                    "description": "If the attacker killed the victim without scoping",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Number of Penetrations?",
+                    "slug": "numpenetrations",
+                    "description": "Number of penetrations of the bullet",
+                    "type": "number"
+                }
+            ]
         }
     },
     "operators": [

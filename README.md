@@ -48,7 +48,7 @@ Information: this is currently NOT ready for implementation by other plugins. DO
 - [X] Event BotTakeover
 - [X] Event BreakBreakable
 - [X] Event BreakProp
-- [ ] Event BulletDamage
+- [X] Event BulletDamage
 - [ ] Event DefuserDropped
 - [ ] Event DefuserPickup
 - [ ] Event DoorClosed
