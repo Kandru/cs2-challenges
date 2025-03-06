@@ -1,4 +1,5 @@
 using ChallengesShared.Events;
+using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 
 namespace Challenges
@@ -196,19 +197,30 @@ namespace Challenges
                         DebugPrint($"user {player.NetworkIDString} has completed challenge {kvp.Key}");
                         // notify user about completion
                         if (Config.Notifications.NotifyPlayerOnChallengeComplete && kvp.Value.AnnounceCompletion)
-                            player.PrintToChat(
-                                Localizer["challenges.completed.user"]
-                                    .Value
-                                    .Replace("{challenge}", kvp.Value.Title)
-                            );
+                        {
+                            Server.NextFrame(() =>
+                            {
+                                string message = Localizer["challenges.completed.user"].Value
+                                    .Replace("{challenge}", kvp.Value.Title);
+                                player.PrintToChat(
+                                    message
+                                        .Replace("{total}", kvp.Value.Amount.ToString())
+                                        .Replace("{count}", kvp.Value.Amount.ToString())
+                                );
+                            });
+                        }
                         // notify other players about completion
                         if (Config.Notifications.NotifyOtherOnChallengeComplete && kvp.Value.AnnounceCompletion)
+                        {
+                            string message = Localizer["challenges.completed.other"].Value
+                                    .Replace("{challenge}", kvp.Value.Title);
                             SendGlobalChatMessage(
-                                message: Localizer["challenges.completed.other"]
-                                    .Value
-                                    .Replace("{challenge}", kvp.Value.Title),
+                                message: message
+                                    .Replace("{total}", kvp.Value.Amount.ToString())
+                                    .Replace("{count}", kvp.Value.Amount.ToString()),
                                 player: player
                             );
+                        }
                         // send event to other plugins
                         var eventData = new Dictionary<string, Dictionary<string, string>>
                         {
@@ -231,13 +243,18 @@ namespace Challenges
                     {
                         // notify user about progress
                         if (Config.Notifications.NotifyPlayerOnChallengeProgress && kvp.Value.AnnounceProgress)
-                            player.PrintToChat(
-                                Localizer["challenges.progress"]
-                                    .Value
-                                    .Replace("{challenge}", kvp.Value.Title
+                        {
+                            Server.NextFrame(() =>
+                            {
+                                string message = Localizer["challenges.progress"].Value
+                                    .Replace("{challenge}", kvp.Value.Title);
+                                player.PrintToChat(
+                                    message
                                         .Replace("{total}", kvp.Value.Amount.ToString())
-                                        .Replace("{count}", _playerConfigs[player.NetworkIDString].Challenges[kvp.Key].Amount.ToString()))
-                            );
+                                        .Replace("{count}", _playerConfigs[player.NetworkIDString].Challenges[kvp.Key].Amount.ToString())
+                                );
+                            });
+                        }
                         // send event to other plugins
                         var eventData = new Dictionary<string, Dictionary<string, string>>
                         {
