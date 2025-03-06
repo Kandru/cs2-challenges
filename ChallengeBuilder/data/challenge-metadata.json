@@ -2639,6 +2639,53 @@
                     "type": "string"
                 }
             ]
+        },
+        "item_pickup": {
+            "name": "Player picks item up",
+            "rules": [
+                {
+                    "name": "Is during Round?",
+                    "slug": "isduringround",
+                    "description": "If the event happened during the round",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Player Name",
+                    "slug": "player",
+                    "description": "The name of the player",
+                    "type": "string"
+                },
+                {
+                    "name": "Player is Bot?",
+                    "slug": "player_isbot",
+                    "description": "If the player is a bot",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Player Team",
+                    "slug": "player_team",
+                    "description": "The team name of the player",
+                    "type": "string"
+                },
+                {
+                    "name": "Item Name",
+                    "slug": "item",
+                    "description": "The name of the item",
+                    "type": "string"
+                },
+                {
+                    "name": "Def Index",
+                    "slug": "defindex",
+                    "description": "the def index",
+                    "type": "number"
+                },
+                {
+                    "name": "Silent?",
+                    "slug": "silent",
+                    "description": "If the pickup was silent",
+                    "type": "checkbox"
+                }
+            ]
         }
     },
     "operators": [
