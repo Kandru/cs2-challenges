@@ -8,9 +8,9 @@ namespace Challenges
         private RunningChallengeSchedule _currentSchedule = new();
         private Dictionary<string, CPointWorldText> _playerHudPersonalChallenges = [];
 
-        private void CheckForRunningChallenge()
+        private void CheckForRunningSchedule()
         {
-            DebugPrint("checking for running challenge");
+            DebugPrint("checking for running schedule");
             // reset current challenge
             _currentSchedule = new RunningChallengeSchedule();
             // check if we have a new challenge
@@ -24,7 +24,7 @@ namespace Challenges
                     && startDate <= DateTime.UtcNow
                     && endDate >= DateTime.UtcNow)
                 {
-                    DebugPrint($"found running challenge {kvp.Key}");
+                    DebugPrint($"found running schedule {kvp.Key}");
                     // set current challenge
                     _currentSchedule.Title = kvp.Value.Title;
                     _currentSchedule.Key = kvp.Key;
@@ -41,17 +41,33 @@ namespace Challenges
                     // find blueprints for challenge
                     foreach (var challenge in kvp.Value.Challenges)
                     {
-                        if (_playerChallenges.Blueprints.ContainsKey(challenge))
+                        // check if challenge is already in list
+                        if (_currentSchedule.Challenges.ContainsKey(challenge)) continue;
+                        // check if we have a blueprint for the challenge
+                        if (_playerChallenges.Blueprints.TryGetValue(challenge, out var blueprint))
                         {
-                            DebugPrint($"found blueprint {challenge} for challenge {kvp.Key}");
-                            _currentSchedule.Challenges.Add(
-                                challenge,
-                                _playerChallenges.Blueprints[challenge]
-                            );
+                            DebugPrint($"found blueprint {challenge} for schedule {kvp.Key}");
+                            _currentSchedule.Challenges.Add(challenge, blueprint);
                         }
-                        else
+                        else // check if we have wildcard blueprints for the challenge
                         {
-                            DebugPrint($"couldn't find blueprint {challenge} for challenge {kvp.Key}");
+                            var wildcardKeys = _playerChallenges.Blueprints.Keys.Where(k => k.StartsWith(challenge.TrimEnd('*'))).ToList();
+                            if (wildcardKeys.Count > 0)
+                            {
+                                foreach (var wildcardKey in wildcardKeys)
+                                {
+                                    if (_currentSchedule.Challenges.ContainsKey(wildcardKey)) continue;
+                                    if (_playerChallenges.Blueprints.TryGetValue(wildcardKey, out blueprint))
+                                    {
+                                        DebugPrint($"found wildcard blueprint {wildcardKey} for schedule {kvp.Key}");
+                                        _currentSchedule.Challenges.Add(wildcardKey, blueprint);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                DebugPrint($"couldn't find blueprint {challenge} for challenge {kvp.Key}");
+                            }
                         }
                     }
                     break;

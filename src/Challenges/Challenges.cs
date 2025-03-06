@@ -18,7 +18,7 @@ namespace Challenges
         {
             // load challenges
             LoadChallenges();
-            CheckForRunningChallenge();
+            CheckForRunningSchedule();
             // register listeners
             // map events
             RegisterListener<Listeners.OnServerHibernationUpdate>(OnServerHibernationUpdate);
@@ -270,7 +270,7 @@ namespace Challenges
                 // load
                 LoadActivePlayerConfigs();
                 LoadChallenges();
-                CheckForRunningChallenge();
+                CheckForRunningSchedule();
                 // register challenge listeners
                 RegisterListeners();
             }
@@ -283,7 +283,7 @@ namespace Challenges
             // load player configs
             LoadActivePlayerConfigs();
             LoadChallenges();
-            CheckForRunningChallenge();
+            CheckForRunningSchedule();
             // register challenge listeners
             RegisterListeners();
         }
