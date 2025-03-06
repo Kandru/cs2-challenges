@@ -69,7 +69,7 @@ Information: this is currently NOT ready for implementation by other plugins. DO
 - [X] Event ItemPickup
 - [X] Event ItemPurchase
 - [X] Event TeamScore
-- [ ] Event WeaponFireOnEmpty
+- [X] Event WeaponFireOnEmpty
 - [ ] Event WeaponReload
 - [ ] Event WeaponZoom
 - [ ] Event WeaponZoomRifle
