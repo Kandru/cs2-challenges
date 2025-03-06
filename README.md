@@ -68,7 +68,7 @@ Information: this is currently NOT ready for implementation by other plugins. DO
 - [X] Event InspectWeapon
 - [X] Event ItemPickup
 - [X] Event ItemPurchase
-- [ ] Event TeamScore
+- [X] Event TeamScore
 - [ ] Event VipEscaped
 - [ ] Event VipKilled
 - [ ] Event WeaponFireOnEmpty
