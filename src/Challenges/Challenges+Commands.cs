@@ -20,7 +20,7 @@ namespace Challenges
                 || !player.PlayerPawn.IsValid
                 || player.PlayerPawn.Value == null
                 || !_playerConfigs.ContainsKey(player.NetworkIDString)) return;
-            if (_currentChallenge.Challenges.Count == 0)
+            if (_currentSchedule.Challenges.Count == 0)
             {
                 command.ReplyToCommand(Localizer["command.nochallenges"]);
                 return;
@@ -49,14 +49,14 @@ namespace Challenges
         [CommandHelper(whoCanExecute: CommandUsage.CLIENT_ONLY, minArgs: 0, usage: "!sendtestchallengeevent")]
         public void CommandTest(CCSPlayerController player, CommandInfo command)
         {
-            if (_currentChallenge.Challenges.Count == 0)
+            if (_currentSchedule.Challenges.Count == 0)
             {
                 command.ReplyToCommand(Localizer["command.nochallenges"]);
                 return;
             }
             // send event to other plugins
             // get first challenge and use as test data
-            var challenge = _currentChallenge.Challenges.ElementAt(0);
+            var challenge = _currentSchedule.Challenges.ElementAt(0);
             var eventData = new Dictionary<string, Dictionary<string, string>>
             {
                 ["info"] = new Dictionary<string, string>

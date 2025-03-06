@@ -69,7 +69,7 @@ namespace Challenges
                 || player.PlayerPawn.Value == null
                 || player.PlayerPawn.Value.LifeState != (byte)LifeState_t.LIFE_ALIVE) return;
             // check for running challenges of the specified type
-            var challenges = _currentChallenge.Challenges.ToList();
+            var challenges = _currentSchedule.Challenges.ToList();
             if (challenges.Count == 0) return;
             // build challenges message
             string message = "{challenges_title}";
@@ -113,9 +113,9 @@ namespace Challenges
             // replace title with actual values
             message = message.Replace(
                 "{challenges_title}",
-                _currentChallenge.Title
+                _currentSchedule.Title
                     .Replace("{playerName}", player.PlayerName.Length > 12 ? player.PlayerName.Substring(0, 12) : player.PlayerName)
-                    .Replace("{total}", _currentChallenge.Challenges.Count.ToString())
+                    .Replace("{total}", _currentSchedule.Challenges.Count.ToString())
                     .Replace("{count}", finishedChallenges.ToString())
             );
             // use our entity if it still exists

@@ -30,64 +30,8 @@ namespace Challenges
             RegisterEventHandler<EventPlayerConnectFull>(OnPlayerConnectFull);
             RegisterEventHandler<EventPlayerDisconnect>(OnPlayerDisconnect);
             RegisterEventHandler<EventPlayerSpawn>(OnPlayerSpawn);
-            RegisterEventHandler<EventPlayerDeath>(OnPlayerDeath);
-            RegisterEventHandler<EventPlayerJump>(OnPlayerJump);
-            RegisterEventHandler<EventPlayerBlind>(OnPlayerBlind);
-            RegisterEventHandler<EventPlayerAvengedTeammate>(OnPlayerAvengedTeammate);
-            RegisterEventHandler<EventPlayerChangename>(OnPlayerChangename);
-            RegisterEventHandler<EventPlayerChat>(OnPlayerChat);
-            RegisterEventHandler<EventPlayerDecal>(OnPlayerDecal);
-            RegisterEventHandler<EventPlayerFalldamage>(OnPlayerFalldamage);
-            RegisterEventHandler<EventPlayerFootstep>(OnPlayerFootstep);
-            RegisterEventHandler<EventPlayerGivenC4>(OnPlayerGivenC4);
-            if (Config.Performance.EnableEventOnPlayerHurt) RegisterEventHandler<EventPlayerHurt>(OnPlayerHurt);
-            RegisterEventHandler<EventPlayerPing>(OnPlayerPing);
-            RegisterEventHandler<EventPlayerRadio>(OnPlayerRadio);
-            RegisterEventHandler<EventPlayerScore>(OnPlayerScore);
-            if (Config.Performance.EnableEventOnPlayerSound) RegisterEventHandler<EventPlayerSound>(OnPlayerSound);
-            RegisterEventHandler<EventPlayerSpawned>(OnPlayerSpawned);
-            RegisterEventHandler<EventPlayerTeam>(OnPlayerTeam);
-            RegisterEventHandler<EventAchievementEarned>(OnAchievementEarned);
-            RegisterEventHandler<EventAddPlayerSonarIcon>(OnAddPlayerSonarIcon);
-            RegisterEventHandler<EventAmmoPickup>(OnAmmoPickup);
-            RegisterEventHandler<EventBombAbortdefuse>(OnBombAbortdefuse);
-            RegisterEventHandler<EventBombAbortplant>(OnBombAbortplant);
-            RegisterEventHandler<EventBombBegindefuse>(OnBombBegindefuse);
-            RegisterEventHandler<EventBombBeginplant>(OnBombBeginplant);
-            RegisterEventHandler<EventBombDropped>(OnBombDropped);
-            RegisterEventHandler<EventBombPickup>(OnBombPickup);
-            RegisterEventHandler<EventBombPlanted>(OnBombPlanted);
-            RegisterEventHandler<EventBotTakeover>(OnBotTakeover);
-            RegisterEventHandler<EventDefuserPickup>(OnDefuserPickup);
-            // other events
-            RegisterEventHandler<EventBombExploded>(OnBombExploded);
-            RegisterEventHandler<EventBombDefused>(OnBombDefused);
-            RegisterEventHandler<EventBreakBreakable>(OnBreakBreakable);
-            RegisterEventHandler<EventBreakProp>(OnBreakProp);
-            RegisterEventHandler<EventBulletDamage>(OnBulletDamage);
-            RegisterEventHandler<EventDoorClosed>(OnDoorClosed);
-            RegisterEventHandler<EventDoorOpen>(OnDoorOpen);
-            RegisterEventHandler<EventEnterBombzone>(OnEnterBombzone);
-            RegisterEventHandler<EventExitBombzone>(OnExitBombzone);
-            RegisterEventHandler<EventEnterBuyzone>(OnEnterBuyzone);
-            RegisterEventHandler<EventExitBuyzone>(OnExitBuyzone);
-            RegisterEventHandler<EventEnterRescueZone>(OnEnterRescuezone);
-            RegisterEventHandler<EventExitRescueZone>(OnExitRescuezone);
-            RegisterEventHandler<EventGrenadeBounce>(OnGrenadeBounce);
-            RegisterEventHandler<EventHostageFollows>(OnHostageFollows);
-            RegisterEventHandler<EventHostageHurt>(OnHostageHurt);
-            RegisterEventHandler<EventHostageKilled>(OnHostageKilled);
-            RegisterEventHandler<EventHostageRescued>(OnHostageRescued);
-            RegisterEventHandler<EventHostageRescuedAll>(OnHostageRescuedAll);
-            RegisterEventHandler<EventHostageStopsFollowing>(OnHostageStopsFollowing);
-            RegisterEventHandler<EventInspectWeapon>(OnInspectWeapon);
-            RegisterEventHandler<EventItemPickup>(OnItemPickup);
-            RegisterEventHandler<EventItemPurchase>(OnItemPurchase);
-            RegisterEventHandler<EventTeamScore>(OnTeamScore);
-            RegisterEventHandler<EventWeaponFireOnEmpty>(OnWeaponFireOnEmpty);
-            RegisterEventHandler<EventWeaponReload>(OnWeaponReload);
-            RegisterEventHandler<EventWeaponZoom>(OnWeaponZoom);
-            RegisterEventHandler<EventWeaponZoomRifle>(OnWeaponZoomRifle);
+            // register challenge listeners
+            RegisterListeners();
             // initialize custom events
             var customEventsSender = new CustomEventsSender();
             Capabilities.RegisterPluginCapability(ChallengesEvents, () => customEventsSender);
@@ -102,6 +46,7 @@ namespace Challenges
 
         public override void Unload(bool hotReload)
         {
+            // remove listeners
             // unregister listeners
             // map events
             RemoveListener<Listeners.OnServerHibernationUpdate>(OnServerHibernationUpdate);
@@ -113,6 +58,142 @@ namespace Challenges
             DeregisterEventHandler<EventPlayerConnectFull>(OnPlayerConnectFull);
             DeregisterEventHandler<EventPlayerDisconnect>(OnPlayerDisconnect);
             DeregisterEventHandler<EventPlayerSpawn>(OnPlayerSpawn);
+            // remove challenge listeners
+            RemoveListeners();
+            // save config(s)
+            Config.Update();
+            SavePlayerConfigs();
+            // hide GUI(s)
+            HideAllGui();
+            Console.WriteLine(Localizer["core.unload"]);
+        }
+
+        private void RegisterListeners()
+        {
+            // player events
+            var challengeTypes = _currentSchedule.Challenges.Select(c => c.Value.Type).ToList();
+            if (challengeTypes.Contains("player_kill_assist")
+                || challengeTypes.Contains("player_kill")
+                || challengeTypes.Contains("player_death"))
+                RegisterEventHandler<EventPlayerDeath>(OnPlayerDeath);
+            if (challengeTypes.Contains("player_jump"))
+                RegisterEventHandler<EventPlayerJump>(OnPlayerJump);
+            if (challengeTypes.Contains("player_has_blinded")
+                || challengeTypes.Contains("player_got_blinded")) RegisterEventHandler<EventPlayerBlind>(OnPlayerBlind);
+            if (challengeTypes.Contains("player_has_avenged_teammate")
+                || challengeTypes.Contains("player_got_avenged_teammate")) RegisterEventHandler<EventPlayerAvengedTeammate>(OnPlayerAvengedTeammate);
+            if (challengeTypes.Contains("player_changed_name"))
+                RegisterEventHandler<EventPlayerChangename>(OnPlayerChangename);
+            if (challengeTypes.Contains("player_chat"))
+                RegisterEventHandler<EventPlayerChat>(OnPlayerChat);
+            if (challengeTypes.Contains("player_decal"))
+                RegisterEventHandler<EventPlayerDecal>(OnPlayerDecal);
+            if (challengeTypes.Contains("player_falldamage"))
+                RegisterEventHandler<EventPlayerFalldamage>(OnPlayerFalldamage);
+            if (challengeTypes.Contains("player_footstep"))
+                RegisterEventHandler<EventPlayerFootstep>(OnPlayerFootstep);
+            if (challengeTypes.Contains("player_givenc4"))
+                RegisterEventHandler<EventPlayerGivenC4>(OnPlayerGivenC4);
+            if (challengeTypes.Contains("player_hurt_attacker")
+                || challengeTypes.Contains("player_hurt_victim")) RegisterEventHandler<EventPlayerHurt>(OnPlayerHurt);
+            if (challengeTypes.Contains("player_ping"))
+                RegisterEventHandler<EventPlayerPing>(OnPlayerPing);
+            if (challengeTypes.Contains("player_radio"))
+                RegisterEventHandler<EventPlayerRadio>(OnPlayerRadio);
+            if (challengeTypes.Contains("player_score"))
+                RegisterEventHandler<EventPlayerScore>(OnPlayerScore);
+            if (challengeTypes.Contains("player_sound"))
+                RegisterEventHandler<EventPlayerSound>(OnPlayerSound);
+            if (challengeTypes.Contains("player_spawned"))
+                RegisterEventHandler<EventPlayerSpawned>(OnPlayerSpawned);
+            if (challengeTypes.Contains("player_team"))
+                RegisterEventHandler<EventPlayerTeam>(OnPlayerTeam);
+            if (challengeTypes.Contains("player_achievement_earned"))
+                RegisterEventHandler<EventAchievementEarned>(OnAchievementEarned);
+            if (challengeTypes.Contains("player_add_sonar_icon"))
+                RegisterEventHandler<EventAddPlayerSonarIcon>(OnAddPlayerSonarIcon);
+            if (challengeTypes.Contains("player_ammo_pickup"))
+                RegisterEventHandler<EventAmmoPickup>(OnAmmoPickup);
+            if (challengeTypes.Contains("player_bomb_abortdefuse"))
+                RegisterEventHandler<EventBombAbortdefuse>(OnBombAbortdefuse);
+            if (challengeTypes.Contains("player_bomb_abortplant"))
+                RegisterEventHandler<EventBombAbortplant>(OnBombAbortplant);
+            if (challengeTypes.Contains("player_bomb_begindefuse"))
+                RegisterEventHandler<EventBombBegindefuse>(OnBombBegindefuse);
+            if (challengeTypes.Contains("player_bomb_beginplant"))
+                RegisterEventHandler<EventBombBeginplant>(OnBombBeginplant);
+            if (challengeTypes.Contains("player_bomb_dropped"))
+                RegisterEventHandler<EventBombDropped>(OnBombDropped);
+            if (challengeTypes.Contains("player_bomb_pickup"))
+                RegisterEventHandler<EventBombPickup>(OnBombPickup);
+            if (challengeTypes.Contains("player_bomb_planted"))
+                RegisterEventHandler<EventBombPlanted>(OnBombPlanted);
+            if (challengeTypes.Contains("player_bot_takeover"))
+                RegisterEventHandler<EventBotTakeover>(OnBotTakeover);
+            if (challengeTypes.Contains("player_defuser_pickup"))
+                RegisterEventHandler<EventDefuserPickup>(OnDefuserPickup);
+            // other events
+            if (challengeTypes.Contains("bomb_exploded"))
+                RegisterEventHandler<EventBombExploded>(OnBombExploded);
+            if (challengeTypes.Contains("bomb_defused"))
+                RegisterEventHandler<EventBombDefused>(OnBombDefused);
+            if (challengeTypes.Contains("break_breakable"))
+                RegisterEventHandler<EventBreakBreakable>(OnBreakBreakable);
+            if (challengeTypes.Contains("break_prop"))
+                RegisterEventHandler<EventBreakProp>(OnBreakProp);
+            if (challengeTypes.Contains("bullet_damage_given")
+               || challengeTypes.Contains("bullet_damage_taken")) RegisterEventHandler<EventBulletDamage>(OnBulletDamage);
+            if (challengeTypes.Contains("door_closed"))
+                RegisterEventHandler<EventDoorClosed>(OnDoorClosed);
+            if (challengeTypes.Contains("door_open"))
+                RegisterEventHandler<EventDoorOpen>(OnDoorOpen);
+            if (challengeTypes.Contains("enter_bombzone"))
+                RegisterEventHandler<EventEnterBombzone>(OnEnterBombzone);
+            if (challengeTypes.Contains("exit_bombzone"))
+                RegisterEventHandler<EventExitBombzone>(OnExitBombzone);
+            if (challengeTypes.Contains("enter_buyzone"))
+                RegisterEventHandler<EventEnterBuyzone>(OnEnterBuyzone);
+            if (challengeTypes.Contains("exit_buyzone"))
+                RegisterEventHandler<EventExitBuyzone>(OnExitBuyzone);
+            if (challengeTypes.Contains("enter_rescuezone"))
+                RegisterEventHandler<EventEnterRescueZone>(OnEnterRescuezone);
+            if (challengeTypes.Contains("exit_rescuezone"))
+                RegisterEventHandler<EventExitRescueZone>(OnExitRescuezone);
+            if (challengeTypes.Contains("grenade_bounce"))
+                RegisterEventHandler<EventGrenadeBounce>(OnGrenadeBounce);
+            if (challengeTypes.Contains("hostage_follows"))
+                RegisterEventHandler<EventHostageFollows>(OnHostageFollows);
+            if (challengeTypes.Contains("hostage_hurt"))
+                RegisterEventHandler<EventHostageHurt>(OnHostageHurt);
+            if (challengeTypes.Contains("hostage_killed"))
+                RegisterEventHandler<EventHostageKilled>(OnHostageKilled);
+            if (challengeTypes.Contains("hostage_rescued"))
+                RegisterEventHandler<EventHostageRescued>(OnHostageRescued);
+            if (challengeTypes.Contains("hostage_rescued_all"))
+                RegisterEventHandler<EventHostageRescuedAll>(OnHostageRescuedAll);
+            if (challengeTypes.Contains("hostage_stops_following"))
+                RegisterEventHandler<EventHostageStopsFollowing>(OnHostageStopsFollowing);
+            if (challengeTypes.Contains("inspect_weapon"))
+                RegisterEventHandler<EventInspectWeapon>(OnInspectWeapon);
+            if (challengeTypes.Contains("item_pickup"))
+                RegisterEventHandler<EventItemPickup>(OnItemPickup);
+            if (challengeTypes.Contains("item_purchase"))
+                RegisterEventHandler<EventItemPurchase>(OnItemPurchase);
+            if (challengeTypes.Contains("team_score"))
+                RegisterEventHandler<EventTeamScore>(OnTeamScore);
+            if (challengeTypes.Contains("weapon_fire_on_empty"))
+                RegisterEventHandler<EventWeaponFireOnEmpty>(OnWeaponFireOnEmpty);
+            if (challengeTypes.Contains("weapon_reload"))
+                RegisterEventHandler<EventWeaponReload>(OnWeaponReload);
+            if (challengeTypes.Contains("weapon_zoom"))
+                RegisterEventHandler<EventWeaponZoom>(OnWeaponZoom);
+            if (challengeTypes.Contains("weapon_zoom_rifle"))
+                RegisterEventHandler<EventWeaponZoomRifle>(OnWeaponZoomRifle);
+        }
+
+        private void RemoveListeners()
+        {
+            // player events
             DeregisterEventHandler<EventPlayerDeath>(OnPlayerDeath);
             DeregisterEventHandler<EventPlayerJump>(OnPlayerJump);
             DeregisterEventHandler<EventPlayerBlind>(OnPlayerBlind);
@@ -171,12 +252,6 @@ namespace Challenges
             DeregisterEventHandler<EventWeaponReload>(OnWeaponReload);
             DeregisterEventHandler<EventWeaponZoom>(OnWeaponZoom);
             DeregisterEventHandler<EventWeaponZoomRifle>(OnWeaponZoomRifle);
-            // save config(s)
-            Config.Update();
-            SavePlayerConfigs();
-            // hide GUI(s)
-            HideAllGui();
-            Console.WriteLine(Localizer["core.unload"]);
         }
 
         private void OnServerHibernationUpdate(bool isHibernating)
@@ -187,6 +262,8 @@ namespace Challenges
                 SavePlayerConfigs();
                 // hide GUI(s)
                 HideAllGui();
+                // remove challenge listeners
+                RemoveListeners();
             }
             else
             {
@@ -194,6 +271,8 @@ namespace Challenges
                 LoadActivePlayerConfigs();
                 LoadChallenges();
                 CheckForRunningChallenge();
+                // register challenge listeners
+                RegisterListeners();
             }
         }
 
@@ -205,12 +284,16 @@ namespace Challenges
             LoadActivePlayerConfigs();
             LoadChallenges();
             CheckForRunningChallenge();
+            // register challenge listeners
+            RegisterListeners();
         }
 
         private void OnMapEnd()
         {
             // save config
             SavePlayerConfigs();
+            // remove challenge listeners
+            RemoveListeners();
         }
 
         private HookResult OnRoundStart(EventRoundStart @event, GameEventInfo info)

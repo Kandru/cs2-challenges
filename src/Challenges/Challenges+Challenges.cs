@@ -5,14 +5,14 @@ namespace Challenges
 {
     public partial class Challenges : BasePlugin
     {
-        private RunningChallengeSchedule _currentChallenge = new();
+        private RunningChallengeSchedule _currentSchedule = new();
         private Dictionary<string, CPointWorldText> _playerHudPersonalChallenges = [];
 
         private void CheckForRunningChallenge()
         {
             DebugPrint("checking for running challenge");
             // reset current challenge
-            _currentChallenge = new RunningChallengeSchedule();
+            _currentSchedule = new RunningChallengeSchedule();
             // check if we have a new challenge
             if (_playerChallenges.Schedules.Count == 0
                 || _playerChallenges.Blueprints.Count == 0) return;
@@ -26,25 +26,25 @@ namespace Challenges
                 {
                     DebugPrint($"found running challenge {kvp.Key}");
                     // set current challenge
-                    _currentChallenge.Title = kvp.Value.Title;
-                    _currentChallenge.Key = kvp.Key;
+                    _currentSchedule.Title = kvp.Value.Title;
+                    _currentSchedule.Key = kvp.Key;
                     // use unique key combinations to avoid having the same key for different challenges
                     // this will reset the challenge on change of date or title which is intentional
                     using (var sha256 = System.Security.Cryptography.SHA256.Create())
                     {
-                        var hashInput = $"{_currentChallenge.Title}{_currentChallenge.StartDate}{_currentChallenge.EndDate}";
+                        var hashInput = $"{_currentSchedule.Title}{_currentSchedule.StartDate}{_currentSchedule.EndDate}";
                         var hashBytes = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(hashInput));
-                        _currentChallenge.Key = Convert.ToBase64String(hashBytes);
+                        _currentSchedule.Key = Convert.ToBase64String(hashBytes);
                     }
-                    _currentChallenge.StartDate = kvp.Value.StartDate;
-                    _currentChallenge.EndDate = kvp.Value.EndDate;
+                    _currentSchedule.StartDate = kvp.Value.StartDate;
+                    _currentSchedule.EndDate = kvp.Value.EndDate;
                     // find blueprints for challenge
                     foreach (var challenge in kvp.Value.Challenges)
                     {
                         if (_playerChallenges.Blueprints.ContainsKey(challenge))
                         {
                             DebugPrint($"found blueprint {challenge} for challenge {kvp.Key}");
-                            _currentChallenge.Challenges.Add(
+                            _currentSchedule.Challenges.Add(
                                 challenge,
                                 _playerChallenges.Blueprints[challenge]
                             );
@@ -66,7 +66,7 @@ namespace Challenges
                 || !player.IsValid
                 || !_playerConfigs.ContainsKey(player.NetworkIDString)) return;
             // check if we have a running challenge
-            if (_currentChallenge.Challenges.Count == 0)
+            if (_currentSchedule.Challenges.Count == 0)
             {
                 // delete all challenges from the user
                 _playerConfigs[player.NetworkIDString].Challenges.Clear();
@@ -75,7 +75,7 @@ namespace Challenges
             // check player for outdated challenges
             foreach (var kvp in _playerConfigs[player.NetworkIDString].Challenges.ToList())
             {
-                if (kvp.Value.ScheduleKey != _currentChallenge.Key)
+                if (kvp.Value.ScheduleKey != _currentSchedule.Key)
                 {
                     DebugPrint($"deleting outdated challenge {kvp.Key} for user {player.NetworkIDString}");
                     _playerConfigs[player.NetworkIDString].Challenges.Remove(kvp.Key);
@@ -83,7 +83,7 @@ namespace Challenges
             }
             DebugPrint($"CheckChallengeGoal for {player.NetworkIDString} -> {type}");
             // check for running challenges of the specified type
-            var challenges = _currentChallenge.Challenges.Where(x => x.Value.Type == type).ToList();
+            var challenges = _currentSchedule.Challenges.Where(x => x.Value.Type == type).ToList();
             if (challenges.Count == 0) return;
             foreach (var kvp in challenges)
             {
@@ -164,7 +164,7 @@ namespace Challenges
                     {
                         _playerConfigs[player.NetworkIDString].Challenges.Add(kvp.Key, new PlayerConfigChallenges
                         {
-                            ScheduleKey = _currentChallenge.Key,
+                            ScheduleKey = _currentSchedule.Key,
                             Amount = 1,
                             LastUpdate = GetUnixTimestamp() + kvp.Value.Cooldown
                         });
