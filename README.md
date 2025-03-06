@@ -11,6 +11,10 @@ This plugin allow to create Challenges for players. Challenges are tasks a playe
 
 Information: this is currently NOT ready for implementation by other plugins. DO NOT USE right now :)
 
+## Documentation
+
+- [Blueprints](./documentation/blueprints/index.md)
+
 ## Feature Road Map
 
 - [ ] Easy Webinterface to create your own Challenges
