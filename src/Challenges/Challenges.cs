@@ -61,6 +61,7 @@ namespace Challenges
             // other events
             RegisterEventHandler<EventBombExploded>(OnBombExploded);
             RegisterEventHandler<EventBombDefused>(OnBombDefused);
+            RegisterEventHandler<EventBreakBreakable>(OnBreakBreakable);
             // initialize custom events
             var customEventsSender = new CustomEventsSender();
             Capabilities.RegisterPluginCapability(ChallengesEvents, () => customEventsSender);
@@ -117,6 +118,7 @@ namespace Challenges
             // other events
             DeregisterEventHandler<EventBombExploded>(OnBombExploded);
             DeregisterEventHandler<EventBombDefused>(OnBombDefused);
+            DeregisterEventHandler<EventBreakBreakable>(OnBreakBreakable);
             // save config(s)
             Config.Update();
             SavePlayerConfigs();
