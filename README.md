@@ -34,7 +34,7 @@ Information: this is currently NOT ready for implementation by other plugins. DO
 - [X] Event PlayerSpawned
 - [X] Event PlayerTeam
 - [X] Event AchievementEarned
-- [ ] Event AddPlayerSonarIcon
+- [X] Event AddPlayerSonarIcon
 - [ ] Event AmmoPickup
 - [ ] Event BombAbortdefuse
 - [ ] Event BombAbortplant
