@@ -87,6 +87,7 @@ namespace Challenges
             RegisterEventHandler<EventWeaponFireOnEmpty>(OnWeaponFireOnEmpty);
             RegisterEventHandler<EventWeaponReload>(OnWeaponReload);
             RegisterEventHandler<EventWeaponZoom>(OnWeaponZoom);
+            RegisterEventHandler<EventWeaponZoomRifle>(OnWeaponZoomRifle);
             // initialize custom events
             var customEventsSender = new CustomEventsSender();
             Capabilities.RegisterPluginCapability(ChallengesEvents, () => customEventsSender);
@@ -169,6 +170,7 @@ namespace Challenges
             DeregisterEventHandler<EventWeaponFireOnEmpty>(OnWeaponFireOnEmpty);
             DeregisterEventHandler<EventWeaponReload>(OnWeaponReload);
             DeregisterEventHandler<EventWeaponZoom>(OnWeaponZoom);
+            DeregisterEventHandler<EventWeaponZoomRifle>(OnWeaponZoomRifle);
             // save config(s)
             Config.Update();
             SavePlayerConfigs();
