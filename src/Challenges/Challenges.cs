@@ -40,7 +40,7 @@ namespace Challenges
             RegisterEventHandler<EventPlayerFalldamage>(OnPlayerFalldamage);
             RegisterEventHandler<EventPlayerFootstep>(OnPlayerFootstep);
             RegisterEventHandler<EventPlayerGivenC4>(OnPlayerGivenC4);
-            RegisterEventHandler<EventPlayerHurt>(OnPlayerHurt);
+            if (Config.Performance.EnableEventOnPlayerHurt) RegisterEventHandler<EventPlayerHurt>(OnPlayerHurt);
             RegisterEventHandler<EventPlayerPing>(OnPlayerPing);
             RegisterEventHandler<EventPlayerRadio>(OnPlayerRadio);
             RegisterEventHandler<EventPlayerScore>(OnPlayerScore);

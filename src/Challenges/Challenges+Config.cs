@@ -34,6 +34,7 @@ namespace Challenges
     public class PluginConfigPerformance
     {
         [JsonPropertyName("enable_event_on_player_sound")] public bool EnableEventOnPlayerSound { get; set; } = false;
+        [JsonPropertyName("enable_event_on_player_hurt")] public bool EnableEventOnPlayerHurt { get; set; } = false;
     }
 
     public class PluginConfig : BasePluginConfig
