@@ -68,15 +68,15 @@ Rules are what makes this Challenges-Plugin so powerful. Almost all events have 
 The following operators can be used:
 
 ```
-- == (equal)
-- != (not equal)
-- < (less than)
-- > (greater than)
-- <= (less or equal than)
-- >= (greater or equal than)
-- bool== (equal for bool values)
-- bool!= (not equal for bool values)
-- contains (if the value of the rule contains a specific keyword)`
+== (equal)
+!= (not equal)
+< (less than)
+> (greater than)
+<= (less or equal than)
+>= (greater or equal than)
+bool== (equal for bool values)
+bool!= (not equal for bool values)
+contains (if the value of the rule contains a specific keyword)`
 ```
 
 ## List of events
