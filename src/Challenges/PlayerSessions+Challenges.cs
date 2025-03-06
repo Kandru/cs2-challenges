@@ -3,24 +3,6 @@ using CounterStrikeSharp.API.Core;
 
 namespace Challenges
 {
-    public class RunningChallengeSchedule
-    {
-        public string Title { get; set; } = "";
-        public string Key { get; set; } = "";
-        public string StartDate { get; set; } = "2025-01-01 00:00:00";
-        public string EndDate { get; set; } = "2025-02-01 00:00:00";
-        public Dictionary<string, RunningChallengeBlueprints> Challenges { get; set; } = [];
-    }
-
-    public class RunningChallengeBlueprints
-    {
-        public string Title { get; set; } = "";
-        public string Type { get; set; } = "";
-        public int Amount { get; set; } = 0;
-        public Dictionary<string, Dictionary<string, string>> Data { get; set; } = new Dictionary<string, Dictionary<string, string>>();
-        public List<ChallengesBlueprintRules> Rules { get; set; } = [];
-    }
-
     public partial class Challenges : BasePlugin
     {
         private RunningChallengeSchedule _currentChallenge = new();
