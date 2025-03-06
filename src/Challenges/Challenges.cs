@@ -58,6 +58,7 @@ namespace Challenges
             RegisterEventHandler<EventBombPickup>(OnBombPickup);
             RegisterEventHandler<EventBombPlanted>(OnBombPlanted);
             RegisterEventHandler<EventBotTakeover>(OnBotTakeover);
+            RegisterEventHandler<EventDefuserPickup>(OnDefuserPickup);
             // other events
             RegisterEventHandler<EventBombExploded>(OnBombExploded);
             RegisterEventHandler<EventBombDefused>(OnBombDefused);
@@ -117,6 +118,7 @@ namespace Challenges
             DeregisterEventHandler<EventBombPickup>(OnBombPickup);
             DeregisterEventHandler<EventBombPlanted>(OnBombPlanted);
             DeregisterEventHandler<EventBotTakeover>(OnBotTakeover);
+            DeregisterEventHandler<EventDefuserPickup>(OnDefuserPickup);
             // other events
             DeregisterEventHandler<EventBombExploded>(OnBombExploded);
             DeregisterEventHandler<EventBombDefused>(OnBombDefused);

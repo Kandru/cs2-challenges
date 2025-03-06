@@ -49,7 +49,7 @@ Information: this is currently NOT ready for implementation by other plugins. DO
 - [X] Event BreakBreakable
 - [X] Event BreakProp
 - [X] Event BulletDamage
-- [ ] Event DefuserPickup
+- [X] Event DefuserPickup
 - [ ] Event DoorClosed
 - [ ] Event DoorOpen
 - [ ] Event EnterBombzone
