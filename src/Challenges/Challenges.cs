@@ -53,6 +53,7 @@ namespace Challenges
             RegisterEventHandler<EventBombAbortdefuse>(OnBombAbortdefuse);
             RegisterEventHandler<EventBombAbortplant>(OnBombAbortplant);
             RegisterEventHandler<EventBombBegindefuse>(OnBombBegindefuse);
+            RegisterEventHandler<EventBombBeginplant>(OnBombBeginplant);
             // initialize custom events
             var customEventsSender = new CustomEventsSender();
             Capabilities.RegisterPluginCapability(ChallengesEvents, () => customEventsSender);
@@ -101,6 +102,7 @@ namespace Challenges
             DeregisterEventHandler<EventBombAbortdefuse>(OnBombAbortdefuse);
             DeregisterEventHandler<EventBombAbortplant>(OnBombAbortplant);
             DeregisterEventHandler<EventBombBegindefuse>(OnBombBegindefuse);
+            DeregisterEventHandler<EventBombBeginplant>(OnBombBeginplant);
             // save config(s)
             Config.Update();
             SavePlayerConfigs();

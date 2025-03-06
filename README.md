@@ -39,7 +39,7 @@ Information: this is currently NOT ready for implementation by other plugins. DO
 - [X] Event BombAbortdefuse
 - [X] Event BombAbortplant
 - [X] Event BombBegindefuse
-- [ ] Event BombBeginplant
+- [X] Event BombBeginplant
 - [ ] Event BombDefused
 - [ ] Event BombDropped
 - [ ] Event BombExploded
