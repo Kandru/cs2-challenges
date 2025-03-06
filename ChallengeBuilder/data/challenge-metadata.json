@@ -2492,6 +2492,24 @@
                     "type": "checkbox"
                 },
                 {
+                    "name": "Rescuer Name",
+                    "slug": "rescuer",
+                    "description": "The name of the rescuer",
+                    "type": "string"
+                },
+                {
+                    "name": "Rescuer is Bot?",
+                    "slug": "rescuer_isbot",
+                    "description": "If the rescuer is a bot",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Rescuer Team",
+                    "slug": "rescuer_team",
+                    "description": "The team name of the rescuer",
+                    "type": "string"
+                },
+                {
                     "name": "Player Name",
                     "slug": "player",
                     "description": "The name of the player",

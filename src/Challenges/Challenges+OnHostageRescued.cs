@@ -13,12 +13,15 @@ namespace Challenges
                 || !_playerConfigs.ContainsKey(player.NetworkIDString)) return HookResult.Continue;
             // check all players for challenge
             foreach (CCSPlayerController entry in Utilities.GetPlayers())
-                CheckChallengeGoal(player, "hostage_rescued", new Dictionary<string, string>
+                CheckChallengeGoal(entry, "hostage_rescued", new Dictionary<string, string>
                 {
                     { "isduringround", _isDuringRound.ToString() },
-                    { "player", player.PlayerName },
-                    { "player_isbot", player.IsBot.ToString() },
-                    { "player_team", player.Team.ToString() },
+                    { "rescuer", player.PlayerName },
+                    { "rescuer_isbot", player.IsBot.ToString() },
+                    { "rescuer_team", player.Team.ToString() },
+                    { "player", entry.PlayerName },
+                    { "player_isbot", entry.IsBot.ToString() },
+                    { "player_team", entry.Team.ToString() },
                     { "player_is_rescuer", player == entry ? "true" : "false" },
                     { "hostage", @event.Hostage.ToString() },
                     { "rescue_site", @event.Site.ToString() },
