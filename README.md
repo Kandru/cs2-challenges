@@ -76,6 +76,7 @@ Information: this is currently NOT ready for implementation by other plugins. DO
 - [ ] Event WeaponZoom
 - [ ] Event WeaponZoomRifle
 - [ ] Add ability to hide challenge updates on a per challenge basis (e.g. hiding how many times an event needs to occure until finished)
+- [ ] Add ability for a cooldown for an event to avoid toggling too fast (e.g. closing / opening doors too fast, dropping bomb 100times in a second)
 
 ## Plugin Installation
 
