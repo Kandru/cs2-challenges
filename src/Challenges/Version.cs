@@ -4,6 +4,6 @@ namespace Challenges
 {
     public partial class Challenges : BasePlugin
     {
-        public override string ModuleVersion => "0.0.4";
+        public override string ModuleVersion => "0.0.5";
     }
 }
