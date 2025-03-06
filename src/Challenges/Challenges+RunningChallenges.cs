@@ -14,10 +14,10 @@ namespace Challenges
             // reset current challenge
             _currentSchedule = new RunningChallengeSchedule();
             // check if we have a new challenge
-            if (_playerChallenges.Schedules.Count == 0
-                || _playerChallenges.Blueprints.Count == 0) return;
+            if (_availableChallenges.Schedules.Count == 0
+                || _availableChallenges.Blueprints.Count == 0) return;
             // iterate through all schedules
-            foreach (var kvp in _playerChallenges.Schedules)
+            foreach (var kvp in _availableChallenges.Schedules)
             {
                 if (DateTime.TryParse(kvp.Value.StartDate, out DateTime startDate)
                     && DateTime.TryParse(kvp.Value.EndDate, out DateTime endDate)
@@ -44,20 +44,20 @@ namespace Challenges
                         // check if challenge is already in list
                         if (_currentSchedule.Challenges.ContainsKey(challenge)) continue;
                         // check if we have a blueprint for the challenge
-                        if (_playerChallenges.Blueprints.TryGetValue(challenge, out var blueprint))
+                        if (_availableChallenges.Blueprints.TryGetValue(challenge, out var blueprint))
                         {
                             DebugPrint($"found blueprint {challenge} for schedule {kvp.Key}");
                             _currentSchedule.Challenges.Add(challenge, blueprint);
                         }
                         else // check if we have wildcard blueprints for the challenge
                         {
-                            var wildcardKeys = _playerChallenges.Blueprints.Keys.Where(k => k.StartsWith(challenge.TrimEnd('*'))).ToList();
+                            var wildcardKeys = _availableChallenges.Blueprints.Keys.Where(k => k.StartsWith(challenge.TrimEnd('*'))).ToList();
                             if (wildcardKeys.Count > 0)
                             {
                                 foreach (var wildcardKey in wildcardKeys)
                                 {
                                     if (_currentSchedule.Challenges.ContainsKey(wildcardKey)) continue;
-                                    if (_playerChallenges.Blueprints.TryGetValue(wildcardKey, out blueprint))
+                                    if (_availableChallenges.Blueprints.TryGetValue(wildcardKey, out blueprint))
                                     {
                                         DebugPrint($"found wildcard blueprint {wildcardKey} for schedule {kvp.Key}");
                                         _currentSchedule.Challenges.Add(wildcardKey, blueprint);

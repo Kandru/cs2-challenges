@@ -47,7 +47,7 @@ namespace Challenges
     {
         public required PluginConfig Config { get; set; }
         private Dictionary<string, PlayerConfig> _playerConfigs = [];
-        private ChallengesConfig _playerChallenges = new();
+        private ChallengesConfig _availableChallenges = new();
 
         private PlayerConfig LoadPlayerConfig(string steamId)
         {
@@ -146,7 +146,7 @@ namespace Challenges
             string blueprintsPath = Path.Combine(Path.GetDirectoryName(Config.GetConfigPath()) ?? "./", "blueprints/");
             string schedulesPath = Path.Combine(Path.GetDirectoryName(Config.GetConfigPath()) ?? "./", "schedules.json");
             // create new and empty challenges config
-            _playerChallenges = new();
+            _availableChallenges = new();
             // load all blueprints
             if (Path.Exists(blueprintsPath))
             {
@@ -160,7 +160,7 @@ namespace Challenges
                         {
                             foreach (var kvp in challenges)
                             {
-                                _playerChallenges.Blueprints.Add(
+                                _availableChallenges.Blueprints.Add(
                                     $"{Path.GetFileNameWithoutExtension(file).ToLower()}_{kvp.Key}",
                                     kvp.Value
                                 );
@@ -187,13 +187,13 @@ namespace Challenges
                 var schedules = JsonSerializer.Deserialize<Dictionary<string, ChallengesSchedule>>(jsonString);
                 if (schedules != null)
                 {
-                    _playerChallenges.Schedules = schedules;
+                    _availableChallenges.Schedules = schedules;
                 }
             }
             else
             {
                 DebugPrint($"Creating empty schedules json");
-                var jsonString = JsonSerializer.Serialize(_playerChallenges.Schedules, new JsonSerializerOptions { WriteIndented = true });
+                var jsonString = JsonSerializer.Serialize(_availableChallenges.Schedules, new JsonSerializerOptions { WriteIndented = true });
                 File.WriteAllText(schedulesPath, jsonString);
             }
         }
