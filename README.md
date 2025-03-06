@@ -37,7 +37,7 @@ Information: this is currently NOT ready for implementation by other plugins. DO
 - [X] Event AddPlayerSonarIcon
 - [X] Event AmmoPickup
 - [X] Event BombAbortdefuse
-- [ ] Event BombAbortplant
+- [X] Event BombAbortplant
 - [ ] Event BombBegindefuse
 - [ ] Event BombBeginplant
 - [ ] Event BombDefused

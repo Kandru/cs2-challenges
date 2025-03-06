@@ -51,6 +51,7 @@ namespace Challenges
             RegisterEventHandler<EventAddPlayerSonarIcon>(OnAddPlayerSonarIcon);
             RegisterEventHandler<EventAmmoPickup>(OnAmmoPickup);
             RegisterEventHandler<EventBombAbortdefuse>(OnBombAbortdefuse);
+            RegisterEventHandler<EventBombAbortplant>(OnBombAbortplant);
             // initialize custom events
             var customEventsSender = new CustomEventsSender();
             Capabilities.RegisterPluginCapability(ChallengesEvents, () => customEventsSender);
@@ -97,6 +98,7 @@ namespace Challenges
             DeregisterEventHandler<EventAddPlayerSonarIcon>(OnAddPlayerSonarIcon);
             DeregisterEventHandler<EventAmmoPickup>(OnAmmoPickup);
             DeregisterEventHandler<EventBombAbortdefuse>(OnBombAbortdefuse);
+            DeregisterEventHandler<EventBombAbortplant>(OnBombAbortplant);
             // save config(s)
             Config.Update();
             SavePlayerConfigs();
