@@ -822,8 +822,8 @@
 	"OnPlayerJump": {
 		"title": "OnPlayerJump ({count} / {total})",
 		"type": "player_jump",
-		"amount": 200,
-		"cooldown": 5,
+		"amount": 100,
+		"cooldown": 0,
 		"announce_progress": true,
 		"announce_completion": true,
 		"data": {
