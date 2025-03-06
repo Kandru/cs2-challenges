@@ -58,7 +58,7 @@ Information: this is currently NOT ready for implementation by other plugins. DO
 - [X] Event ExitBombzone
 - [X] Event ExitBuyzone
 - [X] Event ExitRescueZone
-- [ ] Event GrenadeBounce
+- [X] Event GrenadeBounce
 - [ ] Event HostageFollows
 - [ ] Event HostageHurt
 - [ ] Event HostageKilled
