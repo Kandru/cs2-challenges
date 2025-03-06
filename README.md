@@ -70,7 +70,7 @@ Information: this is currently NOT ready for implementation by other plugins. DO
 - [X] Event ItemPurchase
 - [X] Event TeamScore
 - [X] Event WeaponFireOnEmpty
-- [ ] Event WeaponReload
+- [X] Event WeaponReload
 - [ ] Event WeaponZoom
 - [ ] Event WeaponZoomRifle
 - [ ] Add ability to hide challenge updates on a per challenge basis (e.g. hiding how many times an event needs to occure until finished)

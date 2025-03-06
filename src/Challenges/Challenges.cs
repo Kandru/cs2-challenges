@@ -85,6 +85,7 @@ namespace Challenges
             RegisterEventHandler<EventItemPurchase>(OnItemPurchase);
             RegisterEventHandler<EventTeamScore>(OnTeamScore);
             RegisterEventHandler<EventWeaponFireOnEmpty>(OnWeaponFireOnEmpty);
+            RegisterEventHandler<EventWeaponReload>(OnWeaponReload);
             // initialize custom events
             var customEventsSender = new CustomEventsSender();
             Capabilities.RegisterPluginCapability(ChallengesEvents, () => customEventsSender);
@@ -165,6 +166,7 @@ namespace Challenges
             DeregisterEventHandler<EventItemPurchase>(OnItemPurchase);
             DeregisterEventHandler<EventTeamScore>(OnTeamScore);
             DeregisterEventHandler<EventWeaponFireOnEmpty>(OnWeaponFireOnEmpty);
+            DeregisterEventHandler<EventWeaponReload>(OnWeaponReload);
             // save config(s)
             Config.Update();
             SavePlayerConfigs();
