@@ -47,6 +47,7 @@ namespace Challenges
             RegisterEventHandler<EventPlayerSound>(OnPlayerSound);
             RegisterEventHandler<EventPlayerSpawned>(OnPlayerSpawned);
             RegisterEventHandler<EventPlayerTeam>(OnPlayerTeam);
+            RegisterEventHandler<EventAchievementEarned>(OnAchievementEarned);
             // initialize custom events
             var customEventsSender = new CustomEventsSender();
             Capabilities.RegisterPluginCapability(ChallengesEvents, () => customEventsSender);
@@ -89,6 +90,7 @@ namespace Challenges
             DeregisterEventHandler<EventPlayerSound>(OnPlayerSound);
             DeregisterEventHandler<EventPlayerSpawned>(OnPlayerSpawned);
             DeregisterEventHandler<EventPlayerTeam>(OnPlayerTeam);
+            DeregisterEventHandler<EventAchievementEarned>(OnAchievementEarned);
             // save config(s)
             Config.Update();
             SavePlayerConfigs();

@@ -1406,6 +1406,41 @@
                     "type": "string"
                 }
             ]
+        },
+        "player_achievement_earned": {
+            "name": "Player earned achievement",
+            "rules": [
+                {
+                    "name": "Is during Round?",
+                    "slug": "isduringround",
+                    "description": "If the event happened during the round",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Player Name",
+                    "slug": "player",
+                    "description": "The name of the player",
+                    "type": "string"
+                },
+                {
+                    "name": "Player is Bot?",
+                    "slug": "player_isbot",
+                    "description": "If the player is a bot",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Player Team",
+                    "slug": "player_team",
+                    "description": "The team name of the player",
+                    "type": "string"
+                },
+                {
+                    "name": "Achievement ID",
+                    "slug": "achievement",
+                    "description": "The ID of the achievement",
+                    "type": "number"
+                }
+            ]
         }
     },
     "operators": [
