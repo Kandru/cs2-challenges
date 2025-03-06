@@ -54,7 +54,7 @@ Information: this is currently NOT ready for implementation by other plugins. DO
 - [X] Event DoorOpen
 - [X] Event EnterBombzone
 - [X] Event EnterBuyzone
-- [ ] Event EnterRescueZone
+- [X] Event EnterRescueZone
 - [X] Event ExitBombzone
 - [X] Event ExitBuyzone
 - [ ] Event ExitRescueZone
