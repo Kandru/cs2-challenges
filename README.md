@@ -64,7 +64,7 @@ Information: this is currently NOT ready for implementation by other plugins. DO
 - [X] Event HostageKilled
 - [X] Event HostageRescued
 - [X] Event HostageRescuedAll
-- [ ] Event HostageStopsFollowing
+- [X] Event HostageStopsFollowing
 - [ ] Event InspectWeapon
 - [ ] Event ItemPickup
 - [ ] Event ItemPurchase
