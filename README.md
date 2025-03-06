@@ -53,7 +53,7 @@ Information: this is currently NOT ready for implementation by other plugins. DO
 - [X] Event DoorClosed
 - [X] Event DoorOpen
 - [X] Event EnterBombzone
-- [ ] Event EnterBuyzone
+- [X] Event EnterBuyzone
 - [ ] Event EnterRescueZone
 - [X] Event ExitBombzone
 - [ ] Event ExitBuyzone
