@@ -62,7 +62,7 @@ Information: this is currently NOT ready for implementation by other plugins. DO
 - [X] Event HostageFollows
 - [X] Event HostageHurt
 - [X] Event HostageKilled
-- [ ] Event HostageRescued
+- [X] Event HostageRescued
 - [ ] Event HostageRescuedAll
 - [ ] Event HostageStopsFollowing
 - [ ] Event InspectWeapon
