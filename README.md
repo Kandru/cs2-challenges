@@ -59,7 +59,7 @@ Information: this is currently NOT ready for implementation by other plugins. DO
 - [X] Event ExitBuyzone
 - [X] Event ExitRescueZone
 - [X] Event GrenadeBounce
-- [ ] Event HostageFollows
+- [X] Event HostageFollows
 - [ ] Event HostageHurt
 - [ ] Event HostageKilled
 - [ ] Event HostageRescued
