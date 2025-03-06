@@ -8,5 +8,3 @@ This blueprint currently does not seem to work.
 - `player` (string): The player's name
 - `player_isbot` (bool): Whether the player is a bot
 - `player_team` (string): The player's team name
-
-For more information check the CounterStrikeSharp Documentation [here] (https://docs.cssharp.dev/api/CounterStrikeSharp.API.Core.EventAddPlayerSonarIcon.html).

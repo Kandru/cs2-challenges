@@ -9,5 +9,3 @@ This blueprint is triggered when the player picks up ammo. Currently does not se
 - `player_isbot` (bool): Whether the player is a bot
 - `player_team` (string): The player's team name
 - `item` (string): The type of ammo that was picked up
-
-For more information check the CounterStrikeSharp Documentation [here] (https://docs.cssharp.dev/api/CounterStrikeSharp.API.Core.EventAmmoPickup.html).
