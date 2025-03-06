@@ -10,6 +10,7 @@ namespace Challenges
             CCSPlayerController? assister = @event.Assister;
             CCSPlayerController? victim = @event.Userid;
             if (attacker != null && !_playerConfigs.ContainsKey(attacker.NetworkIDString)
+                && assister != null && !_playerConfigs.ContainsKey(assister.NetworkIDString)
                 && victim != null && !_playerConfigs.ContainsKey(victim.NetworkIDString)) return HookResult.Continue;
             // hide GUI for victim
             if (victim != null && victim.IsValid) HideGui(victim);
