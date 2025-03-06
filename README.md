@@ -61,7 +61,7 @@ Information: this is currently NOT ready for implementation by other plugins. DO
 - [X] Event GrenadeBounce
 - [X] Event HostageFollows
 - [X] Event HostageHurt
-- [ ] Event HostageKilled
+- [X] Event HostageKilled
 - [ ] Event HostageRescued
 - [ ] Event HostageRescuedAll
 - [ ] Event HostageStopsFollowing
