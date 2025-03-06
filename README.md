@@ -1,5 +1,8 @@
 # CounterstrikeSharp - Challenges
 
+> [!CAUTION]
+> This plugin is currently NOT ready for implementation by other plugins. DO NOT USE right now! Star this repository and look for updates.
+
 [![UpdateManager Compatible](https://img.shields.io/badge/CS2-UpdateManager-darkgreen)](https://github.com/Kandru/cs2-update-manager/)
 [![Discord Support](https://img.shields.io/discord/289448144335536138?label=Discord%20Support&color=darkgreen)](https://discord.gg/NtHCk5PWEt)
 [![GitHub release](https://img.shields.io/github/release/Kandru/cs2-challenges?include_prereleases=&sort=semver&color=blue)](https://github.com/Kandru/cs2-challenges/releases/)
@@ -9,10 +12,10 @@
 
 This plugin allow to create Challenges for players. Challenges are tasks a player has to achieve in a given amount of time (e.g. daily, weekly, monthly). Each task can be defined around an event that happens in the game. For example, when a user kills somebody, you can create a Challenge that counts how many times this has happened with a headshot at a minimum distance of 15 meters. If it has happen 3 times, the player has the challenge finished successfully. Another CounterstrikeSharp plugin can then be notified to do something with it. This plugin only provides the interface for further actions after a challenge has been completed. It does not grant special items on its own.
 
-> [!CAUTION]
-> This plugin is currently NOT ready for implementation by other plugins. DO NOT USE right now! Star this repository and look for updates.
-
 ## Documentation
+
+> [!IMPORTANT]  
+> Create an Github Issue for Bugs, Features and Improvements! Use our Discord Support-Channel for everything else!
 
 - [Blueprints](./documentation/blueprints/index.md)
 
