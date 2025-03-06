@@ -1715,6 +1715,71 @@
                     "type": "string"
                 }
             ]
+        },
+        "bomb_exploded": {
+            "name": "Bomb exploded",
+            "rules": [
+                {
+                    "name": "Is during Round?",
+                    "slug": "isduringround",
+                    "description": "If the event happened during the round",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Exploder Name",
+                    "slug": "exploder",
+                    "description": "The name of the exploder",
+                    "type": "string"
+                },
+                {
+                    "name": "Exploder is Bot?",
+                    "slug": "exploder_isbot",
+                    "description": "If the exploder is a bot",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Exploder Team",
+                    "slug": "exploder_team",
+                    "description": "The team name of the exploder",
+                    "type": "string"
+                },
+                {
+                    "name": "Player Name",
+                    "slug": "player",
+                    "description": "The name of the player",
+                    "type": "string"
+                },
+                {
+                    "name": "Player is Bot?",
+                    "slug": "player_isbot",
+                    "description": "If the player is a bot",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Player Team",
+                    "slug": "player_team",
+                    "description": "The team name of the player",
+                    "type": "string"
+                },
+                {
+                    "name": "Defuser is Bot?",
+                    "slug": "defuser_isbot",
+                    "description": "If the defuser is a bot",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Player is exploder?",
+                    "slug": "player_is_exploder",
+                    "description": "If this player is the exploder",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Bomb Site",
+                    "slug": "bomb_site",
+                    "description": "The ID of the bomb site",
+                    "type": "number"
+                }
+            ]
         }
     },
     "operators": [

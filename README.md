@@ -42,7 +42,7 @@ Information: this is currently NOT ready for implementation by other plugins. DO
 - [X] Event BombBeginplant
 - [X] Event BombDefused
 - [X] Event BombDropped
-- [ ] Event BombExploded
+- [X] Event BombExploded
 - [ ] Event BombPickup
 - [ ] Event BombPlanted
 - [ ] Event BotTakeover

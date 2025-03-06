@@ -56,6 +56,7 @@ namespace Challenges
             RegisterEventHandler<EventBombBeginplant>(OnBombBeginplant);
             RegisterEventHandler<EventBombDropped>(OnBombDropped);
             // other events
+            RegisterEventHandler<EventBombExploded>(OnBombExploded);
             RegisterEventHandler<EventBombDefused>(OnBombDefused);
             // initialize custom events
             var customEventsSender = new CustomEventsSender();
@@ -108,6 +109,7 @@ namespace Challenges
             DeregisterEventHandler<EventBombBeginplant>(OnBombBeginplant);
             DeregisterEventHandler<EventBombDropped>(OnBombDropped);
             // other events
+            DeregisterEventHandler<EventBombExploded>(OnBombExploded);
             DeregisterEventHandler<EventBombDefused>(OnBombDefused);
             // save config(s)
             Config.Update();
