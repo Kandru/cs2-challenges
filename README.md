@@ -41,7 +41,7 @@ Information: this is currently NOT ready for implementation by other plugins. DO
 - [X] Event BombBegindefuse
 - [X] Event BombBeginplant
 - [X] Event BombDefused
-- [ ] Event BombDropped
+- [X] Event BombDropped
 - [ ] Event BombExploded
 - [ ] Event BombPickup
 - [ ] Event BombPlanted

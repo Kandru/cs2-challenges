@@ -54,6 +54,7 @@ namespace Challenges
             RegisterEventHandler<EventBombAbortplant>(OnBombAbortplant);
             RegisterEventHandler<EventBombBegindefuse>(OnBombBegindefuse);
             RegisterEventHandler<EventBombBeginplant>(OnBombBeginplant);
+            RegisterEventHandler<EventBombDropped>(OnBombDropped);
             // other events
             RegisterEventHandler<EventBombDefused>(OnBombDefused);
             // initialize custom events
@@ -105,6 +106,7 @@ namespace Challenges
             DeregisterEventHandler<EventBombAbortplant>(OnBombAbortplant);
             DeregisterEventHandler<EventBombBegindefuse>(OnBombBegindefuse);
             DeregisterEventHandler<EventBombBeginplant>(OnBombBeginplant);
+            DeregisterEventHandler<EventBombDropped>(OnBombDropped);
             // other events
             DeregisterEventHandler<EventBombDefused>(OnBombDefused);
             // save config(s)
