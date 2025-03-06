@@ -50,7 +50,7 @@ Information: this is currently NOT ready for implementation by other plugins. DO
 - [X] Event BreakProp
 - [X] Event BulletDamage
 - [X] Event DefuserPickup
-- [ ] Event DoorClosed
+- [X] Event DoorClosed
 - [ ] Event DoorOpen
 - [ ] Event EnterBombzone
 - [ ] Event EnterBuyzone
