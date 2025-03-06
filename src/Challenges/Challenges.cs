@@ -72,6 +72,7 @@ namespace Challenges
             RegisterEventHandler<EventEnterBuyzone>(OnEnterBuyzone);
             RegisterEventHandler<EventExitBuyzone>(OnExitBuyzone);
             RegisterEventHandler<EventEnterRescueZone>(OnEnterRescuezone);
+            RegisterEventHandler<EventExitRescueZone>(OnExitRescuezone);
             // initialize custom events
             var customEventsSender = new CustomEventsSender();
             Capabilities.RegisterPluginCapability(ChallengesEvents, () => customEventsSender);
@@ -139,6 +140,7 @@ namespace Challenges
             DeregisterEventHandler<EventEnterBuyzone>(OnEnterBuyzone);
             DeregisterEventHandler<EventExitBuyzone>(OnExitBuyzone);
             DeregisterEventHandler<EventEnterRescueZone>(OnEnterRescuezone);
+            DeregisterEventHandler<EventExitRescueZone>(OnExitRescuezone);
             // save config(s)
             Config.Update();
             SavePlayerConfigs();
