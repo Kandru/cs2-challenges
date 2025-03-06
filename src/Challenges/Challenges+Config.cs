@@ -151,9 +151,11 @@ namespace Challenges
                     var jsonString = File.ReadAllText(challengesPath);
                     _playerChallenges = JsonSerializer.Deserialize<ChallengesConfig>(jsonString) ?? new();
                 }
-                catch
+                catch (Exception e)
                 {
-                    Console.WriteLine(Localizer["core.faultyconfig"].Value.Replace("{config}", challengesPath));
+                    Console.WriteLine(Localizer["core.faultyconfig"].Value
+                        .Replace("{config}", challengesPath)
+                        .Replace("{error}", e.Message));
                 }
             }
             else
