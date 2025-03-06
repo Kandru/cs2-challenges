@@ -67,6 +67,7 @@ namespace Challenges
             RegisterEventHandler<EventBulletDamage>(OnBulletDamage);
             RegisterEventHandler<EventDoorClosed>(OnDoorClosed);
             RegisterEventHandler<EventDoorOpen>(OnDoorOpen);
+            RegisterEventHandler<EventEnterBombzone>(OnEnterBombzone);
             // initialize custom events
             var customEventsSender = new CustomEventsSender();
             Capabilities.RegisterPluginCapability(ChallengesEvents, () => customEventsSender);
@@ -129,6 +130,7 @@ namespace Challenges
             DeregisterEventHandler<EventBulletDamage>(OnBulletDamage);
             DeregisterEventHandler<EventDoorClosed>(OnDoorClosed);
             DeregisterEventHandler<EventDoorOpen>(OnDoorOpen);
+            DeregisterEventHandler<EventEnterBombzone>(OnEnterBombzone);
             // save config(s)
             Config.Update();
             SavePlayerConfigs();

@@ -52,7 +52,7 @@ Information: this is currently NOT ready for implementation by other plugins. DO
 - [X] Event DefuserPickup
 - [X] Event DoorClosed
 - [X] Event DoorOpen
-- [ ] Event EnterBombzone
+- [X] Event EnterBombzone
 - [ ] Event EnterBuyzone
 - [ ] Event EnterRescueZone
 - [ ] Event ExitBombzone
