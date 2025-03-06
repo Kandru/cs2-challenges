@@ -106,7 +106,7 @@ namespace Challenges
                 if (entry == null
                     || !entry.IsValid
                     || entry.IsBot
-                    || _playerConfigs.ContainsKey(entry.NetworkIDString)) return;
+                    || _playerConfigs.ContainsKey(entry.NetworkIDString)) continue;
                 LoadPlayerConfig(entry.NetworkIDString);
             }
         }
