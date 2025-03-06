@@ -44,7 +44,7 @@ namespace Challenges
             RegisterEventHandler<EventPlayerPing>(OnPlayerPing);
             RegisterEventHandler<EventPlayerRadio>(OnPlayerRadio);
             RegisterEventHandler<EventPlayerScore>(OnPlayerScore);
-            RegisterEventHandler<EventPlayerSound>(OnPlayerSound);
+            if (Config.Performance.EnableEventOnPlayerSound) RegisterEventHandler<EventPlayerSound>(OnPlayerSound);
             RegisterEventHandler<EventPlayerSpawned>(OnPlayerSpawned);
             RegisterEventHandler<EventPlayerTeam>(OnPlayerTeam);
             RegisterEventHandler<EventAchievementEarned>(OnAchievementEarned);

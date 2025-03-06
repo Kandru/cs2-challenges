@@ -31,16 +31,23 @@ namespace Challenges
         [JsonPropertyName("notify_other_on_challenge_complete")] public bool NotifyOtherOnChallengeComplete { get; set; } = true;
     }
 
+    public class PluginConfigPerformance
+    {
+        [JsonPropertyName("enable_event_on_player_sound")] public bool EnableEventOnPlayerSound { get; set; } = false;
+    }
+
     public class PluginConfig : BasePluginConfig
     {
         // disabled
         [JsonPropertyName("enabled")] public bool Enabled { get; set; } = true;
         // debug prints
         [JsonPropertyName("debug")] public bool Debug { get; set; } = false;
-        // challenges
+        // gui
         [JsonPropertyName("gui")] public PluginConfigGUI GUI { get; set; } = new();
         // notifications
         [JsonPropertyName("notifications")] public PluginConfigNotifications Notifications { get; set; } = new();
+        // performance settings
+        [JsonPropertyName("performance")] public PluginConfigPerformance Performance { get; set; } = new();
     }
 
     public partial class Challenges : BasePlugin, IPluginConfig<PluginConfig>
