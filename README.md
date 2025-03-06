@@ -40,7 +40,7 @@ Information: this is currently NOT ready for implementation by other plugins. DO
 - [X] Event BombAbortplant
 - [X] Event BombBegindefuse
 - [X] Event BombBeginplant
-- [ ] Event BombDefused
+- [X] Event BombDefused
 - [ ] Event BombDropped
 - [ ] Event BombExploded
 - [ ] Event BombPickup

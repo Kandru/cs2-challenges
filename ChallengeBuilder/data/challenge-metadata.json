@@ -1621,6 +1621,71 @@
                     "type": "string"
                 }
             ]
+        },
+        "bomb_defused": {
+            "name": "Bomb defused",
+            "rules": [
+                {
+                    "name": "Is during Round?",
+                    "slug": "isduringround",
+                    "description": "If the event happened during the round",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Defuser Name",
+                    "slug": "defuser",
+                    "description": "The name of the defuser",
+                    "type": "string"
+                },
+                {
+                    "name": "Defuser is Bot?",
+                    "slug": "defuser_isbot",
+                    "description": "If the defuser is a bot",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Defuser Team",
+                    "slug": "defuser_team",
+                    "description": "The team name of the defuser",
+                    "type": "string"
+                },
+                {
+                    "name": "Player Name",
+                    "slug": "player",
+                    "description": "The name of the player",
+                    "type": "string"
+                },
+                {
+                    "name": "Player is Bot?",
+                    "slug": "player_isbot",
+                    "description": "If the player is a bot",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Player Team",
+                    "slug": "player_team",
+                    "description": "The team name of the player",
+                    "type": "string"
+                },
+                {
+                    "name": "Defuser is Bot?",
+                    "slug": "defuser_isbot",
+                    "description": "If the defuser is a bot",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Player is defuser?",
+                    "slug": "player_is_defuser",
+                    "description": "If this player is the defuser",
+                    "type": "checkbox"
+                },
+                {
+                    "name": "Bomb Site",
+                    "slug": "bomb_site",
+                    "description": "The ID of the bomb site",
+                    "type": "number"
+                }
+            ]
         }
     },
     "operators": [
