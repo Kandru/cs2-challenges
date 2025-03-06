@@ -78,10 +78,10 @@ This plugin allow to create Challenges for players. Challenges are tasks a playe
 - [X] Event WeaponReload
 - [X] Event WeaponZoom
 - [X] Event WeaponZoomRifle
-- [X] Add ability to hide challenge updates on a per challenge basis (e.g. hiding how many times an event needs to occure until finished)
-- [X] Add ability for a cooldown for an event to avoid toggling too fast (e.g. closing / opening doors too fast, dropping bomb 100times in a second)
-- [X] Add ability to load multiple challenge blueprints to allow custom plugins to create their own without the need to modify the examples
-- [ ] Add ability to spawn custom props on the map as a challenge (e.g. spawning them on AI path ways and players can walk over them to consume them)
+- [X] Add ability to hide challenge updates on a per challenge basis
+- [X] Add ability for a cooldown for an event to avoid toggling too fast
+- [X] Add ability to load multiple challenge blueprint files
+- [ ] Add ability to spawn custom props on the map as a challenge
 - [ ] Add ability to see and use challenges after bot takeover
 - [ ] Optimize challenge save per user (json is not optimized)
 
