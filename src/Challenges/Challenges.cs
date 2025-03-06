@@ -75,6 +75,7 @@ namespace Challenges
             RegisterEventHandler<EventExitRescueZone>(OnExitRescuezone);
             RegisterEventHandler<EventGrenadeBounce>(OnGrenadeBounce);
             RegisterEventHandler<EventHostageFollows>(OnHostageFollows);
+            RegisterEventHandler<EventHostageHurt>(OnHostageHurt);
             // initialize custom events
             var customEventsSender = new CustomEventsSender();
             Capabilities.RegisterPluginCapability(ChallengesEvents, () => customEventsSender);
@@ -145,6 +146,7 @@ namespace Challenges
             DeregisterEventHandler<EventExitRescueZone>(OnExitRescuezone);
             DeregisterEventHandler<EventGrenadeBounce>(OnGrenadeBounce);
             DeregisterEventHandler<EventHostageFollows>(OnHostageFollows);
+            DeregisterEventHandler<EventHostageHurt>(OnHostageHurt);
             // save config(s)
             Config.Update();
             SavePlayerConfigs();

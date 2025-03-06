@@ -60,7 +60,7 @@ Information: this is currently NOT ready for implementation by other plugins. DO
 - [X] Event ExitRescueZone
 - [X] Event GrenadeBounce
 - [X] Event HostageFollows
-- [ ] Event HostageHurt
+- [X] Event HostageHurt
 - [ ] Event HostageKilled
 - [ ] Event HostageRescued
 - [ ] Event HostageRescuedAll
