@@ -51,7 +51,7 @@ Information: this is currently NOT ready for implementation by other plugins. DO
 - [X] Event BulletDamage
 - [X] Event DefuserPickup
 - [X] Event DoorClosed
-- [ ] Event DoorOpen
+- [X] Event DoorOpen
 - [ ] Event EnterBombzone
 - [ ] Event EnterBuyzone
 - [ ] Event EnterRescueZone
