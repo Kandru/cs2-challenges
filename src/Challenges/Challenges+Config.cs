@@ -183,11 +183,18 @@ namespace Challenges
             // load all schedules
             if (Path.Exists(schedulesPath))
             {
-                var jsonString = File.ReadAllText(schedulesPath);
-                var schedules = JsonSerializer.Deserialize<Dictionary<string, ChallengesSchedule>>(jsonString);
-                if (schedules != null)
+                try
                 {
-                    _availableChallenges.Schedules = schedules;
+                    var jsonString = File.ReadAllText(schedulesPath);
+                    var schedules = JsonSerializer.Deserialize<Dictionary<string, ChallengesSchedule>>(jsonString);
+                    if (schedules != null)
+                    {
+                        _availableChallenges.Schedules = schedules;
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(Localizer["core.faultyconfig"].Value.Replace("{config}", schedulesPath).Replace("{error}", e.Message));
                 }
             }
             else
