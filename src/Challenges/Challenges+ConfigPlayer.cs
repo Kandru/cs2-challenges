@@ -14,7 +14,6 @@ namespace Challenges
 
     public class PlayerConfigChallenges
     {
-        [JsonPropertyName("schedule_key")] public string ScheduleKey { get; set; } = "";
         [JsonPropertyName("amount")] public int Amount { get; set; } = 0;
         [JsonPropertyName("last_update")] public long LastUpdate { get; set; } = 0;
     }
@@ -23,7 +22,7 @@ namespace Challenges
     {
         [JsonPropertyName("username")] public string Username { get; set; } = "";
         [JsonPropertyName("clantag")] public string ClanTag { get; set; } = "";
-        [JsonPropertyName("challenges")] public Dictionary<string, PlayerConfigChallenges> Challenges { get; set; } = [];
+        [JsonPropertyName("challenges")] public Dictionary<string, Dictionary<string, PlayerConfigChallenges>> Challenges { get; set; } = [];
         [JsonPropertyName("settings")] public PlayerConfigSettings Settings { get; set; } = new();
     }
 }

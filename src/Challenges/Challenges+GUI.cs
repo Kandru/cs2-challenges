@@ -76,7 +76,9 @@ namespace Challenges
             // iterate through all challenges and list them
             int displayedChallenges = 0;
             int finishedChallenges = 0;
-            var playerChallenges = _playerConfigs[player.NetworkIDString].Challenges;
+            var playerChallenges = _playerConfigs[player.NetworkIDString].Challenges.ContainsKey(_currentSchedule.Key)
+                ? _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key]
+                : [];
 
             foreach (var kvp in challenges.OrderByDescending(c => playerChallenges.TryGetValue(c.Key, out var challenge) ? challenge.Amount : 0))
             {

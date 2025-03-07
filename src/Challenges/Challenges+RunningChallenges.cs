@@ -90,13 +90,11 @@ namespace Challenges
                 return;
             }
             // check player for outdated challenges
-            foreach (var kvp in _playerConfigs[player.NetworkIDString].Challenges.ToList())
+            foreach (var kvp in _playerConfigs[player.NetworkIDString].Challenges)
             {
-                if (kvp.Value.ScheduleKey != _currentSchedule.Key)
-                {
-                    DebugPrint($"deleting outdated challenge {kvp.Key} for user {player.NetworkIDString}");
-                    _playerConfigs[player.NetworkIDString].Challenges.Remove(kvp.Key);
-                }
+                if (kvp.Key == _currentSchedule.Key) continue;
+                DebugPrint($"deleting outdated challenge {kvp.Key} for user {player.NetworkIDString}");
+                _playerConfigs[player.NetworkIDString].Challenges.Remove(kvp.Key);
             }
             DebugPrint($"CheckChallengeGoal for {player.NetworkIDString} -> {type}");
             // check for running challenges of the specified type
@@ -106,15 +104,17 @@ namespace Challenges
             {
                 DebugPrint($"found challenge {kvp.Key}");
                 // check if the user has already completed the challenge
-                if (_playerConfigs[player.NetworkIDString].Challenges.ContainsKey(kvp.Key)
-                    && _playerConfigs[player.NetworkIDString].Challenges[kvp.Key].Amount >= kvp.Value.Amount)
+                if (_playerConfigs[player.NetworkIDString].Challenges.ContainsKey(_currentSchedule.Key)
+                    && _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key].ContainsKey(kvp.Key)
+                    && _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key][kvp.Key].Amount >= kvp.Value.Amount)
                 {
                     DebugPrint($"user {player.NetworkIDString} has already completed challenge {kvp.Key}");
                     continue;
                 }
                 // check if the user can attend the challenge because of a possible cooldown
-                if (_playerConfigs[player.NetworkIDString].Challenges.ContainsKey(kvp.Key)
-                    && _playerConfigs[player.NetworkIDString].Challenges[kvp.Key].LastUpdate + kvp.Value.Cooldown > GetUnixTimestamp())
+                if (_playerConfigs[player.NetworkIDString].Challenges.ContainsKey(_currentSchedule.Key)
+                    && _playerConfigs[player.NetworkIDString].Challenges.ContainsKey(kvp.Key)
+                    && _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key][kvp.Key].LastUpdate + kvp.Value.Cooldown > GetUnixTimestamp())
                 {
                     DebugPrint($"user {player.NetworkIDString} has cooldown for challenge {kvp.Key}");
                     continue;
@@ -176,23 +176,27 @@ namespace Challenges
                 if (compliedWithRules)
                 {
                     DebugPrint($"user {player.NetworkIDString} has mastered a step of challenge {kvp.Key}");
-                    // add challenge to user or update challenge
-                    if (!_playerConfigs[player.NetworkIDString].Challenges.ContainsKey(kvp.Key))
+                    // add schedule key for player if not exists
+                    if (!_playerConfigs[player.NetworkIDString].Challenges.ContainsKey(_currentSchedule.Key))
                     {
-                        _playerConfigs[player.NetworkIDString].Challenges.Add(kvp.Key, new PlayerConfigChallenges
+                        _playerConfigs[player.NetworkIDString].Challenges.Add(_currentSchedule.Key, new Dictionary<string, PlayerConfigChallenges>());
+                    }
+                    // add challenge to user or update challenge
+                    if (!_playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key].ContainsKey(kvp.Key))
+                    {
+                        _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key].Add(kvp.Key, new PlayerConfigChallenges
                         {
-                            ScheduleKey = _currentSchedule.Key,
                             Amount = 1,
                             LastUpdate = GetUnixTimestamp() + kvp.Value.Cooldown
                         });
                     }
                     else
                     {
-                        _playerConfigs[player.NetworkIDString].Challenges[kvp.Key].Amount++;
-                        _playerConfigs[player.NetworkIDString].Challenges[kvp.Key].LastUpdate = GetUnixTimestamp() + kvp.Value.Cooldown;
+                        _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key][kvp.Key].Amount++;
+                        _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key][kvp.Key].LastUpdate = GetUnixTimestamp() + kvp.Value.Cooldown;
                     }
                     // check if the user has completed the challenge
-                    if (_playerConfigs[player.NetworkIDString].Challenges[kvp.Key].Amount >= kvp.Value.Amount)
+                    if (_playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key][kvp.Key].Amount >= kvp.Value.Amount)
                     {
                         DebugPrint($"user {player.NetworkIDString} has completed challenge {kvp.Key}");
                         // notify user about completion
@@ -251,7 +255,7 @@ namespace Challenges
                                 player.PrintToChat(
                                     message
                                         .Replace("{total}", kvp.Value.Amount.ToString())
-                                        .Replace("{count}", _playerConfigs[player.NetworkIDString].Challenges[kvp.Key].Amount.ToString())
+                                        .Replace("{count}", _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key][kvp.Key].Amount.ToString())
                                 );
                             });
                         }
@@ -262,7 +266,7 @@ namespace Challenges
                             {
                                 { "title", kvp.Value.Title },
                                 { "type", kvp.Value.Type },
-                                { "current_amount", _playerConfigs[player.NetworkIDString].Challenges[kvp.Key].Amount.ToString() },
+                                { "current_amount", _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key][kvp.Key].Amount.ToString() },
                                 { "total_amount", kvp.Value.Amount.ToString() },
                                 { "cooldown", kvp.Value.Cooldown.ToString() }
                             }

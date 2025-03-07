@@ -63,7 +63,9 @@ namespace Challenges
                 {
                     { "title", challenge.Value.Title },
                     { "type", challenge.Value.Type },
-                    { "current_amount", _playerConfigs.ContainsKey(player.NetworkIDString) && _playerConfigs[player.NetworkIDString].Challenges.ContainsKey(challenge.Key) ? _playerConfigs[player.NetworkIDString].Challenges[challenge.Key].Amount.ToString() : "0" },
+                    { "current_amount", _playerConfigs.ContainsKey(player.NetworkIDString)
+                        && _playerConfigs[player.NetworkIDString].Challenges.ContainsKey(_currentSchedule.Key)
+                        && _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key].ContainsKey(challenge.Key) ? _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key][challenge.Key].Amount.ToString() : "0" },
                     { "total_amount", challenge.Value.Amount.ToString() }
                 }
             };
