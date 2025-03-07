@@ -4,7 +4,7 @@ namespace Challenges
 {
     public class ChallengesSchedule
     {
-        [JsonPropertyName("title")] public string Title { get; set; } = "";
+        [JsonPropertyName("title")] public Dictionary<string, string> Title { get; set; } = [];
         [JsonPropertyName("date_start")] public string StartDate { get; set; } = "2025-01-01 00:00:00";
         [JsonPropertyName("date_end")] public string EndDate { get; set; } = "2025-02-01 00:00:00";
         [JsonPropertyName("challenges")] public List<string> Challenges { get; set; } = [];
@@ -19,7 +19,7 @@ namespace Challenges
 
     public class ChallengesBlueprint
     {
-        [JsonPropertyName("title")] public string Title { get; set; } = "";
+        [JsonPropertyName("title")] public Dictionary<string, string> Title { get; set; } = [];
         [JsonPropertyName("type")] public string Type { get; set; } = "";
         [JsonPropertyName("amount")] public int Amount { get; set; } = 0;
         [JsonPropertyName("cooldown")] public int Cooldown { get; set; } = 0;
@@ -37,7 +37,7 @@ namespace Challenges
 
     public class RunningChallengeSchedule
     {
-        public string Title { get; set; } = "";
+        public Dictionary<string, string> Title { get; set; } = [];
         public string Key { get; set; } = "";
         public string StartDate { get; set; } = "2025-01-01 00:00:00";
         public string EndDate { get; set; } = "2025-02-01 00:00:00";

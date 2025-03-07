@@ -1,6 +1,7 @@
 using ChallengesShared.Events;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
+using CounterStrikeSharp.API.Core.Translations;
 using CounterStrikeSharp.API.Modules.Admin;
 using CounterStrikeSharp.API.Modules.Commands;
 
@@ -61,7 +62,9 @@ namespace Challenges
             {
                 ["info"] = new Dictionary<string, string>
                 {
-                    { "title", challenge.Value.Title },
+                    { "title", challenge.Value.Title.TryGetValue(PlayerLanguageExtensions.GetLanguage(player).TwoLetterISOLanguageName, out var title)
+                        ? title
+                        : challenge.Value.Title.First().Value },
                     { "type", challenge.Value.Type },
                     { "current_amount", _playerConfigs.ContainsKey(player.NetworkIDString)
                         && _playerConfigs[player.NetworkIDString].Challenges.ContainsKey(_currentSchedule.Key)

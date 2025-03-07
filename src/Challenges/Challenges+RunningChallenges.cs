@@ -1,6 +1,7 @@
 using ChallengesShared.Events;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Core.Translations;
 
 namespace Challenges
 {
@@ -33,7 +34,7 @@ namespace Challenges
                     // this will reset the challenge on change of date or title which is intentional
                     using (var sha256 = System.Security.Cryptography.SHA256.Create())
                     {
-                        var hashInput = $"{_currentSchedule.Title}{_currentSchedule.StartDate}{_currentSchedule.EndDate}";
+                        var hashInput = $"{_currentSchedule.Title.First()}{_currentSchedule.StartDate}{_currentSchedule.EndDate}";
                         var hashBytes = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(hashInput));
                         _currentSchedule.Key = Convert.ToBase64String(hashBytes);
                     }
@@ -205,7 +206,10 @@ namespace Challenges
                             Server.NextFrame(() =>
                             {
                                 string message = Localizer["challenges.completed.user"].Value
-                                    .Replace("{challenge}", kvp.Value.Title);
+                                    .Replace("{challenge}",
+                                        kvp.Value.Title.TryGetValue(PlayerLanguageExtensions.GetLanguage(player).TwoLetterISOLanguageName, out var title)
+                                        ? title
+                                        : kvp.Value.Title.First().Value);
                                 player.PrintToChat(
                                     message
                                         .Replace("{total}", kvp.Value.Amount.ToString())
@@ -217,7 +221,10 @@ namespace Challenges
                         if (Config.Notifications.NotifyOtherOnChallengeComplete && kvp.Value.AnnounceCompletion)
                         {
                             string message = Localizer["challenges.completed.other"].Value
-                                    .Replace("{challenge}", kvp.Value.Title);
+                                    .Replace("{challenge}",
+                                        kvp.Value.Title.ContainsKey(PlayerLanguageExtensions.GetLanguage(player).TwoLetterISOLanguageName)
+                                        ? kvp.Value.Title[PlayerLanguageExtensions.GetLanguage(player).TwoLetterISOLanguageName]
+                                        : kvp.Value.Title.First().Value);
                             SendGlobalChatMessage(
                                 message: message
                                     .Replace("{total}", kvp.Value.Amount.ToString())
@@ -230,7 +237,9 @@ namespace Challenges
                         {
                             ["info"] = new Dictionary<string, string>
                             {
-                                { "title", kvp.Value.Title },
+                                { "title", kvp.Value.Title.TryGetValue(PlayerLanguageExtensions.GetLanguage(player).TwoLetterISOLanguageName, out var title)
+                                            ? title
+                                            : kvp.Value.Title.First().Value },
                                 { "type", kvp.Value.Type },
                                 { "amount", kvp.Value.Amount.ToString() },
                                 { "cooldown", kvp.Value.Cooldown.ToString() }
@@ -251,7 +260,10 @@ namespace Challenges
                             Server.NextFrame(() =>
                             {
                                 string message = Localizer["challenges.progress"].Value
-                                    .Replace("{challenge}", kvp.Value.Title);
+                                    .Replace("{challenge}",
+                                        kvp.Value.Title.TryGetValue(PlayerLanguageExtensions.GetLanguage(player).TwoLetterISOLanguageName, out var title)
+                                        ? title
+                                        : kvp.Value.Title.First().Value);
                                 player.PrintToChat(
                                     message
                                         .Replace("{total}", kvp.Value.Amount.ToString())
@@ -264,7 +276,9 @@ namespace Challenges
                         {
                             ["info"] = new Dictionary<string, string>
                             {
-                                { "title", kvp.Value.Title },
+                                { "title", kvp.Value.Title.TryGetValue(PlayerLanguageExtensions.GetLanguage(player).TwoLetterISOLanguageName, out var title)
+                                            ? title
+                                            : kvp.Value.Title.First().Value },
                                 { "type", kvp.Value.Type },
                                 { "current_amount", _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key][kvp.Key].Amount.ToString() },
                                 { "total_amount", kvp.Value.Amount.ToString() },

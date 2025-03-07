@@ -1,5 +1,6 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Core.Translations;
 using CounterStrikeSharp.API.Modules.Cvars;
 using CounterStrikeSharp.API.Modules.Utils;
 using System.Drawing;
@@ -91,7 +92,7 @@ namespace Challenges
                     if (displayedChallenges < Config.GUI.DisplayMaximum && !isFinished
                         || challenges.Count <= Config.GUI.DisplayMaximum)
                     {
-                        string tmpMessage = $"\n{kvp.Value.Title}"
+                        string tmpMessage = $"\n{(kvp.Value.Title.TryGetValue(PlayerLanguageExtensions.GetLanguage(player).TwoLetterISOLanguageName, out var challengeTitle) ? challengeTitle : kvp.Value.Title.First().Value)}"
                             .Replace("{total}", kvp.Value.Amount.ToString("N0"))
                             .Replace("{count}", challenge.Amount.ToString("N0"));
                         message += tmpMessage;
@@ -104,7 +105,7 @@ namespace Challenges
                     if (displayedChallenges < Config.GUI.DisplayMaximum
                         || challenges.Count <= Config.GUI.DisplayMaximum)
                     {
-                        string tmpMessage = $"\n{kvp.Value.Title}"
+                        string tmpMessage = $"\n{(kvp.Value.Title.TryGetValue(PlayerLanguageExtensions.GetLanguage(player).TwoLetterISOLanguageName, out var challengeTitle) ? challengeTitle : kvp.Value.Title.First().Value)}"
                             .Replace("{total}", kvp.Value.Amount.ToString("N0"))
                             .Replace("{count}", "0");
                         message += tmpMessage;
@@ -115,7 +116,9 @@ namespace Challenges
             // replace title with actual values
             message = message.Replace(
                 "{challenges_title}",
-                _currentSchedule.Title
+                (_currentSchedule.Title.TryGetValue(PlayerLanguageExtensions.GetLanguage(player).TwoLetterISOLanguageName, out var title)
+                    ? title
+                    : _currentSchedule.Title.First().Value)
                     .Replace("{playerName}", player.PlayerName.Length > 12 ? player.PlayerName.Substring(0, 12) : player.PlayerName)
                     .Replace("{total}", _currentSchedule.Challenges.Count.ToString())
                     .Replace("{count}", finishedChallenges.ToString())
