@@ -29,6 +29,8 @@ This plugin allow to create Challenges for players. Challenges are tasks a playe
 - [ ] Add ability to see and use challenges after bot takeover
 - [ ] Add ability to have dependencies for each challenge (e.g. user needs to complete challenge X before doing challenge Y)
 - [ ] Optimize challenge save per user (json is not optimized)
+- [ ] multi-langual titles
+- [ ] Link possible values for all rules in documentation 
 
 ## Plugin Installation
 
