@@ -27,10 +27,10 @@ This plugin allow to create Challenges for players. Challenges are tasks a playe
 - [ ] Easy Webinterface to create your own Challenges
 - [ ] Add ability to spawn custom props on the map as a challenge
 - [ ] Add ability to see and use challenges after bot takeover
-- [ ] Add ability to have dependencies for each challenge (e.g. user needs to complete challenge X before doing challenge Y)
+- [X] Add ability to have dependencies for each challenge (e.g. user needs to complete challenge X before doing challenge Y)
 - [X] multi-langual titles
 - [ ] Link possible values for all rules in documentation
-- [ ] Validate each blueprint (e.g. if title exists and something happens on completion)
+- [X] Validate each blueprint (e.g. if title exists and something happens on completion)
 
 ## Plugin Installation
 

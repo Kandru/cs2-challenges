@@ -112,6 +112,23 @@ namespace Challenges
                     DebugPrint($"user {player.NetworkIDString} has already completed challenge {kvp.Key}");
                     continue;
                 }
+                // check if the user can attend the challenge because of dependencies which have to be completed first
+                if (kvp.Value.Dependencies.Count > 0)
+                {
+                    bool canCompleted = true;
+                    foreach (var dependency in kvp.Value.Dependencies)
+                    {
+                        if (!_playerConfigs[player.NetworkIDString].Challenges.ContainsKey(_currentSchedule.Key)
+                            || !_playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key].ContainsKey(dependency)
+                            || _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key][dependency].Amount < _availableChallenges.Blueprints[dependency].Amount)
+                        {
+                            DebugPrint($"user {player.NetworkIDString} has not completed dependency {dependency} for challenge {kvp.Key}");
+                            canCompleted = false;
+                            break;
+                        }
+                    }
+                    if (!canCompleted) continue;
+                }
                 // check if the user can attend the challenge because of a possible cooldown
                 if (_playerConfigs[player.NetworkIDString].Challenges.ContainsKey(_currentSchedule.Key)
                     && _playerConfigs[player.NetworkIDString].Challenges.ContainsKey(kvp.Key)

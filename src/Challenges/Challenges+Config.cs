@@ -160,6 +160,28 @@ namespace Challenges
                         {
                             foreach (var kvp in challenges)
                             {
+                                // check if title contains at least one entry
+                                if (kvp.Value.Title.Count == 0)
+                                {
+                                    Console.WriteLine(Localizer["core.faultyconfig"].Value
+                                        .Replace("{config}", file)
+                                        .Replace("{error}", $"title of challenge {kvp.Key} is missing"));
+                                    continue;
+                                }
+                                // check if data contains at least one entry
+                                if (kvp.Value.Data.Count == 0)
+                                {
+                                    Console.WriteLine(Localizer["core.faultyconfig"].Value
+                                        .Replace("{config}", file)
+                                        .Replace("{error}", $"data of challenge {kvp.Key} is missing"));
+                                    continue;
+                                }
+                                // update key of dependencies to match key of given blueprint
+                                for (int i = 0; i < kvp.Value.Dependencies.Count; i++)
+                                {
+                                    kvp.Value.Dependencies[i] = $"{Path.GetFileNameWithoutExtension(file).ToLower()}.{kvp.Value.Dependencies[i]}";
+                                }
+                                // add blueprint to available challenges
                                 _availableChallenges.Blueprints.Add(
                                     $"{Path.GetFileNameWithoutExtension(file).ToLower()}.{kvp.Key}",
                                     kvp.Value

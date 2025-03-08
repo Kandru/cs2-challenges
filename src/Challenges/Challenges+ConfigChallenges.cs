@@ -27,6 +27,7 @@ namespace Challenges
         [JsonPropertyName("announce_completion")] public bool AnnounceCompletion { get; set; } = true;
         [JsonPropertyName("data")] public Dictionary<string, Dictionary<string, string>> Data { get; set; } = new Dictionary<string, Dictionary<string, string>>();
         [JsonPropertyName("rules")] public List<ChallengesBlueprintRules> Rules { get; set; } = [];
+        [JsonPropertyName("dependencies")] public List<string> Dependencies { get; set; } = [];
     }
 
     public class ChallengesConfig
