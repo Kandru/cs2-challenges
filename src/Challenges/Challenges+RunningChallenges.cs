@@ -273,7 +273,7 @@ namespace Challenges
                                 string message = LocalizerExtensions.ForPlayer(Localizer, player, "challenges.progress")
                                         .Replace("{challenge}", GetChallengeTitle(kvp.Value, player))
                                         .Replace("{total}", kvp.Value.Amount.ToString())
-                                        .Replace("{count}", kvp.Value.Amount.ToString());
+                                        .Replace("{count}", _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key][kvp.Key].Amount.ToString());
                                 player.PrintToChat(message);
                             });
                         }
