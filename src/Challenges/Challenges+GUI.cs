@@ -68,8 +68,10 @@ namespace Challenges
                 || !player.PlayerPawn.IsValid
                 || player.PlayerPawn.Value == null
                 || player.PlayerPawn.Value.LifeState != (byte)LifeState_t.LIFE_ALIVE) return;
-            // check for running challenges of the specified type
-            var challenges = _currentSchedule.Challenges.ToList();
+            // check for running challenges which can be completed
+            var challenges = _currentSchedule.Challenges
+                .Where(kvp => CanChallengeBeCompleted(kvp.Value, player))
+                .ToList();
             if (challenges.Count == 0) return;
             // build challenges message
             string message = "{challenges_title}";
@@ -82,6 +84,7 @@ namespace Challenges
 
             foreach (var kvp in challenges.OrderByDescending(c => playerChallenges.TryGetValue(c.Key, out var challenge) ? challenge.Amount : 0))
             {
+                // check if player already has progessed or completed this challenge
                 if (playerChallenges.TryGetValue(kvp.Key, out var challenge))
                 {
                     bool isFinished = challenge.Amount >= kvp.Value.Amount;
@@ -116,7 +119,7 @@ namespace Challenges
             message = message.Replace(
                 "{challenges_title}", GetScheduleTitle(_currentSchedule, player)
                 .Replace("{playerName}", player.PlayerName.Length > 12 ? player.PlayerName.Substring(0, 12) : player.PlayerName)
-                .Replace("{total}", _currentSchedule.Challenges.Count.ToString())
+                .Replace("{total}", challenges.Count.ToString())
                 .Replace("{count}", finishedChallenges.ToString()));
             // use our entity if it still exists
             if (_playerHudPersonalChallenges.ContainsKey(player.NetworkIDString))

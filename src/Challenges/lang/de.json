@@ -3,7 +3,7 @@
     "core.unload": "[Spielsitzung] Challenges Plugin entladen!",
     "core.defaultconfig": "[Spielsitzung] Keine kartenspezifische Konfiguration für {mapName} gefunden, Standardkonfiguration wird verwendet!",
     "core.noconfig": "[Spielsitzung] Keine kartenspezifische Konfiguration für {mapName} oder Standardkonfiguration gefunden. Überspringen!",
-    "core.faultyconfig": "[Spielsitzung] Fehlerhafte Konfiguration {config}! übersprungen! Stellen Sie sicher, dass Sie es beheben, da eine Standardkonfiguration generiert wurde und eine Sicherung aufbewahrt wird: {error}",
+    "core.faultyconfig": "[Spielsitzung] Fehlerhafte Konfiguration {config}: {error}",
     "core.config": "[Spielsitzung] Konfiguration geladen!",
     "core.disabled": "[Spielsitzung] {default}Spielsitzung ist deaktiviert!",
     "core.debugprint": "[Spielsitzung]{red}[DEBUG] {default}{message}",

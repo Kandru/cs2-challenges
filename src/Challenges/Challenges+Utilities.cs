@@ -37,5 +37,21 @@ namespace Challenges
                     ? serverTitle
                     : challenge.Title.First().Value);
         }
+
+        private bool CanChallengeBeCompleted(ChallengesBlueprint challenge, CCSPlayerController player)
+        {
+            if (!_playerConfigs.ContainsKey(player.NetworkIDString)) return false;
+            if (challenge.Dependencies.Count > 0)
+            {
+                foreach (var dependency in challenge.Dependencies)
+                {
+                    if (!_playerConfigs[player.NetworkIDString].Challenges.ContainsKey(_currentSchedule.Key)
+                        || !_playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key].ContainsKey(dependency)
+                        || _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key][dependency].Amount < _availableChallenges.Blueprints[dependency].Amount)
+                        return false;
+                }
+            }
+            return true;
+        }
     }
 }

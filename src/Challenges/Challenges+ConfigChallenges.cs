@@ -20,6 +20,7 @@ namespace Challenges
     public class ChallengesBlueprint
     {
         [JsonPropertyName("title")] public Dictionary<string, string> Title { get; set; } = [];
+        public string Key { get; set; } = "";
         [JsonPropertyName("type")] public string Type { get; set; } = "";
         [JsonPropertyName("amount")] public int Amount { get; set; } = 0;
         [JsonPropertyName("cooldown")] public int Cooldown { get; set; } = 0;

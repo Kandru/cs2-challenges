@@ -3,7 +3,7 @@
     "core.unload": "[Challenges] Unloaded Challenges Plugin!",
     "core.defaultconfig": "[Challenges] Found no map-specific configuration for {mapName}, using default one!",
     "core.noconfig": "[Challenges] No map-specific configuration for {mapName} or default one found. Skipping!",
-    "core.faultyconfig": "[Challenges] Faulty configuration {config}! Skipping! Make sure to fix it because a default config will be generated and a backup configuration will be kept: {error}",
+    "core.faultyconfig": "[Challenges] Faulty configuration {config}: {error}",
     "core.config": "[Challenges] Configuration loaded!",
     "core.disabled": "[Challenges] {default}Challenges is disabled!",
     "core.debugprint": "[Challenges]{red}[DEBUG] {default}{message}",

@@ -179,8 +179,12 @@ namespace Challenges
                                 // update key of dependencies to match key of given blueprint
                                 for (int i = 0; i < kvp.Value.Dependencies.Count; i++)
                                 {
+                                    // check if a dot already exists and skip
+                                    if (kvp.Value.Dependencies[i].Contains('.')) continue;
                                     kvp.Value.Dependencies[i] = $"{Path.GetFileNameWithoutExtension(file).ToLower()}.{kvp.Value.Dependencies[i]}";
                                 }
+                                // add key to blueprint
+                                kvp.Value.Key = $"{Path.GetFileNameWithoutExtension(file).ToLower()}.{kvp.Key}";
                                 // add blueprint to available challenges
                                 _availableChallenges.Blueprints.Add(
                                     $"{Path.GetFileNameWithoutExtension(file).ToLower()}.{kvp.Key}",
@@ -194,6 +198,21 @@ namespace Challenges
                         Console.WriteLine(Localizer["core.faultyconfig"].Value
                             .Replace("{config}", file)
                             .Replace("{error}", e.Message));
+                    }
+                }
+                // check if blueprints dependencies are valid (and remove blueprint with invalid dependencies)
+                foreach (var kvp in _availableChallenges.Blueprints)
+                {
+                    for (int i = 0; i < kvp.Value.Dependencies.Count; i++)
+                    {
+                        if (!_availableChallenges.Blueprints.ContainsKey(kvp.Value.Dependencies[i]))
+                        {
+                            Console.WriteLine(Localizer["core.faultyconfig"].Value
+                                .Replace("{config}", kvp.Value.Key)
+                                .Replace("{error}", $"dependency {kvp.Value.Dependencies[i]} is missing. Removing blueprint."));
+                            _availableChallenges.Blueprints.Remove(kvp.Key);
+                            break;
+                        }
                     }
                 }
             }

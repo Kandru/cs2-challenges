@@ -30,6 +30,8 @@ namespace Challenges
                     // set current challenge
                     _currentSchedule.Title = kvp.Value.Title;
                     _currentSchedule.Key = kvp.Key;
+                    _currentSchedule.StartDate = kvp.Value.StartDate;
+                    _currentSchedule.EndDate = kvp.Value.EndDate;
                     // use unique key combinations to avoid having the same key for different challenges
                     // this will reset the challenge on change of date or title which is intentional
                     using (var sha256 = System.Security.Cryptography.SHA256.Create())
@@ -113,21 +115,10 @@ namespace Challenges
                     continue;
                 }
                 // check if the user can attend the challenge because of dependencies which have to be completed first
-                if (kvp.Value.Dependencies.Count > 0)
+                if (!CanChallengeBeCompleted(kvp.Value, player))
                 {
-                    bool canCompleted = true;
-                    foreach (var dependency in kvp.Value.Dependencies)
-                    {
-                        if (!_playerConfigs[player.NetworkIDString].Challenges.ContainsKey(_currentSchedule.Key)
-                            || !_playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key].ContainsKey(dependency)
-                            || _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key][dependency].Amount < _availableChallenges.Blueprints[dependency].Amount)
-                        {
-                            DebugPrint($"user {player.NetworkIDString} has not completed dependency {dependency} for challenge {kvp.Key}");
-                            canCompleted = false;
-                            break;
-                        }
-                    }
-                    if (!canCompleted) continue;
+                    DebugPrint($"user {player.NetworkIDString} has not completed dependencies for challenge {kvp.Key}");
+                    continue;
                 }
                 // check if the user can attend the challenge because of a possible cooldown
                 if (_playerConfigs[player.NetworkIDString].Challenges.ContainsKey(_currentSchedule.Key)
