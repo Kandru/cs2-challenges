@@ -26,7 +26,7 @@ namespace Challenges
                     || player.IsBot
                     || !_playerConfigs.ContainsKey(player.NetworkIDString)
                     || (player.TeamNum != (int)CsTeam.CounterTerrorist && player.TeamNum != (int)CsTeam.Terrorist)) continue;
-                AddTimer(0.1f, () =>
+                AddTimer(0.3f, () =>
                 {
                     if (player == null
                     || !player.IsValid) return;
