@@ -11,7 +11,9 @@ Each json file needs to be structured as follows and can contain multiple bluepr
 ```json
 {
 	"YourUniqueChallengeName": {
-		"title": "My Unique Challenge ({count} / {total})",
+		"title": {
+			"en": "My Unique Challenge ({count} / {total})"
+		},
 		"type": "player_jump",
 		"amount": 10,
 		"cooldown": 0,
@@ -35,7 +37,9 @@ Each json file needs to be structured as follows and can contain multiple bluepr
 
 ### title
 
-The title is what the player can see on the upper right (currently not translated). You can also include the parameters *{count}* and *{total}* to show the current and necessary amount of the events to happen until this challenge is completed.
+The title is what the player can see on the upper right in the GUI per default or in the text chat once progress was made or the achievement was completed. You can also include the parameters *{count}* and *{total}* to show the current and necessary amount of the events to happen until this challenge is completed.
+
+The default language is the players language (changeable with !lang en/de/...). If that language is not available it will fall back to the servers language (change this default in the CounterstrikeSharp settings json). If this is also not available the first entry of the list will be chosen.
 
 ### type
 
