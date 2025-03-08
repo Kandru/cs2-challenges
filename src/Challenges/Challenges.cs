@@ -375,7 +375,6 @@ namespace Challenges
             if (@event.Text.StartsWith("!lang", StringComparison.OrdinalIgnoreCase))
             {
                 // redraw gui
-                HideGui(player);
                 Server.NextFrame(() =>
                 {
                     if (player == null

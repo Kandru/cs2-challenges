@@ -16,5 +16,6 @@
     "challenges.progress": "{default}Challenge Progress: {green}{challenge}",
     "challenges.completed.all": "Everything completed <3",
     "challenges.completed.user": "{default}Challenge Completed: {green}{challenge}",
+    "challenges.deleted": "{default}Challenge deleted: {green}{challenge}",
     "challenges.completed.other": "{green}{player} {default}completed challenge: {green}{challenge}"
 }

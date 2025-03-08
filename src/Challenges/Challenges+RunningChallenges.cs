@@ -184,7 +184,6 @@ namespace Challenges
                 // give points if all rules are met
                 if (compliedWithRules)
                 {
-                    DebugPrint($"user {player.NetworkIDString} has mastered a step of challenge {kvp.Key}");
                     // add schedule key for player if not exists
                     if (!_playerConfigs[player.NetworkIDString].Challenges.ContainsKey(_currentSchedule.Key))
                     {
@@ -234,7 +233,7 @@ namespace Challenges
                                 }
                             });
                         }
-                        // send event to other plugins
+                        // prepare event data
                         var eventData = new Dictionary<string, Dictionary<string, string>>
                         {
                             ["info"] = new Dictionary<string, string>
@@ -250,6 +249,9 @@ namespace Challenges
                         {
                             eventData.Add(kvp2.Key, kvp2.Value);
                         }
+                        // send event to this plugin
+                        OnChallengeCompletion(player, kvp.Value, eventData);
+                        // send event to other plugins
                         TriggerEvent(new PlayerCompletedChallengeEvent(player, eventData));
                     }
                     else
