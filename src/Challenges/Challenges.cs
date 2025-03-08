@@ -1,4 +1,5 @@
 ﻿using ChallengesShared;
+using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Capabilities;
 using CounterStrikeSharp.API.Modules.Extensions;
@@ -24,6 +25,7 @@ namespace Challenges
             RegisterListener<Listeners.OnServerHibernationUpdate>(OnServerHibernationUpdate);
             RegisterListener<Listeners.OnMapStart>(OnMapStart);
             RegisterListener<Listeners.OnMapEnd>(OnMapEnd);
+            RegisterEventHandler<EventPlayerChat>(OnPlayerChatCommand);
             RegisterEventHandler<EventRoundStart>(OnRoundStart);
             RegisterEventHandler<EventRoundEnd>(OnRoundEnd);
             // player events
@@ -62,6 +64,7 @@ namespace Challenges
             RemoveListener<Listeners.OnMapEnd>(OnMapEnd);
             DeregisterEventHandler<EventRoundStart>(OnRoundStart);
             DeregisterEventHandler<EventRoundEnd>(OnRoundEnd);
+            DeregisterEventHandler<EventPlayerChat>(OnPlayerChatCommand);
             // player events
             DeregisterEventHandler<EventPlayerConnectFull>(OnPlayerConnectFull);
             DeregisterEventHandler<EventPlayerDisconnect>(OnPlayerDisconnect);
@@ -360,6 +363,32 @@ namespace Challenges
             || player.IsBot) return HookResult.Continue;
             // show GUIs
             ShowGuiOnSpawn(player);
+            return HookResult.Continue;
+        }
+
+        private HookResult OnPlayerChatCommand(EventPlayerChat @event, GameEventInfo info)
+        {
+            CCSPlayerController? player = Utilities.GetPlayerFromUserid(@event.Userid);
+            if (player == null
+                || !player.IsValid
+                || player.IsBot) return HookResult.Continue;
+            if (@event.Text.StartsWith("!lang", StringComparison.OrdinalIgnoreCase))
+            {
+                // redraw gui
+                HideGui(player);
+                Server.NextFrame(() =>
+                {
+                    if (player == null
+                        || !player.IsValid
+                        || !_playerConfigs.ContainsKey(player.NetworkIDString)) return;
+                    float duration = _playerConfigs[player.NetworkIDString].Settings.Challenges.ShowAlways
+                        ? 0
+                        : Config.GUI.OnRoundStartDuration;
+                    ShowGui(player, duration);
+                });
+                return HookResult.Continue;
+            }
+            // redraw GUI
             return HookResult.Continue;
         }
     }
