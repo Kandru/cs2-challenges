@@ -200,46 +200,38 @@ namespace Challenges
                     if (_playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key][kvp.Key].Amount >= kvp.Value.Amount)
                     {
                         DebugPrint($"user {player.NetworkIDString} has completed challenge {kvp.Key}");
-                        // notify user about completion
-                        if (Config.Notifications.NotifyPlayerOnChallengeComplete && kvp.Value.AnnounceCompletion)
+                        // notify players about completion
+                        if (kvp.Value.AnnounceCompletion)
                         {
                             Server.NextFrame(() =>
                             {
-                                string message = Localizer["challenges.completed.user"].Value
-                                    .Replace("{challenge}",
-                                        kvp.Value.Title.TryGetValue(PlayerLanguageExtensions.GetLanguage(player).TwoLetterISOLanguageName, out var title)
-                                        ? title
-                                        : kvp.Value.Title.First().Value);
-                                player.PrintToChat(
-                                    message
-                                        .Replace("{total}", kvp.Value.Amount.ToString())
-                                        .Replace("{count}", kvp.Value.Amount.ToString())
-                                );
-                            });
-                        }
-                        // notify other players about completion
-                        if (Config.Notifications.NotifyOtherOnChallengeComplete && kvp.Value.AnnounceCompletion)
-                        {
-                            string message = Localizer["challenges.completed.other"].Value
-                                    .Replace("{challenge}",
-                                        kvp.Value.Title.ContainsKey(PlayerLanguageExtensions.GetLanguage(player).TwoLetterISOLanguageName)
-                                        ? kvp.Value.Title[PlayerLanguageExtensions.GetLanguage(player).TwoLetterISOLanguageName]
-                                        : kvp.Value.Title.First().Value);
-                            SendGlobalChatMessage(
-                                message: message
+                                if (player == null
+                                    || !player.IsValid) return;
+                                foreach (CCSPlayerController entry in Utilities.GetPlayers())
+                                {
+                                    if (entry == null
+                                    || !entry.IsValid
+                                    || entry.IsBot
+                                    || (entry == player && !Config.Notifications.NotifyPlayerOnChallengeComplete)
+                                    || (entry != player && !Config.Notifications.NotifyOtherOnChallengeComplete)) continue;
+                                    string message = "";
+                                    if (entry == player)
+                                        message = LocalizerExtensions.ForPlayer(Localizer, entry, "challenges.completed.user");
+                                    else
+                                        message = LocalizerExtensions.ForPlayer(Localizer, entry, "challenges.completed.other");
+                                    entry.PrintToChat(message.Replace("{challenge}", GetChallengeTitle(kvp.Value, player))
+                                    .Replace("{player}", player.PlayerName)
                                     .Replace("{total}", kvp.Value.Amount.ToString())
-                                    .Replace("{count}", kvp.Value.Amount.ToString()),
-                                player: player
-                            );
+                                    .Replace("{count}", kvp.Value.Amount.ToString()));
+                                }
+                            });
                         }
                         // send event to other plugins
                         var eventData = new Dictionary<string, Dictionary<string, string>>
                         {
                             ["info"] = new Dictionary<string, string>
                             {
-                                { "title", kvp.Value.Title.TryGetValue(PlayerLanguageExtensions.GetLanguage(player).TwoLetterISOLanguageName, out var title)
-                                            ? title
-                                            : kvp.Value.Title.First().Value },
+                                { "title", GetChallengeTitle(kvp.Value, player) },
                                 { "type", kvp.Value.Type },
                                 { "amount", kvp.Value.Amount.ToString() },
                                 { "cooldown", kvp.Value.Cooldown.ToString() }
@@ -259,16 +251,13 @@ namespace Challenges
                         {
                             Server.NextFrame(() =>
                             {
-                                string message = Localizer["challenges.progress"].Value
-                                    .Replace("{challenge}",
-                                        kvp.Value.Title.TryGetValue(PlayerLanguageExtensions.GetLanguage(player).TwoLetterISOLanguageName, out var title)
-                                        ? title
-                                        : kvp.Value.Title.First().Value);
-                                player.PrintToChat(
-                                    message
+                                if (player == null
+                                    || !player.IsValid) return;
+                                string message = LocalizerExtensions.ForPlayer(Localizer, player, "challenges.progress")
+                                        .Replace("{challenge}", GetChallengeTitle(kvp.Value, player))
                                         .Replace("{total}", kvp.Value.Amount.ToString())
-                                        .Replace("{count}", _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key][kvp.Key].Amount.ToString())
-                                );
+                                        .Replace("{count}", kvp.Value.Amount.ToString());
+                                player.PrintToChat(message);
                             });
                         }
                         // send event to other plugins
@@ -276,9 +265,7 @@ namespace Challenges
                         {
                             ["info"] = new Dictionary<string, string>
                             {
-                                { "title", kvp.Value.Title.TryGetValue(PlayerLanguageExtensions.GetLanguage(player).TwoLetterISOLanguageName, out var title)
-                                            ? title
-                                            : kvp.Value.Title.First().Value },
+                                { "title", GetChallengeTitle(kvp.Value, player) },
                                 { "type", kvp.Value.Type },
                                 { "current_amount", _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key][kvp.Key].Amount.ToString() },
                                 { "total_amount", kvp.Value.Amount.ToString() },

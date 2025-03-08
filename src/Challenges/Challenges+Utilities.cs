@@ -1,5 +1,5 @@
-using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Core.Translations;
 
 namespace Challenges
 {
@@ -13,28 +13,29 @@ namespace Challenges
             }
         }
 
-        private void SendGlobalChatMessage(string message, float delay = 0, CCSPlayerController? player = null)
-        {
-            DebugPrint(message);
-            foreach (CCSPlayerController entry in Utilities.GetPlayers())
-            {
-                if (entry == null || !entry.IsValid || entry.IsBot || entry == player) continue;
-                if (delay > 0)
-                    AddTimer(delay, () =>
-                    {
-                        if (entry == null || !entry.IsValid) return;
-                        entry.PrintToChat(message);
-                    });
-                else
-                    entry.PrintToChat(message);
-            }
-        }
-
         private long GetUnixTimestamp(DateTime? currentTime = null)
         {
             if (currentTime == null)
                 currentTime = DateTime.UtcNow;
             return ((DateTimeOffset)currentTime).ToUnixTimeSeconds();
+        }
+
+        private static string GetChallengeTitle(ChallengesBlueprint challenge, CCSPlayerController player)
+        {
+            return challenge.Title.TryGetValue(PlayerLanguageExtensions.GetLanguage(player).TwoLetterISOLanguageName, out var userTitle)
+                ? userTitle
+                : (challenge.Title.TryGetValue(CoreConfig.ServerLanguage, out var serverTitle)
+                    ? serverTitle
+                    : challenge.Title.First().Value);
+        }
+
+        private static string GetScheduleTitle(RunningChallengeSchedule challenge, CCSPlayerController player)
+        {
+            return challenge.Title.TryGetValue(PlayerLanguageExtensions.GetLanguage(player).TwoLetterISOLanguageName, out var userTitle)
+                ? userTitle
+                : (challenge.Title.TryGetValue(CoreConfig.ServerLanguage, out var serverTitle)
+                    ? serverTitle
+                    : challenge.Title.First().Value);
         }
     }
 }
