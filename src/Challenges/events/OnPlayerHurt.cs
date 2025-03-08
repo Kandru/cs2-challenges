@@ -10,18 +10,10 @@ namespace Challenges
             CCSPlayerController? victim = @event.Userid;
             if (attacker != null && !_playerConfigs.ContainsKey(attacker.NetworkIDString)
                 && victim != null && !_playerConfigs.ContainsKey(victim.NetworkIDString)) return HookResult.Continue;
-            // create challenge data
-            Dictionary<string, string> challengeData = new Dictionary<string, string>
-            {
-                { "isduringround", _isDuringRound.ToString() },
+            // build challenge data
+            var challengeData = new Dictionary<string, string>{
                 { "isteamdamage", attacker != null && victim != null ? (attacker.TeamNum == victim.TeamNum).ToString() : "false" },
                 { "isselfdamage", (attacker == victim).ToString() },
-                { "attacker", attacker != null && attacker.IsValid ? attacker.PlayerName : "" },
-                { "attacker_isbot", attacker != null && attacker.IsValid ? attacker.IsBot.ToString() : "" },
-                { "attacker_team", attacker != null && attacker.IsValid ? attacker.Team.ToString() : "" },
-                { "victim", victim != null && victim.IsValid ? victim.PlayerName : "" },
-                { "victim_isbot", victim != null && victim.IsValid ? victim.IsBot.ToString() : "" },
-                { "victim_team", victim != null && victim.IsValid ? victim.Team.ToString() : "" },
                 { "dmghealth", @event.DmgHealth.ToString() },
                 { "dmgarmor", @event.DmgArmor.ToString() },
                 { "health", @event.Health.ToString() },
@@ -29,6 +21,11 @@ namespace Challenges
                 { "hitgroup", @event.Hitgroup.ToString() },
                 { "weapon", @event.Weapon },
             };
+            // merge global data
+            foreach (var item in GetGlobalEventData()) challengeData[item.Key] = item.Value;
+            // add player data
+            foreach (var item in GetCCSPlayerControllerProperties(attacker, "attacker")) challengeData[item.Key] = item.Value;
+            foreach (var item in GetCCSPlayerControllerProperties(victim, "victim")) challengeData[item.Key] = item.Value;
             // check attacker for challenge
             CheckChallengeGoal(attacker, "player_hurt_attacker", challengeData);
             // check victim for challenge

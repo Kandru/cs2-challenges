@@ -7,15 +7,18 @@ namespace Challenges
     {
         private HookResult OnHostageRescuedAll(EventHostageRescuedAll @event, GameEventInfo info)
         {
+            // build challenge data
+            var challengeData = new Dictionary<string, string>();
+            // merge global data
+            foreach (var item in GetGlobalEventData()) challengeData[item.Key] = item.Value;
             // check all players for challenge
             foreach (CCSPlayerController entry in Utilities.GetPlayers())
-                CheckChallengeGoal(entry, "hostage_rescued_all", new Dictionary<string, string>
-                {
-                    { "isduringround", _isDuringRound.ToString() },
-                    { "player", entry.PlayerName },
-                    { "player_isbot", entry.IsBot.ToString() },
-                    { "player_team", entry.Team.ToString() }
-                });
+            {
+                // add player data
+                foreach (var item in GetCCSPlayerControllerProperties(entry, "player")) challengeData[item.Key] = item.Value;
+                // check challenge
+                CheckChallengeGoal(entry, "hostage_rescued_all", challengeData);
+            }
             return HookResult.Continue;
         }
     }

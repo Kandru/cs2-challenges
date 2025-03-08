@@ -14,21 +14,10 @@ namespace Challenges
                 && victim != null && !_playerConfigs.ContainsKey(victim.NetworkIDString)) return HookResult.Continue;
             // hide GUI for victim
             if (victim != null && victim.IsValid) HideGui(victim);
-            // create challenge data
-            Dictionary<string, string> challengeData = new Dictionary<string, string>
-            {
-                { "isduringround", _isDuringRound.ToString() },
+            // build challenge data
+            var challengeData = new Dictionary<string, string>{
                 { "isteamkill", attacker != null && victim != null ? (attacker.TeamNum == victim.TeamNum).ToString() : "false" },
                 { "isselfkill", (attacker == victim).ToString() },
-                { "attacker", attacker != null && attacker.IsValid ? attacker.PlayerName : "" },
-                { "attacker_isbot", attacker != null && attacker.IsValid ? attacker.IsBot.ToString() : "" },
-                { "attacker_team", attacker != null && attacker.IsValid ? attacker.Team.ToString() : "" },
-                { "assister", assister != null && assister.IsValid ? assister.PlayerName : "" },
-                { "assister_isbot", assister != null && assister.IsValid ? assister.IsBot.ToString() : "" },
-                { "assister_team", assister != null && assister.IsValid ? assister.Team.ToString() : "" },
-                { "victim", victim != null && victim.IsValid ? victim.PlayerName : "" },
-                { "victim_isbot", victim != null && victim.IsValid ? victim.IsBot.ToString() : "" },
-                { "victim_team", victim != null && victim.IsValid ? victim.Team.ToString() : "" },
                 { "assistedflash", @event.Assistedflash.ToString() },
                 { "attackerblind", @event.Attackerblind.ToString() },
                 { "attackerinair", @event.Attackerinair.ToString() },
@@ -45,6 +34,12 @@ namespace Challenges
                 { "weapon", @event.Weapon },
                 { "weaponitemid", @event.WeaponItemid }
             };
+            // merge global data
+            foreach (var item in GetGlobalEventData()) challengeData[item.Key] = item.Value;
+            // add player data
+            foreach (var item in GetCCSPlayerControllerProperties(attacker, "attacker")) challengeData[item.Key] = item.Value;
+            foreach (var item in GetCCSPlayerControllerProperties(assister, "assister")) challengeData[item.Key] = item.Value;
+            foreach (var item in GetCCSPlayerControllerProperties(victim, "victim")) challengeData[item.Key] = item.Value;
             // check assister for challenge
             CheckChallengeGoal(assister, "player_kill_assist", challengeData);
             // check attacker for challenge

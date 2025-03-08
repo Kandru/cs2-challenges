@@ -11,20 +11,22 @@ namespace Challenges
             if (player == null
                 || !player.IsValid
                 || !_playerConfigs.ContainsKey(player.NetworkIDString)) return HookResult.Continue;
-            // check all players for challenge
+            // build challenge data
+            var challengeData = new Dictionary<string, string>{
+                { "bomb_site", @event.Site.ToString() }
+            };
+            // merge global data
+            foreach (var item in GetGlobalEventData()) challengeData[item.Key] = item.Value;
+            // add player data
+            foreach (var item in GetCCSPlayerControllerProperties(player, "defuser")) challengeData[item.Key] = item.Value;
+            // check challenge
             foreach (CCSPlayerController entry in Utilities.GetPlayers())
-                CheckChallengeGoal(player, "bomb_defused", new Dictionary<string, string>
-                {
-                    { "isduringround", _isDuringRound.ToString() },
-                    { "defuser", player.PlayerName },
-                    { "defuser_isbot", player.IsBot.ToString() },
-                    { "defuser_team", player.Team.ToString() },
-                    { "player", entry.PlayerName },
-                    { "player_isbot", entry.IsBot.ToString() },
-                    { "player_team", entry.Team.ToString() },
-                    { "player_is_defuser", player == entry ? "true" : "false" },
-                    { "bomb_site", @event.Site.ToString() }
-                });
+            {
+                // add player data
+                foreach (var item in GetCCSPlayerControllerProperties(entry, "player")) challengeData[item.Key] = item.Value;
+                challengeData["player_is_defuser"] = player == entry ? "true" : "false";
+                CheckChallengeGoal(player, "bomb_defused", challengeData);
+            }
             return HookResult.Continue;
         }
     }

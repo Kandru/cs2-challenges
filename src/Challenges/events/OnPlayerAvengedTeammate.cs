@@ -10,18 +10,15 @@ namespace Challenges
             CCSPlayerController? victim = @event.AvengedPlayerId;
             if (avenger != null && !_playerConfigs.ContainsKey(avenger.NetworkIDString)
                 && victim != null && !_playerConfigs.ContainsKey(victim.NetworkIDString)) return HookResult.Continue;
-            // create challenge data
-            Dictionary<string, string> challengeData = new Dictionary<string, string>
-            {
-                { "isduringround", _isDuringRound.ToString() },
+            // build challenge data
+            var challengeData = new Dictionary<string, string>{
                 { "isselfavenged", (avenger == victim).ToString() },
-                { "avenger", avenger != null && avenger.IsValid ? avenger.PlayerName : "" },
-                { "avenger_isbot", avenger != null && avenger.IsValid ? avenger.IsBot.ToString() : "" },
-                { "avenger_team", avenger != null && avenger.IsValid ? avenger.Team.ToString() : "" },
-                { "victim", victim != null && victim.IsValid ? victim.PlayerName : ""},
-                { "victim_isbot", victim != null && victim.IsValid ? victim.IsBot.ToString() : ""},
-                { "victim_team", victim != null && victim.IsValid ? victim.Team.ToString() : ""}
             };
+            // merge global data
+            foreach (var item in GetGlobalEventData()) challengeData[item.Key] = item.Value;
+            // add player data
+            foreach (var item in GetCCSPlayerControllerProperties(avenger, "avenger")) challengeData[item.Key] = item.Value;
+            foreach (var item in GetCCSPlayerControllerProperties(victim, "victim")) challengeData[item.Key] = item.Value;
             // check avenger for challenge
             CheckChallengeGoal(avenger, "player_has_avenged_teammate", challengeData);
             // check victim for challenge

@@ -10,15 +10,16 @@ namespace Challenges
             if (player == null
                 || !player.IsValid
                 || !_playerConfigs.ContainsKey(player.NetworkIDString)) return HookResult.Continue;
-            // check avenger for challenge
-            CheckChallengeGoal(player, "hostage_stops_following", new Dictionary<string, string>
-            {
-                { "isduringround", _isDuringRound.ToString() },
-                { "player", player.PlayerName },
-                { "player_isbot", player.IsBot.ToString() },
-                { "player_team", player.Team.ToString() },
+            // build challenge data
+            var challengeData = new Dictionary<string, string>{
                 { "hostage", @event.Hostage.ToString() }
-            });
+            };
+            // merge global data
+            foreach (var item in GetGlobalEventData()) challengeData[item.Key] = item.Value;
+            // add player data
+            foreach (var item in GetCCSPlayerControllerProperties(player, "player")) challengeData[item.Key] = item.Value;
+            // check challenge
+            CheckChallengeGoal(player, "hostage_stops_following", challengeData);
             return HookResult.Continue;
         }
     }
