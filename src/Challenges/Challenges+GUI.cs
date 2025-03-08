@@ -10,7 +10,9 @@ namespace Challenges
     {
         private void ShowGuiOnRoundStart()
         {
-            if (!Config.Enabled || !_isDuringRound || !Config.GUI.ShowOnRoundStart) return;
+            if (!Config.Enabled
+                || !_isDuringRound
+                || !Config.GUI.ShowOnRoundStart) return;
             int freezeTime = 0;
             ConVar? mpFreezeTime = ConVar.Find("mp_freezetime");
             if (mpFreezeTime != null)

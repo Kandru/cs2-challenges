@@ -1,3 +1,4 @@
+using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Translations;
 
@@ -11,6 +12,11 @@ namespace Challenges
             {
                 Console.WriteLine(Localizer["core.debugprint"].Value.Replace("{message}", message));
             }
+        }
+
+        private CCSGameRules? GetGameRules()
+        {
+            return Utilities.FindAllEntitiesByDesignerName<CCSGameRulesProxy>("cs_gamerules").First().GameRules;
         }
 
         private long GetUnixTimestamp(DateTime? currentTime = null)

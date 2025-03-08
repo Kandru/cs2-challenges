@@ -40,6 +40,14 @@ namespace Challenges
             {
                 // load player configs
                 LoadActivePlayerConfigs();
+                // check if it is during a round (no matter if warmup or not, simply not in between a round or end of match)
+                if (GetGameRules()?.GamePhase <= 3)
+                {
+                    // set variables
+                    _isDuringRound = true;
+                    // show GUIs
+                    ShowGuiOnRoundStart();
+                }
                 Console.WriteLine(Localizer["core.hotreload"]);
             }
         }
