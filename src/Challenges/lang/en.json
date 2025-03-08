@@ -14,6 +14,7 @@
     "command.showgui": "[Challenges] {default}Opened challenges popup",
     "command.hidegui": "[Challenges] {default}Closed challenges popup",
     "challenges.progress": "{default}Challenge Progress: {green}{challenge}",
+    "challenges.completed.all": "Everything completed <3",
     "challenges.completed.user": "{default}Challenge Completed: {green}{challenge}",
     "challenges.completed.other": "{green}{player} {default}completed challenge: {green}{challenge}"
 }

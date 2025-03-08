@@ -1,5 +1,6 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Core.Translations;
 using CounterStrikeSharp.API.Modules.Cvars;
 using CounterStrikeSharp.API.Modules.Utils;
 using System.Drawing;
@@ -92,9 +93,8 @@ namespace Challenges
                     bool isFinished = challenge.Amount >= kvp.Value.Amount;
                     if (isFinished) finishedChallenges++;
 
-                    // display only unfinished challenges or all if they are less or equal than the maximum
-                    if (displayedChallenges < Config.GUI.DisplayMaximum && !isFinished
-                        || challenges.Count <= Config.GUI.DisplayMaximum)
+                    // display only unfinished challenges
+                    if (displayedChallenges < Config.GUI.DisplayMaximum && !isFinished)
                     {
                         string tmpMessage = $"\n{GetChallengeTitle(kvp.Value, player)}"
                             .Replace("{total}", kvp.Value.Amount.ToString("N0"))
@@ -105,9 +105,8 @@ namespace Challenges
                 }
                 else
                 {
-                    // display only unfinished challenges or all if they are less or equal than the maximum
-                    if (displayedChallenges < Config.GUI.DisplayMaximum
-                        || challenges.Count <= Config.GUI.DisplayMaximum)
+                    // display not started challenges
+                    if (displayedChallenges < Config.GUI.DisplayMaximum)
                     {
                         string tmpMessage = $"\n{GetChallengeTitle(kvp.Value, player)}"
                             .Replace("{total}", kvp.Value.Amount.ToString("N0"))
@@ -117,6 +116,7 @@ namespace Challenges
                     }
                 }
             }
+            if (displayedChallenges == 0) message += "\n" + LocalizerExtensions.ForPlayer(Localizer, player, "challenges.completed.all");
             // replace title with actual values
             message = message.Replace(
                 "{challenges_title}", GetScheduleTitle(_currentSchedule, player)

@@ -14,6 +14,7 @@
     "command.showgui": "[Spielsitzung] {default}Herausforderungsfenster geöffnet",
     "command.hidegui": "[Spielsitzung] {default}Herausforderungsfenster geschlossen",
     "challenges.progress": "{default}Fortschritt: {green}{challenge}",
+    "challenges.completed.all": "Alles abgeschlossen <3",
     "challenges.completed.user": "{default}Herausforderung abgeschlossen: {green}{challenge}",
     "challenges.completed.other": "{green}{player} {default}hat die Herausforderung abgeschlossen: {green}{challenge}"
 }
