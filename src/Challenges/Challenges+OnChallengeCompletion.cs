@@ -25,19 +25,19 @@ namespace Challenges
             // check if player has progress for this challenge and delete it
             if (player == null
                 || !_playerConfigs.ContainsKey(player.NetworkIDString)
+                || !_currentSchedule.Challenges.ContainsKey(challengeKey)
                 || !_playerConfigs[player.NetworkIDString].Challenges.ContainsKey(_currentSchedule.Key)
                 || !_playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key].ContainsKey(challengeKey)
                 || (_playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key][challengeKey].Amount
                     >= _currentSchedule.Challenges[challengeKey].Amount
-                    && !deleteCompleted)
-                || !_currentSchedule.Challenges.ContainsKey(challengeKey)) return;
+                    && !deleteCompleted)) return;
             Server.NextFrame(() =>
             {
                 if (player == null
                     || !_playerConfigs.ContainsKey(player.NetworkIDString)
+                    || !_currentSchedule.Challenges.ContainsKey(challengeKey)
                     || !_playerConfigs[player.NetworkIDString].Challenges.ContainsKey(_currentSchedule.Key)
-                    || !_playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key].ContainsKey(challengeKey)
-                    || !_currentSchedule.Challenges.ContainsKey(challengeKey)) return;
+                    || !_playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key].ContainsKey(challengeKey)) return;
                 // inform player only if challenge is not the same
                 if (challengeKey != challenge.Key)
                     player.PrintToChat(LocalizerExtensions.ForPlayer(Localizer, player, "challenges.deleted")
