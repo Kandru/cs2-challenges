@@ -17,6 +17,8 @@ Each json file needs to be structured as follows and can contain multiple bluepr
 		"type": "player_jump",
 		"amount": 10,
 		"cooldown": 0,
+		"is_visible": false,
+		"is_rule": true,
 		"announce_progress": true,
 		"announce_completion": true,
 		"data": {
@@ -51,7 +53,15 @@ How many times this event needs to occure to finish it. Should be reasonable for
 
 ### cooldown
 
-Tim in seconds before the event will be counted again. This way you can make it harder for a player (e.g. allow jumping only every 10 seconds).
+Time in seconds before the event will be counted again. This way you can make it harder for a player (e.g. allow jumping only every 10 seconds).
+
+### is_visible
+
+Whether this challenge should be visible for the player. If disabled the challenge can still be completed as normal but without any visible interaction for the player.
+
+### is_rule
+
+Whether this challenge is a rule. Rules are specific challenges which allow for reset of other challenges. The *title* of a rule will be shown to the user if activated! Rules should always have set *amount* to 1 and *announce_progress* as well as *announce_completion* should be set to false. Rules will be explained the rules section of this documentation.
 
 ### announce_progress
 
