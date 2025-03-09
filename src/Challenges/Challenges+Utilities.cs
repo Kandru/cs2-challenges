@@ -84,7 +84,7 @@ namespace Challenges
         {
             return new Dictionary<string, string>
             {
-                { "isduringround", _isDuringRound.ToString() }
+                { "global.isduringround", _isDuringRound.ToString() }
             };
         }
 
