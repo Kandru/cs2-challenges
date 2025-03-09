@@ -3,7 +3,6 @@
 > [!CAUTION]
 > This plugin is currently NOT ready for implementation by other plugins. DO NOT USE right now! Star this repository and look for updates.
 
-[![UpdateManager Compatible](https://img.shields.io/badge/CS2-UpdateManager-darkgreen)](https://github.com/Kandru/cs2-update-manager/)
 [![Discord Support](https://img.shields.io/discord/289448144335536138?label=Discord%20Support&color=darkgreen)](https://discord.gg/NtHCk5PWEt)
 [![GitHub release](https://img.shields.io/github/release/Kandru/cs2-challenges?include_prereleases=&sort=semver&color=blue)](https://github.com/Kandru/cs2-challenges/releases/)
 [![License](https://img.shields.io/badge/License-GPLv3-blue)](#license)
@@ -41,7 +40,7 @@ This plugin allow to create Challenges for players. Challenges are tasks a playe
 
 ## Plugin Update
 
-Simply overwrite all plugin files and they will be reloaded automatically or just use the [Update Manager](https://github.com/Kandru/cs2-update-manager/) itself for an easy automatic or manual update by using the *um update Challenges* command.
+Simply overwrite all plugin files and they will be reloaded automatically.
 
 ## Commands
 

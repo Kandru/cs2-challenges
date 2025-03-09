@@ -62,11 +62,11 @@ jobs:
       if: env.new_version == 'true'
       run: dotnet publish -c Release
 
-    - name: Prepare ${{ env.REPOSITORY_NAME }}.info
-      if: env.new_version == 'true'
-      run: |
-        echo "version: ${{ env.version }}" > /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_FOLDER }}/${{ env.PLUGIN_NAME }}/bin/Release/net8.0/publish/${{ env.PLUGIN_NAME }}.info
-        echo "repository: https://github.com/${{ github.repository }}" >> /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_FOLDER }}/${{ env.PLUGIN_NAME }}/bin/Release/net8.0/publish/${{ env.PLUGIN_NAME }}.info
+#    - name: Prepare ${{ env.REPOSITORY_NAME }}.info
+#      if: env.new_version == 'true'
+#      run: |
+#        echo "version: ${{ env.version }}" > /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_FOLDER }}/${{ env.PLUGIN_NAME }}/bin/Release/net8.0/publish/${{ env.PLUGIN_NAME }}.info
+#        echo "repository: https://github.com/${{ github.repository }}" >> /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_FOLDER }}/${{ env.PLUGIN_NAME }}/bin/Release/net8.0/publish/${{ env.PLUGIN_NAME }}.info
 
     - name: Prepare Release
       if: env.new_version == 'true'
