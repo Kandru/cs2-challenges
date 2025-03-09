@@ -2,10 +2,8 @@
 
 This blueprint is triggered when a player earns an achievement.
 
-## Available Parameters
+## Available rules
 
-- `isduringround` (bool): Whether a round is currently active
-- `player` (string): The player's name
-- `player_isbot` (bool): Whether the player is a bot
-- `player_team` (string): The player's team name
-- `achievement` (int): The achievement that was earned
+- [Event Data](GlobalEventData.md)
+- [Player Data](GlobalPlayerData.md): with prefix: *player*
+- `achievement (int)`: the achievement that was earned (TODO: link to achievement list)

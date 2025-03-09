@@ -2,14 +2,9 @@
 
 This blueprint is triggered when the bomb has been defused. **Each player on the server will get checked for this event!**.
 
-## Available Parameters
+## Available rules
 
-- `isduringround` (bool): Whether a round is currently active
-- `defuser` (string): The defuser's name
-- `defuser_isbot` (bool): Whether the defuser is a bot
-- `defuser_team` (string): The defuser's team name
-- `player` (string): The player's name
-- `player_isbot` (bool): Whether the player is a bot
-- `player_team` (string): The player's team name
-- `player_is_defuser` (bool): Whether the player is the defuser
-- `bomb_site` (int): bomb site
+- [Event Data](GlobalEventData.md)
+- [Player Data](GlobalPlayerData.md): with prefixes: *player*, *defuser*
+- `player_is_defuser (bool)`: if the player is the *defuser* who defused the bomb
+- `bomb_site (number)`: bomb site (TODO: link to bomb site list)

@@ -2,9 +2,8 @@
 
 This blueprint is triggered when 
 
-## Available Parameters
+## Available rules
 
-- `isduringround` (bool): Whether a round is currently active
-- `player` (string): The player's name
-- `player_isbot` (bool): Whether the player is a bot
-- `player_team` (string): The player's team name
+- [Event Data](GlobalEventData.md)
+- [Player Data](GlobalPlayerData.md): with prefix: *player*
+- `test (bool)`: test

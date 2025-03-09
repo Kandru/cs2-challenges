@@ -83,6 +83,13 @@ bool!= (not equal for bool values)
 contains (if the value of the rule contains a specific keyword)`
 ```
 
+## List of global rules
+
+Global rules are applicable for almost all events.
+
+- [Event Data](GlobalEventData.md)
+- [Player Data](GlobalPlayerData.md)
+
 ## List of events
 
 - [OnAchievementEarned](OnAchievementEarned.md)

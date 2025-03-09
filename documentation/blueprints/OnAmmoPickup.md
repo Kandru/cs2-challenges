@@ -2,10 +2,8 @@
 
 This blueprint is triggered when the player picks up ammo. Currently does not seem to work.
 
-## Available Parameters
+## Available rules
 
-- `isduringround` (bool): Whether a round is currently active
-- `player` (string): The player's name
-- `player_isbot` (bool): Whether the player is a bot
-- `player_team` (string): The player's team name
-- `item` (string): The type of ammo that was picked up
+- [Event Data](GlobalEventData.md)
+- [Player Data](GlobalPlayerData.md): with prefix: *player*
+- `item (string)`: the type of ammo that was picked up (TODO: link to ammo list)

@@ -2,10 +2,9 @@
 
 This blueprint is triggered when a player planted the bomb.
 
-## Available Parameters
+## Available rules
 
-- `isduringround` (bool): Whether a round is currently active
-- `player` (string): The player's name
-- `player_isbot` (bool): Whether the player is a bot
-- `player_team` (string): The player's team name
-- `bomb_site` (int): bomb site
+- [Event Data](GlobalEventData.md)
+- [Player Data](GlobalPlayerData.md): with prefixes: *player*, *planter*
+- `player_is_planter (bool)`: if the player is the *planter* who planted the bomb
+- `bomb_site (number)`: bomb site (TODO: link to bomb site list)

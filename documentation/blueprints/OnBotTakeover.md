@@ -1,6 +1,6 @@
-# OnBombBeginplant (player_bomb_beginplant)
+# OnBotTakeover (player_bot_takeover)
 
-This blueprint is triggered when a player started to plant the bomb.
+This blueprint is triggered when a player took over a bot.
 
 ## Available rules
 

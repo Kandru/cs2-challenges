@@ -1,0 +1,8 @@
+# Rule: Global Event Data
+
+The global event data consists of data which is applicable for (almost) all events.
+
+## Available rules
+
+- `global.iswarmup (bool)`: If the warmup mode is currently active
+- `global.isduringround (bool)`: If the round is currently active (both warmup and game rounds are counted)
