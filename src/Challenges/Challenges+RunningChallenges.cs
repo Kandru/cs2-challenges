@@ -208,7 +208,7 @@ namespace Challenges
                     {
                         DebugPrint($"user {player.NetworkIDString} has completed challenge {kvp.Key}");
                         // notify players about completion
-                        if (kvp.Value.AnnounceCompletion)
+                        if (kvp.Value.AnnounceCompletion && !kvp.Value.Rule)
                         {
                             Server.NextFrame(() =>
                             {
@@ -257,7 +257,7 @@ namespace Challenges
                     else
                     {
                         // notify user about progress
-                        if (Config.Notifications.NotifyPlayerOnChallengeProgress && kvp.Value.AnnounceProgress)
+                        if (Config.Notifications.NotifyPlayerOnChallengeProgress && kvp.Value.AnnounceProgress && !kvp.Value.Rule)
                         {
                             Server.NextFrame(() =>
                             {
