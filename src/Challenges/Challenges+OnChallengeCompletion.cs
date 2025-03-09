@@ -12,9 +12,12 @@ namespace Challenges
             // check if we have data for our own plugin
             if (!data.TryGetValue("Challenges", out var challengesData)) return;
             // notify player if challenge is a rule
-            player.PrintToChat(LocalizerExtensions.ForPlayer(Localizer, player, "challenges.rule.broken"));
-            player.PrintToChat(GetChallengeTitle(_currentSchedule.Challenges[challenge.Key], player));
-            player.PrintToCenterAlert(GetChallengeTitle(_currentSchedule.Challenges[challenge.Key], player));
+            if (challenge.Rule)
+            {
+                player.PrintToChat(LocalizerExtensions.ForPlayer(Localizer, player, "challenges.rule.broken"));
+                player.PrintToChat(GetChallengeTitle(_currentSchedule.Challenges[challenge.Key], player));
+                player.PrintToCenterAlert(GetChallengeTitle(_currentSchedule.Challenges[challenge.Key], player));
+            }
             // iterate through our data
             foreach (var kvp in challengesData)
             {
