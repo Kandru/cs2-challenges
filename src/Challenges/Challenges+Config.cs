@@ -75,6 +75,8 @@ namespace Challenges
                         {
                             _playerConfigs.Add(steamId, playerConfig);
                         }
+                        // set language if available
+                        LoadPlayerLanguage(steamId);
                     }
                     catch (Exception e)
                     {

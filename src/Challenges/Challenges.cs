@@ -338,8 +338,6 @@ namespace Challenges
             // update player data
             _playerConfigs[player.NetworkIDString].ClanTag = player.PlayerName;
             _playerConfigs[player.NetworkIDString].ClanTag = player.ClanName;
-            // set language if available
-            LoadPlayerLanguage(player.NetworkIDString);
             // bugfix: show empty worldtext on connect to allow instant display of worldtext entity
             WorldTextManager.Create(player, "");
             return HookResult.Continue;
