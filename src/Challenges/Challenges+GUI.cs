@@ -73,7 +73,7 @@ namespace Challenges
                 || player.PlayerPawn.Value.LifeState != (byte)LifeState_t.LIFE_ALIVE) return;
             // check for running challenges which can be completed
             var challenges = _currentSchedule.Challenges
-                .Where(kvp => CanChallengeBeCompleted(kvp.Value, player))
+                .Where(kvp => CanChallengeBeCompleted(kvp.Value, player) && kvp.Value.Visible)
                 .ToList();
             if (challenges.Count == 0) return;
             // build challenges message
