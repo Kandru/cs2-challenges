@@ -1,3 +1,4 @@
+using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 
 namespace Challenges
@@ -17,9 +18,16 @@ namespace Challenges
             // merge global data
             foreach (var item in GetGlobalEventData()) challengeData[item.Key] = item.Value;
             // add player data
-            foreach (var item in GetCCSPlayerControllerProperties(player, "player")) challengeData[item.Key] = item.Value;
+            foreach (var item in GetCCSPlayerControllerProperties(player, "planter")) challengeData[item.Key] = item.Value;
             // check challenge
-            CheckChallengeGoal(player, "player_bomb_planted", challengeData);
+            foreach (CCSPlayerController entry in Utilities.GetPlayers())
+            {
+                // add player data
+                foreach (var item in GetCCSPlayerControllerProperties(entry, "player")) challengeData[item.Key] = item.Value;
+                challengeData["player_is_planter"] = player == entry ? "true" : "false";
+                // check challenge
+                CheckChallengeGoal(player, "player_bomb_planted", challengeData);
+            }
             return HookResult.Continue;
         }
     }
