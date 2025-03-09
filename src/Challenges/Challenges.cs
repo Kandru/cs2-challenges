@@ -2,7 +2,9 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Capabilities;
+using CounterStrikeSharp.API.Core.Translations;
 using CounterStrikeSharp.API.Modules.Extensions;
+using System.Globalization;
 
 namespace Challenges
 {
@@ -12,6 +14,7 @@ namespace Challenges
         public override string ModuleAuthor => "Kalle <kalle@kandru.de>";
 
         private static PluginCapability<IChallengesEventSender> ChallengesEvents { get; } = new("challenges:events");
+        private readonly PlayerLanguageManager playerLanguageManager = new();
         private readonly Random _random = new Random(Guid.NewGuid().GetHashCode());
         private bool _isDuringRound = false;
 
@@ -335,6 +338,8 @@ namespace Challenges
             // update player data
             _playerConfigs[player.NetworkIDString].ClanTag = player.PlayerName;
             _playerConfigs[player.NetworkIDString].ClanTag = player.ClanName;
+            // set language if available
+            LoadPlayerLanguage(player.NetworkIDString);
             // bugfix: show empty worldtext on connect to allow instant display of worldtext entity
             WorldTextManager.Create(player, "");
             return HookResult.Continue;
@@ -374,7 +379,16 @@ namespace Challenges
                 || player.IsBot) return HookResult.Continue;
             if (@event.Text.StartsWith("!lang", StringComparison.OrdinalIgnoreCase))
             {
-                // redraw gui
+                // get language from command instead of player because it defaults to english all the time Oo
+                string? language = @event.Text.Split(' ').Skip(1).FirstOrDefault()?.Trim();
+                if (language == null
+                    || !CultureInfo.GetCultures(CultureTypes.AllCultures).Any(c => c.Name.Equals(language, StringComparison.OrdinalIgnoreCase)))
+                {
+                    return HookResult.Continue;
+                }
+                // set language for player
+                SavePlayerLanguage(player.NetworkIDString, language);
+                // delay one frame to ensure the language is set
                 Server.NextFrame(() =>
                 {
                     if (player == null

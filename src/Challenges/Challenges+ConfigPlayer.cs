@@ -22,6 +22,7 @@ namespace Challenges
     {
         [JsonPropertyName("username")] public string Username { get; set; } = "";
         [JsonPropertyName("clantag")] public string ClanTag { get; set; } = "";
+        [JsonPropertyName("language")] public string Language { get; set; } = "";
         [JsonPropertyName("challenges")] public Dictionary<string, Dictionary<string, PlayerConfigChallenges>> Challenges { get; set; } = [];
         [JsonPropertyName("settings")] public PlayerConfigSettings Settings { get; set; } = new();
     }

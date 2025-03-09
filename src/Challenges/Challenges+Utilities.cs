@@ -1,6 +1,7 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Translations;
+using CounterStrikeSharp.API.Modules.Entities;
 
 namespace Challenges
 {
@@ -24,6 +25,25 @@ namespace Challenges
             if (currentTime == null)
                 currentTime = DateTime.UtcNow;
             return ((DateTimeOffset)currentTime).ToUnixTimeSeconds();
+        }
+
+        private void LoadPlayerLanguage(string steamID)
+        {
+            if (!_playerConfigs.ContainsKey(steamID)
+                || _playerConfigs[steamID].Language == "") return;
+            playerLanguageManager.SetLanguage(
+                new SteamID(steamID),
+                new System.Globalization.CultureInfo(_playerConfigs[steamID].Language));
+        }
+
+        private void SavePlayerLanguage(string steamID, string language)
+        {
+            if (!_playerConfigs.ContainsKey(steamID)
+                || language == null
+                || language == "") return;
+            // set language for player
+            _playerConfigs[steamID].Language = language;
+            playerLanguageManager.SetLanguage(new SteamID(steamID), new System.Globalization.CultureInfo(language));
         }
 
         private static string GetChallengeTitle(ChallengesBlueprint challenge, CCSPlayerController player)
