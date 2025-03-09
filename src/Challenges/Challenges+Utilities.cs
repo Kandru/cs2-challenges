@@ -84,6 +84,7 @@ namespace Challenges
         {
             return new Dictionary<string, string>
             {
+                { "global.iswarmup", GetGameRules()?.WarmupPeriod.ToString() ?? "false" },
                 { "global.isduringround", _isDuringRound.ToString() }
             };
         }
