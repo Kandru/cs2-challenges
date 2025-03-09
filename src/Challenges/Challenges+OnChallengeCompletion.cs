@@ -57,7 +57,17 @@ namespace Challenges
 
         private void OnChallengeCompletionCompleteChallenge(CCSPlayerController player, string challengeKey)
         {
-
+            // check player and challenge exist
+            if (player == null
+                || !_playerConfigs.ContainsKey(player.NetworkIDString)
+                || !_currentSchedule.Challenges.ContainsKey(challengeKey)
+                || !_playerConfigs[player.NetworkIDString].Challenges.ContainsKey(_currentSchedule.Key)) return;
+            // set challenge as completed
+            _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key][challengeKey] = new PlayerConfigChallenges
+            {
+                Amount = _currentSchedule.Challenges[challengeKey].Amount,
+                LastUpdate = GetUnixTimestamp()
+            };
         }
     }
 }
