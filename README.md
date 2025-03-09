@@ -30,6 +30,7 @@ This plugin allow to create Challenges for players. Challenges are tasks a playe
 - [X] multi-langual titles
 - [ ] Link possible values for all rules in documentation
 - [X] Validate each blueprint (e.g. if title exists and something happens on completion)
+- [ ] hand all event game data over to third-party plugins
 
 ## Plugin Installation
 
