@@ -2,6 +2,9 @@
 
 This blueprint is triggered when the attacker hurt someone or the victim got hurt by an attacker.
 
+> [!CAUTION]
+> This event will trigger offen and could slow down the server with many players online!
+
 ## Available rules
 
 - [Event Data](GlobalEventData.md)
