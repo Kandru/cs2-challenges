@@ -8,6 +8,7 @@
 		"amount": 5,
 		"cooldown": 0,
 		"is_visible": true,
+		"is_rule": false,
 		"announce_progress": true,
 		"announce_completion": true,
 		"data": {
@@ -21,7 +22,7 @@
 		},
 		"rules": [
 			{
-				"key": "isduringround",
+				"key": "global.isduringround",
 				"operator": "bool==",
 				"value": "true"
 			},
@@ -60,7 +61,7 @@
 		},
 		"rules": [
 			{
-				"key": "isduringround",
+				"key": "global.isduringround",
 				"operator": "bool==",
 				"value": "true"
 			},
@@ -99,7 +100,7 @@
 		},
 		"rules": [
 			{
-				"key": "isduringround",
+				"key": "global.isduringround",
 				"operator": "bool==",
 				"value": "true"
 			},
@@ -122,6 +123,7 @@
 		"amount": 3,
 		"cooldown": 0,
 		"is_visible": true,
+		"is_rule": false,
 		"announce_progress": true,
 		"announce_completion": true,
 		"data": {
@@ -134,7 +136,7 @@
 		},
 		"rules": [
 			{
-				"key": "isduringround",
+				"key": "global.isduringround",
 				"operator": "bool==",
 				"value": "true"
 			},
@@ -171,7 +173,7 @@
 		},
 		"rules": [
 			{
-				"key": "isduringround",
+				"key": "global.isduringround",
 				"operator": "bool==",
 				"value": "true"
 			},

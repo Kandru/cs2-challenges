@@ -1,15 +1,14 @@
 # CounterstrikeSharp - Challenges
 
-> [!CAUTION]
-> This plugin is currently NOT ready for implementation by other plugins. DO NOT USE right now! Star this repository and look for updates.
-
 [![Discord Support](https://img.shields.io/discord/289448144335536138?label=Discord%20Support&color=darkgreen)](https://discord.gg/NtHCk5PWEt)
 [![GitHub release](https://img.shields.io/github/release/Kandru/cs2-challenges?include_prereleases=&sort=semver&color=blue)](https://github.com/Kandru/cs2-challenges/releases/)
 [![License](https://img.shields.io/badge/License-GPLv3-blue)](#license)
 [![issues - cs2-challenges](https://img.shields.io/github/issues/Kandru/cs2-challenges?color=darkgreen)](https://github.com/Kandru/cs2-challenges/issues)
 [![](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/donate/?hosted_button_id=C2AVYKGVP9TRG)
 
-This plugin allow to create Challenges for players. Challenges are tasks a player has to achieve in a given amount of time (e.g. daily, weekly, monthly). Each task can be defined around an event that happens in the game. For example, when a user kills somebody, you can create a Challenge that counts how many times this has happened with a headshot at a minimum distance of 15 meters. If it has happen 3 times, the player has the challenge finished successfully. Another CounterstrikeSharp plugin can then be notified to do something with it. This plugin only provides the interface for further actions after a challenge has been completed. It does not grant special items on its own.
+This plugin allows you to create Challenges for players. Challenges are tasks that players need to complete within a certain time frame (e.g., daily, weekly, monthly). Each task is based on an event in the game. For example, you can create a Challenge that tracks how many times a player kills an opponent with a headshot from at least 15 meters away. If the player achieves this 3 times, the Challenge is completed.
+
+Other CounterstrikeSharp plugins will then be notified to take further actions. This plugin only provides the interface for tracking and completing Challenges; it does not grant rewards on its own. So make sure to ask your favorite plug-in developer to build an integration for you.
 
 > [!TIP]
 > Please consider a [Donation](https://www.paypal.com/donate/?hosted_button_id=C2AVYKGVP9TRG) when you're using this plugin. It took me 40+ hours of development time to get to this state so far.
@@ -19,17 +18,23 @@ This plugin allow to create Challenges for players. Challenges are tasks a playe
 > [!IMPORTANT]  
 > Create an Github Issue for Bugs, Features and Improvements! Use our Discord Support-Channel for everything else!
 
-- [Blueprints](./documentation/blueprints/index.md)
+- [Blueprints](./documentation/blueprints.md)
+- [Rules](./documentation/rules.md)
 
-## Road map before publication
+## Features
+
+- Create custom challenges for your players.
+- Track challenge progress and completion, and send this data to other plugins.
+- Set challenges to depend on each other (e.g., complete one challenge to unlock another).
+- Define rules that can reset a challenge (e.g., make 10 headshots in a row, but reset if only 9 or less headshots are made).
+- Challenges GUI which can be opened with *!c* or *!challenges*
+- Player language chosen with *!lang en* gets saved and load again upon re-joining (no more setting !lang every map <3)
+
+## Road Map
 
 - [ ] Easy Webinterface to create your own Challenges
 - [ ] Add ability to spawn custom props on the map as a challenge
-- [ ] Add ability to see and use challenges after bot takeover
-- [X] Add ability to have dependencies for each challenge (e.g. user needs to complete challenge X before doing challenge Y)
-- [X] multi-langual titles
 - [ ] Link possible values for all rules in documentation
-- [X] Validate each blueprint (e.g. if title exists and something happens on completion)
 - [ ] hand all event game data over to third-party plugins
 
 ## Plugin Installation
