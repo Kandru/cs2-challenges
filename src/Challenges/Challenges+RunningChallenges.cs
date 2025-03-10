@@ -223,13 +223,22 @@ namespace Challenges
                                     || (entry != player && !Config.Notifications.NotifyOtherOnChallengeComplete)) continue;
                                     string message = "";
                                     if (entry == player)
+                                    {
+                                        // play sound if available
+                                        if (Config.Notifications.ChallengeCompleteSound != "")
+                                            player.ExecuteClientCommand($"play {Config.Notifications.ChallengeCompleteSound}");
+                                        // build user message
                                         message = LocalizerExtensions.ForPlayer(Localizer, entry, "challenges.completed.user");
+                                    }
                                     else
+                                    {
+                                        // build other message
                                         message = LocalizerExtensions.ForPlayer(Localizer, entry, "challenges.completed.other");
+                                    }
                                     entry.PrintToChat(message.Replace("{challenge}", GetChallengeTitle(kvp.Value, player))
-                                    .Replace("{player}", player.PlayerName)
-                                    .Replace("{total}", kvp.Value.Amount.ToString())
-                                    .Replace("{count}", kvp.Value.Amount.ToString()));
+                                        .Replace("{player}", player.PlayerName)
+                                        .Replace("{total}", kvp.Value.Amount.ToString())
+                                        .Replace("{count}", kvp.Value.Amount.ToString()));
                                 }
                             });
                         }
@@ -263,10 +272,14 @@ namespace Challenges
                             {
                                 if (player == null
                                     || !player.IsValid) return;
+                                // play sound if available
+                                if (Config.Notifications.ChallengeProgressSound != "")
+                                    player.ExecuteClientCommand($"play {Config.Notifications.ChallengeProgressSound}");
+                                // send progress message
                                 string message = LocalizerExtensions.ForPlayer(Localizer, player, "challenges.progress")
-                                        .Replace("{challenge}", GetChallengeTitle(kvp.Value, player))
-                                        .Replace("{total}", kvp.Value.Amount.ToString())
-                                        .Replace("{count}", _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key][kvp.Key].Amount.ToString());
+                                    .Replace("{challenge}", GetChallengeTitle(kvp.Value, player))
+                                    .Replace("{total}", kvp.Value.Amount.ToString())
+                                    .Replace("{count}", _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key][kvp.Key].Amount.ToString());
                                 player.PrintToChat(message);
                             });
                         }

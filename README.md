@@ -85,7 +85,9 @@ This plugin automatically creates a readable JSON configuration file. This confi
   "notifications": {
     "notify_player_on_challenge_progress": true,
     "notify_player_on_challenge_complete": true,
-    "notify_other_on_challenge_complete": true
+    "notify_other_on_challenge_complete": true,
+    "notification_sound_on_challenge_progress": "",
+    "notification_sound_on_challenge_complete": ""
   },
   "ConfigVersion": 1
 }

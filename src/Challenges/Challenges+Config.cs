@@ -29,6 +29,8 @@ namespace Challenges
         [JsonPropertyName("notify_player_on_challenge_progress")] public bool NotifyPlayerOnChallengeProgress { get; set; } = true;
         [JsonPropertyName("notify_player_on_challenge_complete")] public bool NotifyPlayerOnChallengeComplete { get; set; } = true;
         [JsonPropertyName("notify_other_on_challenge_complete")] public bool NotifyOtherOnChallengeComplete { get; set; } = true;
+        [JsonPropertyName("notification_sound_on_challenge_progress")] public string ChallengeProgressSound { get; set; } = "";
+        [JsonPropertyName("notification_sound_on_challenge_complete")] public string ChallengeCompleteSound { get; set; } = "";
     }
 
     public class PluginConfig : BasePluginConfig
