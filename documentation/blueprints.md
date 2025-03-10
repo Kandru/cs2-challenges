@@ -3,7 +3,7 @@
 
 # Blueprints Documentation
 
-Blueprints are in-game challenges that players can see and complete. You can create many challenges, but be aware that having too many active challenges at once might slow down the server.
+Blueprints are in-game challenges that players can see and complete. You can create many challenges, but be aware that having too many active challenges at once might slow down the server. The Challenges-Plugin tries to optimize this by disabling and enabling events only if they are actively used by a challenge.
 
 ## Blueprints file
 
@@ -20,7 +20,7 @@ For example:
 - Unique Challenge name: `YourUniqueChallengeName`
 - Resulting global identifier: `example:YourUniqueChallengeName`
 
-When the blueprint file is loaded into the Challenges-Plugin, it will be referenced by this global identifier. The *:* is reserved within the plugin. Do **NOT** use it for any challenge name or blueprint filename. Only use it *once* to set the blueprint filename of your identifier within the *actions* and/or *dependencies* whenever you are referencing to another file.
+When the blueprint file is loaded into the Challenges-Plugin, it will be referenced by this global identifier. The **":"** is reserved within the plugin. Do **NOT** use it for any challenge name or blueprint filename. Only use it *once* to set the blueprint filename of your identifier within the *actions* and/or *dependencies* whenever you are referencing to another file.
 
 Each JSON file should be structured as follows and can contain multiple blueprints, each with a unique name:
 
