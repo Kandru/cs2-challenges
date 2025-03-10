@@ -242,26 +242,33 @@ namespace Challenges
                                 }
                             });
                         }
-                        // prepare event data
-                        var eventData = new Dictionary<string, Dictionary<string, string>>
-                        {
-                            ["info"] = new Dictionary<string, string>
-                            {
-                                { "title", GetChallengeTitle(kvp.Value, player) },
-                                { "type", kvp.Value.Type },
-                                { "amount", kvp.Value.Amount.ToString() },
-                                { "cooldown", kvp.Value.Cooldown.ToString() }
-                            }
-                        };
-                        // iterate through Data
-                        foreach (var kvp2 in kvp.Value.Data)
-                        {
-                            eventData.Add(kvp2.Key, kvp2.Value);
-                        }
-                        // send event to this plugin
+                        // send event to our plugin
                         OnCompletionAction(player, kvp.Value);
-                        // send event to other plugins
-                        TriggerEvent(new PlayerCompletedChallengeEvent(player, eventData));
+                        // send event to other plugins on next frame to decouple from listening plugins and partly avoid lags due to runtime contrains
+                        Server.NextFrame(() =>
+                        {
+                            if (player == null
+                                || !player.IsValid
+                                || !_playerConfigs.ContainsKey(player.NetworkIDString)) return;
+                            // prepare event data
+                            var eventData = new Dictionary<string, Dictionary<string, string>>
+                            {
+                                ["info"] = new Dictionary<string, string>
+                                {
+                                    { "title", GetChallengeTitle(kvp.Value, player) },
+                                    { "type", kvp.Value.Type },
+                                    { "amount", kvp.Value.Amount.ToString() },
+                                    { "cooldown", kvp.Value.Cooldown.ToString() }
+                                }
+                            };
+                            // iterate through Data
+                            foreach (var kvp2 in kvp.Value.Data)
+                            {
+                                eventData.Add(kvp2.Key, kvp2.Value);
+                            }
+                            // send event to other plugins
+                            TriggerEvent(new PlayerCompletedChallengeEvent(player.UserId, eventData));
+                        });
                     }
                     else
                     {
@@ -283,24 +290,31 @@ namespace Challenges
                                 player.PrintToChat(message);
                             });
                         }
-                        // send event to other plugins
-                        var eventData = new Dictionary<string, Dictionary<string, string>>
+                        // send event to other plugins on next frame to decouple from listening plugins and partly avoid lags due to runtime contrains
+                        Server.NextFrame(() =>
                         {
-                            ["info"] = new Dictionary<string, string>
+                            if (player == null
+                                || !player.IsValid
+                                || !_playerConfigs.ContainsKey(player.NetworkIDString)) return;
+                            // prepare event data
+                            var eventData = new Dictionary<string, Dictionary<string, string>>
                             {
-                                { "title", GetChallengeTitle(kvp.Value, player) },
-                                { "type", kvp.Value.Type },
-                                { "current_amount", _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key][kvp.Key].Amount.ToString() },
-                                { "total_amount", kvp.Value.Amount.ToString() },
-                                { "cooldown", kvp.Value.Cooldown.ToString() }
+                                ["info"] = new Dictionary<string, string>
+                                {
+                                    { "title", GetChallengeTitle(kvp.Value, player) },
+                                    { "type", kvp.Value.Type },
+                                    { "current_amount", _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key][kvp.Key].Amount.ToString() },
+                                    { "total_amount", kvp.Value.Amount.ToString() },
+                                    { "cooldown", kvp.Value.Cooldown.ToString() }
+                                }
+                            };
+                            // iterate through Data
+                            foreach (var kvp2 in kvp.Value.Data)
+                            {
+                                eventData.Add(kvp2.Key, kvp2.Value);
                             }
-                        };
-                        // iterate through Data
-                        foreach (var kvp2 in kvp.Value.Data)
-                        {
-                            eventData.Add(kvp2.Key, kvp2.Value);
-                        }
-                        TriggerEvent(new PlayerProgressedChallengeEvent(player, eventData));
+                            TriggerEvent(new PlayerProgressedChallengeEvent(player.UserId, eventData));
+                        });
                     }
                     // show challenges gui if enabled
                     if (Config.GUI.ShowOnChallengeUpdate)

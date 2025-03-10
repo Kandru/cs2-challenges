@@ -1,5 +1,3 @@
-﻿using CounterStrikeSharp.API.Core;
+﻿namespace ChallengesShared.Events;
 
-namespace ChallengesShared.Events;
-
-public record PlayerProgressedChallengeEvent(CCSPlayerController Player, Dictionary<string, Dictionary<string, string>> Data) : IChallengesEvent;
+public record PlayerProgressedChallengeEvent(int? UserId, Dictionary<string, Dictionary<string, string>> Data) : IChallengesEvent;

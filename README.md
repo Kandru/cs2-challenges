@@ -19,6 +19,7 @@ Other CounterstrikeSharp plugins will then be notified to take further actions. 
 > Create an Github Issue for Bugs, Features and Improvements! Use our Discord Support-Channel for everything else!
 
 - [How to Start](./documentation/howto.md)
+- [Third-Party Plugin Integration](./documentation/plugin-integration.md)
 - [Blueprints](./documentation/blueprints.md)
 - [Rules](./documentation/rules.md)
 - [Actions](./documentation/actions.md)
@@ -38,13 +39,20 @@ Other CounterstrikeSharp plugins will then be notified to take further actions. 
 - [ ] Easy Webinterface to create your own Challenges
 - [ ] Add ability to spawn custom props on the map as a challenge
 - [ ] Link possible values for all rules in documentation
-- [ ] hand all event game data over to third-party plugins
 - [ ] make plugin config file only save on update, otherwise only load (to avoid overwriting)
 - [ ] Discord integration
   - [ ] Webhook for Challenge completion
   - [ ] Webhook for notification of a new Schedule starting (with all challenges listed)
   - [ ] Webhook for sending statistics at a given interval about all players (like a top list)
 - [ ] Command !topc for top players with most challenges solved
+
+## Compatible plugins
+
+- none yet (be the first to get added here)
+
+# Servers to test this Challenges-Plugin on
+
+- CounterStrike.Party Ballerbude (connect via https://counterstrike.party or server.counterstrike.party:27030)
 
 ## Plugin Installation
 

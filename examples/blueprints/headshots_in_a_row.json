@@ -149,9 +149,6 @@
 		"data": {
 			"ExamplePlugin": {
 				"ExamplePoints": "1"
-			},
-			"Challenges": {
-				"challenge.mark.completed0": "headshots_in_a_row:OnPlayerKillHeadshot.easy.control.noheadshot"
 			}
 		},
 		"rules": [

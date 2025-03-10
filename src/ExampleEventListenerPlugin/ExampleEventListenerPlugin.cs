@@ -37,8 +37,8 @@ namespace ExampleEventListenerPlugin
             Console.WriteLine($"Event: {@event.GetType().Name}");
             if (@event is PlayerCompletedChallengeEvent playerCompletedChallenge)
             {
-                // CCSPlayerController
-                Console.WriteLine($"Player: {playerCompletedChallenge.Player.PlayerName}");
+                // convert to CCSPlayerController by yourself
+                Console.WriteLine($"Player: {playerCompletedChallenge.Userid}");
                 // specific challenge data (can be totally custom, you NEED custom challenge data for YOUR plugin)
                 // data is ALWAYS string -> cast it to the correct type on your own!
                 // make sure to have a fallback in place and notify player in case of invalid data
@@ -53,8 +53,8 @@ namespace ExampleEventListenerPlugin
             }
             else if (@event is PlayerProgressedChallengeEvent playerProgressedChallenge)
             {
-                // CCSPlayerController
-                Console.WriteLine($"Player: {playerProgressedChallenge.Player.PlayerName}");
+                // convert to CCSPlayerController by yourself
+                Console.WriteLine($"Player: {playerProgressedChallenge.Userid}");
                 // specific challenge data (can be totally custom, you NEED custom challenge data for YOUR plugin)
                 // data is ALWAYS string -> cast it to the correct type on your own!
                 // make sure to have a fallback in place and notify player in case of invalid data
