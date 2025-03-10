@@ -8,7 +8,8 @@
 		"challenges": [
 			"headshots_in_a_row:*",
 			"hostage_rescue:*",
-			"blind_them_by_the_light:*"
+			"blind_them_by_the_light:*",
+			"inflatable_castle:*"
 		]
 	}
 }

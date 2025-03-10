@@ -1,0 +1,77 @@
+{
+	"OnPlayerJump.hard": {
+		"title": {
+			"en": "{count}/{total} times jumped",
+			"de": "{count}/{total} mal gesprungen"
+		},
+		"type": "player_jump",
+		"amount": 1000,
+		"cooldown": 0,
+		"is_visible": true,
+		"announce_progress": true,
+		"announce_completion": true,
+		"data": {
+			"ExamplePlugin": {
+				"ExamplePoints": "1"
+			}
+		},
+		"rules": [
+			{
+				"key": "global.isduringround",
+				"operator": "bool==",
+				"value": "true"
+			}
+		],
+		"dependencies": ["OnPlayerJump.medium"]
+	},
+	"OnPlayerJump.medium": {
+		"title": {
+			"en": "{count}/{total} times jumped",
+			"de": "{count}/{total} mal gesprungen"
+		},
+		"type": "player_jump",
+		"amount": 500,
+		"cooldown": 0,
+		"is_visible": true,
+		"announce_progress": true,
+		"announce_completion": true,
+		"data": {
+			"ExamplePlugin": {
+				"ExamplePoints": "1"
+			}
+		},
+		"rules": [
+			{
+				"key": "global.isduringround",
+				"operator": "bool==",
+				"value": "true"
+			}
+		],
+		"dependencies": ["OnPlayerJump.easy"]
+	},
+	"OnPlayerJump.easy": {
+		"title": {
+			"en": "{count}/{total} times jumped",
+			"de": "{count}/{total} mal gesprungen"
+		},
+		"type": "player_jump",
+		"amount": 100,
+		"cooldown": 0,
+		"is_visible": true,
+		"announce_progress": true,
+		"announce_completion": true,
+		"data": {
+			"ExamplePlugin": {
+				"ExamplePoints": "1"
+			}
+		},
+		"rules": [
+			{
+				"key": "global.isduringround",
+				"operator": "bool==",
+				"value": "true"
+			}
+		],
+		"dependencies": []
+	}
+}
