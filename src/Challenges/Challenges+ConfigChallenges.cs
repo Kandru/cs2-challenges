@@ -17,6 +17,12 @@ namespace Challenges
         [JsonPropertyName("value")] public string Value { get; set; } = "";
     }
 
+    public class ChallengesBlueprintActions
+    {
+        [JsonPropertyName("action")] public string Key { get; set; } = "";
+        [JsonPropertyName("values")] public List<string> Values { get; set; } = [];
+    }
+
     public class ChallengesBlueprint
     {
         [JsonPropertyName("title")] public Dictionary<string, string> Title { get; set; } = [];
@@ -25,11 +31,11 @@ namespace Challenges
         [JsonPropertyName("amount")] public int Amount { get; set; } = 0;
         [JsonPropertyName("cooldown")] public int Cooldown { get; set; } = 0;
         [JsonPropertyName("is_visible")] public bool Visible { get; set; } = true;
-        [JsonPropertyName("is_rule")] public bool Rule { get; set; } = false;
         [JsonPropertyName("announce_progress")] public bool AnnounceProgress { get; set; } = true;
         [JsonPropertyName("announce_completion")] public bool AnnounceCompletion { get; set; } = true;
         [JsonPropertyName("data")] public Dictionary<string, Dictionary<string, string>> Data { get; set; } = new Dictionary<string, Dictionary<string, string>>();
         [JsonPropertyName("rules")] public List<ChallengesBlueprintRules> Rules { get; set; } = [];
+        [JsonPropertyName("actions")] public List<ChallengesBlueprintActions> Actions { get; set; } = [];
         [JsonPropertyName("dependencies")] public List<string> Dependencies { get; set; } = [];
     }
 

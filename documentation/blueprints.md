@@ -1,3 +1,6 @@
+> [!TIP]
+> Blueprints can be complex to understand. Please look into the *examples* folder of this repository before asking questions in our Discord.
+
 # Blueprints Documentation
 
 Blueprints are in-game challenges that players can see and complete. You can create many challenges, but be aware that having too many active challenges at once might slow down the server.
@@ -10,14 +13,14 @@ To create your first challenge, follow these steps:
 2. Place this file in the `blueprints` folder of the Challenges-Plugin.
 3. You can create multiple files and organize them as you prefer (e.g., one file per blueprint type or plugin).
 
-Each blueprint file must contain at least one challenge. A challenge is defined by an event type (see below) and various settings. Each challenge needs a unique name within the same blueprint file. The Challenges-Plugin will automatically generate an identifier for each challenge.
+Each blueprint file must contain at least one challenge. A challenge is defined by an event type (see below) and various settings. Each challenge needs a unique name within the same blueprint file. The Challenges-Plugin will automatically generate an global identifier for each challenge.
 
 For example:
 - Blueprint filename: `example.json`
 - Unique Challenge name: `YourUniqueChallengeName`
-- Resulting identifier: `example.YourUniqueChallengeName`
+- Resulting global identifier: `example:YourUniqueChallengeName`
 
-When the blueprint file is loaded into the Challenges-Plugin, it will be referenced by this identifier.
+When the blueprint file is loaded into the Challenges-Plugin, it will be referenced by this global identifier. The *:* is reserved within the plugin. Do **NOT** use it for any challenge name or blueprint filename. Only use it *once* to set the blueprint filename of your identifier within the *actions* and/or *dependencies* whenever you are referencing to another file.
 
 Each JSON file should be structured as follows and can contain multiple blueprints, each with a unique name:
 
@@ -31,7 +34,6 @@ Each JSON file should be structured as follows and can contain multiple blueprin
 		"amount": 10,
 		"cooldown": 0,
 		"is_visible": true,
-		"is_rule": true,
 		"announce_progress": true,
 		"announce_completion": true,
 		"data": {
@@ -46,6 +48,7 @@ Each JSON file should be structured as follows and can contain multiple blueprin
 				"value": "true"
 			}
 		],
+		"actions": [],
 		"dependencies": []
 	}
 }
@@ -73,10 +76,6 @@ The cooldown is the time in seconds that must pass before the event can be count
 
 Whether this challenge should be visible to the player. If set to false, the challenge can still be completed, but the player will not see any notifications or progress updates.
 
-### is_rule
-
-A rule is a special type of challenge that can change other challenges. If a challenge is marked as a rule, its *title* will be shown to the player when it is activated and changes another challenge. Rules must have the *amount* set to 1, and both *announce_progress* and *announce_completion* should be set to false. More details about rules can be found in the rules section of this documentation.
-
 ### announce_progress
 
 Whether you want to notify the player about their progress. This setting does not affect notifications sent to third-party plugins.
@@ -93,11 +92,17 @@ This section contains a dictionary of strings, where each string represents data
 
 Rules make the Challenges-Plugin very powerful. Almost all events have parameters that you can compare against values you choose. In our example, we check if there is an active round. If not, we ignore this challenge until a round starts. You can also check for specific weapons, distances, teams, and more.
 
+### actions
+
+Actions modify challenges of your choice after completion. Please refer to the actions documentation for further information.
+
 ### dependencies
 
 Dependencies are conditions that must be met before a challenge becomes available to the player. These conditions are other challenges that the player must complete first. This allows you to create a series of challenges with increasing difficulty.
 
-To set a dependency, list the unique name of the required challenge. If the required challenge is in the same file, just use its unique name. For example, *YourUniqueChallengeName*. If the required challenge is in a different file, include the filename. For example, *example.YourUniqueChallengeName*.
+To set a dependency, list the unique name of the required challenge. If the required challenge is in the same file, just use its unique name. For example, *YourUniqueChallengeName*. If the required challenge is in a different file, include the filename. For example, *example:YourUniqueChallengeName*.
+
+**Important**: Challenges are executed in the order they appear, from top to bottom. If you have multiple challenges of the same type (e.g., *player_kill*) and they depend on each other, you should list them from the most dependent (bottom) to the least dependent (top). This way, the next challenge won't trigger prematurely.
 
 ## List of global rules
 

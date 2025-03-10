@@ -208,7 +208,7 @@ namespace Challenges
                     {
                         DebugPrint($"user {player.NetworkIDString} has completed challenge {kvp.Key}");
                         // notify players about completion
-                        if (kvp.Value.AnnounceCompletion && !kvp.Value.Rule)
+                        if (kvp.Value.AnnounceCompletion)
                         {
                             Server.NextFrame(() =>
                             {
@@ -259,14 +259,14 @@ namespace Challenges
                             eventData.Add(kvp2.Key, kvp2.Value);
                         }
                         // send event to this plugin
-                        OnChallengeCompletion(player, kvp.Value, eventData);
+                        OnCompletionAction(player, kvp.Value);
                         // send event to other plugins
                         TriggerEvent(new PlayerCompletedChallengeEvent(player, eventData));
                     }
                     else
                     {
                         // notify user about progress
-                        if (Config.Notifications.NotifyPlayerOnChallengeProgress && kvp.Value.AnnounceProgress && !kvp.Value.Rule)
+                        if (Config.Notifications.NotifyPlayerOnChallengeProgress && kvp.Value.AnnounceProgress)
                         {
                             Server.NextFrame(() =>
                             {

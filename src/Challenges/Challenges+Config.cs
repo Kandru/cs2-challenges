@@ -180,15 +180,34 @@ namespace Challenges
                                         .Replace("{error}", $"data of challenge {kvp.Key} is missing"));
                                     continue;
                                 }
-                                // update key of dependencies to match key of given blueprint
+                                // update key of dependencies to match the filename prefix of given blueprint
                                 for (int i = 0; i < kvp.Value.Dependencies.Count; i++)
                                 {
-                                    // check if a dot already exists and skip
-                                    if (kvp.Value.Dependencies[i].Contains('.')) continue;
-                                    kvp.Value.Dependencies[i] = $"{Path.GetFileNameWithoutExtension(file).ToLower()}.{kvp.Value.Dependencies[i]}";
+                                    // check if dependency already contains filename prefix
+                                    if (kvp.Value.Dependencies[i].Contains(':')) continue;
+                                    kvp.Value.Dependencies[i] = $"{Path.GetFileNameWithoutExtension(file).ToLower()}:{kvp.Value.Dependencies[i]}";
                                 }
-                                // add key to blueprint
-                                kvp.Value.Key = $"{Path.GetFileNameWithoutExtension(file).ToLower()}.{kvp.Key}";
+                                // update key of actions to match the filename prefix of given blueprint
+                                foreach (var action in kvp.Value.Actions)
+                                {
+                                    switch (action.Key)
+                                    {
+                                        case "challenge.delete.progress" when action.Values.Count >= 1:
+                                            if (action.Values[0].Contains(':')) break;
+                                            action.Values[0] = $"{Path.GetFileNameWithoutExtension(file).ToLower()}:{action.Values[0]}";
+                                            break;
+                                        case "challenge.delete.completed" when action.Values.Count >= 1:
+                                            if (action.Values[0].Contains(':')) break;
+                                            action.Values[0] = $"{Path.GetFileNameWithoutExtension(file).ToLower()}:{action.Values[0]}";
+                                            break;
+                                        case "challenge.mark.completed" when action.Values.Count >= 1:
+                                            if (action.Values[0].Contains(':')) break;
+                                            action.Values[0] = $"{Path.GetFileNameWithoutExtension(file).ToLower()}:{action.Values[0]}";
+                                            break;
+                                    }
+                                }
+                                // add filename prefix to blueprint
+                                kvp.Value.Key = $"{Path.GetFileNameWithoutExtension(file).ToLower()}:{kvp.Key}";
                                 // add blueprint to available challenges
                                 _availableChallenges.Blueprints.Add(
                                     $"{Path.GetFileNameWithoutExtension(file).ToLower()}.{kvp.Key}",

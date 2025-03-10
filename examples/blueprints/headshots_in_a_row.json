@@ -1,5 +1,5 @@
 {
-	"OnPlayerKillHeadshot_hard": {
+	"OnPlayerKillHeadshot.hard": {
 		"title": {
 			"en": "{count}/{total} Headshots in a row",
 			"de": "{count}/{total} Kopfschüsse hintereinander"
@@ -8,16 +8,11 @@
 		"amount": 5,
 		"cooldown": 0,
 		"is_visible": true,
-		"is_rule": false,
 		"announce_progress": true,
 		"announce_completion": true,
 		"data": {
 			"ExamplePlugin": {
 				"ExamplePoints": "1"
-			},
-			"Challenges": {
-				"mark_completed0": "headshots_in_a_row.rule_OnPlayerKillHeadshot_hard_noheadshot",
-				"mark_completed1": "headshots_in_a_row.rule_OnPlayerKillHeadshot_hard_donotdie"
 			}
 		},
 		"rules": [
@@ -37,11 +32,21 @@
 				"value": "false"
 			}
 		],
+		"actions": [
+			{
+				"type": "challenge.mark.completed",
+				"values": ["headshots_in_a_row:OnPlayerKillHeadshot.hard.control.noheadshot"]
+			},
+			{
+				"type": "challenge.mark.completed",
+				"values": ["headshots_in_a_row:OnPlayerKillHeadshot.hard.control.donotdie"]
+			}
+		],
 		"dependencies": [
-			"OnPlayerKillHeadshot_easy"
+			"OnPlayerKillHeadshot.easy"
 		]
 	},
-	"rule_OnPlayerKillHeadshot_hard_noheadshot": {
+	"OnPlayerKillHeadshot.hard.control.noheadshot": {
 		"title": {
 			"en": "Rule broken: without headshot",
 			"de": "Regel verletzt: ohne Headshot"
@@ -50,15 +55,9 @@
 		"amount": 1,
 		"cooldown": 0,
 		"is_visible": false,
-		"is_rule": true,
 		"announce_progress": false,
 		"announce_completion": false,
-		"data": {
-			"Challenges": {
-				"delete_progress0": "headshots_in_a_row.OnPlayerKillHeadshot_hard",
-				"delete_completed0": "headshots_in_a_row.rule_OnPlayerKillHeadshot_hard_noheadshot"
-			}
-		},
+		"data": {},
 		"rules": [
 			{
 				"key": "global.isduringround",
@@ -76,11 +75,25 @@
 				"value": "false"
 			}
 		],
+		"actions": [
+			{
+				"type": "challenge.delete.progress",
+				"values": ["headshots_in_a_row:OnPlayerKillHeadshot.hard"]
+			},
+			{
+				"type": "challenge.delete.completed",
+				"values": ["headshots_in_a_row:OnPlayerKillHeadshot.hard.control.noheadshot"]
+			},
+			{
+				"type": "notify.player.rule_broken",
+				"values": []
+			}
+		],
 		"dependencies": [
-			"OnPlayerKillHeadshot_easy"
+			"OnPlayerKillHeadshot.easy"
 		]
 	},
-	"rule_OnPlayerKillHeadshot_hard_donotdie": {
+	"OnPlayerKillHeadshot.hard.control.donotdie": {
 		"title": {
 			"en": "Rule broken: do not die",
 			"de": "Regel verletzt: ohne sterben"
@@ -89,15 +102,9 @@
 		"amount": 1,
 		"cooldown": 0,
 		"is_visible": false,
-		"is_rule": true,
 		"announce_progress": false,
 		"announce_completion": false,
-		"data": {
-			"Challenges": {
-				"delete_progress0": "headshots_in_a_row.OnPlayerKillHeadshot_hard",
-				"delete_completed0": "headshots_in_a_row.rule_OnPlayerKillHeadshot_hard_donotdie"
-			}
-		},
+		"data": {},
 		"rules": [
 			{
 				"key": "global.isduringround",
@@ -110,11 +117,25 @@
 				"value": "false"
 			}
 		],
+		"actions": [
+			{
+				"type": "challenge.delete.progress",
+				"values": ["headshots_in_a_row:OnPlayerKillHeadshot.hard"]
+			},
+			{
+				"type": "challenge.delete.completed",
+				"values": ["headshots_in_a_row:OnPlayerKillHeadshot.hard.control.donotdie"]
+			},
+			{
+				"type": "notify.player.rule_broken",
+				"values": []
+			}
+		],
 		"dependencies": [
-			"OnPlayerKillHeadshot_easy"
+			"OnPlayerKillHeadshot.easy"
 		]
 	},
-	"OnPlayerKillHeadshot_easy": {
+	"OnPlayerKillHeadshot.easy": {
 		"title": {
 			"en": "{count}/{total} Headshots in a row",
 			"de": "{count}/{total} Kopfschüsse hintereinander"
@@ -123,7 +144,6 @@
 		"amount": 3,
 		"cooldown": 0,
 		"is_visible": true,
-		"is_rule": false,
 		"announce_progress": true,
 		"announce_completion": true,
 		"data": {
@@ -131,7 +151,7 @@
 				"ExamplePoints": "1"
 			},
 			"Challenges": {
-				"mark_completed0": "headshots_in_a_row.rule_OnPlayerKillHeadshot_easy_noheadshot"
+				"challenge.mark.completed0": "headshots_in_a_row:OnPlayerKillHeadshot.easy.control.noheadshot"
 			}
 		},
 		"rules": [
@@ -151,9 +171,15 @@
 				"value": "false"
 			}
 		],
+		"actions": [
+			{
+				"type": "challenge.mark.completed",
+				"values": ["headshots_in_a_row:OnPlayerKillHeadshot.easy.control.noheadshot"]
+			}
+		],
 		"dependencies": []
 	},
-	"rule_OnPlayerKillHeadshot_easy_noheadshot": {
+	"OnPlayerKillHeadshot.easy.control.noheadshot": {
 		"title": {
 			"en": "Rule broken: without headshot",
 			"de": "Regel verletzt: ohne Headshot"
@@ -162,15 +188,9 @@
 		"amount": 1,
 		"cooldown": 0,
 		"is_visible": false,
-		"is_rule": true,
 		"announce_progress": false,
 		"announce_completion": false,
-		"data": {
-			"Challenges": {
-				"delete_progress0": "headshots_in_a_row.OnPlayerKillHeadshot_easy",
-				"delete_completed0": "headshots_in_a_row.rule_OnPlayerKillHeadshot_easy_noheadshot"
-			}
-		},
+		"data": {},
 		"rules": [
 			{
 				"key": "global.isduringround",
@@ -181,6 +201,20 @@
 				"key": "headshot",
 				"operator": "bool==",
 				"value": "false"
+			}
+		],
+		"actions": [
+			{
+				"type": "challenge.delete.progress",
+				"values": ["headshots_in_a_row:OnPlayerKillHeadshot.easy"]
+			},
+			{
+				"type": "challenge.delete.completed",
+				"values": ["headshots_in_a_row:OnPlayerKillHeadshot.easy.control.noheadshot"]
+			},
+			{
+				"type": "notify.player.rule_broken",
+				"values": []
 			}
 		],
 		"dependencies": []
