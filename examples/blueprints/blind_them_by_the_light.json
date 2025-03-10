@@ -1,0 +1,290 @@
+{
+	"OnPlayerBlind.hard": {
+		"title": {
+			"en": "{count}/{total} blind enemies (>2s)",
+			"de": "{count}/{total} blinde Gegner (>2s)"
+		},
+		"type": "player_has_blinded",
+		"amount": 20,
+		"cooldown": 0,
+		"is_visible": true,
+		"announce_progress": true,
+		"announce_completion": true,
+		"data": {
+			"ExamplePlugin": {
+				"ExamplePoints": "1"
+			}
+		},
+		"rules": [
+			{
+				"key": "global.isduringround",
+				"operator": "bool==",
+				"value": "true"
+			},
+			{
+				"key": "isteamflash",
+				"operator": "bool==",
+				"value": "false"
+			},
+			{
+				"key": "isselfflash",
+				"operator": "bool==",
+				"value": "false"
+			},
+			{
+				"key": "blindduration",
+				"operator": ">=",
+				"value": "2"
+			}
+		],
+		"dependencies": ["OnPlayerBlind.medium"]
+	},
+	"OnPlayerBlind.hard.control.noselfflash": {
+		"title": {
+			"en": "Rule broken: do not flash yourself!",
+			"de": "Regel verletzt: selbst geblendet!"
+		},
+		"type": "player_got_blinded",
+		"amount": 1,
+		"cooldown": 0,
+		"is_visible": false,
+		"announce_progress": false,
+		"announce_completion": false,
+		"data": {},
+		"rules": [
+			{
+				"key": "global.isduringround",
+				"operator": "bool==",
+				"value": "true"
+			},
+			{
+				"key": "isselfflash",
+				"operator": "bool==",
+				"value": "true"
+			}
+		],
+		"actions": [
+			{
+				"type": "challenge.delete.progress",
+				"values": ["OnPlayerBlind.hard"]
+			},
+			{
+				"type": "challenge.delete.completed",
+				"values": ["OnPlayerBlind.hard.control.noselfflash"]
+			},
+			{
+				"type": "notify.player.rule_broken",
+				"values": []
+			}
+		],
+		"dependencies": [
+			"OnPlayerBlind.medium"
+		]
+	},
+	"OnPlayerBlind.hard.control.noteamflash": {
+		"title": {
+			"en": "Rule broken: do not flash your team!",
+			"de": "Regel verletzt: Teammitglied geblendet!"
+		},
+		"type": "player_got_blinded",
+		"amount": 1,
+		"cooldown": 0,
+		"is_visible": false,
+		"announce_progress": false,
+		"announce_completion": false,
+		"data": {},
+		"rules": [
+			{
+				"key": "global.isduringround",
+				"operator": "bool==",
+				"value": "true"
+			},
+			{
+				"key": "isteamflash",
+				"operator": "bool==",
+				"value": "true"
+			},
+			{
+				"key": "isselfflash",
+				"operator": "bool==",
+				"value": "false"
+			}
+		],
+		"actions": [
+			{
+				"type": "challenge.delete.progress",
+				"values": ["OnPlayerBlind.hard"]
+			},
+			{
+				"type": "challenge.delete.completed",
+				"values": ["OnPlayerBlind.hard.control.noteamflash"]
+			},
+			{
+				"type": "notify.player.rule_broken",
+				"values": []
+			}
+		],
+		"dependencies": [
+			"OnPlayerBlind.medium"
+		]
+	},
+	"OnPlayerBlind.medium": {
+		"title": {
+			"en": "{count}/{total} blind enemies",
+			"de": "{count}/{total} blinde Gegner"
+		},
+		"type": "player_has_blinded",
+		"amount": 15,
+		"cooldown": 0,
+		"is_visible": true,
+		"announce_progress": true,
+		"announce_completion": true,
+		"data": {
+			"ExamplePlugin": {
+				"ExamplePoints": "1"
+			}
+		},
+		"rules": [
+			{
+				"key": "global.isduringround",
+				"operator": "bool==",
+				"value": "true"
+			},
+			{
+				"key": "isteamflash",
+				"operator": "bool==",
+				"value": "false"
+			},
+			{
+				"key": "isselfflash",
+				"operator": "bool==",
+				"value": "false"
+			}
+		],
+		"dependencies": ["OnPlayerBlind.easy"]
+	},
+	"OnPlayerBlind.medium.control.noselfflash": {
+		"title": {
+			"en": "Rule broken: do not flash yourself!",
+			"de": "Regel verletzt: selbst geblendet!"
+		},
+		"type": "player_got_blinded",
+		"amount": 1,
+		"cooldown": 0,
+		"is_visible": false,
+		"announce_progress": false,
+		"announce_completion": false,
+		"data": {},
+		"rules": [
+			{
+				"key": "global.isduringround",
+				"operator": "bool==",
+				"value": "true"
+			},
+			{
+				"key": "isselfflash",
+				"operator": "bool==",
+				"value": "true"
+			}
+		],
+		"actions": [
+			{
+				"type": "challenge.delete.progress",
+				"values": ["OnPlayerBlind.medium"]
+			},
+			{
+				"type": "challenge.delete.completed",
+				"values": ["OnPlayerBlind.medium.control.noselfflash"]
+			},
+			{
+				"type": "notify.player.rule_broken",
+				"values": []
+			}
+		],
+		"dependencies": [
+			"OnPlayerBlind.easy"
+		]
+	},
+	"OnPlayerBlind.medium.control.noteamflash": {
+		"title": {
+			"en": "Rule broken: do not flash your team!",
+			"de": "Regel verletzt: Teammitglied geblendet!"
+		},
+		"type": "player_got_blinded",
+		"amount": 1,
+		"cooldown": 0,
+		"is_visible": false,
+		"announce_progress": false,
+		"announce_completion": false,
+		"data": {},
+		"rules": [
+			{
+				"key": "global.isduringround",
+				"operator": "bool==",
+				"value": "true"
+			},
+			{
+				"key": "isteamflash",
+				"operator": "bool==",
+				"value": "true"
+			},
+			{
+				"key": "isselfflash",
+				"operator": "bool==",
+				"value": "false"
+			}
+		],
+		"actions": [
+			{
+				"type": "challenge.delete.progress",
+				"values": ["OnPlayerBlind.medium"]
+			},
+			{
+				"type": "challenge.delete.completed",
+				"values": ["OnPlayerBlind.medium.control.noteamflash"]
+			},
+			{
+				"type": "notify.player.rule_broken",
+				"values": []
+			}
+		],
+		"dependencies": [
+			"OnPlayerBlind.easy"
+		]
+	},
+	"OnPlayerBlind.easy": {
+		"title": {
+			"en": "{count}/{total} blind enemies",
+			"de": "{count}/{total} blinde Gegner"
+		},
+		"type": "player_has_blinded",
+		"amount": 5,
+		"cooldown": 0,
+		"is_visible": true,
+		"announce_progress": true,
+		"announce_completion": true,
+		"data": {
+			"ExamplePlugin": {
+				"ExamplePoints": "1"
+			}
+		},
+		"rules": [
+			{
+				"key": "global.isduringround",
+				"operator": "bool==",
+				"value": "true"
+			},
+			{
+				"key": "isteamflash",
+				"operator": "bool==",
+				"value": "false"
+			},
+			{
+				"key": "isselfflash",
+				"operator": "bool==",
+				"value": "false"
+			}
+		],
+		"dependencies": []
+	}
+}

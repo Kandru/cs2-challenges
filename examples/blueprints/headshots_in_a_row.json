@@ -35,11 +35,11 @@
 		"actions": [
 			{
 				"type": "challenge.mark.completed",
-				"values": ["headshots_in_a_row:OnPlayerKillHeadshot.hard.control.noheadshot"]
+				"values": ["OnPlayerKillHeadshot.hard.control.noheadshot"]
 			},
 			{
 				"type": "challenge.mark.completed",
-				"values": ["headshots_in_a_row:OnPlayerKillHeadshot.hard.control.donotdie"]
+				"values": ["OnPlayerKillHeadshot.hard.control.donotdie"]
 			}
 		],
 		"dependencies": [
@@ -78,11 +78,11 @@
 		"actions": [
 			{
 				"type": "challenge.delete.progress",
-				"values": ["headshots_in_a_row:OnPlayerKillHeadshot.hard"]
+				"values": ["OnPlayerKillHeadshot.hard"]
 			},
 			{
 				"type": "challenge.delete.completed",
-				"values": ["headshots_in_a_row:OnPlayerKillHeadshot.hard.control.noheadshot"]
+				"values": ["OnPlayerKillHeadshot.hard.control.noheadshot"]
 			},
 			{
 				"type": "notify.player.rule_broken",
@@ -120,11 +120,11 @@
 		"actions": [
 			{
 				"type": "challenge.delete.progress",
-				"values": ["headshots_in_a_row:OnPlayerKillHeadshot.hard"]
+				"values": ["OnPlayerKillHeadshot.hard"]
 			},
 			{
 				"type": "challenge.delete.completed",
-				"values": ["headshots_in_a_row:OnPlayerKillHeadshot.hard.control.donotdie"]
+				"values": ["OnPlayerKillHeadshot.hard.control.donotdie"]
 			},
 			{
 				"type": "notify.player.rule_broken",
@@ -171,7 +171,7 @@
 		"actions": [
 			{
 				"type": "challenge.mark.completed",
-				"values": ["headshots_in_a_row:OnPlayerKillHeadshot.easy.control.noheadshot"]
+				"values": ["OnPlayerKillHeadshot.easy.control.noheadshot"]
 			}
 		],
 		"dependencies": []
@@ -203,11 +203,11 @@
 		"actions": [
 			{
 				"type": "challenge.delete.progress",
-				"values": ["headshots_in_a_row:OnPlayerKillHeadshot.easy"]
+				"values": ["OnPlayerKillHeadshot.easy"]
 			},
 			{
 				"type": "challenge.delete.completed",
-				"values": ["headshots_in_a_row:OnPlayerKillHeadshot.easy.control.noheadshot"]
+				"values": ["OnPlayerKillHeadshot.easy.control.noheadshot"]
 			},
 			{
 				"type": "notify.player.rule_broken",
