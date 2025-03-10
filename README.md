@@ -20,6 +20,7 @@ Other CounterstrikeSharp plugins will then be notified to take further actions. 
 
 - [Blueprints](./documentation/blueprints.md)
 - [Rules](./documentation/rules.md)
+- [Actions](./documentation/actions.md)
 
 ## Features
 
