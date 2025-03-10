@@ -174,11 +174,11 @@ namespace Challenges
                                     continue;
                                 }
                                 // check if data contains at least one entry
-                                if (kvp.Value.Data.Count == 0)
+                                if (kvp.Value.Data.Count == 0 && kvp.Value.Actions.Count == 0)
                                 {
                                     Console.WriteLine(Localizer["core.faultyconfig"].Value
                                         .Replace("{config}", file)
-                                        .Replace("{error}", $"data of challenge {kvp.Key} is missing"));
+                                        .Replace("{error}", $"data & actions of challenge {kvp.Key} are missing"));
                                     continue;
                                 }
                                 // update key of dependencies to match the filename prefix of given blueprint
@@ -211,7 +211,7 @@ namespace Challenges
                                 kvp.Value.Key = $"{Path.GetFileNameWithoutExtension(file).ToLower()}:{kvp.Key}";
                                 // add blueprint to available challenges
                                 _availableChallenges.Blueprints.Add(
-                                    $"{Path.GetFileNameWithoutExtension(file).ToLower()}.{kvp.Key}",
+                                    $"{Path.GetFileNameWithoutExtension(file).ToLower()}:{kvp.Key}",
                                     kvp.Value
                                 );
                             }
