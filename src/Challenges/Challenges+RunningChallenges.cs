@@ -275,15 +275,22 @@ namespace Challenges
                         // notify user about progress
                         if (Config.Notifications.NotifyPlayerOnChallengeProgress && kvp.Value.AnnounceProgress)
                         {
-                            // play sound if available
-                            if (Config.Notifications.ChallengeProgressSound != "")
-                                player.ExecuteClientCommand($"play {Config.Notifications.ChallengeProgressSound}");
-                            // send progress message
-                            string message = LocalizerExtensions.ForPlayer(Localizer, player, "challenges.progress")
-                                .Replace("{challenge}", GetChallengeTitle(kvp.Value, player))
-                                .Replace("{total}", kvp.Value.Amount.ToString())
-                                .Replace("{count}", _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key][kvp.Key].Amount.ToString());
-                            player.PrintToChat(message);
+                            // do this before next frame to avoid wrong counting (e.g. multiple counter updates in one frame)
+                            string count = _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key][kvp.Key].Amount.ToString();
+                            Server.NextFrame(() =>
+                            {
+                                if (player == null
+                                    || !player.IsValid) return;
+                                // play sound if available
+                                if (Config.Notifications.ChallengeProgressSound != "")
+                                    player.ExecuteClientCommand($"play {Config.Notifications.ChallengeProgressSound}");
+                                // send progress message
+                                string message = LocalizerExtensions.ForPlayer(Localizer, player, "challenges.progress")
+                                    .Replace("{challenge}", GetChallengeTitle(kvp.Value, player))
+                                    .Replace("{total}", kvp.Value.Amount.ToString())
+                                    .Replace("{count}", count);
+                                player.PrintToChat(message);
+                            });
                         }
                         // send event to other plugins on next frame to decouple from listening plugins and partly avoid lags due to runtime contrains
                         Server.NextFrame(() =>
