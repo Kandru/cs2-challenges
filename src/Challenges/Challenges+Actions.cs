@@ -14,7 +14,7 @@ namespace Challenges
             // iterate through possible actions
             foreach (var kvp in challenge.Actions)
             {
-                switch (kvp.Key)
+                switch (kvp.Type)
                 {
                     case "challenge.delete.progress" when kvp.Values.Count == 1:
                         ActionChallengeDelete(player, challenge, kvp.Values[0]);
@@ -29,7 +29,7 @@ namespace Challenges
                         ActionNotifyPlayerRuleBroken(player, challenge.Key);
                         break;
                     default:
-                        DebugPrint($"Action {kvp.Key} not found for challenge {challenge.Key}.");
+                        DebugPrint($"Action {kvp.Type} not found for challenge {challenge.Key}.");
                         break;
                 }
             }

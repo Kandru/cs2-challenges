@@ -191,7 +191,7 @@ namespace Challenges
                                 // update key of actions to match the filename prefix of given blueprint
                                 foreach (var action in kvp.Value.Actions)
                                 {
-                                    switch (action.Key)
+                                    switch (action.Type)
                                     {
                                         case "challenge.delete.progress" when action.Values.Count >= 1:
                                             if (action.Values[0].Contains(':')) break;

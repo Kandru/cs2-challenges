@@ -19,7 +19,7 @@ namespace Challenges
 
     public class ChallengesBlueprintActions
     {
-        [JsonPropertyName("action")] public string Key { get; set; } = "";
+        [JsonPropertyName("type")] public string Type { get; set; } = "";
         [JsonPropertyName("values")] public List<string> Values { get; set; } = [];
     }
 
