@@ -92,6 +92,9 @@ namespace Challenges
         {
             // check if player still exists
             if (player == null || !player.IsValid) return;
+            // play sound if available
+            if (Config.Notifications.ChallengeRuleBrokenSound != "")
+                player.ExecuteClientCommand($"play {Config.Notifications.ChallengeRuleBrokenSound}");
             player.PrintToChat(LocalizerExtensions.ForPlayer(Localizer, player, "challenges.rule.broken"));
             player.PrintToChat(GetChallengeTitle(_currentSchedule.Challenges[challengeKey], player));
             player.PrintToCenterAlert(GetChallengeTitle(_currentSchedule.Challenges[challengeKey], player));
