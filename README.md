@@ -45,6 +45,7 @@ Other CounterstrikeSharp plugins will then be notified to take further actions. 
   - [ ] Webhook for notification of a new Schedule starting (with all challenges listed)
   - [ ] Webhook for sending statistics at a given interval about all players (like a top list)
 - [ ] Command !topc for top players with most challenges solved
+- [ ] do not show broken rules if challenge has amount = 0
 
 ## Compatible plugins
 
