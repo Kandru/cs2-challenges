@@ -37,7 +37,9 @@
 				"value": "2"
 			}
 		],
-		"dependencies": ["OnPlayerBlind.medium"]
+		"dependencies": [
+			"OnPlayerBlind.medium"
+		]
 	},
 	"OnPlayerBlind.hard.control.noselfflash": {
 		"title": {
@@ -66,11 +68,15 @@
 		"actions": [
 			{
 				"type": "challenge.delete.progress",
-				"values": ["OnPlayerBlind.hard"]
+				"values": [
+					"OnPlayerBlind.hard"
+				]
 			},
 			{
 				"type": "challenge.delete.completed",
-				"values": ["OnPlayerBlind.hard.control.noselfflash"]
+				"values": [
+					"OnPlayerBlind.hard.control.noselfflash"
+				]
 			},
 			{
 				"type": "notify.player.rule_broken",
@@ -113,11 +119,15 @@
 		"actions": [
 			{
 				"type": "challenge.delete.progress",
-				"values": ["OnPlayerBlind.hard"]
+				"values": [
+					"OnPlayerBlind.hard"
+				]
 			},
 			{
 				"type": "challenge.delete.completed",
-				"values": ["OnPlayerBlind.hard.control.noteamflash"]
+				"values": [
+					"OnPlayerBlind.hard.control.noteamflash"
+				]
 			},
 			{
 				"type": "notify.player.rule_broken",
@@ -161,7 +171,9 @@
 				"value": "false"
 			}
 		],
-		"dependencies": ["OnPlayerBlind.easy"]
+		"dependencies": [
+			"OnPlayerBlind.easy"
+		]
 	},
 	"OnPlayerBlind.medium.control.noselfflash": {
 		"title": {
@@ -190,11 +202,15 @@
 		"actions": [
 			{
 				"type": "challenge.delete.progress",
-				"values": ["OnPlayerBlind.medium"]
+				"values": [
+					"OnPlayerBlind.medium"
+				]
 			},
 			{
 				"type": "challenge.delete.completed",
-				"values": ["OnPlayerBlind.medium.control.noselfflash"]
+				"values": [
+					"OnPlayerBlind.medium.control.noselfflash"
+				]
 			},
 			{
 				"type": "notify.player.rule_broken",
@@ -210,7 +226,7 @@
 			"en": "Rule broken: do not flash your team!",
 			"de": "Regel verletzt: Teammitglied geblendet!"
 		},
-		"type": "player_got_blinded",
+		"type": "player_has_blinded",
 		"amount": 1,
 		"cooldown": 0,
 		"is_visible": false,
@@ -237,11 +253,15 @@
 		"actions": [
 			{
 				"type": "challenge.delete.progress",
-				"values": ["OnPlayerBlind.medium"]
+				"values": [
+					"OnPlayerBlind.medium"
+				]
 			},
 			{
 				"type": "challenge.delete.completed",
-				"values": ["OnPlayerBlind.medium.control.noteamflash"]
+				"values": [
+					"OnPlayerBlind.medium.control.noteamflash"
+				]
 			},
 			{
 				"type": "notify.player.rule_broken",
