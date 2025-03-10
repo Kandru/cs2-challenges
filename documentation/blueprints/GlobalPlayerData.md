@@ -8,7 +8,7 @@ Swap *prefix* with the given prefix of the event.
 
 - `prefix.name (string)`: Name of the player
 - `prefix.isbot (bool)`: If the player is a bot
-- `prefix.team (string)`: Name of the Team of the player
+- `prefix.team (string)`: Name of the Team of the player (see [CsTeam](../enums/CsTeam.md))
 - `prefix.alive (bool)`: If the player is alive or not
 - `prefix.ping (number)`: The current ping
 - `prefix.money (number)`: The current money
