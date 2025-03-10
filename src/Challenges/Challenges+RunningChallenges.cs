@@ -297,7 +297,9 @@ namespace Challenges
                         {
                             if (player == null
                                 || !player.IsValid
-                                || !_playerConfigs.ContainsKey(player.NetworkIDString)) return;
+                                || !_playerConfigs.ContainsKey(player.NetworkIDString)
+                                || !_playerConfigs[player.NetworkIDString].Challenges.ContainsKey(_currentSchedule.Key)
+                                || !_playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key].ContainsKey(kvp.Key)) return;
                             // prepare event data
                             var eventData = new Dictionary<string, Dictionary<string, string>>
                             {
