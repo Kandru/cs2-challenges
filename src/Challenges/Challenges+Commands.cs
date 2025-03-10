@@ -74,7 +74,8 @@ namespace Challenges
             {
                 eventData.Add(kvp2.Key, kvp2.Value);
             }
-            TriggerEvent(new PlayerCompletedChallengeEvent(player.UserId, eventData));
+            if (player.UserId == null) return;
+            TriggerEvent(new PlayerCompletedChallengeEvent((int)player.UserId, eventData));
             command.ReplyToCommand(Localizer["core.event.trigger"].Value
                 .Replace("{eventName}", nameof(PlayerCompletedChallengeEvent)));
         }

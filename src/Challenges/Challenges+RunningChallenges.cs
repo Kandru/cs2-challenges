@@ -267,7 +267,7 @@ namespace Challenges
                                 eventData.Add(kvp2.Key, kvp2.Value);
                             }
                             // send event to other plugins
-                            TriggerEvent(new PlayerCompletedChallengeEvent(player.UserId, eventData));
+                            if (player.UserId != null) TriggerEvent(new PlayerCompletedChallengeEvent((int)player.UserId, eventData));
                         });
                     }
                     else
@@ -315,7 +315,7 @@ namespace Challenges
                             {
                                 eventData.Add(kvp2.Key, kvp2.Value);
                             }
-                            TriggerEvent(new PlayerProgressedChallengeEvent(player.UserId, eventData));
+                            if (player.UserId != null) TriggerEvent(new PlayerProgressedChallengeEvent((int)player.UserId, eventData));
                         });
                     }
                     // show challenges gui if enabled
