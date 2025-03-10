@@ -37,6 +37,20 @@
 				"value": "2"
 			}
 		],
+		"actions": [
+			{
+				"type": "challenge.mark.completed",
+				"values": [
+					"OnPlayerBlind.hard.control.noselfflash"
+				]
+			},
+			{
+				"type": "challenge.mark.completed",
+				"values": [
+					"OnPlayerBlind.hard.control.noteamflash"
+				]
+			}
+		],
 		"dependencies": [
 			"OnPlayerBlind.medium"
 		]
@@ -92,7 +106,7 @@
 			"en": "Rule broken: do not flash your team!",
 			"de": "Regel verletzt: Teammitglied geblendet!"
 		},
-		"type": "player_got_blinded",
+		"type": "player_has_blinded",
 		"amount": 1,
 		"cooldown": 0,
 		"is_visible": false,
@@ -169,6 +183,20 @@
 				"key": "isselfflash",
 				"operator": "bool==",
 				"value": "false"
+			}
+		],
+		"actions": [
+			{
+				"type": "challenge.mark.completed",
+				"values": [
+					"OnPlayerBlind.medium.control.noselfflash"
+				]
+			},
+			{
+				"type": "challenge.mark.completed",
+				"values": [
+					"OnPlayerBlind.medium.control.noteamflash"
+				]
 			}
 		],
 		"dependencies": [
