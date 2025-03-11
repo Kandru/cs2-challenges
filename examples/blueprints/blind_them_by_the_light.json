@@ -17,6 +17,11 @@
 		},
 		"rules": [
 			{
+				"key": "global.iswarmup",
+				"operator": "bool==",
+				"value": "false"
+			},
+			{
 				"key": "global.isduringround",
 				"operator": "bool==",
 				"value": "true"
@@ -57,8 +62,8 @@
 	},
 	"OnPlayerBlind.hard.control.noselfflash": {
 		"title": {
-			"en": "Rule broken: do not flash yourself!",
-			"de": "Regel verletzt: selbst geblendet!"
+			"en": "Rule broken: do not flash yourself (>2s)!",
+			"de": "Regel verletzt: selbst geblendet (>2s)!"
 		},
 		"type": "player_got_blinded",
 		"amount": 1,
@@ -69,6 +74,11 @@
 		"data": {},
 		"rules": [
 			{
+				"key": "global.iswarmup",
+				"operator": "bool==",
+				"value": "false"
+			},
+			{
 				"key": "global.isduringround",
 				"operator": "bool==",
 				"value": "true"
@@ -77,6 +87,11 @@
 				"key": "isselfflash",
 				"operator": "bool==",
 				"value": "true"
+			},
+			{
+				"key": "blindduration",
+				"operator": ">=",
+				"value": "2"
 			}
 		],
 		"actions": [
@@ -103,8 +118,8 @@
 	},
 	"OnPlayerBlind.hard.control.noteamflash": {
 		"title": {
-			"en": "Rule broken: do not flash your team!",
-			"de": "Regel verletzt: Teammitglied geblendet!"
+			"en": "Rule broken: do not flash your team (>2s)!",
+			"de": "Regel verletzt: Teammitglied geblendet (>2s)!"
 		},
 		"type": "player_has_blinded",
 		"amount": 1,
@@ -114,6 +129,11 @@
 		"announce_completion": false,
 		"data": {},
 		"rules": [
+			{
+				"key": "global.iswarmup",
+				"operator": "bool==",
+				"value": "false"
+			},
 			{
 				"key": "global.isduringround",
 				"operator": "bool==",
@@ -128,6 +148,11 @@
 				"key": "isselfflash",
 				"operator": "bool==",
 				"value": "false"
+			},
+			{
+				"key": "blindduration",
+				"operator": ">=",
+				"value": "2"
 			}
 		],
 		"actions": [
@@ -154,8 +179,8 @@
 	},
 	"OnPlayerBlind.medium": {
 		"title": {
-			"en": "{count}/{total} blind enemies",
-			"de": "{count}/{total} blinde Gegner"
+			"en": "{count}/{total} blind enemies (>1s)",
+			"de": "{count}/{total} blinde Gegner (>1s)"
 		},
 		"type": "player_has_blinded",
 		"amount": 15,
@@ -170,6 +195,11 @@
 		},
 		"rules": [
 			{
+				"key": "global.iswarmup",
+				"operator": "bool==",
+				"value": "false"
+			},
+			{
 				"key": "global.isduringround",
 				"operator": "bool==",
 				"value": "true"
@@ -183,6 +213,11 @@
 				"key": "isselfflash",
 				"operator": "bool==",
 				"value": "false"
+			},
+			{
+				"key": "blindduration",
+				"operator": ">=",
+				"value": "1"
 			}
 		],
 		"actions": [
@@ -205,8 +240,8 @@
 	},
 	"OnPlayerBlind.medium.control.noselfflash": {
 		"title": {
-			"en": "Rule broken: do not flash yourself!",
-			"de": "Regel verletzt: selbst geblendet!"
+			"en": "Rule broken: do not flash yourself (>2s)!",
+			"de": "Regel verletzt: selbst geblendet! (>2s)"
 		},
 		"type": "player_got_blinded",
 		"amount": 1,
@@ -217,6 +252,11 @@
 		"data": {},
 		"rules": [
 			{
+				"key": "global.iswarmup",
+				"operator": "bool==",
+				"value": "false"
+			},
+			{
 				"key": "global.isduringround",
 				"operator": "bool==",
 				"value": "true"
@@ -225,6 +265,11 @@
 				"key": "isselfflash",
 				"operator": "bool==",
 				"value": "true"
+			},
+			{
+				"key": "blindduration",
+				"operator": ">=",
+				"value": "2"
 			}
 		],
 		"actions": [
@@ -251,8 +296,8 @@
 	},
 	"OnPlayerBlind.medium.control.noteamflash": {
 		"title": {
-			"en": "Rule broken: do not flash your team!",
-			"de": "Regel verletzt: Teammitglied geblendet!"
+			"en": "Rule broken: do not flash your team (>2s)!",
+			"de": "Regel verletzt: Teammitglied geblendet (>2s)!"
 		},
 		"type": "player_has_blinded",
 		"amount": 1,
@@ -262,6 +307,11 @@
 		"announce_completion": false,
 		"data": {},
 		"rules": [
+			{
+				"key": "global.iswarmup",
+				"operator": "bool==",
+				"value": "false"
+			},
 			{
 				"key": "global.isduringround",
 				"operator": "bool==",
@@ -276,6 +326,11 @@
 				"key": "isselfflash",
 				"operator": "bool==",
 				"value": "false"
+			},
+			{
+				"key": "blindduration",
+				"operator": ">=",
+				"value": "2"
 			}
 		],
 		"actions": [
@@ -317,6 +372,11 @@
 			}
 		},
 		"rules": [
+			{
+				"key": "global.iswarmup",
+				"operator": "bool==",
+				"value": "false"
+			},
 			{
 				"key": "global.isduringround",
 				"operator": "bool==",

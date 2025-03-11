@@ -17,6 +17,11 @@
 		},
 		"rules": [
 			{
+				"key": "global.iswarmup",
+				"operator": "bool==",
+				"value": "false"
+			},
+			{
 				"key": "global.isduringround",
 				"operator": "bool==",
 				"value": "true"
@@ -44,6 +49,11 @@
 		},
 		"rules": [
 			{
+				"key": "global.iswarmup",
+				"operator": "bool==",
+				"value": "false"
+			},
+			{
 				"key": "global.isduringround",
 				"operator": "bool==",
 				"value": "true"
@@ -70,6 +80,11 @@
 			}
 		},
 		"rules": [
+			{
+				"key": "global.iswarmup",
+				"operator": "bool==",
+				"value": "false"
+			},
 			{
 				"key": "global.isduringround",
 				"operator": "bool==",

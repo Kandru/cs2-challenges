@@ -17,6 +17,11 @@
 		},
 		"rules": [
 			{
+				"key": "global.iswarmup",
+				"operator": "bool==",
+				"value": "false"
+			},
+			{
 				"key": "global.isduringround",
 				"operator": "bool==",
 				"value": "true"
@@ -63,6 +68,11 @@
 		"announce_completion": false,
 		"data": {},
 		"rules": [
+			{
+				"key": "global.iswarmup",
+				"operator": "bool==",
+				"value": "false"
+			},
 			{
 				"key": "global.isduringround",
 				"operator": "bool==",
@@ -115,6 +125,11 @@
 		"data": {},
 		"rules": [
 			{
+				"key": "global.iswarmup",
+				"operator": "bool==",
+				"value": "false"
+			},
+			{
 				"key": "global.isduringround",
 				"operator": "bool==",
 				"value": "true"
@@ -165,6 +180,11 @@
 		},
 		"rules": [
 			{
+				"key": "global.iswarmup",
+				"operator": "bool==",
+				"value": "false"
+			},
+			{
 				"key": "global.isduringround",
 				"operator": "bool==",
 				"value": "true"
@@ -203,6 +223,11 @@
 		"announce_completion": false,
 		"data": {},
 		"rules": [
+			{
+				"key": "global.iswarmup",
+				"operator": "bool==",
+				"value": "false"
+			},
 			{
 				"key": "global.isduringround",
 				"operator": "bool==",
