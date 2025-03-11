@@ -86,7 +86,7 @@
 				]
 			},
 			{
-				"type": "notify.player.rule_broken",
+				"type": "notify.player.progress.rule_broken",
 				"values": []
 			}
 		],
@@ -181,7 +181,7 @@
 				]
 			},
 			{
-				"type": "notify.player.rule_broken",
+				"type": "notify.player.progress.rule_broken",
 				"values": []
 			}
 		],

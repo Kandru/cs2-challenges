@@ -96,7 +96,7 @@
 		],
 		"actions": [
 			{
-				"type": "notify.player.rule_broken",
+				"type": "notify.player.progress.rule_broken",
 				"values": ["OnPlayerBlind.hard"]
 			},
 			{
@@ -157,7 +157,7 @@
 		],
 		"actions": [
 			{
-				"type": "notify.player.rule_broken",
+				"type": "notify.player.progress.rule_broken",
 				"values": ["OnPlayerBlind.hard"]
 			},
 			{
@@ -274,7 +274,7 @@
 		],
 		"actions": [
 			{
-				"type": "notify.player.rule_broken",
+				"type": "notify.player.progress.rule_broken",
 				"values": ["OnPlayerBlind.medium"]
 			},
 			{
@@ -335,7 +335,7 @@
 		],
 		"actions": [
 			{
-				"type": "notify.player.rule_broken",
+				"type": "notify.player.progress.rule_broken",
 				"values": ["OnPlayerBlind.medium"]
 			},
 			{

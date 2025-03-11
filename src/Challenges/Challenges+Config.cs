@@ -205,6 +205,20 @@ namespace Challenges
                                             if (action.Values[0].Contains(':')) break;
                                             action.Values[0] = $"{Path.GetFileNameWithoutExtension(file).ToLower()}:{action.Values[0]}";
                                             break;
+                                        case "notify.player.progress.rule_broken":
+                                            for (int i = 0; i < action.Values.Count; i++)
+                                            {
+                                                if (action.Values[i].Contains(':')) continue;
+                                                action.Values[i] = $"{Path.GetFileNameWithoutExtension(file).ToLower()}:{action.Values[i]}";
+                                            }
+                                            break;
+                                        case "notify.player.completed.rule_broken":
+                                            for (int i = 0; i < action.Values.Count; i++)
+                                            {
+                                                if (action.Values[i].Contains(':')) continue;
+                                                action.Values[i] = $"{Path.GetFileNameWithoutExtension(file).ToLower()}:{action.Values[i]}";
+                                            }
+                                            break;
                                     }
                                 }
                                 // add filename prefix to blueprint

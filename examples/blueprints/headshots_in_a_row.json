@@ -91,7 +91,7 @@
 		],
 		"actions": [
 			{
-				"type": "notify.player.rule_broken",
+				"type": "notify.player.progress.rule_broken",
 				"values": ["OnPlayerKillHeadshot.hard"]
 			},
 			{
@@ -142,7 +142,7 @@
 		],
 		"actions": [
 			{
-				"type": "notify.player.rule_broken",
+				"type": "notify.player.progress.rule_broken",
 				"values": ["OnPlayerKillHeadshot.hard"]
 			},
 			{
@@ -241,7 +241,7 @@
 		],
 		"actions": [
 			{
-				"type": "notify.player.rule_broken",
+				"type": "notify.player.progress.rule_broken",
 				"values": ["OnPlayerKillHeadshot.easy"]
 			},
 			{
