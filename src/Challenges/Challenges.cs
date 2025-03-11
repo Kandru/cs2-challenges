@@ -43,6 +43,8 @@ namespace Challenges
             // print message if hot reload
             if (hotReload)
             {
+                // calculate statistics
+                CalculatePlayersWithMostChallengesSolved();
                 // load player configs
                 LoadActivePlayerConfigs();
                 // check if it is during a round (no matter if warmup or not, simply not in between a round or end of match)
