@@ -71,58 +71,9 @@ namespace Challenges
                 || !player.PlayerPawn.IsValid
                 || player.PlayerPawn.Value == null
                 || player.PlayerPawn.Value.LifeState != (byte)LifeState_t.LIFE_ALIVE) return;
-            // check for running challenges which can be completed
-            var challenges = _currentSchedule.Challenges
-                .Where(kvp => CanChallengeBeCompleted(kvp.Value, player) && kvp.Value.Visible)
-                .ToList();
-            if (challenges.Count == 0) return;
-            // build challenges message
-            string message = "{challenges_title}";
-            // iterate through all challenges and list them
-            int displayedChallenges = 0;
-            int finishedChallenges = 0;
-            var playerChallenges = _playerConfigs[player.NetworkIDString].Challenges.ContainsKey(_currentSchedule.Key)
-                ? _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key]
-                : [];
-
-            foreach (var kvp in challenges.OrderByDescending(c => playerChallenges.TryGetValue(c.Key, out var challenge) ? challenge.Amount : 0))
-            {
-                // check if player already has progessed or completed this challenge
-                if (playerChallenges.TryGetValue(kvp.Key, out var challenge))
-                {
-                    bool isFinished = challenge.Amount >= kvp.Value.Amount;
-                    if (isFinished) finishedChallenges++;
-
-                    // display only unfinished challenges
-                    if (displayedChallenges < Config.GUI.DisplayMaximum && !isFinished)
-                    {
-                        string tmpMessage = $"\n{GetChallengeTitle(kvp.Value, player)}"
-                            .Replace("{total}", kvp.Value.Amount.ToString("N0"))
-                            .Replace("{count}", challenge.Amount.ToString("N0"));
-                        message += tmpMessage;
-                        displayedChallenges++;
-                    }
-                }
-                else
-                {
-                    // display not started challenges
-                    if (displayedChallenges < Config.GUI.DisplayMaximum)
-                    {
-                        string tmpMessage = $"\n{GetChallengeTitle(kvp.Value, player)}"
-                            .Replace("{total}", kvp.Value.Amount.ToString("N0"))
-                            .Replace("{count}", "0");
-                        message += tmpMessage;
-                        displayedChallenges++;
-                    }
-                }
-            }
-            if (displayedChallenges == 0) message += "\n" + LocalizerExtensions.ForPlayer(Localizer, player, "challenges.completed.all");
-            // replace title with actual values
-            message = message.Replace(
-                "{challenges_title}", GetScheduleTitle(_currentSchedule, player)
-                .Replace("{playerName}", player.PlayerName.Length > 12 ? player.PlayerName.Substring(0, 12) : player.PlayerName)
-                .Replace("{total}", challenges.Count.ToString())
-                .Replace("{count}", finishedChallenges.ToString()));
+            // create gui message
+            string? message = BuildGuiMessage(player);
+            if (message == null) return;
             // use our entity if it still exists
             if (_playerHudPersonalChallenges.ContainsKey(player.NetworkIDString))
             {
@@ -199,6 +150,65 @@ namespace Challenges
                     kvp.Value.AcceptInput("kill");
             }
             _playerHudPersonalChallenges.Clear();
+        }
+
+        private string? BuildGuiMessage(CCSPlayerController player)
+        {
+            if (player == null
+                || !player.IsValid
+                || !_playerConfigs.ContainsKey(player.NetworkIDString)) return null;
+            // check for running challenges which can be completed
+            var challenges = _currentSchedule.Challenges
+                .Where(kvp => CanChallengeBeCompleted(kvp.Value, player) && kvp.Value.Visible)
+                .ToList();
+            if (challenges.Count == 0) return null;
+            // build challenges message
+            string message = "{challenges_title}";
+            // iterate through all challenges and list them
+            int displayedChallenges = 0;
+            int finishedChallenges = 0;
+            var playerChallenges = _playerConfigs[player.NetworkIDString].Challenges.ContainsKey(_currentSchedule.Key)
+                ? _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key]
+                : [];
+
+            foreach (var kvp in challenges.OrderByDescending(c => playerChallenges.TryGetValue(c.Key, out var challenge) ? challenge.Amount : 0))
+            {
+                // check if player already has progessed or completed this challenge
+                if (playerChallenges.TryGetValue(kvp.Key, out var challenge))
+                {
+                    bool isFinished = challenge.Amount >= kvp.Value.Amount;
+                    if (isFinished) finishedChallenges++;
+
+                    // display only unfinished challenges
+                    if (displayedChallenges < Config.GUI.DisplayMaximum && !isFinished)
+                    {
+                        string tmpMessage = $"\n{GetChallengeTitle(kvp.Value, player)}"
+                            .Replace("{total}", kvp.Value.Amount.ToString("N0"))
+                            .Replace("{count}", challenge.Amount.ToString("N0"));
+                        message += tmpMessage;
+                        displayedChallenges++;
+                    }
+                }
+                else
+                {
+                    // display not started challenges
+                    if (displayedChallenges < Config.GUI.DisplayMaximum)
+                    {
+                        string tmpMessage = $"\n{GetChallengeTitle(kvp.Value, player)}"
+                            .Replace("{total}", kvp.Value.Amount.ToString("N0"))
+                            .Replace("{count}", "0");
+                        message += tmpMessage;
+                        displayedChallenges++;
+                    }
+                }
+            }
+            if (displayedChallenges == 0) message += "\n" + LocalizerExtensions.ForPlayer(Localizer, player, "challenges.completed.all");
+            // replace title with actual values
+            return message.Replace(
+                "{challenges_title}", GetScheduleTitle(_currentSchedule, player)
+                .Replace("{playerName}", player.PlayerName.Length > 12 ? player.PlayerName.Substring(0, 12) : player.PlayerName)
+                .Replace("{total}", challenges.Count.ToString())
+                .Replace("{count}", finishedChallenges.ToString()));
         }
     }
 }

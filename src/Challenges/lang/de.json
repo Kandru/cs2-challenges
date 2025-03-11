@@ -9,7 +9,6 @@
     "core.debugprint": "[Spielsitzung]{red}[DEBUG] {default}{message}",
     "core.event.trigger.error": "[Spielsitzung] {red}Fehler beim Auslösen des Ereignisses {eventName}: {error}",
     "core.event.trigger": "[Spielsitzung] Ereignis {eventName} ausgelöst",
-    "command.notalive": "[Challenges] Du musst am Leben sein um deine Statistik einzusehen.",
     "command.nochallenges": "[Spielsitzung] Keine aktiven Herausforderungen.",
     "command.showgui": "[Spielsitzung] {default}Herausforderungsfenster geöffnet",
     "command.hidegui": "[Spielsitzung] {default}Herausforderungsfenster geschlossen",

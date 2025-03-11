@@ -41,7 +41,19 @@ namespace Challenges
                     _playerConfigs[player.NetworkIDString].Settings.Challenges.ShowAlways = true;
                 }
             else
-                command.ReplyToCommand(Localizer["command.notalive"]);
+            {
+                var message = BuildGuiMessage(player);
+                if (message != null)
+                {
+                    // print to center of screen (maybe gets overwritten by some other event)
+                    player.PrintToCenterHtml(message.Replace("\n", "<br>"));
+                    // print to chat as fallback
+                    foreach (string line in message.Split("\n"))
+                        command.ReplyToCommand(line);
+                }
+                else
+                    command.ReplyToCommand(Localizer["command.nochallenges"]);
+            }
         }
 
         [ConsoleCommand("sendtestchallengeevent", "sends a test challenge event to listening plugins for testing purposes <3")]
