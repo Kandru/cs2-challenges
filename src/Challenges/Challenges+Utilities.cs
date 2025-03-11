@@ -67,8 +67,28 @@ namespace Challenges
         private bool CanChallengeBeCompleted(ChallengesBlueprint challenge, CCSPlayerController player)
         {
             if (!_playerConfigs.ContainsKey(player.NetworkIDString)) return false;
+            if (challenge.Rules.Count > 0)
+            {
+                // check if map is not correct
+                foreach (var kvp in challenge.Rules)
+                {
+                    if (kvp.Key == "global.mapname")
+                    {
+                        switch (kvp.Operator)
+                        {
+                            case "==":
+                                if (kvp.Value.ToLower() != Server.MapName.ToLower()) return false;
+                                break;
+                            case "!=":
+                                if (kvp.Value.ToLower() == Server.MapName.ToLower()) return false;
+                                break;
+                        }
+                    }
+                }
+            }
             if (challenge.Dependencies.Count > 0)
             {
+                // check if dependencies are not met
                 foreach (var dependency in challenge.Dependencies)
                 {
                     if (!_playerConfigs[player.NetworkIDString].Challenges.ContainsKey(_currentSchedule.Key)
