@@ -91,6 +91,10 @@
 		],
 		"actions": [
 			{
+				"type": "notify.player.rule_broken",
+				"values": ["OnPlayerKillHeadshot.hard"]
+			},
+			{
 				"type": "challenge.delete.progress",
 				"values": [
 					"OnPlayerKillHeadshot.hard"
@@ -101,10 +105,6 @@
 				"values": [
 					"OnPlayerKillHeadshot.hard.control.noheadshot"
 				]
-			},
-			{
-				"type": "notify.player.rule_broken",
-				"values": []
 			}
 		],
 		"dependencies": [
@@ -142,6 +142,10 @@
 		],
 		"actions": [
 			{
+				"type": "notify.player.rule_broken",
+				"values": ["OnPlayerKillHeadshot.hard"]
+			},
+			{
 				"type": "challenge.delete.progress",
 				"values": [
 					"OnPlayerKillHeadshot.hard"
@@ -152,10 +156,6 @@
 				"values": [
 					"OnPlayerKillHeadshot.hard.control.donotdie"
 				]
-			},
-			{
-				"type": "notify.player.rule_broken",
-				"values": []
 			}
 		],
 		"dependencies": [
@@ -241,6 +241,10 @@
 		],
 		"actions": [
 			{
+				"type": "notify.player.rule_broken",
+				"values": ["OnPlayerKillHeadshot.easy"]
+			},
+			{
 				"type": "challenge.delete.progress",
 				"values": [
 					"OnPlayerKillHeadshot.easy"
@@ -251,10 +255,6 @@
 				"values": [
 					"OnPlayerKillHeadshot.easy.control.noheadshot"
 				]
-			},
-			{
-				"type": "notify.player.rule_broken",
-				"values": []
 			}
 		],
 		"dependencies": []
