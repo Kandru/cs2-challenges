@@ -104,8 +104,7 @@ namespace Challenges
                     }
                     if (kvp.Key == "global.hashostages")
                     {
-                        Console.WriteLine("===");
-                        Console.WriteLine(mapHostageEntities.Length > 0);
+                        ;
                         switch (kvp.Operator)
                         {
                             case "bool==":
