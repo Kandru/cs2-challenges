@@ -102,17 +102,36 @@ This plugin automatically creates a readable JSON configuration file. This confi
     "notify_player_on_challenge_complete": true,
     "notify_other_on_challenge_complete": true,
     "notification_sound_on_challenge_progress": "",
-    "notification_sound_on_challenge_complete": ""
+    "notification_sound_on_challenge_complete": "sounds/ui/xp_levelup.vsnd",
+    "notification_sound_on_action_rule_broken": "sounds/ui/xp_rankdown_02.vsnd"
+  },
+  "discord": {
+    "language": "de",
+    "webhook_on_challenge_completed": ""
   },
   "ConfigVersion": 1
 }
 ```
+
+### enable 
 
 You can either disable or enable the complete Challenges Plugin by simply setting the *enable* boolean to *false* or *true*.
 
 ### debug
 
 Shows debug messages useful when developing for this plugin.
+
+### gui
+
+Settings for the position of the *!c* challenge menu.
+
+### notifications
+
+Notification settings. To disable sounds simply remove the sound file from the setting.
+
+### discord
+
+Discord Webhook settings. Simply change the language to your desired language. Will fallback to server default (if found) or to the first language available of a challenge.
 
 ## Compile Yourself
 
