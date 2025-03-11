@@ -83,6 +83,8 @@ namespace Challenges
 
         private bool IsChallengeAllowedOnThisMap(ChallengesBlueprint challenge)
         {
+            // check amount of hostages on map
+            var mapHostageEntities = Utilities.FindAllEntitiesByDesignerName<CBaseEntity>("hostage_entity").ToArray();
             if (challenge.Rules.Count > 0)
             {
                 // check if map is not correct
@@ -97,6 +99,20 @@ namespace Challenges
                                 break;
                             case "!=":
                                 if (kvp.Value.ToLower() == Server.MapName.ToLower()) return false;
+                                break;
+                        }
+                    }
+                    if (kvp.Key == "global.hashostages")
+                    {
+                        Console.WriteLine("===");
+                        Console.WriteLine(mapHostageEntities.Length > 0);
+                        switch (kvp.Operator)
+                        {
+                            case "bool==":
+                                if (kvp.Value.ToLower() != (mapHostageEntities.Length > 0).ToString().ToLower()) return false;
+                                break;
+                            case "bool!=":
+                                if (kvp.Value.ToLower() == (mapHostageEntities.Length > 0).ToString().ToLower()) return false;
                                 break;
                         }
                     }

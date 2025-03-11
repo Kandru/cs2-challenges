@@ -7,11 +7,14 @@ namespace Challenges
     {
         private Dictionary<string, string> GetGlobalEventData()
         {
+            // check amount of hostages on map
+            var mapHostageEntities = Utilities.FindAllEntitiesByDesignerName<CBaseEntity>("hostage_entity").ToArray();
             return new Dictionary<string, string>
             {
                 { "global.iswarmup", GetGameRules()?.WarmupPeriod.ToString() ?? "false" },
                 { "global.isduringround", _isDuringRound.ToString() },
-                { "global.mapname", Server.MapName }
+                { "global.mapname", Server.MapName },
+                { "global.hashostages", (mapHostageEntities.Length > 0).ToString() }
             };
         }
 
