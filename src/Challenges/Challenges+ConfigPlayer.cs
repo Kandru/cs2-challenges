@@ -18,6 +18,11 @@ namespace Challenges
         [JsonPropertyName("last_update")] public long LastUpdate { get; set; } = 0;
     }
 
+    public class PlayerConfigStatistics
+    {
+        public int AmountChallengesSolved { get; set; } = 0;
+    }
+
     public class PlayerConfig
     {
         [JsonPropertyName("username")] public string Username { get; set; } = "";
@@ -25,5 +30,6 @@ namespace Challenges
         [JsonPropertyName("language")] public string Language { get; set; } = "";
         [JsonPropertyName("challenges")] public Dictionary<string, Dictionary<string, PlayerConfigChallenges>> Challenges { get; set; } = [];
         [JsonPropertyName("settings")] public PlayerConfigSettings Settings { get; set; } = new();
+        public PlayerConfigStatistics Statistics { get; set; } = new();
     }
 }

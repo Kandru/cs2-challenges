@@ -1,6 +1,8 @@
 using ChallengesShared.Events;
+using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
+using CounterStrikeSharp.API.Core.Translations;
 using CounterStrikeSharp.API.Modules.Admin;
 using CounterStrikeSharp.API.Modules.Commands;
 
@@ -53,6 +55,37 @@ namespace Challenges
                 }
                 else
                     command.ReplyToCommand(Localizer["command.nochallenges"]);
+            }
+        }
+
+        [ConsoleCommand("topc", "players with most challenges solved")]
+        [CommandHelper(whoCanExecute: CommandUsage.CLIENT_ONLY, minArgs: 0, usage: "!topc")]
+        public void CommandShowTopPlayers(CCSPlayerController player, CommandInfo command)
+        {
+            if (player == null
+                || !player.IsValid) return;
+            if (_playersWithMostChallengesSolved.Count == 0)
+            {
+                foreach (CCSPlayerController entry in Utilities.GetPlayers())
+                {
+                    if (entry == null
+                        || !entry.IsValid
+                        || entry.IsBot) continue;
+                    entry.PrintToChat(LocalizerExtensions.ForPlayer(Localizer, entry, "command.topc.nodata"));
+                }
+                return;
+            }
+            foreach (CCSPlayerController entry in Utilities.GetPlayers())
+            {
+                if (entry == null
+                    || !entry.IsValid
+                    || entry.IsBot) continue;
+                entry.PrintToChat(LocalizerExtensions.ForPlayer(Localizer, entry, "command.topc"));
+                // get the top 5 of players with most challenges solved
+                for (int i = 0; i < 5 && i < _playersWithMostChallengesSolved.Count; i++)
+                {
+                    entry.PrintToChat($"{i + 1}. {_playersWithMostChallengesSolved[i].Username} ({_playersWithMostChallengesSolved[i].Statistics.AmountChallengesSolved})");
+                }
             }
         }
 

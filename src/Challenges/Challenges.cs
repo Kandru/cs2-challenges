@@ -296,6 +296,8 @@ namespace Challenges
         {
             // load current config
             Config.Reload();
+            // calculate statistics
+            CalculatePlayersWithMostChallengesSolved();
             // load player configs
             LoadActivePlayerConfigs();
             LoadChallenges();
