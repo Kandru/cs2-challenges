@@ -47,7 +47,7 @@ Other CounterstrikeSharp plugins will then be notified to take further actions. 
 
 ## Compatible plugins
 
-- none yet (be the first to get added here)
+- [CS2 Player Sessions (simple player sessions plugin)](https://github.com/kandru/cs2-player-sessions)
 
 # Servers to test this Challenges-Plugin on
 
