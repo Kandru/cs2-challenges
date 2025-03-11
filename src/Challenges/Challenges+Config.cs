@@ -34,6 +34,12 @@ namespace Challenges
         [JsonPropertyName("notification_sound_on_action_rule_broken")] public string ChallengeRuleBrokenSound { get; set; } = "sounds/ui/xp_rankdown_02.vsnd";
     }
 
+    public class PluginConfigDiscord
+    {
+        [JsonPropertyName("language")] public string Language { get; set; } = "en";
+        [JsonPropertyName("webhook_on_challenge_completed")] public string WebhookChallengeCompleted { get; set; } = "";
+    }
+
     public class PluginConfig : BasePluginConfig
     {
         // disabled
@@ -44,6 +50,8 @@ namespace Challenges
         [JsonPropertyName("gui")] public PluginConfigGUI GUI { get; set; } = new();
         // notifications
         [JsonPropertyName("notifications")] public PluginConfigNotifications Notifications { get; set; } = new();
+        // discord notifications
+        [JsonPropertyName("discord")] public PluginConfigDiscord Discord { get; set; } = new();
     }
 
     public partial class Challenges : BasePlugin, IPluginConfig<PluginConfig>

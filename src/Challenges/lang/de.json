@@ -19,5 +19,6 @@
     "challenges.completed.user": "{default}Herausforderung abgeschlossen: {green}{challenge}",
     "challenges.rule.broken": "{red}Herausforderungsregel gebrochen:",
     "challenges.deleted": "{default}Herausforderung gelöscht: {green}{challenge}",
-    "challenges.completed.other": "{green}{player} {default}hat die Herausforderung abgeschlossen: {green}{challenge}"
+    "challenges.completed.other": "{green}{player} {default}hat die Herausforderung abgeschlossen: {green}{challenge}",
+    "discord.webhook.challenge.completed": "**{player}** *hat eine Herausforderung abgeschlossen*: **{challenge}**"
 }

@@ -244,6 +244,8 @@ namespace Challenges
                         }
                         // send event to our plugin
                         OnCompletionAction(player, kvp.Value);
+                        // send event to discord if applicable
+                        if (kvp.Value.Visible) SendDiscordMessageOnChallengeCompleted(player, kvp.Value);
                         // send event to other plugins on next frame to decouple from listening plugins and partly avoid lags due to runtime contrains
                         Server.NextFrame(() =>
                         {
