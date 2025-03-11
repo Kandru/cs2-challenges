@@ -340,7 +340,8 @@ namespace Challenges
             // read user configuration
             LoadPlayerConfig(player.NetworkIDString);
             // update player data
-            _playerConfigs[player.NetworkIDString].ClanTag = player.PlayerName;
+            _playerConfigs[player.NetworkIDString].Username = player.PlayerName;
+            _playerConfigs[player.NetworkIDString].SteamId = player.NetworkIDString;
             _playerConfigs[player.NetworkIDString].ClanTag = player.ClanName;
             // bugfix: show empty worldtext on connect to allow instant display of worldtext entity
             WorldTextManager.Create(player, "");

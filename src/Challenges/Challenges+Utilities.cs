@@ -64,9 +64,25 @@ namespace Challenges
                     : challenge.Title.First().Value);
         }
 
-        private bool CanChallengeBeCompleted(ChallengesBlueprint challenge, CCSPlayerController player)
+        private bool CanChallengeBeCompleted(ChallengesBlueprint challenge, string SteamId)
         {
-            if (!_playerConfigs.ContainsKey(player.NetworkIDString)) return false;
+            if (!_playerConfigs.ContainsKey(SteamId)) return false;
+            if (challenge.Dependencies.Count > 0)
+            {
+                // check if dependencies are not met
+                foreach (var dependency in challenge.Dependencies)
+                {
+                    if (!_playerConfigs[SteamId].Challenges.ContainsKey(_currentSchedule.Key)
+                        || !_playerConfigs[SteamId].Challenges[_currentSchedule.Key].ContainsKey(dependency)
+                        || _playerConfigs[SteamId].Challenges[_currentSchedule.Key][dependency].Amount < _availableChallenges.Blueprints[dependency].Amount)
+                        return false;
+                }
+            }
+            return true;
+        }
+
+        private bool IsChallengeAllowedOnThisMap(ChallengesBlueprint challenge)
+        {
             if (challenge.Rules.Count > 0)
             {
                 // check if map is not correct
@@ -84,17 +100,6 @@ namespace Challenges
                                 break;
                         }
                     }
-                }
-            }
-            if (challenge.Dependencies.Count > 0)
-            {
-                // check if dependencies are not met
-                foreach (var dependency in challenge.Dependencies)
-                {
-                    if (!_playerConfigs[player.NetworkIDString].Challenges.ContainsKey(_currentSchedule.Key)
-                        || !_playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key].ContainsKey(dependency)
-                        || _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key][dependency].Amount < _availableChallenges.Blueprints[dependency].Amount)
-                        return false;
                 }
             }
             return true;

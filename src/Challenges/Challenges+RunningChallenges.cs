@@ -115,7 +115,7 @@ namespace Challenges
                     continue;
                 }
                 // check if the user can attend the challenge because of dependencies which have to be completed first
-                if (!CanChallengeBeCompleted(kvp.Value, player))
+                if (!CanChallengeBeCompleted(kvp.Value, player.NetworkIDString))
                 {
                     DebugPrint($"user {player.NetworkIDString} has not completed dependencies for challenge {kvp.Key}");
                     continue;

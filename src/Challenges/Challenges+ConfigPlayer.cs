@@ -26,6 +26,7 @@ namespace Challenges
     public class PlayerConfig
     {
         [JsonPropertyName("username")] public string Username { get; set; } = "";
+        [JsonPropertyName("steamid")] public string SteamId { get; set; } = "";
         [JsonPropertyName("clantag")] public string ClanTag { get; set; } = "";
         [JsonPropertyName("language")] public string Language { get; set; } = "";
         [JsonPropertyName("challenges")] public Dictionary<string, Dictionary<string, PlayerConfigChallenges>> Challenges { get; set; } = [];

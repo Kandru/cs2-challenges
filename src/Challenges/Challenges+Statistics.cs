@@ -35,22 +35,26 @@ namespace Challenges
         {
             // sort players by amount of challenges solved
             var playersWithChallenges = players
-                .Select(player => new
-                {
-                    Player = player,
-                    CompletedChallenges = player.Challenges.Sum(
-                        category => category.Value.Count(
-                            challenge => _currentSchedule.Challenges.ContainsKey(challenge.Key)
-                                && challenge.Value.Amount >= _currentSchedule.Challenges[challenge.Key].Amount))
-                })
-                .OrderByDescending(player => player.CompletedChallenges)
-                .ToList();
+            .Select(player => new
+            {
+                Player = player,
+                CompletedChallenges = player.Challenges.Sum(
+                category => category.Value.Count(
+                    // only count if challenge does exist
+                    challenge => _currentSchedule.Challenges.ContainsKey(challenge.Key)
+                    // only count if challenge is completed
+                    && challenge.Value.Amount >= _currentSchedule.Challenges[challenge.Key].Amount
+                    // only count if challenge is visible
+                    && _currentSchedule.Challenges[challenge.Key].Visible))
+            })
+            .OrderByDescending(player => player.CompletedChallenges)
+            .ToList();
             // add amount of challenges solved to player statistics
             foreach (var playerWithChallenges in playersWithChallenges)
             {
                 playerWithChallenges.Player.Statistics.AmountChallengesSolved = playerWithChallenges.CompletedChallenges;
             }
-            return [.. playersWithChallenges.Select(player => player.Player)];
+            return playersWithChallenges.Select(player => player.Player).ToList();
         }
 
         private void CalculatePlayersWithMostChallengesSolved()

@@ -159,7 +159,9 @@ namespace Challenges
                 || !_playerConfigs.ContainsKey(player.NetworkIDString)) return null;
             // check for running challenges which can be completed
             var challenges = _currentSchedule.Challenges
-                .Where(kvp => CanChallengeBeCompleted(kvp.Value, player) && kvp.Value.Visible)
+                .Where(kvp => CanChallengeBeCompleted(kvp.Value, player.NetworkIDString)
+                    && IsChallengeAllowedOnThisMap(kvp.Value)
+                    && kvp.Value.Visible)
                 .ToList();
             if (challenges.Count == 0) return null;
             // build challenges message
