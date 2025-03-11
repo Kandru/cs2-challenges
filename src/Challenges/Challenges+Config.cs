@@ -30,8 +30,8 @@ namespace Challenges
         [JsonPropertyName("notify_player_on_challenge_complete")] public bool NotifyPlayerOnChallengeComplete { get; set; } = true;
         [JsonPropertyName("notify_other_on_challenge_complete")] public bool NotifyOtherOnChallengeComplete { get; set; } = true;
         [JsonPropertyName("notification_sound_on_challenge_progress")] public string ChallengeProgressSound { get; set; } = "";
-        [JsonPropertyName("notification_sound_on_challenge_complete")] public string ChallengeCompleteSound { get; set; } = "";
-        [JsonPropertyName("notification_sound_on_action_rule_broken")] public string ChallengeRuleBrokenSound { get; set; } = "";
+        [JsonPropertyName("notification_sound_on_challenge_complete")] public string ChallengeCompleteSound { get; set; } = "sounds/ui/xp_levelup.vsnd";
+        [JsonPropertyName("notification_sound_on_action_rule_broken")] public string ChallengeRuleBrokenSound { get; set; } = "sounds/ui/xp_rankdown_02.vsnd";
     }
 
     public class PluginConfig : BasePluginConfig
