@@ -1,11 +1,11 @@
 > [!TIP]
-> Blueprints can be complex to understand. Please look into the *examples* folder of this repository before asking questions in our Discord.
+> Blueprints can be complex. Please check the *examples* folder in this repository before asking questions in our Discord.
 
 # Blueprints Documentation
 
-Blueprints are in-game challenges that players can see and complete. You can create many challenges, but be aware that having too many active challenges at once might slow down the server. The Challenges-Plugin tries to optimize this by disabling and enabling events only if they are actively used by a challenge.
+Blueprints are in-game challenges that players can see and complete. You can create many challenges, but having too many active challenges at once might slow down the server. The Challenges-Plugin optimizes this by enabling and disabling events only when they are actively used by a challenge.
 
-## Blueprints file
+## Creating a Blueprint File
 
 To create your first challenge, follow these steps:
 
@@ -13,44 +13,44 @@ To create your first challenge, follow these steps:
 2. Place this file in the `blueprints` folder of the Challenges-Plugin.
 3. You can create multiple files and organize them as you prefer (e.g., one file per blueprint type or plugin).
 
-Each blueprint file must contain at least one challenge. A challenge is defined by an event type (see below) and various settings. Each challenge needs a unique name within the same blueprint file. The Challenges-Plugin will automatically generate an global identifier for each challenge.
+Each blueprint file must contain at least one challenge. A challenge is defined by an event type and various settings. Each challenge needs a unique name within the same blueprint file. The Challenges-Plugin will automatically generate a global identifier for each challenge.
 
 For example:
 - Blueprint filename: `example.json`
 - Unique Challenge name: `YourUniqueChallengeName`
 - Resulting global identifier: `example:YourUniqueChallengeName`
 
-When the blueprint file is loaded into the Challenges-Plugin, it will be referenced by this global identifier. The **":"** is reserved within the plugin. Do **NOT** use it for any challenge name or blueprint filename. Only use it *once* to set the blueprint filename of your identifier within the *actions* and/or *dependencies* whenever you are referencing to another file.
+When the blueprint file is loaded into the Challenges-Plugin, it will be referenced by this global identifier. The **":"** is reserved within the plugin. Do **NOT** use it for any challenge name or blueprint filename. Only use it *once* to set the blueprint filename of your identifier within the *actions* and/or *dependencies* when referencing another file.
 
 Each JSON file should be structured as follows and can contain multiple blueprints, each with a unique name:
 
 ```json
 {
-	"YourUniqueChallengeName": {
-		"title": {
-			"en": "My Unique Challenge ({count} / {total})"
-		},
-		"type": "player_jump",
-		"amount": 10,
-		"cooldown": 0,
-		"is_visible": true,
-		"announce_progress": true,
-		"announce_completion": true,
-		"data": {
-			"ExamplePlugin": {
-				"ExamplePoints": "1"
-			}
-		},
-		"rules": [
-			{
-				"key": "global.isduringround",
-				"operator": "bool==",
-				"value": "true"
-			}
-		],
-		"actions": [],
-		"dependencies": []
-	}
+    "YourUniqueChallengeName": {
+        "title": {
+            "en": "My Unique Challenge ({count} / {total})"
+        },
+        "type": "player_jump",
+        "amount": 10,
+        "cooldown": 0,
+        "is_visible": true,
+        "announce_progress": true,
+        "announce_completion": true,
+        "data": {
+            "ExamplePlugin": {
+                "ExamplePoints": "1"
+            }
+        },
+        "rules": [
+            {
+                "key": "global.isduringround",
+                "operator": "bool==",
+                "value": "true"
+            }
+        ],
+        "actions": [],
+        "dependencies": []
+    }
 }
 ```
 
