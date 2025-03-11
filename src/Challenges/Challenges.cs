@@ -294,7 +294,7 @@ namespace Challenges
 
         private void OnMapStart(string mapName)
         {
-            // load possible challenge changes
+            // load current config
             Config.Reload();
             // load player configs
             LoadActivePlayerConfigs();

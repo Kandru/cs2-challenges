@@ -39,13 +39,11 @@ Other CounterstrikeSharp plugins will then be notified to take further actions. 
 - [ ] Easy Webinterface to create your own Challenges
 - [ ] Add ability to spawn custom props on the map as a challenge
 - [ ] Link possible values for all rules in documentation
-- [ ] make plugin config file only save on update, otherwise only load (to avoid overwriting)
 - [ ] Discord integration
   - [ ] Webhook for Challenge completion
   - [ ] Webhook for notification of a new Schedule starting (with all challenges listed)
   - [ ] Webhook for sending statistics at a given interval about all players (like a top list)
 - [ ] Command !topc for top players with most challenges solved
-- [ ] do not show broken rules if challenge has amount = 0
 
 ## Compatible plugins
 
