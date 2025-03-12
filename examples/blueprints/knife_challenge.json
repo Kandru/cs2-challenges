@@ -1,8 +1,8 @@
 {
 	"OnPlayerDeath.hard": {
 		"title": {
-			"en": "{count}/{total} Master of the Knife <3",
-			"de": "{count}/{total} Meister des Messers <3"
+			"en": "Master of the Knife <3 ({count}/{total})",
+			"de": "Meister des Messers <3 ({count}/{total})"
 		},
 		"type": "player_kill",
 		"amount": 15,
@@ -114,8 +114,8 @@
 	},
 	"OnPlayerDeath.medium": {
 		"title": {
-			"en": "{count}/{total} Knife without resistance :D",
-			"de": "{count}/{total} Messer ohne Gegenwehr :D"
+			"en": "{count}/{total}x Knife without resistance :D",
+			"de": "{count}/{total}x Messern ohne Gegenwehr :D"
 		},
 		"type": "player_kill",
 		"amount": 10,
@@ -227,8 +227,8 @@
 	},
 	"OnPlayerDeath.easy": {
 		"title": {
-			"en": "{count}/{total} Sharp and Deadly",
-			"de": "{count}/{total} Scharf und tödlich"
+			"en": "{count}/{total}x Sharp and Deadly",
+			"de": "{count}/{total}x Scharf und tödlich"
 		},
 		"type": "player_kill",
 		"amount": 5,

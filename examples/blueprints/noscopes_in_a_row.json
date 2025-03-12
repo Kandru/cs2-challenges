@@ -1,121 +1,8 @@
 {
-	"OnPlayerDeath.hard": {
+	"OnPlayerKillNoscope.hard": {
 		"title": {
-			"en": "Master of the Taser <3 ({count}/{total})",
-			"de": "Meister des Tasers <3 ({count}/{total})"
-		},
-		"type": "player_kill",
-		"amount": 15,
-		"cooldown": 0,
-		"is_visible": true,
-		"announce_progress": true,
-		"announce_completion": true,
-		"data": {
-			"PlayerSessions": {
-				"setpoints": "30"
-			}
-		},
-		"rules": [
-			{
-				"key": "global.iswarmup",
-				"operator": "bool==",
-				"value": "false"
-			},
-			{
-				"key": "global.isduringround",
-				"operator": "bool==",
-				"value": "true"
-			},
-			{
-				"key": "weapon",
-				"operator": "contains",
-				"value": "taser"
-			},
-			{
-				"key": "isteamkill",
-				"operator": "bool==",
-				"value": "false"
-			},
-			{
-				"key": "victim.isbot",
-				"operator": "bool==",
-				"value": "false"
-			}
-		],
-		"actions": [
-			{
-				"type": "challenge.mark.completed",
-				"values": [
-					"OnPlayerDeath.hard.control.notaserdeath"
-				]
-			}
-		],
-		"dependencies": [
-			"OnPlayerDeath.medium"
-		]
-	},
-	"OnPlayerDeath.hard.control.notaserdeath": {
-		"title": {
-			"en": "Rule broken: you died because of a taser",
-			"de": "Regel gebrochen: Du bist wegen eines Tasers gestorben"
-		},
-		"type": "player_death",
-		"amount": 1,
-		"cooldown": 0,
-		"is_visible": false,
-		"announce_progress": false,
-		"announce_completion": false,
-		"data": {},
-		"rules": [
-			{
-				"key": "global.iswarmup",
-				"operator": "bool==",
-				"value": "false"
-			},
-			{
-				"key": "global.isduringround",
-				"operator": "bool==",
-				"value": "true"
-			},
-			{
-				"key": "weapon",
-				"operator": "contains",
-				"value": "taser"
-			},
-			{
-				"key": "attacker.isbot",
-				"operator": "bool==",
-				"value": "false"
-			}
-		],
-		"actions": [
-			{
-				"type": "notify.player.progress.rule_broken",
-				"values": [
-					"OnPlayerDeath.hard"
-				]
-			},
-			{
-				"type": "challenge.delete.progress",
-				"values": [
-					"OnPlayerDeath.hard"
-				]
-			},
-			{
-				"type": "challenge.delete.completed",
-				"values": [
-					"OnPlayerDeath.hard.control.notaserdeath"
-				]
-			}
-		],
-		"dependencies": [
-			"OnPlayerDeath.medium"
-		]
-	},
-	"OnPlayerDeath.medium": {
-		"title": {
-			"en": "{count}/{total}x taser without resistance :D",
-			"de": "{count}/{total}x Taser ohne Gegenwehr :D"
+			"en": "{count}/{total} Noscopes in a row",
+			"de": "{count}/{total} Noscopes hintereinander"
 		},
 		"type": "player_kill",
 		"amount": 10,
@@ -125,7 +12,7 @@
 		"announce_completion": true,
 		"data": {
 			"PlayerSessions": {
-				"setpoints": "20"
+				"setpoints": "25"
 			}
 		},
 		"rules": [
@@ -140,12 +27,12 @@
 				"value": "true"
 			},
 			{
-				"key": "weapon",
-				"operator": "contains",
-				"value": "taser"
+				"key": "noscope",
+				"operator": "bool==",
+				"value": "true"
 			},
 			{
-				"key": "isteamkill",
+				"key": "isselfkill",
 				"operator": "bool==",
 				"value": "false"
 			},
@@ -159,18 +46,87 @@
 			{
 				"type": "challenge.mark.completed",
 				"values": [
-					"OnPlayerDeath.medium.control.notaserdeath"
+					"OnPlayerKillNoscope.hard.control.noscope"
+				]
+			},
+			{
+				"type": "challenge.mark.completed",
+				"values": [
+					"OnPlayerKillNoscope.hard.control.donotdie"
 				]
 			}
 		],
 		"dependencies": [
-			"OnPlayerDeath.easy"
+			"OnPlayerKillNoscope.easy"
 		]
 	},
-	"OnPlayerDeath.medium.control.notaserdeath": {
+	"OnPlayerKillNoscope.hard.control.noscope": {
 		"title": {
-			"en": "Rule broken: you died because of a taser",
-			"de": "Regel gebrochen: Du bist wegen eines Tasers gestorben"
+			"en": "Rule broken: without Scope",
+			"de": "Regel verletzt: ohne Scope"
+		},
+		"type": "player_kill",
+		"amount": 1,
+		"cooldown": 0,
+		"is_visible": false,
+		"announce_progress": false,
+		"announce_completion": false,
+		"data": {},
+		"rules": [
+			{
+				"key": "global.iswarmup",
+				"operator": "bool==",
+				"value": "false"
+			},
+			{
+				"key": "global.isduringround",
+				"operator": "bool==",
+				"value": "true"
+			},
+			{
+				"key": "noscope",
+				"operator": "bool==",
+				"value": "false"
+			},
+			{
+				"key": "isselfkill",
+				"operator": "bool==",
+				"value": "false"
+			},
+			{
+				"key": "victim.isbot",
+				"operator": "bool==",
+				"value": "false"
+			}
+		],
+		"actions": [
+			{
+				"type": "notify.player.progress.rule_broken",
+				"values": [
+					"OnPlayerKillNoscope.hard"
+				]
+			},
+			{
+				"type": "challenge.delete.progress",
+				"values": [
+					"OnPlayerKillNoscope.hard"
+				]
+			},
+			{
+				"type": "challenge.delete.completed",
+				"values": [
+					"OnPlayerKillNoscope.hard.control.noscope"
+				]
+			}
+		],
+		"dependencies": [
+			"OnPlayerKillNoscope.easy"
+		]
+	},
+	"OnPlayerKillNoscope.hard.control.donotdie": {
+		"title": {
+			"en": "Rule broken: do not die",
+			"de": "Regel verletzt: ohne sterben"
 		},
 		"type": "player_death",
 		"amount": 1,
@@ -191,11 +147,6 @@
 				"value": "true"
 			},
 			{
-				"key": "weapon",
-				"operator": "contains",
-				"value": "taser"
-			},
-			{
 				"key": "attacker.isbot",
 				"operator": "bool==",
 				"value": "false"
@@ -205,30 +156,30 @@
 			{
 				"type": "notify.player.progress.rule_broken",
 				"values": [
-					"OnPlayerDeath.medium"
+					"OnPlayerKillNoscope.hard"
 				]
 			},
 			{
 				"type": "challenge.delete.progress",
 				"values": [
-					"OnPlayerDeath.medium"
+					"OnPlayerKillNoscope.hard"
 				]
 			},
 			{
 				"type": "challenge.delete.completed",
 				"values": [
-					"OnPlayerDeath.medium.control.notaserdeath"
+					"OnPlayerKillNoscope.hard.control.donotdie"
 				]
 			}
 		],
 		"dependencies": [
-			"OnPlayerDeath.easy"
+			"OnPlayerKillNoscope.easy"
 		]
 	},
-	"OnPlayerDeath.easy": {
+	"OnPlayerKillNoscope.easy": {
 		"title": {
-			"en": "{count}/{total}x electrical connection",
-			"de": "{count}/{total}x elektrische Verbindung"
+			"en": "{count}/{total} Noscopes in a row",
+			"de": "{count}/{total} Noscopes hintereinander"
 		},
 		"type": "player_kill",
 		"amount": 5,
@@ -253,12 +204,12 @@
 				"value": "true"
 			},
 			{
-				"key": "weapon",
-				"operator": "contains",
-				"value": "taser"
+				"key": "noscope",
+				"operator": "bool==",
+				"value": "true"
 			},
 			{
-				"key": "isteamkill",
+				"key": "isselfkill",
 				"operator": "bool==",
 				"value": "false"
 			},
@@ -266,6 +217,70 @@
 				"key": "victim.isbot",
 				"operator": "bool==",
 				"value": "false"
+			}
+		],
+		"actions": [
+			{
+				"type": "challenge.mark.completed",
+				"values": [
+					"OnPlayerKillNoscope.easy.control.noscope"
+				]
+			}
+		],
+		"dependencies": []
+	},
+	"OnPlayerKillNoscope.easy.control.noscope": {
+		"title": {
+			"en": "Rule broken: without scope",
+			"de": "Regel verletzt: ohne Scope"
+		},
+		"type": "player_kill",
+		"amount": 1,
+		"cooldown": 0,
+		"is_visible": false,
+		"announce_progress": false,
+		"announce_completion": false,
+		"data": {},
+		"rules": [
+			{
+				"key": "global.iswarmup",
+				"operator": "bool==",
+				"value": "false"
+			},
+			{
+				"key": "global.isduringround",
+				"operator": "bool==",
+				"value": "true"
+			},
+			{
+				"key": "noscope",
+				"operator": "bool==",
+				"value": "false"
+			},
+			{
+				"key": "victim.isbot",
+				"operator": "bool==",
+				"value": "false"
+			}
+		],
+		"actions": [
+			{
+				"type": "notify.player.progress.rule_broken",
+				"values": [
+					"OnPlayerKillNoscope.easy"
+				]
+			},
+			{
+				"type": "challenge.delete.progress",
+				"values": [
+					"OnPlayerKillNoscope.easy"
+				]
+			},
+			{
+				"type": "challenge.delete.completed",
+				"values": [
+					"OnPlayerKillNoscope.easy.control.noscope"
+				]
 			}
 		],
 		"dependencies": []

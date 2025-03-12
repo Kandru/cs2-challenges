@@ -1,8 +1,8 @@
 {
 	"OnPlayerDeath.hard": {
 		"title": {
-			"en": "Master of the Taser <3 ({count}/{total})",
-			"de": "Meister des Tasers <3 ({count}/{total})"
+			"en": "Master of the revolver <3 ({count}/{total})",
+			"de": "Meister des Revolvers <3 ({count}/{total})"
 		},
 		"type": "player_kill",
 		"amount": 15,
@@ -29,7 +29,7 @@
 			{
 				"key": "weapon",
 				"operator": "contains",
-				"value": "taser"
+				"value": "revolver"
 			},
 			{
 				"key": "isteamkill",
@@ -46,7 +46,7 @@
 			{
 				"type": "challenge.mark.completed",
 				"values": [
-					"OnPlayerDeath.hard.control.notaserdeath"
+					"OnPlayerDeath.hard.control.norevolverdeath"
 				]
 			}
 		],
@@ -54,10 +54,10 @@
 			"OnPlayerDeath.medium"
 		]
 	},
-	"OnPlayerDeath.hard.control.notaserdeath": {
+	"OnPlayerDeath.hard.control.norevolverdeath": {
 		"title": {
-			"en": "Rule broken: you died because of a taser",
-			"de": "Regel gebrochen: Du bist wegen eines Tasers gestorben"
+			"en": "Rule broken: you died because of a revolver",
+			"de": "Regel gebrochen: Du bist wegen eines Revolvers gestorben"
 		},
 		"type": "player_death",
 		"amount": 1,
@@ -80,7 +80,7 @@
 			{
 				"key": "weapon",
 				"operator": "contains",
-				"value": "taser"
+				"value": "revolver"
 			},
 			{
 				"key": "attacker.isbot",
@@ -104,7 +104,7 @@
 			{
 				"type": "challenge.delete.completed",
 				"values": [
-					"OnPlayerDeath.hard.control.notaserdeath"
+					"OnPlayerDeath.hard.control.norevolverdeath"
 				]
 			}
 		],
@@ -114,8 +114,8 @@
 	},
 	"OnPlayerDeath.medium": {
 		"title": {
-			"en": "{count}/{total}x taser without resistance :D",
-			"de": "{count}/{total}x Taser ohne Gegenwehr :D"
+			"en": "revolver like in the wild west :D ({count}/{total})",
+			"de": "Revolver wie im wilden Westen :D ({count}/{total})"
 		},
 		"type": "player_kill",
 		"amount": 10,
@@ -142,7 +142,7 @@
 			{
 				"key": "weapon",
 				"operator": "contains",
-				"value": "taser"
+				"value": "revolver"
 			},
 			{
 				"key": "isteamkill",
@@ -159,7 +159,7 @@
 			{
 				"type": "challenge.mark.completed",
 				"values": [
-					"OnPlayerDeath.medium.control.notaserdeath"
+					"OnPlayerDeath.medium.control.norevolverdeath"
 				]
 			}
 		],
@@ -167,10 +167,10 @@
 			"OnPlayerDeath.easy"
 		]
 	},
-	"OnPlayerDeath.medium.control.notaserdeath": {
+	"OnPlayerDeath.medium.control.norevolverdeath": {
 		"title": {
-			"en": "Rule broken: you died because of a taser",
-			"de": "Regel gebrochen: Du bist wegen eines Tasers gestorben"
+			"en": "Rule broken: you died because of a revolver",
+			"de": "Regel gebrochen: Du bist wegen eines Revolvers gestorben"
 		},
 		"type": "player_death",
 		"amount": 1,
@@ -193,7 +193,7 @@
 			{
 				"key": "weapon",
 				"operator": "contains",
-				"value": "taser"
+				"value": "revolver"
 			},
 			{
 				"key": "attacker.isbot",
@@ -217,7 +217,7 @@
 			{
 				"type": "challenge.delete.completed",
 				"values": [
-					"OnPlayerDeath.medium.control.notaserdeath"
+					"OnPlayerDeath.medium.control.norevolverdeath"
 				]
 			}
 		],
@@ -227,8 +227,8 @@
 	},
 	"OnPlayerDeath.easy": {
 		"title": {
-			"en": "{count}/{total}x electrical connection",
-			"de": "{count}/{total}x elektrische Verbindung"
+			"en": "I like my revolver ({count}/{total})",
+			"de": "Ich mag meinen Revolver ({count}/{total})"
 		},
 		"type": "player_kill",
 		"amount": 5,
@@ -255,7 +255,7 @@
 			{
 				"key": "weapon",
 				"operator": "contains",
-				"value": "taser"
+				"value": "revolver"
 			},
 			{
 				"key": "isteamkill",
