@@ -20,6 +20,7 @@ Events are actions that occur on the server (e.g., a player jumps). You can use 
 - [OnBotTakeover](events/OnBotTakeover.md)
 - [OnBreakBreakable](events/OnBreakBreakable.md)
 - [OnBreakProp](events/OnBreakProp.md)
+- [OnBulletImpact](events/OnBulletImpact.md)
 - [OnBulletDamage](events/OnBulletDamage.md)
 - [OnDefuserPickup](events/OnDefuserPickup.md)
 - [OnDoorClosed](events/OnDoorClosed.md)

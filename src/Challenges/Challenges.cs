@@ -165,6 +165,7 @@ namespace Challenges
                 RegisterEventHandler<EventBreakBreakable>(OnBreakBreakable);
             if (challengeTypes.Contains("break_prop"))
                 RegisterEventHandler<EventBreakProp>(OnBreakProp);
+            if (challengeTypes.Contains("bullet_impact")) RegisterEventHandler<EventBulletImpact>(OnBulletImpact);
             if (challengeTypes.Contains("bullet_damage_given")
                || challengeTypes.Contains("bullet_damage_taken")) RegisterEventHandler<EventBulletDamage>(OnBulletDamage);
             if (challengeTypes.Contains("door_closed"))
@@ -255,6 +256,7 @@ namespace Challenges
             DeregisterEventHandler<EventBombDefused>(OnBombDefused);
             DeregisterEventHandler<EventBreakBreakable>(OnBreakBreakable);
             DeregisterEventHandler<EventBreakProp>(OnBreakProp);
+            DeregisterEventHandler<EventBulletImpact>(OnBulletImpact);
             DeregisterEventHandler<EventBulletDamage>(OnBulletDamage);
             DeregisterEventHandler<EventDoorClosed>(OnDoorClosed);
             DeregisterEventHandler<EventDoorOpen>(OnDoorOpen);
