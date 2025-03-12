@@ -216,11 +216,11 @@ namespace Challenges
                         // notify players about completion
                         if (kvp.Value.AnnounceCompletion)
                         {
-                            // send discord message if enabled
-                            if (kvp.Value.Visible) SendDiscordMessageOnChallengeCompleted(player, kvp.Value);
                             // send message to players on next frame to make it in sync with the game
                             _ = Server.NextFrameAsync(() =>
                             {
+                                // send discord message if enabled
+                                if (kvp.Value.Visible) SendDiscordMessageOnChallengeCompleted(player, kvp.Value);
                                 if (player == null
                                     || !player.IsValid) return;
                                 foreach (CCSPlayerController entry in Utilities.GetPlayers())
@@ -251,11 +251,12 @@ namespace Challenges
                                 }
                             });
                         }
-                        // send event to our plugin
-                        OnCompletionAction(player, kvp.Value);
-                        // send event to other plugins
+                        // send event to plugins
                         _ = Server.NextFrameAsync(() =>
                        {
+                           // send event to our plugin
+                           OnCompletionAction(player, kvp.Value);
+                           // send to other plugins
                            if (player.UserId != null)
                            {
                                var eventData = new Dictionary<string, Dictionary<string, string>>

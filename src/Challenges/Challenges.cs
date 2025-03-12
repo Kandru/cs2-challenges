@@ -21,7 +21,7 @@ namespace Challenges
         public override void Load(bool hotReload)
         {
             // Start the queue processing task
-            Task.Run(ProcessQueueAsync);
+            Task.Run(() => ProcessChallengeQueueAsync(cancellationToken.Token));
             // load challenges
             LoadChallenges();
             CheckForRunningSchedule();
@@ -64,14 +64,7 @@ namespace Challenges
         public override void Unload(bool hotReload)
         {
             // stop the queue processing task
-            try
-            {
-                if (_queueSemaphore.CurrentCount > 0) _queueSemaphore.Release();
-            }
-            catch (SemaphoreFullException)
-            {
-                // Handle the exception if needed
-            }
+            cancellationToken.Cancel();
             // remove listeners
             // unregister listeners
             // map events
