@@ -25,7 +25,7 @@ namespace Challenges
                 // add player data
                 foreach (var item in GetCCSPlayerControllerProperties(entry, "player")) challengeData[item.Key] = item.Value;
                 challengeData["player_is_defuser"] = player == entry ? "true" : "false";
-                CheckChallengeGoal(player, "bomb_defused", challengeData);
+                CheckChallengeGoal(entry, "bomb_defused", challengeData);
             }
             return HookResult.Continue;
         }
