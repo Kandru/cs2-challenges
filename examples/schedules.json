@@ -1,15 +1,20 @@
 {
 	"test_challenge": {
 		"title": {
-			"en": "== {playerName}'s Challenges ({count} / {total}) =="
+			"en": "== {playerName}'s Challenges ({count} / {total}) ==",
+			"de": "== {playerName}'s Herausforderungen ({count} / {total}) =="
 		},
 		"date_start": "2025-01-01 00:00:00",
 		"date_end": "2026-01-01 00:00:00",
 		"challenges": [
+			"blind_them_by_the_light:*",
 			"headshots_in_a_row:*",
 			"hostage_rescue:*",
-			"blind_them_by_the_light:*",
 			"inflatable_castle:*",
+			"knife_challenge:*",
+			"noscopes_in_a_row:*",
+			"revolver_challenge:*",
+			"scout_challenge:*",
 			"taser_challenge:*"
 		]
 	}
