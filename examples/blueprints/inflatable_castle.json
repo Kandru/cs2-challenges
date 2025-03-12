@@ -11,8 +11,8 @@
 		"announce_progress": true,
 		"announce_completion": true,
 		"data": {
-			"ExamplePlugin": {
-				"ExamplePoints": "1"
+			"PlayerSessions": {
+				"setpoints": "50"
 			}
 		},
 		"rules": [
@@ -43,8 +43,8 @@
 		"announce_progress": true,
 		"announce_completion": true,
 		"data": {
-			"ExamplePlugin": {
-				"ExamplePoints": "1"
+			"PlayerSessions": {
+				"setpoints": "25"
 			}
 		},
 		"rules": [
@@ -75,8 +75,8 @@
 		"announce_progress": true,
 		"announce_completion": true,
 		"data": {
-			"ExamplePlugin": {
-				"ExamplePoints": "1"
+			"PlayerSessions": {
+				"setpoints": "10"
 			}
 		},
 		"rules": [

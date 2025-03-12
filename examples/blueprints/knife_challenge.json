@@ -1,18 +1,18 @@
 {
-	"OnPlayerKillHeadshot.hard": {
+	"OnPlayerDeath.hard": {
 		"title": {
-			"en": "{count}/{total} Headshots in a row",
-			"de": "{count}/{total} Kopfschüsse hintereinander"
+			"en": "{count}/{total} Master of the Knife <3",
+			"de": "{count}/{total} Meister des Messers <3"
 		},
 		"type": "player_kill",
-		"amount": 5,
+		"amount": 15,
 		"cooldown": 0,
 		"is_visible": true,
 		"announce_progress": true,
 		"announce_completion": true,
 		"data": {
 			"PlayerSessions": {
-				"setpoints": "25"
+				"setpoints": "30"
 			}
 		},
 		"rules": [
@@ -27,12 +27,12 @@
 				"value": "true"
 			},
 			{
-				"key": "headshot",
-				"operator": "bool==",
-				"value": "true"
+				"key": "weapon",
+				"operator": "contains",
+				"value": "knife"
 			},
 			{
-				"key": "isselfkill",
+				"key": "isteamkill",
 				"operator": "bool==",
 				"value": "false"
 			},
@@ -46,87 +46,18 @@
 			{
 				"type": "challenge.mark.completed",
 				"values": [
-					"OnPlayerKillHeadshot.hard.control.noheadshot"
-				]
-			},
-			{
-				"type": "challenge.mark.completed",
-				"values": [
-					"OnPlayerKillHeadshot.hard.control.donotdie"
+					"OnPlayerDeath.hard.control.noknifedeath"
 				]
 			}
 		],
 		"dependencies": [
-			"OnPlayerKillHeadshot.easy"
+			"OnPlayerDeath.medium"
 		]
 	},
-	"OnPlayerKillHeadshot.hard.control.noheadshot": {
+	"OnPlayerDeath.hard.control.noknifedeath": {
 		"title": {
-			"en": "Rule broken: without headshot",
-			"de": "Regel verletzt: ohne Headshot"
-		},
-		"type": "player_kill",
-		"amount": 1,
-		"cooldown": 0,
-		"is_visible": false,
-		"announce_progress": false,
-		"announce_completion": false,
-		"data": {},
-		"rules": [
-			{
-				"key": "global.iswarmup",
-				"operator": "bool==",
-				"value": "false"
-			},
-			{
-				"key": "global.isduringround",
-				"operator": "bool==",
-				"value": "true"
-			},
-			{
-				"key": "headshot",
-				"operator": "bool==",
-				"value": "false"
-			},
-			{
-				"key": "isselfkill",
-				"operator": "bool==",
-				"value": "false"
-			},
-			{
-				"key": "victim.isbot",
-				"operator": "bool==",
-				"value": "false"
-			}
-		],
-		"actions": [
-			{
-				"type": "notify.player.progress.rule_broken",
-				"values": [
-					"OnPlayerKillHeadshot.hard"
-				]
-			},
-			{
-				"type": "challenge.delete.progress",
-				"values": [
-					"OnPlayerKillHeadshot.hard"
-				]
-			},
-			{
-				"type": "challenge.delete.completed",
-				"values": [
-					"OnPlayerKillHeadshot.hard.control.noheadshot"
-				]
-			}
-		],
-		"dependencies": [
-			"OnPlayerKillHeadshot.easy"
-		]
-	},
-	"OnPlayerKillHeadshot.hard.control.donotdie": {
-		"title": {
-			"en": "Rule broken: do not die",
-			"de": "Regel verletzt: ohne sterben"
+			"en": "Rule broken: you died because of a knife",
+			"de": "Regel gebrochen: Du bist wegen eines Messers gestorben"
 		},
 		"type": "player_death",
 		"amount": 1,
@@ -147,9 +78,9 @@
 				"value": "true"
 			},
 			{
-				"key": "headshot",
-				"operator": "bool==",
-				"value": "false"
+				"key": "weapon",
+				"operator": "contains",
+				"value": "knife"
 			},
 			{
 				"key": "attacker.isbot",
@@ -161,33 +92,146 @@
 			{
 				"type": "notify.player.progress.rule_broken",
 				"values": [
-					"OnPlayerKillHeadshot.hard"
+					"OnPlayerDeath.hard"
 				]
 			},
 			{
 				"type": "challenge.delete.progress",
 				"values": [
-					"OnPlayerKillHeadshot.hard"
+					"OnPlayerDeath.hard"
 				]
 			},
 			{
 				"type": "challenge.delete.completed",
 				"values": [
-					"OnPlayerKillHeadshot.hard.control.donotdie"
+					"OnPlayerDeath.hard.control.noknifedeath"
 				]
 			}
 		],
 		"dependencies": [
-			"OnPlayerKillHeadshot.easy"
+			"OnPlayerDeath.medium"
 		]
 	},
-	"OnPlayerKillHeadshot.easy": {
+	"OnPlayerDeath.medium": {
 		"title": {
-			"en": "{count}/{total} Headshots in a row",
-			"de": "{count}/{total} Kopfschüsse hintereinander"
+			"en": "{count}/{total} Knife without resistance :D",
+			"de": "{count}/{total} Messer ohne Gegenwehr :D"
 		},
 		"type": "player_kill",
-		"amount": 3,
+		"amount": 10,
+		"cooldown": 0,
+		"is_visible": true,
+		"announce_progress": true,
+		"announce_completion": true,
+		"data": {
+			"PlayerSessions": {
+				"setpoints": "20"
+			}
+		},
+		"rules": [
+			{
+				"key": "global.iswarmup",
+				"operator": "bool==",
+				"value": "false"
+			},
+			{
+				"key": "global.isduringround",
+				"operator": "bool==",
+				"value": "true"
+			},
+			{
+				"key": "weapon",
+				"operator": "contains",
+				"value": "knife"
+			},
+			{
+				"key": "isteamkill",
+				"operator": "bool==",
+				"value": "false"
+			},
+			{
+				"key": "victim.isbot",
+				"operator": "bool==",
+				"value": "false"
+			}
+		],
+		"actions": [
+			{
+				"type": "challenge.mark.completed",
+				"values": [
+					"OnPlayerDeath.medium.control.noknifedeath"
+				]
+			}
+		],
+		"dependencies": [
+			"OnPlayerDeath.easy"
+		]
+	},
+	"OnPlayerDeath.medium.control.noknifedeath": {
+		"title": {
+			"en": "Rule broken: you died because of a knife",
+			"de": "Regel gebrochen: Du bist wegen eines Messers gestorben"
+		},
+		"type": "player_death",
+		"amount": 1,
+		"cooldown": 0,
+		"is_visible": false,
+		"announce_progress": false,
+		"announce_completion": false,
+		"data": {},
+		"rules": [
+			{
+				"key": "global.iswarmup",
+				"operator": "bool==",
+				"value": "false"
+			},
+			{
+				"key": "global.isduringround",
+				"operator": "bool==",
+				"value": "true"
+			},
+			{
+				"key": "weapon",
+				"operator": "contains",
+				"value": "knife"
+			},
+			{
+				"key": "attacker.isbot",
+				"operator": "bool==",
+				"value": "false"
+			}
+		],
+		"actions": [
+			{
+				"type": "notify.player.progress.rule_broken",
+				"values": [
+					"OnPlayerDeath.medium"
+				]
+			},
+			{
+				"type": "challenge.delete.progress",
+				"values": [
+					"OnPlayerDeath.medium"
+				]
+			},
+			{
+				"type": "challenge.delete.completed",
+				"values": [
+					"OnPlayerDeath.medium.control.noknifedeath"
+				]
+			}
+		],
+		"dependencies": [
+			"OnPlayerDeath.easy"
+		]
+	},
+	"OnPlayerDeath.easy": {
+		"title": {
+			"en": "{count}/{total} Sharp and Deadly",
+			"de": "{count}/{total} Scharf und tödlich"
+		},
+		"type": "player_kill",
+		"amount": 5,
 		"cooldown": 0,
 		"is_visible": true,
 		"announce_progress": true,
@@ -209,56 +253,12 @@
 				"value": "true"
 			},
 			{
-				"key": "headshot",
-				"operator": "bool==",
-				"value": "true"
+				"key": "weapon",
+				"operator": "contains",
+				"value": "knife"
 			},
 			{
-				"key": "isselfkill",
-				"operator": "bool==",
-				"value": "false"
-			},
-			{
-				"key": "victim.isbot",
-				"operator": "bool==",
-				"value": "false"
-			}
-		],
-		"actions": [
-			{
-				"type": "challenge.mark.completed",
-				"values": [
-					"OnPlayerKillHeadshot.easy.control.noheadshot"
-				]
-			}
-		],
-		"dependencies": []
-	},
-	"OnPlayerKillHeadshot.easy.control.noheadshot": {
-		"title": {
-			"en": "Rule broken: without headshot",
-			"de": "Regel verletzt: ohne Headshot"
-		},
-		"type": "player_kill",
-		"amount": 1,
-		"cooldown": 0,
-		"is_visible": false,
-		"announce_progress": false,
-		"announce_completion": false,
-		"data": {},
-		"rules": [
-			{
-				"key": "global.iswarmup",
-				"operator": "bool==",
-				"value": "false"
-			},
-			{
-				"key": "global.isduringround",
-				"operator": "bool==",
-				"value": "true"
-			},
-			{
-				"key": "headshot",
+				"key": "isteamkill",
 				"operator": "bool==",
 				"value": "false"
 			},
@@ -266,26 +266,6 @@
 				"key": "victim.isbot",
 				"operator": "bool==",
 				"value": "false"
-			}
-		],
-		"actions": [
-			{
-				"type": "notify.player.progress.rule_broken",
-				"values": [
-					"OnPlayerKillHeadshot.easy"
-				]
-			},
-			{
-				"type": "challenge.delete.progress",
-				"values": [
-					"OnPlayerKillHeadshot.easy"
-				]
-			},
-			{
-				"type": "challenge.delete.completed",
-				"values": [
-					"OnPlayerKillHeadshot.easy.control.noheadshot"
-				]
 			}
 		],
 		"dependencies": []

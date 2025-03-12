@@ -11,8 +11,8 @@
 		"announce_progress": true,
 		"announce_completion": true,
 		"data": {
-			"ExamplePlugin": {
-				"ExamplePoints": "1"
+			"PlayerSessions": {
+				"setpoints": "40"
 			}
 		},
 		"rules": [
@@ -40,6 +40,11 @@
 				"key": "blindduration",
 				"operator": ">=",
 				"value": "2"
+			},
+			{
+				"key": "victim.isbot",
+				"operator": "bool==",
+				"value": "false"
 			}
 		],
 		"actions": [
@@ -97,7 +102,9 @@
 		"actions": [
 			{
 				"type": "notify.player.progress.rule_broken",
-				"values": ["OnPlayerBlind.hard"]
+				"values": [
+					"OnPlayerBlind.hard"
+				]
 			},
 			{
 				"type": "challenge.delete.progress",
@@ -158,7 +165,9 @@
 		"actions": [
 			{
 				"type": "notify.player.progress.rule_broken",
-				"values": ["OnPlayerBlind.hard"]
+				"values": [
+					"OnPlayerBlind.hard"
+				]
 			},
 			{
 				"type": "challenge.delete.progress",
@@ -189,8 +198,8 @@
 		"announce_progress": true,
 		"announce_completion": true,
 		"data": {
-			"ExamplePlugin": {
-				"ExamplePoints": "1"
+			"PlayerSessions": {
+				"setpoints": "30"
 			}
 		},
 		"rules": [
@@ -218,6 +227,11 @@
 				"key": "blindduration",
 				"operator": ">=",
 				"value": "1"
+			},
+			{
+				"key": "victim.isbot",
+				"operator": "bool==",
+				"value": "false"
 			}
 		],
 		"actions": [
@@ -275,7 +289,9 @@
 		"actions": [
 			{
 				"type": "notify.player.progress.rule_broken",
-				"values": ["OnPlayerBlind.medium"]
+				"values": [
+					"OnPlayerBlind.medium"
+				]
 			},
 			{
 				"type": "challenge.delete.progress",
@@ -336,7 +352,9 @@
 		"actions": [
 			{
 				"type": "notify.player.progress.rule_broken",
-				"values": ["OnPlayerBlind.medium"]
+				"values": [
+					"OnPlayerBlind.medium"
+				]
 			},
 			{
 				"type": "challenge.delete.progress",
@@ -367,8 +385,8 @@
 		"announce_progress": true,
 		"announce_completion": true,
 		"data": {
-			"ExamplePlugin": {
-				"ExamplePoints": "1"
+			"PlayerSessions": {
+				"setpoints": "10"
 			}
 		},
 		"rules": [
@@ -389,6 +407,11 @@
 			},
 			{
 				"key": "isselfflash",
+				"operator": "bool==",
+				"value": "false"
+			},
+			{
+				"key": "victim.isbot",
 				"operator": "bool==",
 				"value": "false"
 			}
