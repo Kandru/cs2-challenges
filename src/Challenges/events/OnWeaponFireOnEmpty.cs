@@ -19,7 +19,7 @@ namespace Challenges
             // add player data
             foreach (var item in GetCCSPlayerControllerProperties(player, "player")) challengeData[item.Key] = item.Value;
             // check challenge
-            CheckChallengeGoal(player, "weapon_fire_on_empty", challengeData);
+            _ = CheckChallengeGoal(player, "weapon_fire_on_empty", challengeData);
             return HookResult.Continue;
         }
     }

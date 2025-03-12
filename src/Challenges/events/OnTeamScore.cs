@@ -16,7 +16,7 @@ namespace Challenges
             {
                 // add player data
                 foreach (var item in GetCCSPlayerControllerProperties(entry, "player")) challengeData[item.Key] = item.Value;
-                CheckChallengeGoal(entry, "team_score", challengeData);
+                _ = CheckChallengeGoal(entry, "team_score", challengeData);
             }
             return HookResult.Continue;
         }
