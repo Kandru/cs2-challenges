@@ -45,5 +45,5 @@ The value you want to compare with the key. Make sure the value matches the type
 
 Global rules are applicable for almost all events.
 
-- [Event Data](blueprints/GlobalEventData.md)
-- [Player Data](blueprints/GlobalPlayerData.md)
+- [Event Data](rules/GlobalEventData.md)
+- [Player Data](rules/GlobalPlayerData.md)
