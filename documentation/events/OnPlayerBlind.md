@@ -4,8 +4,8 @@ This blueprint is triggered when a player either has blinded someone or got blin
 
 ## Available rules
 
-- [Event Data](GlobalEventData.md)
-- [Player Data](GlobalPlayerData.md): with prefixes: *attacker*, *victim*
+- [Event Data](../rules/GlobalEventData.md)
+- [Player Data](../rules/GlobalPlayerData.md): with prefixes: *attacker*, *victim*
 - `isteamflash (bool)`: if this was a team flash
 - `isselfflash (bool)`: if the player has flashed himself
 - `blindduration (number)`: duration of the blindness

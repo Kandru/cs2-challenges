@@ -4,8 +4,8 @@ This blueprint is triggered when the attacker hurt someone or the victim got hur
 
 ## Available rules
 
-- [Event Data](GlobalEventData.md)
-- [Player Data](GlobalPlayerData.md): with prefix: *attacker*, *victim*
+- [Event Data](../rules/GlobalEventData.md)
+- [Player Data](../rules/GlobalPlayerData.md): with prefix: *attacker*, *victim*
 - `isteamdamage (bool)`: if this is team damage
 - `isselfdamage (bool)`: if the player damaged himself
 - `dmghealth (bool)`: amount damage to the health

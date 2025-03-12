@@ -7,7 +7,7 @@ This blueprint is triggered when a player changed his name.
 
 ## Available rules
 
-- [Event Data](GlobalEventData.md)
-- [Player Data](GlobalPlayerData.md): with prefix: *player*
+- [Event Data](../rules/GlobalEventData.md)
+- [Player Data](../rules/GlobalPlayerData.md): with prefix: *player*
 - `new_name (string)`: new name of the player
 - `old_name (string)`: old name of the player

@@ -4,8 +4,8 @@ This blueprint is triggered when a player kills someone, helped with the kill (a
 
 ## Available rules
 
-- [Event Data](GlobalEventData.md)
-- [Player Data](GlobalPlayerData.md): with prefixex: *attacker*, *assister*, *victim*
+- [Event Data](../rules/GlobalEventData.md)
+- [Player Data](../rules/GlobalPlayerData.md): with prefixex: *attacker*, *assister*, *victim*
 - `isteamkill (bool)`: if this is a team kill
 - `isselfkill (bool)`: if the player killed himself
 - `assistedflash (bool)`: if the assister used a flash to help
