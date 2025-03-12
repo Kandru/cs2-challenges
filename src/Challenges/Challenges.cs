@@ -188,6 +188,8 @@ namespace Challenges
                 RegisterEventHandler<EventExitRescueZone>(OnExitRescuezone);
             if (challengeTypes.Contains("grenade_bounce"))
                 RegisterEventHandler<EventGrenadeBounce>(OnGrenadeBounce);
+            if (challengeTypes.Contains("grenade_thrown"))
+                RegisterEventHandler<EventGrenadeThrown>(OnGrenadeThrown);
             if (challengeTypes.Contains("hostage_follows"))
                 RegisterEventHandler<EventHostageFollows>(OnHostageFollows);
             if (challengeTypes.Contains("hostage_hurt"))
@@ -271,6 +273,7 @@ namespace Challenges
             DeregisterEventHandler<EventEnterRescueZone>(OnEnterRescuezone);
             DeregisterEventHandler<EventExitRescueZone>(OnExitRescuezone);
             DeregisterEventHandler<EventGrenadeBounce>(OnGrenadeBounce);
+            DeregisterEventHandler<EventGrenadeThrown>(OnGrenadeThrown);
             DeregisterEventHandler<EventHostageFollows>(OnHostageFollows);
             DeregisterEventHandler<EventHostageHurt>(OnHostageHurt);
             DeregisterEventHandler<EventHostageKilled>(OnHostageKilled);

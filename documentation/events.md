@@ -34,6 +34,7 @@ Events are actions that occur on the server (e.g., a player jumps). You can use 
 - [OnExitBuyzone](events/OnExitBuyzone.md)
 - [OnExitRescuezone](events/OnExitRescuezone.md)
 - [OnGrenadeBounce](events/OnGrenadeBounce.md)
+- [OnGrenadeThrown](events/OnGrenadeThrown.md)
 - [OnHostageFollows](events/OnHostageFollows.md)
 - [OnHostageHurt](events/OnHostageHurt.md)
 - [OnHostageKilled](events/OnHostageKilled.md)
