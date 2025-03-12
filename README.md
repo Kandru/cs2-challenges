@@ -40,9 +40,9 @@ Other CounterstrikeSharp plugins will then be notified to take further actions. 
 - [ ] Easy Webinterface to create your own Challenges
 - [ ] Add ability to spawn custom props on the map as a challenge
 - [ ] Link possible values for all rules in documentation
-- [O] Discord integration
+- [ ] Discord integration
   - [X] Webhook for Challenge completion
-  - [ ] Webhook for notification of a new Schedule starting (with all challenges listed)
+  - [X] Webhook for notification of a new Schedule starting (with all challenges listed)
   - [ ] Webhook for sending statistics at a given interval about all players (like a top list)
 
 ## Compatible plugins

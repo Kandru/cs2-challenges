@@ -21,5 +21,6 @@
     "challenges.rule.broken": "{red}Challenge Rule Broken:",
     "challenges.deleted": "{default}Challenge deleted: {green}{challenge}",
     "challenges.completed.other": "{green}{player} {default}completed challenge: {green}{challenge}",
-    "discord.webhook.challenge.completed": "**{player}** *completed a challenge*: **{challenge}**"
+    "discord.webhook.challenge.completed": "**{player}** *completed a challenge*: **{challenge}**",
+    "discord.webhook.schedule.new": "*New server-wide Challenges*\n**{schedule}**\n**Starting:** *{startDate}*\n**Ending:** *{endDate}*"
 }

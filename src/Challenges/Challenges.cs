@@ -59,6 +59,8 @@ namespace Challenges
                 }
                 Console.WriteLine(Localizer["core.hotreload"]);
             }
+            // save config
+            Config.Update();
         }
 
         public override void Unload(bool hotReload)

@@ -74,6 +74,14 @@ namespace Challenges
                             }
                         }
                     }
+                    // check if current schedule has changed
+                    if (_currentSchedule.Key != Config.TempData.CurrentSchedule.Key)
+                    {
+                        // update current schedule
+                        Config.TempData.CurrentSchedule.Key = _currentSchedule.Key;
+                        // notify discord about new schedule
+                        SendDiscordMessageOnNewSchedule(_currentSchedule);
+                    }
                     break;
                 }
             }

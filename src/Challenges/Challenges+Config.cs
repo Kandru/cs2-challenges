@@ -38,6 +38,7 @@ namespace Challenges
     {
         [JsonPropertyName("language")] public string Language { get; set; } = "en";
         [JsonPropertyName("webhook_on_challenge_completed")] public string WebhookChallengeCompleted { get; set; } = "";
+        [JsonPropertyName("webhook_on_new_schedule")] public string WebhookNewSchedule { get; set; } = "";
     }
 
     public class PluginConfig : BasePluginConfig
@@ -52,6 +53,8 @@ namespace Challenges
         [JsonPropertyName("notifications")] public PluginConfigNotifications Notifications { get; set; } = new();
         // discord notifications
         [JsonPropertyName("discord")] public PluginConfigDiscord Discord { get; set; } = new();
+        // temporary data
+        [JsonPropertyName("temp_data")] public TempDataConfig TempData { get; set; } = new();
     }
 
     public partial class Challenges : BasePlugin, IPluginConfig<PluginConfig>
