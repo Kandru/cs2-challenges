@@ -3,7 +3,7 @@
 
 # Blueprints Documentation
 
-Blueprints are in-game challenges that players can see and complete. You can create many challenges, but having too many active challenges at once might slow down the server. The Challenges-Plugin optimizes this by enabling and disabling events only when they are actively used by a challenge.
+Blueprints are files which contain definitions for in-game challenges that players can see and complete.
 
 ## Creating a Blueprint File
 
@@ -166,6 +166,7 @@ Global rules are applicable for almost all events.
 - [OnPlayerSpawned](blueprints/OnPlayerSpawned.md)
 - [OnPlayerTeam](blueprints/OnPlayerTeam.md)
 - [OnTeamScore](blueprints/OnTeamScore.md)
+- [OnWeaponFire](blueprints/OnWeaponFire.md)
 - [OnWeaponFireOnEmpty](blueprints/OnWeaponFireOnEmpty.md)
 - [OnWeaponReload](blueprints/OnWeaponReload.md)
 - [OnWeaponZoom](blueprints/OnWeaponZoom.md)

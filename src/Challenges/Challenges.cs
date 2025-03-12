@@ -199,6 +199,8 @@ namespace Challenges
                 RegisterEventHandler<EventItemPurchase>(OnItemPurchase);
             if (challengeTypes.Contains("team_score"))
                 RegisterEventHandler<EventTeamScore>(OnTeamScore);
+            if (challengeTypes.Contains("weapon_fire"))
+                RegisterEventHandler<EventWeaponFire>(OnWeaponFire);
             if (challengeTypes.Contains("weapon_fire_on_empty"))
                 RegisterEventHandler<EventWeaponFireOnEmpty>(OnWeaponFireOnEmpty);
             if (challengeTypes.Contains("weapon_reload"))
@@ -266,6 +268,7 @@ namespace Challenges
             DeregisterEventHandler<EventItemPickup>(OnItemPickup);
             DeregisterEventHandler<EventItemPurchase>(OnItemPurchase);
             DeregisterEventHandler<EventTeamScore>(OnTeamScore);
+            DeregisterEventHandler<EventWeaponFire>(OnWeaponFire);
             DeregisterEventHandler<EventWeaponFireOnEmpty>(OnWeaponFireOnEmpty);
             DeregisterEventHandler<EventWeaponReload>(OnWeaponReload);
             DeregisterEventHandler<EventWeaponZoom>(OnWeaponZoom);
