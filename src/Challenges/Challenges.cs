@@ -155,6 +155,8 @@ namespace Challenges
             if (challengeTypes.Contains("player_defuser_pickup"))
                 RegisterEventHandler<EventDefuserPickup>(OnDefuserPickup);
             // other events
+            if (challengeTypes.Contains("bomb_beep"))
+                RegisterEventHandler<EventBombBeep>(OnBombBeep);
             if (challengeTypes.Contains("bomb_exploded"))
                 RegisterEventHandler<EventBombExploded>(OnBombExploded);
             if (challengeTypes.Contains("bomb_defused"))
@@ -248,6 +250,7 @@ namespace Challenges
             DeregisterEventHandler<EventBotTakeover>(OnBotTakeover);
             DeregisterEventHandler<EventDefuserPickup>(OnDefuserPickup);
             // other events
+            DeregisterEventHandler<EventBombBeep>(OnBombBeep);
             DeregisterEventHandler<EventBombExploded>(OnBombExploded);
             DeregisterEventHandler<EventBombDefused>(OnBombDefused);
             DeregisterEventHandler<EventBreakBreakable>(OnBreakBreakable);

@@ -9,6 +9,7 @@ Events are actions that occur on the server (e.g., a player jumps). You can use 
 - [OnAmmoPickup](events/OnAmmoPickup.md)
 - [OnBombAbortdefuse](events/OnBombAbortdefuse.md)
 - [OnBombAbortplant](events/OnBombAbortplant.md)
+- [OnBombBeep](events/OnBombBeep.md)
 - [OnBombBegindefuse](events/OnBombBegindefuse.md)
 - [OnBombBeginplant](events/OnBombBeginplant.md)
 - [OnBombDefused](events/OnBombDefused.md)
