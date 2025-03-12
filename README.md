@@ -21,6 +21,7 @@ Other CounterstrikeSharp plugins will then be notified to take further actions. 
 - [How to Start](./documentation/howto.md)
 - [Third-Party Plugin Integration](./documentation/plugin-integration.md)
 - [Blueprints](./documentation/blueprints.md)
+- [Events](./documentation/events.md)
 - [Rules](./documentation/rules.md)
 - [Actions](./documentation/actions.md)
 - [Schedules](./documentation/schedules.md)

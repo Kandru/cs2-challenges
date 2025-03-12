@@ -40,3 +40,10 @@ contains (if the value of the rule contains a specific keyword)`
 ### value
 
 The value you want to compare with the key. Make sure the value matches the type of the key (e.g., number, string, bool). Refer to the event documentation to determine the correct type. Depending on the type, only certain operators from the list above can be used.
+
+## List of global rules
+
+Global rules are applicable for almost all events.
+
+- [Event Data](blueprints/GlobalEventData.md)
+- [Player Data](blueprints/GlobalPlayerData.md)
