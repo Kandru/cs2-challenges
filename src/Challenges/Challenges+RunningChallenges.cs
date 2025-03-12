@@ -79,7 +79,13 @@ namespace Challenges
             }
         }
 
-        private async Task CheckChallengeGoal(CCSPlayerController? player, string type, Dictionary<string, string> data)
+        private void CheckChallengeGoal(CCSPlayerController? player, string type, Dictionary<string, string> data)
+        {
+            // Enqueue the task to be processed
+            EnqueueChallengeTask(() => ProcessCheckChallengeGoal(player, type, data));
+        }
+
+        private async Task ProcessCheckChallengeGoal(CCSPlayerController? player, string type, Dictionary<string, string> data)
         {
             if (!Config.Enabled
                 || player == null
@@ -213,7 +219,7 @@ namespace Challenges
                             // send discord message if enabled
                             if (kvp.Value.Visible) SendDiscordMessageOnChallengeCompleted(player, kvp.Value);
                             // send message to players on next frame to make it in sync with the game
-                            Server.NextFrame(() =>
+                            _ = Server.NextFrameAsync(() =>
                             {
                                 if (player == null
                                     || !player.IsValid) return;
@@ -248,26 +254,29 @@ namespace Challenges
                         // send event to our plugin
                         OnCompletionAction(player, kvp.Value);
                         // send event to other plugins
-                        if (player.UserId != null)
-                        {
-                            var eventData = new Dictionary<string, Dictionary<string, string>>
-                            {
-                                ["info"] = new Dictionary<string, string>
-                                {
+                        _ = Server.NextFrameAsync(() =>
+                       {
+                           if (player.UserId != null)
+                           {
+                               var eventData = new Dictionary<string, Dictionary<string, string>>
+                               {
+                                   ["info"] = new Dictionary<string, string>
+                               {
                                     { "title", GetChallengeTitle(kvp.Value, player) },
                                     { "type", kvp.Value.Type },
                                     { "amount", kvp.Value.Amount.ToString() },
                                     { "cooldown", kvp.Value.Cooldown.ToString() }
-                                }
-                            };
-                            // iterate through Data
-                            foreach (var kvp2 in kvp.Value.Data)
-                            {
-                                eventData.Add(kvp2.Key, kvp2.Value);
-                            }
-                            // send event to other plugins
-                            TriggerEvent(new PlayerCompletedChallengeEvent((int)player.UserId, eventData));
-                        }
+                               }
+                               };
+                               // iterate through Data
+                               foreach (var kvp2 in kvp.Value.Data)
+                               {
+                                   eventData.Add(kvp2.Key, kvp2.Value);
+                               }
+                               // send event to other plugins
+                               TriggerEvent(new PlayerCompletedChallengeEvent((int)player.UserId, eventData));
+                           }
+                       });
                     }
                     else
                     {
@@ -277,7 +286,7 @@ namespace Challenges
                             // do this before next frame to avoid wrong counting (e.g. multiple counter updates in one frame)
                             string count = _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key][kvp.Key].Amount.ToString();
                             // send message to players on next frame to make it in sync with the game
-                            Server.NextFrame(() =>
+                            _ = Server.NextFrameAsync(() =>
                             {
                                 if (player == null
                                     || !player.IsValid) return;
@@ -292,13 +301,15 @@ namespace Challenges
                                 player.PrintToChat(message);
                             });
                         }
-                        // send event to other plugins
-                        if (player.UserId != null)
+                        _ = Server.NextFrameAsync(() =>
                         {
-                            // prepare event data
-                            var eventData = new Dictionary<string, Dictionary<string, string>>
+                            // send event to other plugins
+                            if (player.UserId != null)
                             {
-                                ["info"] = new Dictionary<string, string>
+                                // prepare event data
+                                var eventData = new Dictionary<string, Dictionary<string, string>>
+                                {
+                                    ["info"] = new Dictionary<string, string>
                                 {
                                     { "title", GetChallengeTitle(kvp.Value, player) },
                                     { "type", kvp.Value.Type },
@@ -306,17 +317,18 @@ namespace Challenges
                                     { "total_amount", kvp.Value.Amount.ToString() },
                                     { "cooldown", kvp.Value.Cooldown.ToString() }
                                 }
-                            };
-                            // iterate through Data
-                            foreach (var kvp2 in kvp.Value.Data)
-                            {
-                                eventData.Add(kvp2.Key, kvp2.Value);
+                                };
+                                // iterate through Data
+                                foreach (var kvp2 in kvp.Value.Data)
+                                {
+                                    eventData.Add(kvp2.Key, kvp2.Value);
+                                }
+                                TriggerEvent(new PlayerProgressedChallengeEvent((int)player.UserId, eventData));
                             }
-                            TriggerEvent(new PlayerProgressedChallengeEvent((int)player.UserId, eventData));
-                        }
+                        });
                     }
                     // show challenges gui if enabled on next frame to make it in sync with the game
-                    Server.NextFrame(() =>
+                    _ = Server.NextFrameAsync(() =>
                     {
                         if (player == null
                             || !player.IsValid) return;

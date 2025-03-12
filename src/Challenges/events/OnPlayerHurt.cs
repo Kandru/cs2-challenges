@@ -27,9 +27,9 @@ namespace Challenges
             foreach (var item in GetCCSPlayerControllerProperties(attacker, "attacker")) challengeData[item.Key] = item.Value;
             foreach (var item in GetCCSPlayerControllerProperties(victim, "victim")) challengeData[item.Key] = item.Value;
             // check attacker for challenge
-            _ = CheckChallengeGoal(attacker, "player_hurt_attacker", challengeData);
+            CheckChallengeGoal(attacker, "player_hurt_attacker", challengeData);
             // check victim for challenge
-            _ = CheckChallengeGoal(victim, "player_hurt_victim", challengeData);
+            CheckChallengeGoal(victim, "player_hurt_victim", challengeData);
             return HookResult.Continue;
         }
     }

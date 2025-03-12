@@ -4,7 +4,7 @@
 
 Integrating a third-party plugin is straightforward. First, import the latest version of our interface from the main branch of our repository. Then, refer to our example plugin to learn how to create a listener for when a challenge is completed or progresses. There is a single listener for both events, and more events may be added in the future.
 
-When you start listening, you will receive events from all plugins. You need to check if the data is relevant to your plugin. The Challenges-Plugin uses a separate thread to send the data to other plugins. Please use *Server.NextFrame* or *AddTimer* in case you want to modify anything related to entities on gameserver-side.
+When you start listening, you will receive events from all plugins. You need to check if the data is relevant to your plugin. The Challenges-Plugin itself uses a separate thread to check for challenge goals. However, you **should** use a separate thread as well or otherwise the server may will lag if the execution time is too long.
 
 ```c#
 if (@event is PlayerCompletedChallengeEvent playerCompletedChallenge)
