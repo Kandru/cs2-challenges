@@ -165,11 +165,15 @@ namespace Challenges
                 RegisterEventHandler<EventBreakBreakable>(OnBreakBreakable);
             if (challengeTypes.Contains("break_prop"))
                 RegisterEventHandler<EventBreakProp>(OnBreakProp);
-            if (challengeTypes.Contains("bullet_impact")) RegisterEventHandler<EventBulletImpact>(OnBulletImpact);
-            if (challengeTypes.Contains("buymenu_close")) RegisterEventHandler<EventBuymenuClose>(OnBuymenuClose);
-            if (challengeTypes.Contains("buytime_ended")) RegisterEventHandler<EventBuytimeEnded>(OnBuytimeEnded);
+            if (challengeTypes.Contains("bullet_impact"))
+                RegisterEventHandler<EventBulletImpact>(OnBulletImpact);
+            if (challengeTypes.Contains("buymenu_close"))
+                RegisterEventHandler<EventBuymenuClose>(OnBuymenuClose);
+            if (challengeTypes.Contains("buytime_ended"))
+                RegisterEventHandler<EventBuytimeEnded>(OnBuytimeEnded);
             if (challengeTypes.Contains("bullet_damage_given")
-               || challengeTypes.Contains("bullet_damage_taken")) RegisterEventHandler<EventBulletDamage>(OnBulletDamage);
+               || challengeTypes.Contains("bullet_damage_taken"))
+                RegisterEventHandler<EventBulletDamage>(OnBulletDamage);
             if (challengeTypes.Contains("door_closed"))
                 RegisterEventHandler<EventDoorClosed>(OnDoorClosed);
             if (challengeTypes.Contains("door_open"))
