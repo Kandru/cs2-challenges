@@ -55,8 +55,7 @@ namespace Challenges
             if (Config.Discord.WebhookNewSchedule == "") return;
             // get title of schedule in discord language
             var runningChallenges = schedule.Challenges
-                .Where(kvp => IsChallengeAllowedOnThisMap(kvp.Value)
-                    && kvp.Value.Visible)
+                .Where(kvp => kvp.Value.Visible)
                 .ToList();
             string scheduleTitle = (schedule.Title.TryGetValue(Config.Discord.Language, out var discordTitle)
                 ? discordTitle

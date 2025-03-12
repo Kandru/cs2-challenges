@@ -20,8 +20,6 @@ namespace Challenges
 
         public override void Load(bool hotReload)
         {
-            // Start the queue processing task
-            Task.Run(() => ProcessChallengeQueueAsync(cancellationToken.Token));
             // load challenges
             LoadChallenges();
             CheckForRunningSchedule();
@@ -61,6 +59,12 @@ namespace Challenges
             }
             // save config
             Config.Update();
+        }
+
+        public override void OnAllPluginsLoaded(bool isReload)
+        {
+            // Start the queue processing task
+            Task.Run(() => ProcessChallengeQueueAsync(cancellationToken.Token));
         }
 
         public override void Unload(bool hotReload)
