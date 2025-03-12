@@ -22,6 +22,7 @@ Events are actions that occur on the server (e.g., a player jumps). You can use 
 - [OnBreakProp](events/OnBreakProp.md)
 - [OnBulletImpact](events/OnBulletImpact.md)
 - [OnBuymenuClose](events/OnBuymenuClose.md)
+- [OnBuytimeEnded](events/OnBuytimeEnded.md)
 - [OnBulletDamage](events/OnBulletDamage.md)
 - [OnDefuserPickup](events/OnDefuserPickup.md)
 - [OnDoorClosed](events/OnDoorClosed.md)
