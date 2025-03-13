@@ -33,10 +33,10 @@ namespace Challenges
         [YamlMember(Alias = "is_visible")] public bool Visible { get; set; } = true;
         [YamlMember(Alias = "announce_progress")] public bool AnnounceProgress { get; set; } = true;
         [YamlMember(Alias = "announce_completion")] public bool AnnounceCompletion { get; set; } = true;
-        [YamlMember(Alias = "data")] public Dictionary<string, Dictionary<string, string>> Data { get; set; } = new Dictionary<string, Dictionary<string, string>>();
-        [YamlMember(Alias = "rules")] public List<ChallengesBlueprintRules> Rules { get; set; } = [];
-        [YamlMember(Alias = "actions")] public List<ChallengesBlueprintActions> Actions { get; set; } = [];
-        [YamlMember(Alias = "dependencies")] public List<string> Dependencies { get; set; } = [];
+        [YamlMember(Alias = "data", DefaultValuesHandling = DefaultValuesHandling.OmitDefaults)] public Dictionary<string, Dictionary<string, string>> Data { get; set; } = new Dictionary<string, Dictionary<string, string>>();
+        [YamlMember(Alias = "rules", DefaultValuesHandling = DefaultValuesHandling.OmitDefaults)] public List<ChallengesBlueprintRules> Rules { get; set; } = [];
+        [YamlMember(Alias = "actions", DefaultValuesHandling = DefaultValuesHandling.OmitDefaults)] public List<ChallengesBlueprintActions> Actions { get; set; } = [];
+        [YamlMember(Alias = "dependencies", DefaultValuesHandling = DefaultValuesHandling.OmitDefaults)] public List<string> Dependencies { get; set; } = [];
     }
 
     public class ChallengesConfig

@@ -165,7 +165,7 @@ namespace Challenges
             string blueprintsPath = Path.Combine(Path.GetDirectoryName(Config.GetConfigPath()) ?? "./", "blueprints/");
             string schedulesPath = Path.Combine(Path.GetDirectoryName(Config.GetConfigPath()) ?? "./", "schedules.yaml");
             var deserializer = new DeserializerBuilder()
-                .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                .WithNamingConvention(UnderscoredNamingConvention.Instance)
                 .Build();
             // create new and empty challenges config
             _availableChallenges = new();

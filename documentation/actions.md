@@ -43,57 +43,42 @@ Notifies the user when they break a rule after completing it. The values should 
 
 Control challenges should be configured with the following parameters:
 
-```json
-"OnPlayerBlind.hard.control.noselfflash": {
-    "title": {
-        "en": "Rule broken: do not flash yourself (>2s)!",
-        "de": "Regel verletzt: selbst geblendet (>2s)!"
-    },
-    "type": "player_got_blinded",
-    "amount": 1,
-    "cooldown": 0,
-    "is_visible": false,
-    "announce_progress": false,
-    "announce_completion": false,
-    "data": {},
-    "rules": [
-        {
-            "key": "global.iswarmup",
-            "operator": "bool==",
-            "value": "false"
-        },
-        {
-            "key": "global.isduringround",
-            "operator": "bool==",
-            "value": "true"
-        },
-        {
-            "key": "isselfflash",
-            "operator": "bool==",
-            "value": "true"
-        },
-        {
-            "key": "blindduration",
-            "operator": ">=",
-            "value": "2"
-        }
-    ],
-    "actions": [
-        {
-            "type": "notify.player.progress.rule_broken",
-            "values": ["OnPlayerBlind.hard"]
-        },
-        {
-            "type": "challenge.delete.progress",
-            "values": ["OnPlayerBlind.hard"]
-        },
-        {
-            "type": "challenge.delete.completed",
-            "values": ["OnPlayerBlind.hard.control.noselfflash"]
-        }
-    ],
-    "dependencies": ["OnPlayerBlind.medium"]
-}
+```yaml
+OnPlayerBlind.hard.control.noselfflash:
+  title:
+    en: "Rule broken: do not flash yourself (>2s)!"
+    de: "Regel verletzt: selbst geblendet (>2s)!"
+  type: player_got_blinded
+  amount: 1
+  cooldown: 0
+  is_visible: false
+  announce_progress: false
+  announce_completion: false
+  rules:
+    - key: global.iswarmup
+      operator: bool==
+      value: "false"
+    - key: global.isduringround
+      operator: bool==
+      value: "true"
+    - key: isselfflash
+      operator: bool==
+      value: "true"
+    - key: blindduration
+      operator: ">="
+      value: "2"
+  actions:
+    - type: notify.player.progress.rule_broken
+      values:
+        - OnPlayerBlind.hard
+    - type: challenge.delete.progress
+      values:
+        - OnPlayerBlind.hard
+    - type: challenge.delete.completed
+      values:
+        - OnPlayerBlind.hard.control.noselfflash
+  dependencies:
+    - OnPlayerBlind.medium
 ```
 
 ### title
@@ -143,25 +128,17 @@ Adjust to your needs to create the proper control challenge. Please refer to the
 
 ## Example actions for a control challenge
 
-```
-"actions": {
-    {
-        "type": "notify.player.progress.rule_broken",
-        "values": ["OnPlayerBlind.hard"]
-    },
-    {
-        "type": "challenge.delete.progress",
-        "values": [
-            "OnPlayerBlind.hard"
-        ]
-    },
-    {
-        "type": "challenge.delete.completed",
-        "values": [
-            "OnPlayerBlind.hard.control.noselfflash"
-        ]
-    }
-}
+```yaml
+  actions:
+    - type: notify.player.progress.rule_broken
+      values:
+        - OnPlayerBlind.hard
+    - type: challenge.delete.progress
+      values:
+        - OnPlayerBlind.hard
+    - type: challenge.delete.completed
+      values:
+        - OnPlayerBlind.hard.control.noselfflash
 ```
 
 This example shows how to reset the progress of the challenge OnPlayerBlind.hard in the file blind_them_by_the_light.json.

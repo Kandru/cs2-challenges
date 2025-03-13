@@ -7,14 +7,15 @@ Rules make the Challenges-Plugin very powerful. Almost all events have parameter
 
 All rules are combined with AND, meaning every rule must be met for the challenge to count. Currently, there is no option to use OR.
 
-## example rule
+## example rule(s)
 
-```
-{
-    "key": "global.isduringround",
-    "operator": "bool==",
-    "value": "true"
-}
+```yaml
+- key: global.iswarmup
+    operator: bool==
+    value: "false"
+- key: global.isduringround
+    operator: bool==
+    value: "true"
 ```
 
 ### key

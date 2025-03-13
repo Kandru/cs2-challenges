@@ -1,0 +1,254 @@
+# Rule #7 -> 5 hard headshots in a row without dying
+OnPlayerKillHeadshot.hard:
+  title:
+    en: "{count}/{total} Headshots in a row"
+    de: "{count}/{total} Kopfschüsse hintereinander"
+  type: player_kill
+  amount: 20
+  cooldown: 0
+  is_visible: true
+  announce_progress: true
+  announce_completion: true
+  data:
+    PlayerSessions:
+      setpoints: "25"
+  rules:
+    - key: global.iswarmup
+      operator: bool==
+      value: "false"
+    - key: global.isduringround
+      operator: bool==
+      value: "true"
+    - key: headshot
+      operator: bool==
+      value: "true"
+    - key: isselfkill
+      operator: bool==
+      value: "false"
+    - key: victim.isbot
+      operator: bool==
+      value: "false"
+  actions:
+    - type: challenge.mark.completed
+      values:
+        - OnPlayerKillHeadshot.hard.control.noheadshot
+    - type: challenge.mark.completed
+      values:
+        - OnPlayerKillHeadshot.hard.control.donotdie
+  dependencies:
+    - OnPlayerKillHeadshot.medium
+# Rule #6 -> control rule for the hard headshot
+OnPlayerKillHeadshot.hard.control.noheadshot:
+  title:
+    en: "Rule broken: without headshot"
+    de: "Regel verletzt: ohne Headshot"
+  type: player_kill
+  amount: 1
+  cooldown: 0
+  is_visible: false
+  announce_progress: false
+  announce_completion: false
+  rules:
+    - key: global.iswarmup
+      operator: bool==
+      value: "false"
+    - key: global.isduringround
+      operator: bool==
+      value: "true"
+    - key: headshot
+      operator: bool==
+      value: "false"
+    - key: isselfkill
+      operator: bool==
+      value: "false"
+    - key: victim.isbot
+      operator: bool==
+      value: "false"
+  actions:
+    - type: notify.player.progress.rule_broken
+      values:
+        - OnPlayerKillHeadshot.hard
+    - type: challenge.delete.progress
+      values:
+        - OnPlayerKillHeadshot.hard
+    - type: challenge.delete.completed
+      values:
+        - OnPlayerKillHeadshot.hard.control.noheadshot
+  dependencies:
+    - OnPlayerKillHeadshot.medium
+# Rule #5 -> control rule for the hard headshot
+OnPlayerKillHeadshot.hard.control.donotdie:
+  title:
+    en: "Rule broken: do not die"
+    de: "Regel verletzt: ohne sterben"
+  type: player_death
+  amount: 1
+  cooldown: 0
+  is_visible: false
+  announce_progress: false
+  announce_completion: false
+  rules:
+    - key: global.iswarmup
+      operator: bool==
+      value: "false"
+    - key: global.isduringround
+      operator: bool==
+      value: "true"
+    - key: headshot
+      operator: bool==
+      value: "false"
+    - key: attacker.isbot
+      operator: bool==
+      value: "false"
+  actions:
+    - type: notify.player.progress.rule_broken
+      values:
+        - OnPlayerKillHeadshot.hard
+    - type: challenge.delete.progress
+      values:
+        - OnPlayerKillHeadshot.hard
+    - type: challenge.delete.completed
+      values:
+        - OnPlayerKillHeadshot.hard.control.donotdie
+  dependencies:
+    - OnPlayerKillHeadshot.medium
+# Rule #4 -> 3 medium headshots in a row
+OnPlayerKillHeadshot.medium:
+  title:
+    en: "{count}/{total} Headshots in a row"
+    de: "{count}/{total} Kopfschüsse hintereinander"
+  type: player_kill
+  amount: 10
+  cooldown: 0
+  is_visible: true
+  announce_progress: true
+  announce_completion: true
+  data:
+    PlayerSessions:
+      setpoints: "20"
+  rules:
+    - key: global.iswarmup
+      operator: bool==
+      value: "false"
+    - key: global.isduringround
+      operator: bool==
+      value: "true"
+    - key: headshot
+      operator: bool==
+      value: "true"
+    - key: isselfkill
+      operator: bool==
+      value: "false"
+    - key: victim.isbot
+      operator: bool==
+      value: "false"
+  actions:
+    - type: challenge.mark.completed
+      values:
+        - OnPlayerKillHeadshot.medium.control.noheadshot
+  dependencies:
+    - OnPlayerKillHeadshot.easy
+# Rule #3 -> control rule for the medium headshot
+OnPlayerKillHeadshot.medium.control.noheadshot:
+  title:
+    en: "Rule broken: without headshot"
+    de: "Regel verletzt: ohne Headshot"
+  type: player_kill
+  amount: 1
+  cooldown: 0
+  is_visible: false
+  announce_progress: false
+  announce_completion: false
+  rules:
+    - key: global.iswarmup
+      operator: bool==
+      value: "false"
+    - key: global.isduringround
+      operator: bool==
+      value: "true"
+    - key: headshot
+      operator: bool==
+      value: "false"
+    - key: victim.isbot
+      operator: bool==
+      value: "false"
+  actions:
+    - type: notify.player.progress.rule_broken
+      values:
+        - OnPlayerKillHeadshot.medium
+    - type: challenge.delete.progress
+      values:
+        - OnPlayerKillHeadshot.medium
+    - type: challenge.delete.completed
+      values:
+        - OnPlayerKillHeadshot.medium.control.noheadshot
+  dependencies:
+    - OnPlayerKillHeadshot.easy
+# Rule #2 -> 3 easy headshots in a row
+OnPlayerKillHeadshot.easy:
+  title:
+    en: "{count}/{total} Headshots in a row"
+    de: "{count}/{total} Kopfschüsse hintereinander"
+  type: player_kill
+  amount: 3
+  cooldown: 0
+  is_visible: true
+  announce_progress: true
+  announce_completion: true
+  data:
+    PlayerSessions:
+      setpoints: "10"
+  rules:
+    - key: global.iswarmup
+      operator: bool==
+      value: "false"
+    - key: global.isduringround
+      operator: bool==
+      value: "true"
+    - key: headshot
+      operator: bool==
+      value: "true"
+    - key: isselfkill
+      operator: bool==
+      value: "false"
+    - key: victim.isbot
+      operator: bool==
+      value: "false"
+  actions:
+    - type: challenge.mark.completed
+      values:
+        - OnPlayerKillHeadshot.easy.control.noheadshot
+# Rule # -> control rule for the easy headshot
+OnPlayerKillHeadshot.easy.control.noheadshot:
+  title:
+    en: "Rule broken: without headshot"
+    de: "Regel verletzt: ohne Headshot"
+  type: player_kill
+  amount: 1
+  cooldown: 0
+  is_visible: false
+  announce_progress: false
+  announce_completion: false
+  rules:
+    - key: global.iswarmup
+      operator: bool==
+      value: "false"
+    - key: global.isduringround
+      operator: bool==
+      value: "true"
+    - key: headshot
+      operator: bool==
+      value: "false"
+    - key: victim.isbot
+      operator: bool==
+      value: "false"
+  actions:
+    - type: notify.player.progress.rule_broken
+      values:
+        - OnPlayerKillHeadshot.easy
+    - type: challenge.delete.progress
+      values:
+        - OnPlayerKillHeadshot.easy
+    - type: challenge.delete.completed
+      values:
+        - OnPlayerKillHeadshot.easy.control.noheadshot

@@ -1,0 +1,67 @@
+# Rule #3 -> 1.000 times jumped
+OnPlayerJump.hard:
+  title:
+    en: "{count}/{total} times jumped"
+    de: "{count}/{total} mal gesprungen"
+  type: player_jump
+  amount: 1000
+  cooldown: 0
+  is_visible: true
+  announce_progress: true
+  announce_completion: true
+  data:
+    PlayerSessions:
+      setpoints: "50"
+  rules:
+    - key: global.iswarmup
+      operator: bool==
+      value: "false"
+    - key: global.isduringround
+      operator: bool==
+      value: "true"
+  dependencies:
+    - OnPlayerJump.medium
+# Rule #2 -> 500 times jumped
+OnPlayerJump.medium:
+  title:
+    en: "{count}/{total} times jumped"
+    de: "{count}/{total} mal gesprungen"
+  type: player_jump
+  amount: 500
+  cooldown: 0
+  is_visible: true
+  announce_progress: true
+  announce_completion: true
+  data:
+    PlayerSessions:
+      setpoints: "25"
+  rules:
+    - key: global.iswarmup
+      operator: bool==
+      value: "false"
+    - key: global.isduringround
+      operator: bool==
+      value: "true"
+  dependencies:
+    - OnPlayerJump.easy
+# Rule #1 -> 100 times jumped
+OnPlayerJump.easy:
+  title:
+    en: "{count}/{total} times jumped"
+    de: "{count}/{total} mal gesprungen"
+  type: player_jump
+  amount: 100
+  cooldown: 0
+  is_visible: true
+  announce_progress: true
+  announce_completion: true
+  data:
+    PlayerSessions:
+      setpoints: "10"
+  rules:
+    - key: global.iswarmup
+      operator: bool==
+      value: "false"
+    - key: global.isduringround
+      operator: bool==
+      value: "true"

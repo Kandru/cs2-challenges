@@ -1,5 +1,5 @@
 > [!TIP]
-> An empty *schedules.json* file is automatically created in the plugin config directory after the first start of the plugin. You can update the *schedules.json* file at any time, and it will automatically reload when the map changes. There's no need to reload the plugin manually.
+> An empty *schedules.yaml* file is automatically created in the plugin config directory after the first start of the plugin. You can update the *schedules.json* file at any time, and it will automatically reload when the map changes. There's no need to reload the plugin manually.
 
 # Schedules
 
@@ -9,19 +9,26 @@ A schedule is like a timetable for challenges. With a schedule, you can plan cha
 
 ## Example Schedule
 
-```json
-{
-    "test_schedule_1": {
-        "title": {
-            "en": "{playerName}'s challenge ({count}/{total})"
-        },
-        "date_start": "2025-01-01 00:00:00",
-        "date_end": "2025-12-31 23:59:59",
-        "challenges": [
-            "headshots_in_a_row:*"
-        ]
-    }
-}
+```yaml
+# test challenge for the whole year 2025
+test_challenge:
+  title:
+    en: "== {playerName}'s Challenges ({count} / {total}) =="
+    de: "== {playerName}'s Herausforderungen ({count} / {total}) =="
+  date_start: "2025-01-01 00:00:00"
+  date_end: "2026-01-01 00:00:00"
+  # all example challenges are enabled by default
+  challenges:
+    - "blind_them_by_the_light:*"
+    - "headshots_in_a_row:*"
+    - "hostage_rescue:*"
+    - "inflatable_castle:*"
+    - "knife_challenge:*"
+    - "noscopes_in_a_row:*"
+    - "revolver_challenge:*"
+    - "scout_challenge:*"
+    - "taser_challenge:*"
+
 ```
 
 This document describes each schedule, identified by a unique identifier, such as *test_schedule_1*. It includes basic information about the activation dates and the challenges that will be enabled.

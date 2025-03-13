@@ -1,0 +1,76 @@
+# Rule #3 -> 25 hostages rescued
+OnHostageRescued.hard:
+  title:
+    en: "{count}/{total} Hostages rescued"
+    de: "{count}/{total} Geiseln gerettet"
+  type: hostage_rescued
+  amount: 25
+  cooldown: 0
+  is_visible: true
+  announce_progress: true
+  announce_completion: true
+  data:
+    PlayerSessions:
+      setpoints: "50"
+  rules:
+    - key: global.iswarmup
+      operator: bool==
+      value: "false"
+    - key: global.isduringround
+      operator: bool==
+      value: "true"
+    - key: global.hashostages
+      operator: bool==
+      value: "true"
+  dependencies:
+    - OnHostageRescued.medium
+# Rule #2 -> 10 hostages rescued
+OnHostageRescued.medium:
+  title:
+    en: "{count}/{total} Hostages rescued"
+    de: "{count}/{total} Geiseln gerettet"
+  type: hostage_rescued
+  amount: 10
+  cooldown: 0
+  is_visible: true
+  announce_progress: true
+  announce_completion: true
+  data:
+    PlayerSessions:
+      setpoints: "30"
+  rules:
+    - key: global.iswarmup
+      operator: bool==
+      value: "false"
+    - key: global.isduringround
+      operator: bool==
+      value: "true"
+    - key: global.hashostages
+      operator: bool==
+      value: "true"
+  dependencies:
+    - OnHostageRescued.easy
+# Rule #1 -> 5 hostages rescued
+OnHostageRescued.easy:
+  title:
+    en: "{count}/{total} Hostages rescued"
+    de: "{count}/{total} Geiseln gerettet"
+  type: hostage_rescued
+  amount: 5
+  cooldown: 0
+  is_visible: true
+  announce_progress: true
+  announce_completion: true
+  data:
+    PlayerSessions:
+      setpoints: "15"
+  rules:
+    - key: global.iswarmup
+      operator: bool==
+      value: "false"
+    - key: global.isduringround
+      operator: bool==
+      value: "true"
+    - key: global.hashostages
+      operator: bool==
+      value: "true"

@@ -27,62 +27,15 @@ if (@event is PlayerCompletedChallengeEvent playerCompletedChallenge)
 
 The example above shows all the data you receive from a plugin. This data is what the blueprint creator includes in the *data* dictionary for a challenge.
 
-```json
-"data": {
-    "ExamplePlugin": {
-        "ExamplePoints": "1"
-    }
-}
+```yaml
+data:
+PlayerSessions:
+    setpoints: "30"
 ```
 
-In this example, the data is for the *ExamplePlugin*. Your plugin should listen for a specific key that matches your plugin name (case-sensitive by default). It is good practice to compare the key in lowercase to handle any typos. You can then check for any key/value pairs you need. Ensure you cast them properly with error handling to fit your requirements.
+In this example, the data is for the *PlayerSessions*. Your plugin should listen for a specific key that matches your plugin name (case-sensitive by default). It is good practice to compare the key in lowercase to handle any typos. You can then check for any key/value pairs you need. Ensure you cast them properly with error handling to fit your requirements.
 
 What can be in your key/value pairs? Anything you want to grant to a player when they win or progress in a challenge. Give users of your plugin the flexibility to customize the player experience. This adds significant value for everyone using challenges.
-
-## Example Integrations
-
-Here are some ideas for imaginary plugins that you can integrate with our Challenges-Plugin easily:
-
-1. **Experience Points Plugin**
-    ```json
-    "data": {
-        "ExperiencePointsPlugin": {
-            "ExperienceGained": "500"
-        }
-    }
-    ```
-    This plugin grants players experience points when they complete a challenge.
-
-2. **Currency Plugin**
-    ```json
-    "data": {
-        "CurrencyPlugin": {
-            "CoinsAwarded": "100"
-        }
-    }
-    ```
-    This plugin awards in-game currency to players upon challenge completion.
-
-3. **Item Reward Plugin**
-    ```json
-    "data": {
-        "ItemRewardPlugin": {
-            "ItemID": "awp_001",
-            "Quantity": "1"
-        }
-    }
-    ```
-    This plugin gives players a specific item as a reward for completing a challenge.
-
-4. **Badge Plugin**
-    ```json
-    "data": {
-        "BadgePlugin": {
-            "BadgeID": "challenge_master"
-        }
-    }
-    ```
-    This plugin awards a badge to players who complete a challenge.
 
 ## Free Advertisement
 
