@@ -1,8 +1,11 @@
 ﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Extensions;
+using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 
 namespace Challenges
 {
@@ -160,18 +163,21 @@ namespace Challenges
         {
             DebugPrint($"Loading challenges");
             string blueprintsPath = Path.Combine(Path.GetDirectoryName(Config.GetConfigPath()) ?? "./", "blueprints/");
-            string schedulesPath = Path.Combine(Path.GetDirectoryName(Config.GetConfigPath()) ?? "./", "schedules.json");
+            string schedulesPath = Path.Combine(Path.GetDirectoryName(Config.GetConfigPath()) ?? "./", "schedules.yaml");
+            var deserializer = new DeserializerBuilder()
+                .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                .Build();
             // create new and empty challenges config
             _availableChallenges = new();
             // load all blueprints
             if (Path.Exists(blueprintsPath))
             {
-                foreach (string file in Directory.GetFiles(blueprintsPath, "*.json"))
+                foreach (string file in Directory.GetFiles(blueprintsPath, "*.yaml"))
                 {
                     try
                     {
-                        var jsonString = File.ReadAllText(file);
-                        var challenges = JsonSerializer.Deserialize<Dictionary<string, ChallengesBlueprint>>(jsonString);
+                        using var reader = new StreamReader(file);
+                        var challenges = deserializer.Deserialize<Dictionary<string, ChallengesBlueprint>>(reader);
                         if (challenges != null)
                         {
                             foreach (var kvp in challenges)
@@ -275,8 +281,8 @@ namespace Challenges
             {
                 try
                 {
-                    var jsonString = File.ReadAllText(schedulesPath);
-                    var schedules = JsonSerializer.Deserialize<Dictionary<string, ChallengesSchedule>>(jsonString);
+                    using var reader = new StreamReader(schedulesPath);
+                    var schedules = deserializer.Deserialize<Dictionary<string, ChallengesSchedule>>(reader);
                     if (schedules != null)
                     {
                         _availableChallenges.Schedules = schedules;
@@ -289,9 +295,12 @@ namespace Challenges
             }
             else
             {
-                DebugPrint($"Creating empty schedules json");
-                var jsonString = JsonSerializer.Serialize(_availableChallenges.Schedules, new JsonSerializerOptions { WriteIndented = true });
-                File.WriteAllText(schedulesPath, jsonString);
+                DebugPrint($"Creating empty schedules yaml");
+                var serializer = new SerializerBuilder()
+                    .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                    .Build();
+                var yamlString = serializer.Serialize(_availableChallenges.Schedules);
+                File.WriteAllText(schedulesPath, yamlString);
             }
         }
 
