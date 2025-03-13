@@ -1,5 +1,5 @@
 > [!TIP]
-> An empty *schedules.yaml* file is automatically created in the plugin config directory after the first start of the plugin. You can update the *schedules.json* file at any time, and it will automatically reload when the map changes. There's no need to reload the plugin manually.
+> An empty *schedules.yaml* file is automatically created in the plugin config directory after the first start of the plugin. You can update the *schedules.yaml* file at any time, and it will automatically reload when the map changes. There's no need to reload the plugin manually.
 
 # Schedules
 

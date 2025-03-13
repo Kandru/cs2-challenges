@@ -1,5 +1,5 @@
 > [!TIP]
-> Check the examples folder for the latest examples you can use in the configuration folder of the Challenges-Plugin. Verify the timings in *schedules.json*. Make sure to **read all documentation**. This plugin is complex and **NOT** easy to understand. If you still have questions, join our Discord for help.
+> Check the examples folder for the latest examples you can use in the configuration folder of the Challenges-Plugin. Verify the timings in *schedules.yaml*. Make sure to **read all documentation**. This plugin is complex and **NOT** easy to understand. If you still have questions, join our Discord for help.
 
 # How to start
 

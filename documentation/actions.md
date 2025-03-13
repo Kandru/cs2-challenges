@@ -5,7 +5,7 @@
 
 ## What are actions used for?
 
-Actions give you more control over challenges. For example, you can make challenges harder by checking if a player stays within certain boundaries. Let's look at an example from the *examples* folder. The file *blind_them_by_the_light.json* contains three challenges:
+Actions give you more control over challenges. For example, you can make challenges harder by checking if a player stays within certain boundaries. Let's look at an example from the *examples* folder. The file *blind_them_by_the_light.yaml* contains three challenges:
 
 1. Blind 5 enemies.
 2. Blind 15 enemies for at least 1 second without blinding teammates or yourself for 2+ seconds.
@@ -141,7 +141,7 @@ Adjust to your needs to create the proper control challenge. Please refer to the
         - OnPlayerBlind.hard.control.noselfflash
 ```
 
-This example shows how to reset the progress of the challenge OnPlayerBlind.hard in the file blind_them_by_the_light.json.
+This example shows how to reset the progress of the challenge OnPlayerBlind.hard in the file blind_them_by_the_light.yaml.
 
 1. Notify User: The first action notifies the user about the broken rule and displays a message in the center of the screen and in the text chat. You need to specify the name(s) of the rule(s) that the user might have broken. The system checks if the user made any progress on these rules before displaying the message.
 
