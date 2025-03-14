@@ -190,14 +190,6 @@ namespace Challenges
                                         .Replace("{error}", $"title of challenge {kvp.Key} is missing"));
                                     continue;
                                 }
-                                // check if data contains at least one entry
-                                if (kvp.Value.Data.Count == 0 && kvp.Value.Actions.Count == 0)
-                                {
-                                    Console.WriteLine(Localizer["core.faultyconfig"].Value
-                                        .Replace("{config}", file)
-                                        .Replace("{error}", $"data & actions of challenge {kvp.Key} are missing"));
-                                    continue;
-                                }
                                 // update key of dependencies to match the filename prefix of given blueprint
                                 for (int i = 0; i < kvp.Value.Dependencies.Count; i++)
                                 {
