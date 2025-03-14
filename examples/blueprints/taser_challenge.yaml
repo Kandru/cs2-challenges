@@ -172,3 +172,56 @@ OnPlayerDeath.easy:
     - key: victim.isbot
       operator: bool==
       value: "false"
+  dependencies:
+    - BuyFirst
+    - PickUpFirst
+# Pre-Requirement: Player first needs to buy a taser to start the challenge
+BuyFirst:
+  title:
+    en: "Buy a taser"
+    de: "Kaufe einen Taser"
+  type: item_purchase
+  amount: 1
+  cooldown: 0
+  is_visible: false
+  announce_progress: false
+  announce_completion: false
+  rules:
+    - key: global.iswarmup
+      operator: bool==
+      value: "false"
+    - key: global.isduringround
+      operator: bool==
+      value: "true"
+    - key: weapon
+      operator: contains
+      value: taser
+  actions:
+    - type: challenge.mark.completed
+      values:
+        - PickUpFirst
+# Pre-Requirement: Player first needs to pick up a taser to start the challenge
+PickUpFirst:
+  title:
+    en: "Pick up a taser"
+    de: "Hebe einen Taser auf"
+  type: item_pickup
+  amount: 1
+  cooldown: 0
+  is_visible: false
+  announce_progress: false
+  announce_completion: false
+  rules:
+    - key: global.iswarmup
+      operator: bool==
+      value: "false"
+    - key: global.isduringround
+      operator: bool==
+      value: "true"
+    - key: item
+      operator: contains
+      value: taser
+  actions:
+    - type: challenge.mark.completed
+      values:
+        - BuyFirst
