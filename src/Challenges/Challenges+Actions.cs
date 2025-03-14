@@ -31,6 +31,12 @@ namespace Challenges
                     case "notify.player.completed.rule_broken" when kvp.Values.Count >= 1:
                         ActionNotifyPlayerCompletedRuleBroken(player, challenge.Key, kvp.Values);
                         break;
+                    case "server.runcommand" when kvp.Values.Count >= 1:
+                        Server.ExecuteCommand(kvp.Values[0]
+                            .Replace("{steamid}", player.NetworkIDString)
+                            .Replace("{userid}", player.UserId.ToString())
+                            .Replace("{index}", player.Index.ToString()));
+                        break;
                     default:
                         DebugPrint($"Action {kvp.Type} not found for challenge {challenge.Key}.");
                         break;

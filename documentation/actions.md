@@ -39,6 +39,10 @@ Notifies the user when they break a rule during their progress. The values must 
 
 Notifies the user when they break a rule after completing it. The values should include the challenge names of the rules to check.
 
+### server.runcommand
+
+Runs any command in the server console. You can add the following variables: {steamid}, {userid}, {index}
+
 ## How should control challenges be configured?
 
 Control challenges should be configured with the following parameters:
