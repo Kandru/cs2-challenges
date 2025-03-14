@@ -22,7 +22,13 @@ namespace Challenges
                 || !player.PlayerPawn.IsValid
                 || player.PlayerPawn.Value == null
                 || !_playerConfigs.ContainsKey(player.NetworkIDString)) return;
-            if (_currentSchedule.Challenges.Count == 0)
+            // get all challenges that can be completed by this player
+            var challenges = _currentSchedule.Challenges
+                .Where(kvp => CanChallengeBeCompleted(kvp.Value, player.NetworkIDString)
+                    && IsChallengeAllowedOnThisMap(kvp.Value)
+                    && kvp.Value.Visible)
+                .ToList();
+            if (challenges.Count == 0)
             {
                 command.ReplyToCommand(Localizer["command.nochallenges"]);
                 return;
