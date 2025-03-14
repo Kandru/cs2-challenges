@@ -30,7 +30,8 @@ namespace Challenges
                 AddTimer(0.3f, () =>
                 {
                     if (player == null
-                    || !player.IsValid) return;
+                    || !player.IsValid
+                    || !_playerConfigs.ContainsKey(player.NetworkIDString)) return;
                     // check for user preferences
                     float duration = _playerConfigs[player.NetworkIDString].Settings.Challenges.ShowAlways
                         ? 0
@@ -52,6 +53,9 @@ namespace Challenges
                 || (player.TeamNum != (int)CsTeam.CounterTerrorist && player.TeamNum != (int)CsTeam.Terrorist)) return;
             AddTimer(0.1f, () =>
             {
+                if (player == null
+                    || !player.IsValid
+                    || !_playerConfigs.ContainsKey(player.NetworkIDString)) return;
                 // check for user preferences
                 float duration = _playerConfigs[player.NetworkIDString].Settings.Challenges.ShowAlways
                     ? 0
@@ -106,6 +110,9 @@ namespace Challenges
             if (duration > 0)
                 AddTimer(duration, () =>
                 {
+                    if (player == null
+                    || !player.IsValid
+                    || !_playerConfigs.ContainsKey(player.NetworkIDString)) return;
                     HideGui(player);
                 });
         }

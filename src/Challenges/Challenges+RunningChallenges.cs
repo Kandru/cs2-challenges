@@ -230,7 +230,8 @@ namespace Challenges
                                 // send discord message if enabled
                                 if (kvp.Value.Visible) SendDiscordMessageOnChallengeCompleted(player, kvp.Value);
                                 if (player == null
-                                    || !player.IsValid) return;
+                                    || !player.IsValid
+                                    || !_playerConfigs.ContainsKey(player.NetworkIDString)) return;
                                 foreach (CCSPlayerController entry in Utilities.GetPlayers())
                                 {
                                     if (entry == null
@@ -262,29 +263,30 @@ namespace Challenges
                         // send event to plugins
                         _ = Server.NextFrameAsync(() =>
                        {
+                           if (player == null
+                                || !player.IsValid
+                                || !_playerConfigs.ContainsKey(player.NetworkIDString)
+                                || player.UserId == null) return;
                            // send event to our plugin
                            OnCompletionAction(player, kvp.Value);
                            // send to other plugins
-                           if (player.UserId != null)
+                           var eventData = new Dictionary<string, Dictionary<string, string>>
                            {
-                               var eventData = new Dictionary<string, Dictionary<string, string>>
-                               {
-                                   ["info"] = new Dictionary<string, string>
+                               ["info"] = new Dictionary<string, string>
                                {
                                     { "title", GetChallengeTitle(kvp.Value, player) },
                                     { "type", kvp.Value.Type },
                                     { "amount", kvp.Value.Amount.ToString() },
                                     { "cooldown", kvp.Value.Cooldown.ToString() }
                                }
-                               };
-                               // iterate through Data
-                               foreach (var kvp2 in kvp.Value.Data)
-                               {
-                                   eventData.Add(kvp2.Key, kvp2.Value);
-                               }
-                               // send event to other plugins
-                               TriggerEvent(new PlayerCompletedChallengeEvent((int)player.UserId, eventData));
+                           };
+                           // iterate through Data
+                           foreach (var kvp2 in kvp.Value.Data)
+                           {
+                               eventData.Add(kvp2.Key, kvp2.Value);
                            }
+                           // send event to other plugins
+                           TriggerEvent(new PlayerCompletedChallengeEvent((int)player.UserId, eventData));
                        });
                     }
                     else
@@ -298,7 +300,8 @@ namespace Challenges
                             _ = Server.NextFrameAsync(() =>
                             {
                                 if (player == null
-                                    || !player.IsValid) return;
+                                    || !player.IsValid
+                                    || !_playerConfigs.ContainsKey(player.NetworkIDString)) return;
                                 // play sound if available
                                 if (Config.Notifications.ChallengeProgressSound != "")
                                     player.ExecuteClientCommand($"play {Config.Notifications.ChallengeProgressSound}");
@@ -313,12 +316,14 @@ namespace Challenges
                         _ = Server.NextFrameAsync(() =>
                         {
                             // send event to other plugins
-                            if (player.UserId != null)
+                            if (player == null
+                                || !player.IsValid
+                                || !_playerConfigs.ContainsKey(player.NetworkIDString)
+                                || player.UserId == null) return;
+                            // prepare event data
+                            var eventData = new Dictionary<string, Dictionary<string, string>>
                             {
-                                // prepare event data
-                                var eventData = new Dictionary<string, Dictionary<string, string>>
-                                {
-                                    ["info"] = new Dictionary<string, string>
+                                ["info"] = new Dictionary<string, string>
                                 {
                                     { "title", GetChallengeTitle(kvp.Value, player) },
                                     { "type", kvp.Value.Type },
@@ -326,21 +331,21 @@ namespace Challenges
                                     { "total_amount", kvp.Value.Amount.ToString() },
                                     { "cooldown", kvp.Value.Cooldown.ToString() }
                                 }
-                                };
-                                // iterate through Data
-                                foreach (var kvp2 in kvp.Value.Data)
-                                {
-                                    eventData.Add(kvp2.Key, kvp2.Value);
-                                }
-                                TriggerEvent(new PlayerProgressedChallengeEvent((int)player.UserId, eventData));
+                            };
+                            // iterate through Data
+                            foreach (var kvp2 in kvp.Value.Data)
+                            {
+                                eventData.Add(kvp2.Key, kvp2.Value);
                             }
+                            TriggerEvent(new PlayerProgressedChallengeEvent((int)player.UserId, eventData));
                         });
                     }
                     // show challenges gui if enabled on next frame to make it in sync with the game
                     _ = Server.NextFrameAsync(() =>
                     {
                         if (player == null
-                            || !player.IsValid) return;
+                            || !player.IsValid
+                            || !_playerConfigs.ContainsKey(player.NetworkIDString)) return;
                         if (Config.GUI.ShowOnChallengeUpdate)
                             ShowGui(player, Config.GUI.OnChallengeUpdateDuration);
                     });
