@@ -1,7 +1,6 @@
 ﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Extensions;
-using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using YamlDotNet.Serialization;
