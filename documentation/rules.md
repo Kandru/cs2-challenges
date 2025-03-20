@@ -36,6 +36,7 @@ The following operators can be used:
 bool== (equal for bool values)
 bool!= (not equal for bool values)
 contains (if the value of the rule contains a specific keyword)`
+!contains (if the value of the rule does not contain a specific keyword)`
 ```
 
 ### value

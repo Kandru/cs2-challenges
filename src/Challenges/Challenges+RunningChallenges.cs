@@ -171,6 +171,7 @@ namespace Challenges
                 case "bool==": return bool.Parse(currentValue) == bool.Parse(targetValue);
                 case "bool!=": return bool.Parse(currentValue) != bool.Parse(targetValue);
                 case "contains": return currentValue.Contains(targetValue);
+                case "!contains": return !currentValue.Contains(targetValue);
                 default:
                     DebugPrint($"unknown operator {rule.Operator}");
                     return false;
