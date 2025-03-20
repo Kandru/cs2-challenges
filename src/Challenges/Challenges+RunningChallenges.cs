@@ -304,10 +304,10 @@ namespace Challenges
                 {
                     ["info"] = new Dictionary<string, string>
                 {
-                                { "title", GetChallengeTitle(challenge, player) },
-                                { "type", challenge.Type },
-                                { "amount", challenge.Amount.ToString() },
-                                { "cooldown", challenge.Cooldown.ToString() }
+                    { "title", GetChallengeTitle(challenge, player) },
+                    { "type", challenge.Type },
+                    { "amount", challenge.Amount.ToString() },
+                    { "cooldown", challenge.Cooldown.ToString() }
                 }
                 };
                 // add data for external plugins
