@@ -75,7 +75,12 @@ namespace Challenges
         private async Task ProcessCheckChallengeGoal(CCSPlayerController? player, string type, Dictionary<string, string> data)
         {
             // stop if not enabled
-            if (!Config.Enabled || player == null || !player.IsValid || !_playerConfigs.ContainsKey(player.NetworkIDString))
+            if (!Config.Enabled || player == null || !player.IsValid)
+                return;
+            if (!Config.AllowBots && player.IsBot)
+                return;
+            // stop if player has no config
+            if (!_playerConfigs.ContainsKey(player.NetworkIDString))
                 return;
             // stop if no challenges
             if (_currentSchedule.Challenges.Count == 0)

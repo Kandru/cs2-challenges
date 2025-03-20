@@ -49,6 +49,8 @@ namespace Challenges
         [JsonPropertyName("enabled")] public bool Enabled { get; set; } = true;
         // debug prints
         [JsonPropertyName("debug")] public bool Debug { get; set; } = false;
+        // whether bots can participate in challenges
+        [JsonPropertyName("allow_bots")] public bool AllowBots { get; set; } = false;
         // gui
         [JsonPropertyName("gui")] public PluginConfigGUI GUI { get; set; } = new();
         // notifications
@@ -116,9 +118,12 @@ namespace Challenges
             {
                 if (entry == null
                     || !entry.IsValid
-                    || entry.IsBot
+                    || (!Config.AllowBots && entry.IsBot)
                     || _playerConfigs.ContainsKey(entry.NetworkIDString)) continue;
-                LoadPlayerConfig(entry.NetworkIDString);
+                if (entry.IsBot)
+                    LoadPlayerConfig($"BOT_{entry.PlayerName.ToLower()}");
+                else
+                    LoadPlayerConfig(entry.NetworkIDString);
             }
         }
 

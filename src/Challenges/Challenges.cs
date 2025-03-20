@@ -32,6 +32,7 @@ namespace Challenges
             RegisterEventHandler<EventRoundStart>(OnRoundStart);
             RegisterEventHandler<EventRoundEnd>(OnRoundEnd);
             // player events
+            RegisterEventHandler<EventPlayerConnect>(OnPlayerConnect);
             RegisterEventHandler<EventPlayerConnectFull>(OnPlayerConnectFull);
             RegisterEventHandler<EventPlayerDisconnect>(OnPlayerDisconnect);
             RegisterEventHandler<EventPlayerSpawn>(OnPlayerSpawn);
@@ -81,6 +82,7 @@ namespace Challenges
             DeregisterEventHandler<EventRoundEnd>(OnRoundEnd);
             DeregisterEventHandler<EventPlayerChat>(OnPlayerChatCommand);
             // player events
+            DeregisterEventHandler<EventPlayerConnect>(OnPlayerConnect);
             DeregisterEventHandler<EventPlayerConnectFull>(OnPlayerConnectFull);
             DeregisterEventHandler<EventPlayerDisconnect>(OnPlayerDisconnect);
             DeregisterEventHandler<EventPlayerSpawn>(OnPlayerSpawn);
@@ -360,12 +362,27 @@ namespace Challenges
             return HookResult.Continue;
         }
 
+        private HookResult OnPlayerConnect(EventPlayerConnect @event, GameEventInfo info)
+        {
+            // load bot config if enabled
+            if (!Config.AllowBots) return HookResult.Continue;
+            AddTimer(0.1f, () =>
+            {
+                foreach (var player in Utilities.GetPlayers().Where(p => p.IsValid && p.IsBot))
+                {
+                    if (!_playerConfigs.ContainsKey($"BOT_{player.PlayerName.ToLower()}"))
+                        LoadPlayerConfig($"BOT_{player.PlayerName.ToLower()}");
+                }
+            });
+            return HookResult.Continue;
+        }
+
         private HookResult OnPlayerConnectFull(EventPlayerConnectFull @event, GameEventInfo info)
         {
             CCSPlayerController player = @event.Userid!;
             // skip bots
             if (player == null
-                || player.IsBot) return HookResult.Continue;
+                || (!Config.AllowBots && player.IsBot)) return HookResult.Continue;
             // read user configuration
             LoadPlayerConfig(player.NetworkIDString);
             // update player data
@@ -382,7 +399,7 @@ namespace Challenges
             CCSPlayerController player = @event.Userid!;
             // skip bots
             if (player == null
-                || player.IsBot) return HookResult.Continue;
+                || (!Config.AllowBots && player.IsBot)) return HookResult.Continue;
             // add data
             if (!_playerConfigs.ContainsKey(@event.Networkid)) return HookResult.Continue;
             _playerConfigs[@event.Networkid].Username = player.PlayerName;
@@ -397,7 +414,7 @@ namespace Challenges
             CCSPlayerController player = @event.Userid!;
             // skip bots
             if (player == null
-            || player.IsBot) return HookResult.Continue;
+            || (!Config.AllowBots && player.IsBot)) return HookResult.Continue;
             // show GUIs
             ShowGuiOnSpawn(player);
             return HookResult.Continue;

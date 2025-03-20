@@ -48,6 +48,10 @@ namespace Challenges
 
         private static string GetChallengeTitle(ChallengesBlueprint challenge, CCSPlayerController player)
         {
+            // if player is bot, use server language
+            if (player.IsBot) return challenge.Title.TryGetValue(CoreConfig.ServerLanguage, out var botTitle)
+                ? botTitle
+                : challenge.Title.First().Value;
             return challenge.Title.TryGetValue(PlayerLanguageExtensions.GetLanguage(player).TwoLetterISOLanguageName, out var userTitle)
                 ? userTitle
                 : (challenge.Title.TryGetValue(CoreConfig.ServerLanguage, out var serverTitle)
@@ -57,6 +61,10 @@ namespace Challenges
 
         private static string GetScheduleTitle(RunningChallengeSchedule challenge, CCSPlayerController player)
         {
+            // if player is bot, use server language
+            if (player.IsBot) return challenge.Title.TryGetValue(CoreConfig.ServerLanguage, out var botTitle)
+                ? botTitle
+                : challenge.Title.First().Value;
             return challenge.Title.TryGetValue(PlayerLanguageExtensions.GetLanguage(player).TwoLetterISOLanguageName, out var userTitle)
                 ? userTitle
                 : (challenge.Title.TryGetValue(CoreConfig.ServerLanguage, out var serverTitle)

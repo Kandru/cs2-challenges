@@ -84,8 +84,7 @@ namespace Challenges
             foreach (CCSPlayerController entry in Utilities.GetPlayers())
             {
                 if (entry == null
-                    || !entry.IsValid
-                    || entry.IsBot) continue;
+                    || !entry.IsValid) continue;
                 entry.PrintToChat(LocalizerExtensions.ForPlayer(Localizer, entry, "command.topc"));
                 // get the top 5 of players with most challenges solved
                 for (int i = 0; i < 5 && i < _playersWithMostChallengesSolved.Count; i++)
