@@ -79,19 +79,23 @@ namespace Challenges
                 return;
             if (!Config.AllowBots && player.IsBot)
                 return;
+            string steamId = player.NetworkIDString;
+            // TODO: player.UserID || player.PlayerName will crash because not in the main thread
+            if (Config.AllowBots && player.IsBot)
+                steamId = "BOT";
             // stop if player has no config
-            if (!_playerConfigs.ContainsKey(player.NetworkIDString))
+            if (!_playerConfigs.ContainsKey(steamId))
                 return;
             // stop if no challenges
             if (_currentSchedule.Challenges.Count == 0)
             {
                 // clear challenges for player if no schedule
-                _playerConfigs[player.NetworkIDString].Challenges.Clear();
+                _playerConfigs[steamId].Challenges.Clear();
                 return;
             }
             // remove outdated challenges
             RemoveOutdatedChallenges(player);
-            DebugPrint($"CheckChallengeGoal for {player.NetworkIDString} -> {type}");
+            DebugPrint($"CheckChallengeGoal for {steamId} -> {type}");
             // get challenges for specified type
             var challenges = _currentSchedule.Challenges.Where(x => x.Value.Type == type).ToList();
             if (challenges.Count == 0) return;
@@ -99,7 +103,7 @@ namespace Challenges
             foreach (var kvp in challenges)
             {
                 if (HasCompletedChallenge(player, kvp.Value)) continue;
-                if (!CanChallengeBeCompleted(kvp.Value, player.NetworkIDString)) continue;
+                if (!CanChallengeBeCompleted(kvp.Value, steamId)) continue;
                 if (HasCooldown(player, kvp.Value)) continue;
                 if (!CompliesWithRules(kvp.Value, data)) continue;
                 UpdatePlayerChallenges(player, kvp.Value);
@@ -111,21 +115,27 @@ namespace Challenges
 
         private void RemoveOutdatedChallenges(CCSPlayerController player)
         {
-            foreach (var kvp in _playerConfigs[player.NetworkIDString].Challenges)
+            string steamId = player.NetworkIDString;
+            if (Config.AllowBots && player.IsBot)
+                steamId = "BOT";
+            foreach (var kvp in _playerConfigs[steamId].Challenges)
             {
                 if (kvp.Key == _currentSchedule.Key) continue;
-                DebugPrint($"deleting outdated challenge {kvp.Key} for user {player.NetworkIDString}");
-                _playerConfigs[player.NetworkIDString].Challenges.Remove(kvp.Key);
+                DebugPrint($"deleting outdated challenge {kvp.Key} for user {steamId}");
+                _playerConfigs[steamId].Challenges.Remove(kvp.Key);
             }
         }
 
         private bool HasCompletedChallenge(CCSPlayerController player, ChallengesBlueprint challenge)
         {
-            if (_playerConfigs[player.NetworkIDString].Challenges.ContainsKey(_currentSchedule.Key)
-                && _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key].ContainsKey(challenge.Key)
-                && _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key][challenge.Key].Amount >= challenge.Amount)
+            string steamId = player.NetworkIDString;
+            if (Config.AllowBots && player.IsBot)
+                steamId = "BOT";
+            if (_playerConfigs[steamId].Challenges.ContainsKey(_currentSchedule.Key)
+                && _playerConfigs[steamId].Challenges[_currentSchedule.Key].ContainsKey(challenge.Key)
+                && _playerConfigs[steamId].Challenges[_currentSchedule.Key][challenge.Key].Amount >= challenge.Amount)
             {
-                DebugPrint($"user {player.NetworkIDString} has already completed challenge {challenge.Key}");
+                DebugPrint($"user {steamId} has already completed challenge {challenge.Key}");
                 return true;
             }
             return false;
@@ -133,11 +143,14 @@ namespace Challenges
 
         private bool HasCooldown(CCSPlayerController player, ChallengesBlueprint challenge)
         {
-            if (_playerConfigs[player.NetworkIDString].Challenges.ContainsKey(_currentSchedule.Key)
-                && _playerConfigs[player.NetworkIDString].Challenges.ContainsKey(challenge.Key)
-                && _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key][challenge.Key].LastUpdate + challenge.Cooldown > GetUnixTimestamp())
+            string steamId = player.NetworkIDString;
+            if (Config.AllowBots && player.IsBot)
+                steamId = "BOT";
+            if (_playerConfigs[steamId].Challenges.ContainsKey(_currentSchedule.Key)
+                && _playerConfigs[steamId].Challenges.ContainsKey(challenge.Key)
+                && _playerConfigs[steamId].Challenges[_currentSchedule.Key][challenge.Key].LastUpdate + challenge.Cooldown > GetUnixTimestamp())
             {
-                DebugPrint($"user {player.NetworkIDString} has cooldown for challenge {challenge.Key}");
+                DebugPrint($"user {steamId} has cooldown for challenge {challenge.Key}");
                 return true;
             }
             return false;
@@ -185,14 +198,17 @@ namespace Challenges
 
         private void UpdatePlayerChallenges(CCSPlayerController player, ChallengesBlueprint challenge)
         {
+            string steamId = player.NetworkIDString;
+            if (Config.AllowBots && player.IsBot)
+                steamId = "BOT";
             // add schedule to player config if not exists
-            if (!_playerConfigs[player.NetworkIDString].Challenges.ContainsKey(_currentSchedule.Key))
-                _playerConfigs[player.NetworkIDString].Challenges.Add(_currentSchedule.Key, new Dictionary<string, PlayerConfigChallenges>());
+            if (!_playerConfigs[steamId].Challenges.ContainsKey(_currentSchedule.Key))
+                _playerConfigs[steamId].Challenges.Add(_currentSchedule.Key, new Dictionary<string, PlayerConfigChallenges>());
             // add challenge to player config if not exists
-            if (!_playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key].ContainsKey(challenge.Key))
+            if (!_playerConfigs[steamId].Challenges[_currentSchedule.Key].ContainsKey(challenge.Key))
             {
                 // add new challenge
-                _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key].Add(challenge.Key, new PlayerConfigChallenges
+                _playerConfigs[steamId].Challenges[_currentSchedule.Key].Add(challenge.Key, new PlayerConfigChallenges
                 {
                     Amount = 1,
                     LastUpdate = GetUnixTimestamp() + challenge.Cooldown
@@ -201,17 +217,20 @@ namespace Challenges
             else
             {
                 // update existing challenge
-                _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key][challenge.Key].Amount++;
-                _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key][challenge.Key].LastUpdate = GetUnixTimestamp() + challenge.Cooldown;
+                _playerConfigs[steamId].Challenges[_currentSchedule.Key][challenge.Key].Amount++;
+                _playerConfigs[steamId].Challenges[_currentSchedule.Key][challenge.Key].LastUpdate = GetUnixTimestamp() + challenge.Cooldown;
             }
         }
 
         private async Task ChallengeNotification(CCSPlayerController player, ChallengesBlueprint challenge)
         {
+            string steamId = player.NetworkIDString;
+            if (Config.AllowBots && player.IsBot)
+                steamId = "BOT";
             // check if challenge is completed
-            if (_playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key][challenge.Key].Amount >= challenge.Amount)
+            if (_playerConfigs[steamId].Challenges[_currentSchedule.Key][challenge.Key].Amount >= challenge.Amount)
             {
-                DebugPrint($"user {player.NetworkIDString} has completed challenge {challenge.Key}");
+                DebugPrint($"user {steamId} has completed challenge {challenge.Key}");
                 if (challenge.AnnounceCompletion)
                 {
                     await NotifyChallengeCompletion(player, challenge);
@@ -230,7 +249,7 @@ namespace Challenges
             {
                 _ = Server.NextFrameAsync(() =>
                 {
-                    if (player == null || !player.IsValid || !_playerConfigs.ContainsKey(player.NetworkIDString)) return;
+                    if (player == null || !player.IsValid || !_playerConfigs.ContainsKey(steamId)) return;
                     ShowGui(player, Config.GUI.OnChallengeUpdateDuration);
                 });
             }
@@ -239,10 +258,13 @@ namespace Challenges
 
         private async Task NotifyChallengeCompletion(CCSPlayerController player, ChallengesBlueprint challenge)
         {
+            string steamId = player.NetworkIDString;
+            if (Config.AllowBots && player.IsBot)
+                steamId = "BOT";
             // sync with game thread to avoid crashes
             _ = Server.NextFrameAsync(() =>
             {
-                if (player == null || !player.IsValid || !_playerConfigs.ContainsKey(player.NetworkIDString)) return;
+                if (player == null || !player.IsValid || !_playerConfigs.ContainsKey(steamId)) return;
                 if (challenge.Visible && challenge.AnnounceCompletion) SendDiscordMessageOnChallengeCompleted(player, challenge);
 
                 foreach (CCSPlayerController entry in Utilities.GetPlayers())
@@ -269,9 +291,12 @@ namespace Challenges
 
         private async Task TriggerCompletionEvent(CCSPlayerController player, ChallengesBlueprint challenge)
         {
+            string steamId = player.NetworkIDString;
+            if (Config.AllowBots && player.IsBot)
+                steamId = "BOT";
             _ = Server.NextFrameAsync(() =>
             {
-                if (player == null || !player.IsValid || !_playerConfigs.ContainsKey(player.NetworkIDString) || player.UserId == null) return;
+                if (player == null || !player.IsValid || !_playerConfigs.ContainsKey(steamId) || player.UserId == null) return;
                 // check internal actions
                 OnCompletionAction(player, challenge);
                 // build event data for external plugins
@@ -298,11 +323,14 @@ namespace Challenges
 
         private async Task NotifyChallengeProgress(CCSPlayerController player, ChallengesBlueprint challenge)
         {
-            string count = _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key][challenge.Key].Amount.ToString();
+            string steamId = player.NetworkIDString;
+            if (Config.AllowBots && player.IsBot)
+                steamId = "BOT";
+            string count = _playerConfigs[steamId].Challenges[_currentSchedule.Key][challenge.Key].Amount.ToString();
 
             _ = Server.NextFrameAsync(() =>
             {
-                if (player == null || !player.IsValid || !_playerConfigs.ContainsKey(player.NetworkIDString)) return;
+                if (player == null || !player.IsValid || !_playerConfigs.ContainsKey(steamId)) return;
                 // play sound for player if enabled
                 if (Config.Notifications.ChallengeProgressSound != "")
                     player.ExecuteClientCommand($"play {Config.Notifications.ChallengeProgressSound}");
@@ -318,9 +346,12 @@ namespace Challenges
 
         private async Task TriggerProgressEvent(CCSPlayerController player, ChallengesBlueprint challenge)
         {
+            string steamId = player.NetworkIDString;
+            if (Config.AllowBots && player.IsBot)
+                steamId = "BOT";
             _ = Server.NextFrameAsync(() =>
             {
-                if (player == null || !player.IsValid || !_playerConfigs.ContainsKey(player.NetworkIDString) || player.UserId == null) return;
+                if (player == null || !player.IsValid || !_playerConfigs.ContainsKey(steamId) || player.UserId == null) return;
                 // build event data for external plugins
                 var eventData = new Dictionary<string, Dictionary<string, string>>
                 {
@@ -328,7 +359,7 @@ namespace Challenges
                     {
                         { "title", GetChallengeTitle(challenge, player) },
                         { "type", challenge.Type },
-                        { "current_amount", _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key][challenge.Key].Amount.ToString() },
+                        { "current_amount", _playerConfigs[steamId].Challenges[_currentSchedule.Key][challenge.Key].Amount.ToString() },
                         { "total_amount", challenge.Amount.ToString() },
                         { "cooldown", challenge.Cooldown.ToString() }
                     }

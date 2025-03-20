@@ -121,7 +121,7 @@ namespace Challenges
                     || (!Config.AllowBots && entry.IsBot)
                     || _playerConfigs.ContainsKey(entry.NetworkIDString)) continue;
                 if (entry.IsBot)
-                    LoadPlayerConfig($"BOT_{entry.PlayerName.ToLower()}");
+                    LoadPlayerConfig("BOT");
                 else
                     LoadPlayerConfig(entry.NetworkIDString);
             }

@@ -370,8 +370,8 @@ namespace Challenges
             {
                 foreach (var player in Utilities.GetPlayers().Where(p => p.IsValid && p.IsBot))
                 {
-                    if (!_playerConfigs.ContainsKey($"BOT_{player.PlayerName.ToLower()}"))
-                        LoadPlayerConfig($"BOT_{player.PlayerName.ToLower()}");
+                    if (!_playerConfigs.ContainsKey("BOT"))
+                        LoadPlayerConfig("BOT");
                 }
             });
             return HookResult.Continue;
