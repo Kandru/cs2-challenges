@@ -22,6 +22,9 @@ OnPlayerDeath.hard:
     - key: weapon
       operator: contains
       value: m4a1
+    - key: weapon
+      operator: "!contains"
+      value: silencer
     - key: isteamkill
       operator: bool==
       value: "false"
@@ -55,6 +58,9 @@ OnPlayerDeath.hard.control.nom4a1death:
     - key: weapon
       operator: contains
       value: m4a1
+    - key: weapon
+      operator: "!contains"
+      value: silencer
     - key: attacker.isbot
       operator: bool==
       value: "false"
@@ -94,6 +100,9 @@ OnPlayerDeath.medium:
     - key: weapon
       operator: contains
       value: m4a1
+    - key: weapon
+      operator: "!contains"
+      value: silencer
     - key: isteamkill
       operator: bool==
       value: "false"
@@ -127,6 +136,9 @@ OnPlayerDeath.medium.control.nom4a1death:
     - key: weapon
       operator: contains
       value: m4a1
+    - key: weapon
+      operator: "!contains"
+      value: silencer
     - key: attacker.isbot
       operator: bool==
       value: "false"
@@ -166,6 +178,9 @@ OnPlayerDeath.easy:
     - key: weapon
       operator: contains
       value: m4a1
+    - key: weapon
+      operator: "!contains"
+      value: silencer
     - key: isteamkill
       operator: bool==
       value: "false"
@@ -203,8 +218,8 @@ BuyFirst:
 # Pre-Requirement: Player first needs to pick up a m4a1 to start the challenge
 PickUpFirst:
   title:
-    en: "Pick up a m4a1"
-    de: "Hebe einen m4a1 auf"
+    en: "Pick up a M4A1"
+    de: "Hebe eine M4A1 auf"
   type: item_pickup
   amount: 1
   cooldown: 0
