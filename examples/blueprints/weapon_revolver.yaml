@@ -73,8 +73,8 @@ OnPlayerDeath.hard.control.norevolverdeath:
 # Rule #3 -> medium challenge
 OnPlayerDeath.medium:
   title:
-    en: "{count}/{total}x Revolver without resistance"
-    de: "{count}/{total}x Revolver ohne Gegenwehr"
+    en: "{count}/{total} Revolver without resistance"
+    de: "{count}/{total} Revolver ohne Gegenwehr"
   type: player_kill
   amount: 15
   cooldown: 0
@@ -145,8 +145,8 @@ OnPlayerDeath.medium.control.norevolverdeath:
 # Rule #1 -> easy challenge
 OnPlayerDeath.easy:
   title:
-    en: "{count}/{total}x Revolver kills"
-    de: "{count}/{total}x Revolver Kills"
+    en: "{count}/{total} Revolver kills"
+    de: "{count}/{total} Revolver Kills"
   type: player_kill
   amount: 15
   cooldown: 0

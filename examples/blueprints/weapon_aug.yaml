@@ -73,8 +73,8 @@ OnPlayerDeath.hard.control.noaugdeath:
 # Rule #3 -> medium challenge
 OnPlayerDeath.medium:
   title:
-    en: "{count}/{total}x AUG without resistance"
-    de: "{count}/{total}x AUG ohne Gegenwehr"
+    en: "{count}/{total} AUG without resistance"
+    de: "{count}/{total} AUG ohne Gegenwehr"
   type: player_kill
   amount: 15
   cooldown: 0
@@ -145,8 +145,8 @@ OnPlayerDeath.medium.control.noaugdeath:
 # Rule #1 -> easy challenge
 OnPlayerDeath.easy:
   title:
-    en: "{count}/{total}x AUG kills"
-    de: "{count}/{total}x AUG Kills"
+    en: "{count}/{total} AUG kills"
+    de: "{count}/{total} AUG Kills"
   type: player_kill
   amount: 15
   cooldown: 0
@@ -179,7 +179,7 @@ OnPlayerDeath.easy:
 BuyFirst:
   title:
     en: "Buy a aug"
-    de: "Kaufe einen aug"
+    de: "Kaufe eine aug"
   type: item_purchase
   amount: 1
   cooldown: 0
@@ -204,7 +204,7 @@ BuyFirst:
 PickUpFirst:
   title:
     en: "Pick up a aug"
-    de: "Hebe einen aug auf"
+    de: "Hebe eine aug auf"
   type: item_pickup
   amount: 1
   cooldown: 0

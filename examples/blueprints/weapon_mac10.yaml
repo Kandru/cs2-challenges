@@ -73,8 +73,8 @@ OnPlayerDeath.hard.control.nomac10death:
 # Rule #3 -> medium challenge
 OnPlayerDeath.medium:
   title:
-    en: "{count}/{total}x MAC10 without resistance"
-    de: "{count}/{total}x MAC10 ohne Gegenwehr"
+    en: "{count}/{total} MAC10 without resistance"
+    de: "{count}/{total} MAC10 ohne Gegenwehr"
   type: player_kill
   amount: 15
   cooldown: 0
@@ -145,8 +145,8 @@ OnPlayerDeath.medium.control.nomac10death:
 # Rule #1 -> easy challenge
 OnPlayerDeath.easy:
   title:
-    en: "{count}/{total}x MAC10 kills"
-    de: "{count}/{total}x MAC10 Kills"
+    en: "{count}/{total} MAC10 kills"
+    de: "{count}/{total} MAC10 Kills"
   type: player_kill
   amount: 15
   cooldown: 0
@@ -179,7 +179,7 @@ OnPlayerDeath.easy:
 BuyFirst:
   title:
     en: "Buy a mac10"
-    de: "Kaufe einen mac10"
+    de: "Kaufe eine mac10"
   type: item_purchase
   amount: 1
   cooldown: 0
@@ -204,7 +204,7 @@ BuyFirst:
 PickUpFirst:
   title:
     en: "Pick up a mac10"
-    de: "Hebe einen mac10 auf"
+    de: "Hebe eine mac10 auf"
   type: item_pickup
   amount: 1
   cooldown: 0

@@ -73,8 +73,8 @@ OnPlayerDeath.hard.control.nomp5sddeath:
 # Rule #3 -> medium challenge
 OnPlayerDeath.medium:
   title:
-    en: "{count}/{total}x MP5 (SD) without resistance"
-    de: "{count}/{total}x MP5 (SD) ohne Gegenwehr"
+    en: "{count}/{total} MP5 (SD) without resistance"
+    de: "{count}/{total} MP5 (SD) ohne Gegenwehr"
   type: player_kill
   amount: 15
   cooldown: 0
@@ -145,8 +145,8 @@ OnPlayerDeath.medium.control.nomp5sddeath:
 # Rule #1 -> easy challenge
 OnPlayerDeath.easy:
   title:
-    en: "{count}/{total}x MP5 (SD) kills"
-    de: "{count}/{total}x MP5 (SD) Kills"
+    en: "{count}/{total} MP5 (SD) kills"
+    de: "{count}/{total} MP5 (SD) Kills"
   type: player_kill
   amount: 15
   cooldown: 0
@@ -179,7 +179,7 @@ OnPlayerDeath.easy:
 BuyFirst:
   title:
     en: "Buy a mp5sd"
-    de: "Kaufe einen mp5sd"
+    de: "Kaufe eine mp5sd"
   type: item_purchase
   amount: 1
   cooldown: 0
@@ -204,7 +204,7 @@ BuyFirst:
 PickUpFirst:
   title:
     en: "Pick up a mp5sd"
-    de: "Hebe einen mp5sd auf"
+    de: "Hebe eine mp5sd auf"
   type: item_pickup
   amount: 1
   cooldown: 0

@@ -73,8 +73,8 @@ OnPlayerDeath.hard.control.notaserdeath:
 # Rule #3 -> medium challenge
 OnPlayerDeath.medium:
   title:
-    en: "{count}/{total}x taser without resistance :D"
-    de: "{count}/{total}x Taser ohne Gegenwehr :D"
+    en: "{count}/{total} taser without resistance :D"
+    de: "{count}/{total} Taser ohne Gegenwehr :D"
   type: player_kill
   amount: 10
   cooldown: 0
@@ -145,8 +145,8 @@ OnPlayerDeath.medium.control.notaserdeath:
 # Rule #1 -> easy challenge
 OnPlayerDeath.easy:
   title:
-    en: "{count}/{total}x electrical connection"
-    de: "{count}/{total}x elektrische Verbindung"
+    en: "{count}/{total} electrical connection"
+    de: "{count}/{total} elektrische Verbindung"
   type: player_kill
   amount: 5
   cooldown: 0

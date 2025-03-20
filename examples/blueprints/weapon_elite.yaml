@@ -73,8 +73,8 @@ OnPlayerDeath.hard.control.noelitedeath:
 # Rule #3 -> medium challenge
 OnPlayerDeath.medium:
   title:
-    en: "{count}/{total}x ELITE without resistance"
-    de: "{count}/{total}x ELITE ohne Gegenwehr"
+    en: "{count}/{total} ELITE without resistance"
+    de: "{count}/{total} ELITE ohne Gegenwehr"
   type: player_kill
   amount: 15
   cooldown: 0
@@ -145,8 +145,8 @@ OnPlayerDeath.medium.control.noelitedeath:
 # Rule #1 -> easy challenge
 OnPlayerDeath.easy:
   title:
-    en: "{count}/{total}x ELITE kills"
-    de: "{count}/{total}x ELITE Kills"
+    en: "{count}/{total} ELITE kills"
+    de: "{count}/{total} ELITE Kills"
   type: player_kill
   amount: 15
   cooldown: 0
@@ -179,7 +179,7 @@ OnPlayerDeath.easy:
 BuyFirst:
   title:
     en: "Buy a elite"
-    de: "Kaufe einen elite"
+    de: "Kaufe eine elite"
   type: item_purchase
   amount: 1
   cooldown: 0
@@ -204,7 +204,7 @@ BuyFirst:
 PickUpFirst:
   title:
     en: "Pick up a elite"
-    de: "Hebe einen elite auf"
+    de: "Hebe eine elite auf"
   type: item_pickup
   amount: 1
   cooldown: 0

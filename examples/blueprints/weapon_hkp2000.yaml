@@ -73,8 +73,8 @@ OnPlayerDeath.hard.control.nohkp2000death:
 # Rule #3 -> medium challenge
 OnPlayerDeath.medium:
   title:
-    en: "{count}/{total}x HKP2000 without resistance"
-    de: "{count}/{total}x HKP2000 ohne Gegenwehr"
+    en: "{count}/{total} HKP2000 without resistance"
+    de: "{count}/{total} HKP2000 ohne Gegenwehr"
   type: player_kill
   amount: 15
   cooldown: 0
@@ -145,8 +145,8 @@ OnPlayerDeath.medium.control.nohkp2000death:
 # Rule #1 -> easy challenge
 OnPlayerDeath.easy:
   title:
-    en: "{count}/{total}x HKP2000 kills"
-    de: "{count}/{total}x HKP2000 Kills"
+    en: "{count}/{total} HKP2000 kills"
+    de: "{count}/{total} HKP2000 Kills"
   type: player_kill
   amount: 15
   cooldown: 0
@@ -179,7 +179,7 @@ OnPlayerDeath.easy:
 BuyFirst:
   title:
     en: "Buy a hkp2000"
-    de: "Kaufe einen hkp2000"
+    de: "Kaufe eine hkp2000"
   type: item_purchase
   amount: 1
   cooldown: 0
@@ -204,7 +204,7 @@ BuyFirst:
 PickUpFirst:
   title:
     en: "Pick up a hkp2000"
-    de: "Hebe einen hkp2000 auf"
+    de: "Hebe eine hkp2000 auf"
   type: item_pickup
   amount: 1
   cooldown: 0

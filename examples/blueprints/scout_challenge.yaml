@@ -73,8 +73,8 @@ OnPlayerDeath.hard.control.notscoutdeath:
 # Rule #3 -> medium challenge
 OnPlayerDeath.medium:
   title:
-    en: "{count}/{total}x scout without resistance :D"
-    de: "{count}/{total}x Scouten ohne Gegenwehr :D"
+    en: "{count}/{total} scout without resistance :D"
+    de: "{count}/{total} Scouten ohne Gegenwehr :D"
   type: player_kill
   amount: 15
   cooldown: 0

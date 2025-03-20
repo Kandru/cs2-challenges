@@ -73,8 +73,8 @@ OnPlayerDeath.hard.control.notec9death:
 # Rule #3 -> medium challenge
 OnPlayerDeath.medium:
   title:
-    en: "{count}/{total}x TEC9 without resistance"
-    de: "{count}/{total}x TEC9 ohne Gegenwehr"
+    en: "{count}/{total} TEC9 without resistance"
+    de: "{count}/{total} TEC9 ohne Gegenwehr"
   type: player_kill
   amount: 15
   cooldown: 0
@@ -145,8 +145,8 @@ OnPlayerDeath.medium.control.notec9death:
 # Rule #1 -> easy challenge
 OnPlayerDeath.easy:
   title:
-    en: "{count}/{total}x TEC9 kills"
-    de: "{count}/{total}x TEC9 Kills"
+    en: "{count}/{total} TEC9 kills"
+    de: "{count}/{total} TEC9 Kills"
   type: player_kill
   amount: 15
   cooldown: 0
@@ -179,7 +179,7 @@ OnPlayerDeath.easy:
 BuyFirst:
   title:
     en: "Buy a tec9"
-    de: "Kaufe einen tec9"
+    de: "Kaufe eine tec9"
   type: item_purchase
   amount: 1
   cooldown: 0
@@ -204,7 +204,7 @@ BuyFirst:
 PickUpFirst:
   title:
     en: "Pick up a tec9"
-    de: "Hebe einen tec9 auf"
+    de: "Hebe eine tec9 auf"
   type: item_pickup
   amount: 1
   cooldown: 0

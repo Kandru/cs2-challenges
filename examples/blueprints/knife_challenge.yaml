@@ -74,8 +74,8 @@ OnPlayerDeath.hard.control.noknifedeath:
 # Rule #3 -> kill 10 players with a knife (without getting killed by a knife)
 OnPlayerDeath.medium:
   title:
-    en: "{count}/{total}x Knife without resistance :D"
-    de: "{count}/{total}x Messern ohne Gegenwehr :D"
+    en: "{count}/{total} Knife without resistance :D"
+    de: "{count}/{total} Messern ohne Gegenwehr :D"
   type: player_kill
   amount: 10
   cooldown: 0
@@ -145,8 +145,8 @@ OnPlayerDeath.medium.control.noknifedeath:
 # Rule #1 -> 5 times kill someone with a knife
 OnPlayerDeath.easy:
   title:
-    en: "{count}/{total}x Sharp and Deadly"
-    de: "{count}/{total}x Scharf und tödlich"
+    en: "{count}/{total} Sharp and Deadly"
+    de: "{count}/{total} Scharf und tödlich"
   type: player_kill
   amount: 5
   cooldown: 0

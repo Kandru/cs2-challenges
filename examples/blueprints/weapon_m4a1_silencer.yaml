@@ -73,8 +73,8 @@ OnPlayerDeath.hard.control.nom4a1_silencerdeath:
 # Rule #3 -> medium challenge
 OnPlayerDeath.medium:
   title:
-    en: "{count}/{total}x M4A1 (Silencer) without resistance"
-    de: "{count}/{total}x M4A1 (Silencer) ohne Gegenwehr"
+    en: "{count}/{total} M4A1 (Silencer) without resistance"
+    de: "{count}/{total} M4A1 (Silencer) ohne Gegenwehr"
   type: player_kill
   amount: 15
   cooldown: 0
@@ -145,8 +145,8 @@ OnPlayerDeath.medium.control.nom4a1_silencerdeath:
 # Rule #1 -> easy challenge
 OnPlayerDeath.easy:
   title:
-    en: "{count}/{total}x M4A1 (Silencer) kills"
-    de: "{count}/{total}x M4A1 (Silencer) Kills"
+    en: "{count}/{total} M4A1 (Silencer) kills"
+    de: "{count}/{total} M4A1 (Silencer) Kills"
   type: player_kill
   amount: 15
   cooldown: 0

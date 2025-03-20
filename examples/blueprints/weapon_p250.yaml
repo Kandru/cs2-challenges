@@ -73,8 +73,8 @@ OnPlayerDeath.hard.control.nop250death:
 # Rule #3 -> medium challenge
 OnPlayerDeath.medium:
   title:
-    en: "{count}/{total}x P250 without resistance"
-    de: "{count}/{total}x P250 ohne Gegenwehr"
+    en: "{count}/{total} P250 without resistance"
+    de: "{count}/{total} P250 ohne Gegenwehr"
   type: player_kill
   amount: 15
   cooldown: 0
@@ -145,8 +145,8 @@ OnPlayerDeath.medium.control.nop250death:
 # Rule #1 -> easy challenge
 OnPlayerDeath.easy:
   title:
-    en: "{count}/{total}x P250 kills"
-    de: "{count}/{total}x P250 Kills"
+    en: "{count}/{total} P250 kills"
+    de: "{count}/{total} P250 Kills"
   type: player_kill
   amount: 15
   cooldown: 0
@@ -179,7 +179,7 @@ OnPlayerDeath.easy:
 BuyFirst:
   title:
     en: "Buy a p250"
-    de: "Kaufe einen p250"
+    de: "Kaufe eine p250"
   type: item_purchase
   amount: 1
   cooldown: 0
@@ -204,7 +204,7 @@ BuyFirst:
 PickUpFirst:
   title:
     en: "Pick up a p250"
-    de: "Hebe einen p250 auf"
+    de: "Hebe eine p250 auf"
   type: item_pickup
   amount: 1
   cooldown: 0

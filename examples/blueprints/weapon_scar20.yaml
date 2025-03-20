@@ -73,8 +73,8 @@ OnPlayerDeath.hard.control.noscar20death:
 # Rule #3 -> medium challenge
 OnPlayerDeath.medium:
   title:
-    en: "{count}/{total}x SCAR20 without resistance"
-    de: "{count}/{total}x SCAR20 ohne Gegenwehr"
+    en: "{count}/{total} SCAR20 without resistance"
+    de: "{count}/{total} SCAR20 ohne Gegenwehr"
   type: player_kill
   amount: 15
   cooldown: 0
@@ -145,8 +145,8 @@ OnPlayerDeath.medium.control.noscar20death:
 # Rule #1 -> easy challenge
 OnPlayerDeath.easy:
   title:
-    en: "{count}/{total}x SCAR20 kills"
-    de: "{count}/{total}x SCAR20 Kills"
+    en: "{count}/{total} SCAR20 kills"
+    de: "{count}/{total} SCAR20 Kills"
   type: player_kill
   amount: 15
   cooldown: 0
@@ -179,7 +179,7 @@ OnPlayerDeath.easy:
 BuyFirst:
   title:
     en: "Buy a scar20"
-    de: "Kaufe einen scar20"
+    de: "Kaufe eine scar20"
   type: item_purchase
   amount: 1
   cooldown: 0
@@ -204,7 +204,7 @@ BuyFirst:
 PickUpFirst:
   title:
     en: "Pick up a scar20"
-    de: "Hebe einen scar20 auf"
+    de: "Hebe eine scar20 auf"
   type: item_pickup
   amount: 1
   cooldown: 0

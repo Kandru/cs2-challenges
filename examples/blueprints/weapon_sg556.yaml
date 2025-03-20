@@ -73,8 +73,8 @@ OnPlayerDeath.hard.control.nosg556death:
 # Rule #3 -> medium challenge
 OnPlayerDeath.medium:
   title:
-    en: "{count}/{total}x SG556 without resistance"
-    de: "{count}/{total}x SG556 ohne Gegenwehr"
+    en: "{count}/{total} SG556 without resistance"
+    de: "{count}/{total} SG556 ohne Gegenwehr"
   type: player_kill
   amount: 15
   cooldown: 0
@@ -145,8 +145,8 @@ OnPlayerDeath.medium.control.nosg556death:
 # Rule #1 -> easy challenge
 OnPlayerDeath.easy:
   title:
-    en: "{count}/{total}x SG556 kills"
-    de: "{count}/{total}x SG556 Kills"
+    en: "{count}/{total} SG556 kills"
+    de: "{count}/{total} SG556 Kills"
   type: player_kill
   amount: 15
   cooldown: 0
@@ -179,7 +179,7 @@ OnPlayerDeath.easy:
 BuyFirst:
   title:
     en: "Buy a sg556"
-    de: "Kaufe einen sg556"
+    de: "Kaufe eine sg556"
   type: item_purchase
   amount: 1
   cooldown: 0

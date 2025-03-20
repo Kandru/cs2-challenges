@@ -73,8 +73,8 @@ OnPlayerDeath.hard.control.nom249death:
 # Rule #3 -> medium challenge
 OnPlayerDeath.medium:
   title:
-    en: "{count}/{total}x M249 without resistance"
-    de: "{count}/{total}x M249 ohne Gegenwehr"
+    en: "{count}/{total} M249 without resistance"
+    de: "{count}/{total} M249 ohne Gegenwehr"
   type: player_kill
   amount: 15
   cooldown: 0
@@ -145,8 +145,8 @@ OnPlayerDeath.medium.control.nom249death:
 # Rule #1 -> easy challenge
 OnPlayerDeath.easy:
   title:
-    en: "{count}/{total}x M249 kills"
-    de: "{count}/{total}x M249 Kills"
+    en: "{count}/{total} M249 kills"
+    de: "{count}/{total} M249 Kills"
   type: player_kill
   amount: 15
   cooldown: 0
@@ -179,7 +179,7 @@ OnPlayerDeath.easy:
 BuyFirst:
   title:
     en: "Buy a m249"
-    de: "Kaufe einen m249"
+    de: "Kaufe eine m249"
   type: item_purchase
   amount: 1
   cooldown: 0
@@ -204,7 +204,7 @@ BuyFirst:
 PickUpFirst:
   title:
     en: "Pick up a m249"
-    de: "Hebe einen m249 auf"
+    de: "Hebe eine m249 auf"
   type: item_pickup
   amount: 1
   cooldown: 0

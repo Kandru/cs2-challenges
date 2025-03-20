@@ -73,8 +73,8 @@ OnPlayerDeath.hard.control.nousp_silencerdeath:
 # Rule #3 -> medium challenge
 OnPlayerDeath.medium:
   title:
-    en: "{count}/{total}x USP (Silencer) without resistance"
-    de: "{count}/{total}x USP (Silencer) ohne Gegenwehr"
+    en: "{count}/{total} USP (Silencer) without resistance"
+    de: "{count}/{total} USP (Silencer) ohne Gegenwehr"
   type: player_kill
   amount: 15
   cooldown: 0
@@ -145,8 +145,8 @@ OnPlayerDeath.medium.control.nousp_silencerdeath:
 # Rule #1 -> easy challenge
 OnPlayerDeath.easy:
   title:
-    en: "{count}/{total}x USP (Silencer) kills"
-    de: "{count}/{total}x USP (Silencer) Kills"
+    en: "{count}/{total} USP (Silencer) kills"
+    de: "{count}/{total} USP (Silencer) Kills"
   type: player_kill
   amount: 15
   cooldown: 0
@@ -179,7 +179,7 @@ OnPlayerDeath.easy:
 BuyFirst:
   title:
     en: "Buy a usp_silencer"
-    de: "Kaufe einen usp_silencer"
+    de: "Kaufe eine usp_silencer"
   type: item_purchase
   amount: 1
   cooldown: 0
@@ -204,7 +204,7 @@ BuyFirst:
 PickUpFirst:
   title:
     en: "Pick up a usp_silencer"
-    de: "Hebe einen usp_silencer auf"
+    de: "Hebe eine usp_silencer auf"
   type: item_pickup
   amount: 1
   cooldown: 0

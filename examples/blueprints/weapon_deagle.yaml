@@ -73,8 +73,8 @@ OnPlayerDeath.hard.control.nodeagledeath:
 # Rule #3 -> medium challenge
 OnPlayerDeath.medium:
   title:
-    en: "{count}/{total}x DEAGLE without resistance"
-    de: "{count}/{total}x DEAGLE ohne Gegenwehr"
+    en: "{count}/{total} DEAGLE without resistance"
+    de: "{count}/{total} DEAGLE ohne Gegenwehr"
   type: player_kill
   amount: 15
   cooldown: 0
@@ -145,8 +145,8 @@ OnPlayerDeath.medium.control.nodeagledeath:
 # Rule #1 -> easy challenge
 OnPlayerDeath.easy:
   title:
-    en: "{count}/{total}x DEAGLE kills"
-    de: "{count}/{total}x DEAGLE Kills"
+    en: "{count}/{total} DEAGLE kills"
+    de: "{count}/{total} DEAGLE Kills"
   type: player_kill
   amount: 15
   cooldown: 0
@@ -179,7 +179,7 @@ OnPlayerDeath.easy:
 BuyFirst:
   title:
     en: "Buy a deagle"
-    de: "Kaufe einen deagle"
+    de: "Kaufe eine deagle"
   type: item_purchase
   amount: 1
   cooldown: 0
@@ -204,7 +204,7 @@ BuyFirst:
 PickUpFirst:
   title:
     en: "Pick up a deagle"
-    de: "Hebe einen deagle auf"
+    de: "Hebe eine deagle auf"
   type: item_pickup
   amount: 1
   cooldown: 0

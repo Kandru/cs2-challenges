@@ -73,8 +73,8 @@ OnPlayerDeath.hard.control.nossg08death:
 # Rule #3 -> medium challenge
 OnPlayerDeath.medium:
   title:
-    en: "{count}/{total}x SSG08 without resistance"
-    de: "{count}/{total}x SSG08 ohne Gegenwehr"
+    en: "{count}/{total} SSG08 without resistance"
+    de: "{count}/{total} SSG08 ohne Gegenwehr"
   type: player_kill
   amount: 15
   cooldown: 0
@@ -145,8 +145,8 @@ OnPlayerDeath.medium.control.nossg08death:
 # Rule #1 -> easy challenge
 OnPlayerDeath.easy:
   title:
-    en: "{count}/{total}x SSG08 kills"
-    de: "{count}/{total}x SSG08 Kills"
+    en: "{count}/{total} SSG08 kills"
+    de: "{count}/{total} SSG08 Kills"
   type: player_kill
   amount: 15
   cooldown: 0
@@ -179,7 +179,7 @@ OnPlayerDeath.easy:
 BuyFirst:
   title:
     en: "Buy a ssg08"
-    de: "Kaufe einen ssg08"
+    de: "Kaufe eine ssg08"
   type: item_purchase
   amount: 1
   cooldown: 0

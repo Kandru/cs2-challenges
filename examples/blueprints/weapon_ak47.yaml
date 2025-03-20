@@ -73,8 +73,8 @@ OnPlayerDeath.hard.control.noak47death:
 # Rule #3 -> medium challenge
 OnPlayerDeath.medium:
   title:
-    en: "{count}/{total}x AK47 without resistance"
-    de: "{count}/{total}x AK47 ohne Gegenwehr"
+    en: "{count}/{total} AK47 without resistance"
+    de: "{count}/{total} AK47 ohne Gegenwehr"
   type: player_kill
   amount: 15
   cooldown: 0
@@ -145,8 +145,8 @@ OnPlayerDeath.medium.control.noak47death:
 # Rule #1 -> easy challenge
 OnPlayerDeath.easy:
   title:
-    en: "{count}/{total}x AK47 kills"
-    de: "{count}/{total}x AK47 Kills"
+    en: "{count}/{total} AK47 kills"
+    de: "{count}/{total} AK47 Kills"
   type: player_kill
   amount: 15
   cooldown: 0
@@ -179,7 +179,7 @@ OnPlayerDeath.easy:
 BuyFirst:
   title:
     en: "Buy a ak47"
-    de: "Kaufe einen ak47"
+    de: "Kaufe eine ak47"
   type: item_purchase
   amount: 1
   cooldown: 0
@@ -204,7 +204,7 @@ BuyFirst:
 PickUpFirst:
   title:
     en: "Pick up a ak47"
-    de: "Hebe einen ak47 auf"
+    de: "Hebe eine ak47 auf"
   type: item_pickup
   amount: 1
   cooldown: 0
