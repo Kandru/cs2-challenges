@@ -234,11 +234,11 @@ namespace Challenges
 
         private async Task NotifyChallengeCompletion(CCSPlayerController player, ChallengesBlueprint challenge)
         {
-            if (challenge.Visible && challenge.AnnounceCompletion) SendDiscordMessageOnChallengeCompleted(player, challenge);
             // sync with game thread to avoid crashes
             _ = Server.NextFrameAsync(() =>
             {
                 if (player == null || !player.IsValid || !_playerConfigs.ContainsKey(player.NetworkIDString)) return;
+                if (challenge.Visible && challenge.AnnounceCompletion) SendDiscordMessageOnChallengeCompleted(player, challenge);
 
                 foreach (CCSPlayerController entry in Utilities.GetPlayers())
                 {
