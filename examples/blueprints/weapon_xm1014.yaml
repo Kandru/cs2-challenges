@@ -1,0 +1,227 @@
+# Rule #5 -> hard challenge
+OnPlayerDeath.hard:
+  title:
+    en: "Master of the XM1014 <3 ({count}/{total})"
+    de: "Meister der XM1014 <3 ({count}/{total})"
+  type: player_kill
+  amount: 30
+  cooldown: 0
+  is_visible: true
+  announce_progress: false
+  announce_completion: true
+  data:
+    PlayerSessions:
+      setpoints: "15"
+  rules:
+    - key: global.iswarmup
+      operator: bool==
+      value: "false"
+    - key: global.isduringround
+      operator: bool==
+      value: "true"
+    - key: weapon
+      operator: contains
+      value: xm1014
+    - key: isteamkill
+      operator: bool==
+      value: "false"
+    - key: victim.isbot
+      operator: bool==
+      value: "false"
+  actions:
+    - type: challenge.mark.completed
+      values:
+        - OnPlayerDeath.hard.control.noxm1014death
+  dependencies:
+    - OnPlayerDeath.medium
+# Rule #4 -> control rule for hard challenge
+OnPlayerDeath.hard.control.noxm1014death:
+  title:
+    en: "Rule broken: you died because of a XM1014"
+    de: "Regel gebrochen: Du bist wegen einer XM1014 gestorben"
+  type: player_death
+  amount: 1
+  cooldown: 0
+  is_visible: false
+  announce_progress: false
+  announce_completion: false
+  rules:
+    - key: global.iswarmup
+      operator: bool==
+      value: "false"
+    - key: global.isduringround
+      operator: bool==
+      value: "true"
+    - key: weapon
+      operator: contains
+      value: xm1014
+    - key: attacker.isbot
+      operator: bool==
+      value: "false"
+  actions:
+    - type: notify.player.progress.rule_broken
+      values:
+        - OnPlayerDeath.hard
+    - type: challenge.delete.progress
+      values:
+        - OnPlayerDeath.hard
+    - type: challenge.delete.completed
+      values:
+        - OnPlayerDeath.hard.control.noxm1014death
+  dependencies:
+    - OnPlayerDeath.medium
+# Rule #3 -> medium challenge
+OnPlayerDeath.medium:
+  title:
+    en: "{count}/{total}x XM1014 without resistance"
+    de: "{count}/{total}x XM1014 ohne Gegenwehr"
+  type: player_kill
+  amount: 15
+  cooldown: 0
+  is_visible: true
+  announce_progress: false
+  announce_completion: true
+  data:
+    PlayerSessions:
+      setpoints: "30"
+  rules:
+    - key: global.iswarmup
+      operator: bool==
+      value: "false"
+    - key: global.isduringround
+      operator: bool==
+      value: "true"
+    - key: weapon
+      operator: contains
+      value: xm1014
+    - key: isteamkill
+      operator: bool==
+      value: "false"
+    - key: victim.isbot
+      operator: bool==
+      value: "false"
+  actions:
+    - type: challenge.mark.completed
+      values:
+        - OnPlayerDeath.medium.control.noxm1014death
+  dependencies:
+    - OnPlayerDeath.easy
+# Rule #2 -> control rule for medium challenge
+OnPlayerDeath.medium.control.noxm1014death:
+  title:
+    en: "Rule broken: you died because of a XM1014"
+    de: "Regel gebrochen: Du bist wegen einer XM1014 gestorben"
+  type: player_death
+  amount: 1
+  cooldown: 0
+  is_visible: false
+  announce_progress: false
+  announce_completion: false
+  rules:
+    - key: global.iswarmup
+      operator: bool==
+      value: "false"
+    - key: global.isduringround
+      operator: bool==
+      value: "true"
+    - key: weapon
+      operator: contains
+      value: xm1014
+    - key: attacker.isbot
+      operator: bool==
+      value: "false"
+  actions:
+    - type: notify.player.progress.rule_broken
+      values:
+        - OnPlayerDeath.medium
+    - type: challenge.delete.progress
+      values:
+        - OnPlayerDeath.medium
+    - type: challenge.delete.completed
+      values:
+        - OnPlayerDeath.medium.control.noxm1014death
+  dependencies:
+    - OnPlayerDeath.easy
+# Rule #1 -> easy challenge
+OnPlayerDeath.easy:
+  title:
+    en: "{count}/{total}x XM1014 kills"
+    de: "{count}/{total}x XM1014 Kills"
+  type: player_kill
+  amount: 15
+  cooldown: 0
+  is_visible: true
+  announce_progress: false
+  announce_completion: true
+  data:
+    PlayerSessions:
+      setpoints: "10"
+  rules:
+    - key: global.iswarmup
+      operator: bool==
+      value: "false"
+    - key: global.isduringround
+      operator: bool==
+      value: "true"
+    - key: weapon
+      operator: contains
+      value: xm1014
+    - key: isteamkill
+      operator: bool==
+      value: "false"
+    - key: victim.isbot
+      operator: bool==
+      value: "false"
+  dependencies:
+    - BuyFirst
+    - PickUpFirst
+# Pre-Requirement: Player first needs to buy a xm1014 to start the challenge
+BuyFirst:
+  title:
+    en: "Buy a xm1014"
+    de: "Kaufe einen xm1014"
+  type: item_purchase
+  amount: 1
+  cooldown: 0
+  is_visible: false
+  announce_progress: false
+  announce_completion: false
+  rules:
+    - key: global.iswarmup
+      operator: bool==
+      value: "false"
+    - key: global.isduringround
+      operator: bool==
+      value: "true"
+    - key: weapon
+      operator: contains
+      value: xm1014
+  actions:
+    - type: challenge.mark.completed
+      values:
+        - PickUpFirst
+# Pre-Requirement: Player first needs to pick up a xm1014 to start the challenge
+PickUpFirst:
+  title:
+    en: "Pick up a xm1014"
+    de: "Hebe einen xm1014 auf"
+  type: item_pickup
+  amount: 1
+  cooldown: 0
+  is_visible: false
+  announce_progress: false
+  announce_completion: false
+  rules:
+    - key: global.iswarmup
+      operator: bool==
+      value: "false"
+    - key: global.isduringround
+      operator: bool==
+      value: "true"
+    - key: item
+      operator: contains
+      value: xm1014
+  actions:
+    - type: challenge.mark.completed
+      values:
+        - BuyFirst
