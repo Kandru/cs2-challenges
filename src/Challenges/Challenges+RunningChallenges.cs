@@ -107,7 +107,7 @@ namespace Challenges
                 if (HasCooldown(player, kvp.Value)) continue;
                 if (!CompliesWithRules(kvp.Value, data)) continue;
                 UpdatePlayerChallenges(player, kvp.Value);
-                await ChallengeNotification(player, kvp.Value);
+                _ = ChallengeNotification(player, kvp.Value);
             }
 
             await Task.CompletedTask;
@@ -233,16 +233,16 @@ namespace Challenges
                 DebugPrint($"user {steamId} has completed challenge {challenge.Key}");
                 if (challenge.AnnounceCompletion)
                 {
-                    await NotifyChallengeCompletion(player, challenge);
+                    _ = NotifyChallengeCompletion(player, challenge);
                 }
-                await TriggerCompletionEvent(player, challenge);
+                _ = TriggerCompletionEvent(player, challenge);
             }
             else
             {
                 // check if challenge progress should be announced
                 if (Config.Notifications.NotifyPlayerOnChallengeProgress && challenge.AnnounceProgress)
-                    await NotifyChallengeProgress(player, challenge);
-                await TriggerProgressEvent(player, challenge);
+                    _ = NotifyChallengeProgress(player, challenge);
+                _ = TriggerProgressEvent(player, challenge);
             }
             // show updated players gui if enabled
             if (Config.GUI.ShowOnChallengeUpdate)
@@ -250,7 +250,7 @@ namespace Challenges
                 _ = Server.NextFrameAsync(() =>
                 {
                     if (player == null || !player.IsValid || !_playerConfigs.ContainsKey(steamId)) return;
-                    ShowGui(player, Config.GUI.OnChallengeUpdateDuration);
+                    //ShowGui(player, Config.GUI.OnChallengeUpdateDuration);
                 });
             }
             await Task.CompletedTask;
