@@ -250,7 +250,7 @@ namespace Challenges
                 _ = Server.NextFrameAsync(() =>
                 {
                     if (player == null || !player.IsValid || !_playerConfigs.ContainsKey(steamId)) return;
-                    //ShowGui(player, Config.GUI.OnChallengeUpdateDuration);
+                    ShowGui(player, Config.GUI.OnChallengeUpdateDuration);
                 });
             }
             await Task.CompletedTask;
