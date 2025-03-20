@@ -176,13 +176,13 @@ namespace Challenges
             // iterate through all challenges and list them
             int displayedChallenges = 0;
             int finishedChallenges = 0;
-            var playerChallenges = _playerConfigs[player.NetworkIDString].Challenges.ContainsKey(_currentSchedule.Key)
-                ? _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key]
-                : [];
+            if (!_playerConfigs.TryGetValue(player.NetworkIDString, out var playerConfig) ||
+                !playerConfig.Challenges.TryGetValue(_currentSchedule.Key, out var playerChallenges))
+                playerChallenges = new Dictionary<string, PlayerConfigChallenges>();
 
             foreach (var kvp in challenges.OrderByDescending(c => playerChallenges.TryGetValue(c.Key, out var challenge) ? challenge.Amount : 0))
             {
-                // check if player already has progessed or completed this challenge
+                // check if player already has progressed or completed this challenge
                 if (playerChallenges.TryGetValue(kvp.Key, out var challenge))
                 {
                     bool isFinished = challenge.Amount >= kvp.Value.Amount;
