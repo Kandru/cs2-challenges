@@ -210,31 +210,32 @@ namespace Challenges
                 {
                     await NotifyChallengeCompletion(player, challenge);
                 }
-                await TriggerCompletionEvents(player, challenge);
+                await TriggerCompletionEvent(player, challenge);
             }
             else
             {
                 // check if challenge progress should be announced
                 if (Config.Notifications.NotifyPlayerOnChallengeProgress && challenge.AnnounceProgress)
                     await NotifyChallengeProgress(player, challenge);
-                await TriggerProgressEvents(player, challenge);
+                await TriggerProgressEvent(player, challenge);
             }
             // show updated players gui if enabled
             if (Config.GUI.ShowOnChallengeUpdate)
             {
-                await Server.NextFrameAsync(() =>
+                _ = Server.NextFrameAsync(() =>
                 {
                     if (player == null || !player.IsValid || !_playerConfigs.ContainsKey(player.NetworkIDString)) return;
                     ShowGui(player, Config.GUI.OnChallengeUpdateDuration);
                 });
             }
+            await Task.CompletedTask;
         }
 
         private async Task NotifyChallengeCompletion(CCSPlayerController player, ChallengesBlueprint challenge)
         {
             if (challenge.Visible && challenge.AnnounceCompletion) SendDiscordMessageOnChallengeCompleted(player, challenge);
             // sync with game thread to avoid crashes
-            await Server.NextFrameAsync(() =>
+            _ = Server.NextFrameAsync(() =>
             {
                 if (player == null || !player.IsValid || !_playerConfigs.ContainsKey(player.NetworkIDString)) return;
 
@@ -257,31 +258,35 @@ namespace Challenges
                         .Replace("{count}", challenge.Amount.ToString()));
                 }
             });
+            await Task.CompletedTask;
         }
 
-        private async Task TriggerCompletionEvents(CCSPlayerController player, ChallengesBlueprint challenge)
+        private async Task TriggerCompletionEvent(CCSPlayerController player, ChallengesBlueprint challenge)
         {
-            if (player == null || !player.IsValid || !_playerConfigs.ContainsKey(player.NetworkIDString) || player.UserId == null) return;
-            // check internal actions
-            OnCompletionAction(player, challenge);
-            // build event data for external plugins
-            var eventData = new Dictionary<string, Dictionary<string, string>>
+            _ = Server.NextFrameAsync(() =>
             {
-                ["info"] = new Dictionary<string, string>
+                if (player == null || !player.IsValid || !_playerConfigs.ContainsKey(player.NetworkIDString) || player.UserId == null) return;
+                // check internal actions
+                OnCompletionAction(player, challenge);
+                // build event data for external plugins
+                var eventData = new Dictionary<string, Dictionary<string, string>>
                 {
-                    { "title", GetChallengeTitle(challenge, player) },
-                    { "type", challenge.Type },
-                    { "amount", challenge.Amount.ToString() },
-                    { "cooldown", challenge.Cooldown.ToString() }
+                    ["info"] = new Dictionary<string, string>
+                {
+                                { "title", GetChallengeTitle(challenge, player) },
+                                { "type", challenge.Type },
+                                { "amount", challenge.Amount.ToString() },
+                                { "cooldown", challenge.Cooldown.ToString() }
                 }
-            };
-            // add data for external plugins
-            foreach (var kvp2 in challenge.Data)
-            {
-                eventData.Add(kvp2.Key, kvp2.Value);
-            }
-            // trigger event
-            TriggerEvent(new PlayerCompletedChallengeEvent((int)player.UserId, eventData));
+                };
+                // add data for external plugins
+                foreach (var kvp2 in challenge.Data)
+                {
+                    eventData.Add(kvp2.Key, kvp2.Value);
+                }
+                // trigger event
+                TriggerEvent(new PlayerCompletedChallengeEvent((int)player.UserId, eventData));
+            });
             await Task.CompletedTask;
         }
 
@@ -289,7 +294,7 @@ namespace Challenges
         {
             string count = _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key][challenge.Key].Amount.ToString();
 
-            await Server.NextFrameAsync(() =>
+            _ = Server.NextFrameAsync(() =>
             {
                 if (player == null || !player.IsValid || !_playerConfigs.ContainsKey(player.NetworkIDString)) return;
                 // play sound for player if enabled
@@ -302,15 +307,18 @@ namespace Challenges
                     .Replace("{count}", count);
                 player.PrintToChat(message);
             });
+            await Task.CompletedTask;
         }
 
-        private async Task TriggerProgressEvents(CCSPlayerController player, ChallengesBlueprint challenge)
+        private async Task TriggerProgressEvent(CCSPlayerController player, ChallengesBlueprint challenge)
         {
-            if (player == null || !player.IsValid || !_playerConfigs.ContainsKey(player.NetworkIDString) || player.UserId == null) return;
-            // build event data for external plugins
-            var eventData = new Dictionary<string, Dictionary<string, string>>
+            _ = Server.NextFrameAsync(() =>
             {
-                ["info"] = new Dictionary<string, string>
+                if (player == null || !player.IsValid || !_playerConfigs.ContainsKey(player.NetworkIDString) || player.UserId == null) return;
+                // build event data for external plugins
+                var eventData = new Dictionary<string, Dictionary<string, string>>
+                {
+                    ["info"] = new Dictionary<string, string>
                     {
                         { "title", GetChallengeTitle(challenge, player) },
                         { "type", challenge.Type },
@@ -318,14 +326,15 @@ namespace Challenges
                         { "total_amount", challenge.Amount.ToString() },
                         { "cooldown", challenge.Cooldown.ToString() }
                     }
-            };
-            // add data for external plugins
-            foreach (var kvp2 in challenge.Data)
-            {
-                eventData.Add(kvp2.Key, kvp2.Value);
-            }
-            // trigger event
-            TriggerEvent(new PlayerProgressedChallengeEvent((int)player.UserId, eventData));
+                };
+                // add data for external plugins
+                foreach (var kvp2 in challenge.Data)
+                {
+                    eventData.Add(kvp2.Key, kvp2.Value);
+                }
+                // trigger event
+                TriggerEvent(new PlayerProgressedChallengeEvent((int)player.UserId, eventData));
+            });
             await Task.CompletedTask;
         }
     }
