@@ -17,25 +17,30 @@ namespace Challenges
                 switch (kvp.Type)
                 {
                     case "challenge.delete.progress" when kvp.Values.Count == 1:
-                        ActionChallengeDelete(player, challenge, kvp.Values[0]);
+                        // sync with game thread to avoid crashes
+                        Server.NextFrameAsync(() => ActionChallengeDelete(player, challenge, kvp.Values[0]));
                         break;
                     case "challenge.delete.completed" when kvp.Values.Count == 1:
-                        ActionChallengeDelete(player, challenge, kvp.Values[0], true);
+                        // sync with game thread to avoid crashes
+                        Server.NextFrameAsync(() => ActionChallengeDelete(player, challenge, kvp.Values[0], true));
                         break;
                     case "challenge.mark.completed" when kvp.Values.Count == 1:
                         ActionChallengeMarkCompleted(player, kvp.Values[0]);
                         break;
                     case "notify.player.progress.rule_broken" when kvp.Values.Count >= 1:
-                        ActionNotifyPlayerProgressRuleBroken(player, challenge.Key, kvp.Values);
+                        // sync with game thread to avoid crashes
+                        Server.NextFrameAsync(() => ActionNotifyPlayerProgressRuleBroken(player, challenge.Key, kvp.Values));
                         break;
                     case "notify.player.completed.rule_broken" when kvp.Values.Count >= 1:
-                        ActionNotifyPlayerCompletedRuleBroken(player, challenge.Key, kvp.Values);
+                        // sync with game thread to avoid crashes
+                        Server.NextFrameAsync(() => ActionNotifyPlayerCompletedRuleBroken(player, challenge.Key, kvp.Values));
                         break;
                     case "server.runcommand" when kvp.Values.Count >= 1:
-                        Server.ExecuteCommand(kvp.Values[0]
+                        // sync with game thread to avoid crashes
+                        Server.NextFrameAsync(() => Server.ExecuteCommand(kvp.Values[0]
                             .Replace("{steamid}", player.NetworkIDString)
                             .Replace("{userid}", player.UserId.ToString())
-                            .Replace("{index}", player.Index.ToString()));
+                            .Replace("{index}", player.Index.ToString())));
                         break;
                     default:
                         DebugPrint($"Action {kvp.Type} not found for challenge {challenge.Key}.");
@@ -55,31 +60,20 @@ namespace Challenges
                 || (_playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key][challengeKey].Amount
                     >= _currentSchedule.Challenges[challengeKey].Amount
                     && !deleteCompleted)) return;
-            // delay execution to next frame
-            Server.NextFrame(() =>
-            {
-                // check if player and stuff still exists
-                if (player == null
-                    || !_playerConfigs.ContainsKey(player.NetworkIDString)
-                    || !_currentSchedule.Challenges.ContainsKey(challengeKey)
-                    || !_playerConfigs[player.NetworkIDString].Challenges.ContainsKey(_currentSchedule.Key)
-                    || !_playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key].ContainsKey(challengeKey)) return;
-                // inform player only if challenge is not the same (e.g. a rule challenge has been executed)
-                // this informs the player about resetting the challenge
-                if (challengeKey != challenge.Key)
-                    player.PrintToChat(LocalizerExtensions.ForPlayer(Localizer, player, "challenges.deleted")
-                        .Replace("{challenge}", GetChallengeTitle(_currentSchedule.Challenges[challengeKey], player)
-                            .Replace("{total}", _currentSchedule.Challenges[challengeKey].Amount.ToString())
-                            .Replace("{count}", _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key][challengeKey].Amount.ToString())));
-                // delete challenge
-                _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key].Remove(challengeKey);
-                // redraw GUI
-                float duration = _playerConfigs[player.NetworkIDString].Settings.Challenges.ShowAlways
-                    ? 0
-                    : Config.GUI.OnRoundStartDuration;
-                ShowGui(player, duration);
-            });
-            return;
+            // inform player only if challenge is not the same (e.g. a rule challenge has been executed)
+            // this informs the player about resetting the challenge
+            if (challengeKey != challenge.Key)
+                player.PrintToChat(LocalizerExtensions.ForPlayer(Localizer, player, "challenges.deleted")
+                    .Replace("{challenge}", GetChallengeTitle(_currentSchedule.Challenges[challengeKey], player)
+                        .Replace("{total}", _currentSchedule.Challenges[challengeKey].Amount.ToString())
+                        .Replace("{count}", _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key][challengeKey].Amount.ToString())));
+            // delete challenge
+            _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key].Remove(challengeKey);
+            // redraw GUI
+            float duration = _playerConfigs[player.NetworkIDString].Settings.Challenges.ShowAlways
+                ? 0
+                : Config.GUI.OnRoundStartDuration;
+            ShowGui(player, duration);
         }
 
         private void ActionChallengeMarkCompleted(CCSPlayerController player, string challengeKey)
