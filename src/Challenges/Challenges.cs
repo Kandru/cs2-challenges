@@ -335,6 +335,8 @@ namespace Challenges
             LoadActivePlayerConfigs();
             LoadChallenges();
             CheckForRunningSchedule();
+            // check for hostages
+            _globalMapHostageEntities = Utilities.FindAllEntitiesByDesignerName<CBaseEntity>("hostage_entity").ToArray();
             // register challenge listeners
             RegisterListeners();
         }

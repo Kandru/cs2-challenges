@@ -7,6 +7,9 @@ namespace Challenges
 {
     public partial class Challenges : BasePlugin
     {
+        // check amount of hostages on map
+        private CBaseEntity[]? _globalMapHostageEntities;
+
         private void DebugPrint(string message)
         {
             if (Config.Debug)
@@ -86,42 +89,40 @@ namespace Challenges
                         return false;
                 }
             }
+
             return true;
         }
 
         private bool IsChallengeAllowedOnThisMap(ChallengesBlueprint challenge)
         {
-            // check amount of hostages on map
-            var mapHostageEntities = Utilities.FindAllEntitiesByDesignerName<CBaseEntity>("hostage_entity").ToArray();
-            if (challenge.Rules.Count > 0)
+            if (_globalMapHostageEntities == null
+                || challenge.Rules.Count == 0) return true;
+            // check if map is not correct
+            foreach (var kvp in challenge.Rules)
             {
-                // check if map is not correct
-                foreach (var kvp in challenge.Rules)
+                if (kvp.Key == "global.mapname")
                 {
-                    if (kvp.Key == "global.mapname")
+                    switch (kvp.Operator)
                     {
-                        switch (kvp.Operator)
-                        {
-                            case "==":
-                                if (kvp.Value.ToLower() != Server.MapName.ToLower()) return false;
-                                break;
-                            case "!=":
-                                if (kvp.Value.ToLower() == Server.MapName.ToLower()) return false;
-                                break;
-                        }
+                        case "==":
+                            if (kvp.Value.ToLower() != Server.MapName.ToLower()) return false;
+                            break;
+                        case "!=":
+                            if (kvp.Value.ToLower() == Server.MapName.ToLower()) return false;
+                            break;
                     }
-                    if (kvp.Key == "global.hashostages")
+                }
+                if (kvp.Key == "global.hashostages")
+                {
+                    ;
+                    switch (kvp.Operator)
                     {
-                        ;
-                        switch (kvp.Operator)
-                        {
-                            case "bool==":
-                                if (kvp.Value.ToLower() != (mapHostageEntities.Length > 0).ToString().ToLower()) return false;
-                                break;
-                            case "bool!=":
-                                if (kvp.Value.ToLower() == (mapHostageEntities.Length > 0).ToString().ToLower()) return false;
-                                break;
-                        }
+                        case "bool==":
+                            if (kvp.Value.ToLower() != (_globalMapHostageEntities.Length > 0).ToString().ToLower()) return false;
+                            break;
+                        case "bool!=":
+                            if (kvp.Value.ToLower() == (_globalMapHostageEntities.Length > 0).ToString().ToLower()) return false;
+                            break;
                     }
                 }
             }
