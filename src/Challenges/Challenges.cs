@@ -424,7 +424,7 @@ namespace Challenges
 
         private HookResult OnPlayerChatCommand(EventPlayerChat @event, GameEventInfo info)
         {
-            CCSPlayerController? player = Utilities.GetPlayerFromUserid(@event.Userid);
+            CCSPlayerController? player = @event.Userid;
             if (player == null
                 || !player.IsValid
                 || player.IsBot) return HookResult.Continue;
