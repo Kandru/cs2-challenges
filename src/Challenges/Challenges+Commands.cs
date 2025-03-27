@@ -72,19 +72,14 @@ namespace Challenges
                 || !player.IsValid) return;
             if (_playersWithMostChallengesSolved.Count == 0)
             {
-                foreach (CCSPlayerController entry in Utilities.GetPlayers())
+                foreach (CCSPlayerController entry in Utilities.GetPlayers().Where(p => p.IsValid && !p.IsBot))
                 {
-                    if (entry == null
-                        || !entry.IsValid
-                        || entry.IsBot) continue;
                     entry.PrintToChat(LocalizerExtensions.ForPlayer(Localizer, entry, "command.topc.nodata"));
                 }
                 return;
             }
-            foreach (CCSPlayerController entry in Utilities.GetPlayers())
+            foreach (CCSPlayerController entry in Utilities.GetPlayers().Where(p => p.IsValid && !p.IsBot))
             {
-                if (entry == null
-                    || !entry.IsValid) continue;
                 entry.PrintToChat(LocalizerExtensions.ForPlayer(Localizer, entry, "command.topc"));
                 // get the top 5 of players with most challenges solved
                 for (int i = 0; i < 5 && i < _playersWithMostChallengesSolved.Count; i++)

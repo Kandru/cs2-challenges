@@ -114,12 +114,9 @@ namespace Challenges
 
         private void LoadActivePlayerConfigs()
         {
-            foreach (CCSPlayerController entry in Utilities.GetPlayers())
+            foreach (CCSPlayerController entry in Utilities.GetPlayers().Where(p => p.IsValid && (Config.AllowBots || !p.IsBot)))
             {
-                if (entry == null
-                    || !entry.IsValid
-                    || (!Config.AllowBots && entry.IsBot)
-                    || _playerConfigs.ContainsKey(entry.NetworkIDString)) continue;
+                if (_playerConfigs.ContainsKey(entry.NetworkIDString)) continue;
                 if (entry.IsBot)
                     LoadPlayerConfig("BOT");
                 else

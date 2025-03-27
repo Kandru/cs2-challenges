@@ -267,10 +267,9 @@ namespace Challenges
                 if (player == null || !player.IsValid || !_playerConfigs.ContainsKey(steamId)) return;
                 if (challenge.Visible && challenge.AnnounceCompletion) SendDiscordMessageOnChallengeCompleted(player, challenge);
 
-                foreach (CCSPlayerController entry in Utilities.GetPlayers())
+                foreach (CCSPlayerController entry in Utilities.GetPlayers().Where(p => p.IsValid && !p.IsBot))
                 {
-                    if (entry == null || !entry.IsValid || entry.IsBot
-                        || (entry == player && !Config.Notifications.NotifyPlayerOnChallengeComplete)
+                    if ((entry == player && !Config.Notifications.NotifyPlayerOnChallengeComplete)
                         || (entry != player && !Config.Notifications.NotifyOtherOnChallengeComplete)) continue;
 
                     string message = entry == player

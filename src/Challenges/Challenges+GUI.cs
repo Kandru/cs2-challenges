@@ -20,12 +20,9 @@ namespace Challenges
             {
                 freezeTime = mpFreezeTime.GetPrimitiveValue<int>();
             }
-            foreach (CCSPlayerController player in Utilities.GetPlayers())
+            foreach (CCSPlayerController player in Utilities.GetPlayers().Where(p => p.IsValid && !p.IsBot))
             {
-                if (player == null
-                    || !player.IsValid
-                    || player.IsBot
-                    || !_playerConfigs.ContainsKey(player.NetworkIDString)
+                if (!_playerConfigs.ContainsKey(player.NetworkIDString)
                     || (player.TeamNum != (int)CsTeam.CounterTerrorist && player.TeamNum != (int)CsTeam.Terrorist)) continue;
                 AddTimer(0.3f, () =>
                 {
