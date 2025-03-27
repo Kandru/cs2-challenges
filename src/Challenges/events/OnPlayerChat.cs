@@ -7,7 +7,7 @@ namespace Challenges
     {
         private HookResult OnPlayerChat(EventPlayerChat @event, GameEventInfo info)
         {
-            CCSPlayerController? player = @event.Userid;
+            CCSPlayerController? player = Utilities.GetPlayerFromUserid(@event.Userid);
             if (player == null
                 || !player.IsValid
                 || !_playerConfigs.ContainsKey(player.NetworkIDString)) return HookResult.Continue;
