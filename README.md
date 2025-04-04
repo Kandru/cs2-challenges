@@ -56,8 +56,8 @@ Other CounterstrikeSharp plugins will then be notified to take further actions. 
 ## Plugin Installation
 
 1. Download and extract the latest release from the [GitHub releases page](https://github.com/Kandru/cs2-challenges/releases/).
-2. Move the "Challenges" folder to the `/addons/counterstrikesharp/configs/plugins/` directory of your gameserver.
-3. Move the "ChallengesShared" folder to the `/addons/counterstrikesharp/configs/shared/` directory of your gameserver.
+2. Move the "Challenges" folder to the `/addons/counterstrikesharp/plugins/` directory of your gameserver.
+3. Move the "ChallengesShared" folder to the `/addons/counterstrikesharp/shared/` directory of your gameserver.
 4. Restart the server.
 
 ## Plugin Update
@@ -73,6 +73,22 @@ This activates the challenges GUI when the player is alive. The state of the pop
 ### !sendtestchallengeevent
 
 This needs permission *@css/root* to work. Sends the first found Challenge for the current user to all plugins. Useful for testing purposes when creating a custom listener in your own plugin for this Challenge-Plugin.
+
+### challenges (Server Console Only)
+
+Ability to run sub-commands:
+
+#### reload
+
+Reloads the core-configuration.
+
+#### disable
+
+Disables the Challenges-Plugin instantly and remembers this state.
+
+#### enable
+
+Enables the Challenges-Plugin command instantly and remembers this state.
 
 ## Configuration
 
