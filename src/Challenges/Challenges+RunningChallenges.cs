@@ -2,6 +2,7 @@ using ChallengesShared.Events;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Translations;
+using CounterStrikeSharp.API.Modules.Utils;
 
 namespace Challenges
 {
@@ -277,7 +278,18 @@ namespace Challenges
                         : LocalizerExtensions.ForPlayer(Localizer, entry, "challenges.completed.other");
 
                     if (entry == player && Config.Notifications.ChallengeCompleteSound != "")
-                        player.ExecuteClientCommand($"play {Config.Notifications.ChallengeCompleteSound}");
+                        if (Config.Notifications.ChallengeCompleteSound.StartsWith("sounds/"))
+                        {
+                            // simply play sound (will be played at 100% volume regardless of the player's volume settings)
+                            player.ExecuteClientCommand($"play {Config.Notifications.ChallengeCompleteSound}");
+                        }
+                        else
+                        {
+                            // only players that rolled the dice will hear the sound
+                            RecipientFilter filter = [player];
+                            // will be played at the player's volume settings
+                            player.EmitSound(Config.Notifications.ChallengeCompleteSound, filter);
+                        }
 
                     entry.PrintToChat(message.Replace("{challenge}", GetChallengeTitle(challenge, player))
                         .Replace("{player}", player.PlayerName)
@@ -332,7 +344,18 @@ namespace Challenges
                 if (player == null || !player.IsValid || !_playerConfigs.ContainsKey(steamId)) return;
                 // play sound for player if enabled
                 if (Config.Notifications.ChallengeProgressSound != "")
-                    player.ExecuteClientCommand($"play {Config.Notifications.ChallengeProgressSound}");
+                    if (Config.Notifications.ChallengeProgressSound.StartsWith("sounds/"))
+                    {
+                        // simply play sound (will be played at 100% volume regardless of the player's volume settings)
+                        player.ExecuteClientCommand($"play {Config.Notifications.ChallengeProgressSound}");
+                    }
+                    else
+                    {
+                        // only players that rolled the dice will hear the sound
+                        RecipientFilter filter = [player];
+                        // will be played at the player's volume settings
+                        player.EmitSound(Config.Notifications.ChallengeProgressSound, filter);
+                    }
                 // build and send message
                 string message = LocalizerExtensions.ForPlayer(Localizer, player, "challenges.progress")
                     .Replace("{challenge}", GetChallengeTitle(challenge, player))

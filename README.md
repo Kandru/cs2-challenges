@@ -128,7 +128,7 @@ Settings for the position of the *!c* challenge menu.
 
 ### notifications
 
-Notification settings. To disable sounds simply remove the sound file from the setting.
+Notification settings. To disable sounds simply remove the sound file from the setting. Sounds can either be a sound file path (e.g. sounds/test/test.vsnd) or a soundevents_addon.vsndevts name (e.g. MySound.Command). Please note: sound file paths will be played at 100% volume regardless of the player's volume choices. This cannot be changed. Only sound events do support changing the volume via the soundevents_addon.vsndevts file.
 
 ### discord
 

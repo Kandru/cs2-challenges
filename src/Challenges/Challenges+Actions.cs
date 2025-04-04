@@ -1,6 +1,7 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Translations;
+using CounterStrikeSharp.API.Modules.Utils;
 
 
 namespace Challenges
@@ -102,7 +103,18 @@ namespace Challenges
             if (!challenges.Any(c => _playerConfigs[player.NetworkIDString].Challenges[_currentSchedule.Key].ContainsKey(c))) return;
             // play sound if available
             if (Config.Notifications.ChallengeRuleBrokenSound != "")
-                player.ExecuteClientCommand($"play {Config.Notifications.ChallengeRuleBrokenSound}");
+                if (Config.Notifications.ChallengeRuleBrokenSound.StartsWith("sounds/"))
+                {
+                    // simply play sound (will be played at 100% volume regardless of the player's volume settings)
+                    player.ExecuteClientCommand($"play {Config.Notifications.ChallengeRuleBrokenSound}");
+                }
+                else
+                {
+                    // only players that rolled the dice will hear the sound
+                    RecipientFilter filter = [player];
+                    // will be played at the player's volume settings
+                    player.EmitSound(Config.Notifications.ChallengeRuleBrokenSound, filter);
+                }
             player.PrintToChat(LocalizerExtensions.ForPlayer(Localizer, player, "challenges.rule.broken"));
             player.PrintToChat(GetChallengeTitle(_currentSchedule.Challenges[challengeKey], player));
             player.PrintToCenterAlert(GetChallengeTitle(_currentSchedule.Challenges[challengeKey], player));
@@ -121,7 +133,18 @@ namespace Challenges
                                     _currentSchedule.Challenges[c].Amount)) return;
             // play sound if available
             if (Config.Notifications.ChallengeRuleBrokenSound != "")
-                player.ExecuteClientCommand($"play {Config.Notifications.ChallengeRuleBrokenSound}");
+                if (Config.Notifications.ChallengeRuleBrokenSound.StartsWith("sounds/"))
+                {
+                    // simply play sound (will be played at 100% volume regardless of the player's volume settings)
+                    player.ExecuteClientCommand($"play {Config.Notifications.ChallengeRuleBrokenSound}");
+                }
+                else
+                {
+                    // only players that rolled the dice will hear the sound
+                    RecipientFilter filter = [player];
+                    // will be played at the player's volume settings
+                    player.EmitSound(Config.Notifications.ChallengeRuleBrokenSound, filter);
+                }
             player.PrintToChat(LocalizerExtensions.ForPlayer(Localizer, player, "challenges.rule.broken"));
             player.PrintToChat(GetChallengeTitle(_currentSchedule.Challenges[challengeKey], player));
             player.PrintToCenterAlert(GetChallengeTitle(_currentSchedule.Challenges[challengeKey], player));
