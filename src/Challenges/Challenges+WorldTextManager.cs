@@ -24,6 +24,8 @@ namespace Challenges
         {
             if (player == null
                 || !player.IsValid
+                || player.IsBot
+                || player.IsHLTV
                 || player.PlayerPawn == null
                 || !player.PlayerPawn.IsValid
                 || player.PlayerPawn.Value == null) return null;
