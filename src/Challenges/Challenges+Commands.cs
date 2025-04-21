@@ -19,9 +19,9 @@ namespace Challenges
             if (player == null
                 || !player.IsValid
                 || player.IsBot
-                || player.PlayerPawn == null
-                || !player.PlayerPawn.IsValid
-                || player.PlayerPawn.Value == null
+                || player.Pawn == null
+                || !player.Pawn.IsValid
+                || player.Pawn.Value == null
                 || !_playerConfigs.ContainsKey(player.NetworkIDString)) return;
             // get all challenges that can be completed by this player
             var challenges = _currentSchedule.Challenges
@@ -34,7 +34,7 @@ namespace Challenges
                 command.ReplyToCommand(Localizer["command.nochallenges"]);
                 return;
             }
-            if (player.PlayerPawn.Value.LifeState == (byte)LifeState_t.LIFE_ALIVE)
+            if (player.Pawn.Value.LifeState == (byte)LifeState_t.LIFE_ALIVE)
                 if (_playerHudPersonalChallenges.ContainsKey(player.NetworkIDString))
                 {
                     command.ReplyToCommand(Localizer["command.hidegui"]);

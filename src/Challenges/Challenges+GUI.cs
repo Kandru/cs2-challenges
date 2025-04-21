@@ -68,10 +68,10 @@ namespace Challenges
                 || player == null
                 || !player.IsValid
                 || !_playerConfigs.ContainsKey(player.NetworkIDString)
-                || player.PlayerPawn == null
-                || !player.PlayerPawn.IsValid
-                || player.PlayerPawn.Value == null
-                || player.PlayerPawn.Value.LifeState != (byte)LifeState_t.LIFE_ALIVE) return;
+                || player.Pawn == null
+                || !player.Pawn.IsValid
+                || player.Pawn.Value == null
+                || player.Pawn.Value.LifeState != (byte)LifeState_t.LIFE_ALIVE) return;
             // create gui message
             string? message = BuildGuiMessage(player);
             if (message == null) return;
@@ -140,7 +140,10 @@ namespace Challenges
             // do not kill if entity is no longer valid
             if (_playerHudPersonalChallenges[player.NetworkIDString] != null
                 && _playerHudPersonalChallenges[player.NetworkIDString].IsValid)
+            {
                 _playerHudPersonalChallenges[player.NetworkIDString].AcceptInput("kill");
+                _playerHudPersonalChallenges[player.NetworkIDString].Remove();
+            }
             // remove hud from list
             _playerHudPersonalChallenges.Remove(player.NetworkIDString);
         }
