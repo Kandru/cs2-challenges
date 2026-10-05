@@ -2,7 +2,7 @@
 
 Config folder (created on first start):
 
-`/addons/counterstrikesharp/configs/plugins/Challenges/`
+`/game/csgo/addons/counterstrikesharp/configs/plugins/Challenges/`
 
 ## 1. Install
 

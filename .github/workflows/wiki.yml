@@ -1,6 +1,11 @@
 name: Publish Wiki
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'documentation/**'
   workflow_dispatch:
     inputs:
       version:
