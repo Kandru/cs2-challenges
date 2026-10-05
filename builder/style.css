@@ -85,7 +85,14 @@ input.invalid, select.invalid { border-color: var(--red); }
 .row .grow { flex: 1; }
 .row .lang { width: 64px; flex: none; }
 .row .opw { width: 120px; flex: none; }
-.row .keyw { width: 38%; flex: none; }
+.row .keyw { width: 34%; flex: none; }
+.row .keytype {
+  flex: none;
+  min-width: 3.2rem;
+  color: var(--muted);
+  font-size: 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
 .row .iconbtn { flex: none; }
 
 .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }

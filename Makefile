@@ -24,7 +24,7 @@ DOCKER_RUN = docker run --rm \
 
 .DEFAULT_GOAL := help
 
-.PHONY: help debug release restore clean dirs panorama catalog
+.PHONY: help debug release restore clean dirs panorama catalog css-sync
 
 help: ## Show this help
 	@echo "CS2 Challenges"
@@ -39,8 +39,11 @@ ifneq ($(DEBUG_OUTPUT),)
 	@mkdir -p "$(DEBUG_OUTPUT)"
 endif
 
-catalog: ## Generate builder/catalog.json from extractors
-	python3 tools/generate_catalog.py
+css-sync: ## Refresh tools/css/snapshot.json from CounterStrikeSharp main
+	python3 tools/sync_css_api.py
+
+catalog: ## Generate extractors, docs, and builder/catalog.json from the CSS snapshot
+	python3 tools/generate_events.py
 
 debug: dirs catalog ## Build Debug (development game server)
 	$(DOCKER_RUN) dotnet build $(PROJECT) -c Debug

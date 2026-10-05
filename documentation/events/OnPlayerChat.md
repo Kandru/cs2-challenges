@@ -1,10 +1,17 @@
-# OnPlayerChat (player_chat)
+# OnPlayerChat (on_player_chat / player_chat)
 
-This blueprint is triggered when a player writes a message into the chat.
+CSS listener `OnPlayerChat`.
 
-## Available rules
+## Challenge types
+
+- `on_player_chat`
+- `player_chat`
+
+## Available rule keys
 
 - [Event Data](../rules/GlobalEventData.md)
-- [Player Data](../rules/GlobalPlayerData.md): with prefix: *player*
-- `teamonly (bool)`: if team chat was used
-- `text (string)`: the message
+- [Player Data](../rules/GlobalPlayerData.md): prefixes *player*
+- `message (string)`
+- `text (string)`
+- `teamchat (bool)`
+- `teamonly (bool)`

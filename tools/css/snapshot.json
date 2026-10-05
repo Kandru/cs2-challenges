@@ -1,0 +1,5763 @@
+{
+  "ref": "main",
+  "commit": "653d651f1ac09ac1ddb423d588f871b891038860",
+  "source": {
+    "game_events": "managed/CounterStrikeSharp.API/Generated/GameEvents",
+    "listeners": "managed/CounterStrikeSharp.API/Core/Listeners.g.cs"
+  },
+  "skipped_listeners": [
+    "CheckTransmit",
+    "OnServerPostEntityThink",
+    "OnServerPreEntityThink",
+    "OnServerPreWorldUpdate",
+    "OnTick",
+    "OnUpdateWhenNotInGame"
+  ],
+  "events": [
+    {
+      "class_name": "EventAchievementEarned",
+      "event_name": "achievement_earned",
+      "properties": [
+        {
+          "csharp": "Achievement",
+          "field": "achievement",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Player",
+          "field": "player",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventAchievementEarnedLocal",
+      "event_name": "achievement_earned_local",
+      "properties": [
+        {
+          "csharp": "Achievement",
+          "field": "achievement",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Splitscreenplayer",
+          "field": "splitscreenplayer",
+          "type": "int",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventAchievementEvent",
+      "event_name": "achievement_event",
+      "properties": [
+        {
+          "csharp": "AchievementName",
+          "field": "achievement_name",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "CurVal",
+          "field": "cur_val",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "MaxVal",
+          "field": "max_val",
+          "type": "int",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventAchievementInfoLoaded",
+      "event_name": "achievement_info_loaded",
+      "properties": []
+    },
+    {
+      "class_name": "EventAchievementWriteFailed",
+      "event_name": "achievement_write_failed",
+      "properties": []
+    },
+    {
+      "class_name": "EventAddBulletHitMarker",
+      "event_name": "add_bullet_hit_marker",
+      "properties": [
+        {
+          "csharp": "AngX",
+          "field": "ang_x",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "AngY",
+          "field": "ang_y",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "AngZ",
+          "field": "ang_z",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Bone",
+          "field": "bone",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Hit",
+          "field": "hit",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "PosX",
+          "field": "pos_x",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "PosY",
+          "field": "pos_y",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "PosZ",
+          "field": "pos_z",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "StartX",
+          "field": "start_x",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "StartY",
+          "field": "start_y",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "StartZ",
+          "field": "start_z",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventAddPlayerSonarIcon",
+      "event_name": "add_player_sonar_icon",
+      "properties": [
+        {
+          "csharp": "PosX",
+          "field": "pos_x",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "PosY",
+          "field": "pos_y",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "PosZ",
+          "field": "pos_z",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventAmmoPickup",
+      "event_name": "ammo_pickup",
+      "properties": [
+        {
+          "csharp": "Index",
+          "field": "index",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "Item",
+          "field": "item",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventAmmoRefill",
+      "event_name": "ammo_refill",
+      "properties": [
+        {
+          "csharp": "Success",
+          "field": "success",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventAnnouncePhaseEnd",
+      "event_name": "announce_phase_end",
+      "properties": []
+    },
+    {
+      "class_name": "EventBeginNewMatch",
+      "event_name": "begin_new_match",
+      "properties": []
+    },
+    {
+      "class_name": "EventBombAbortdefuse",
+      "event_name": "bomb_abortdefuse",
+      "properties": [
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventBombAbortplant",
+      "event_name": "bomb_abortplant",
+      "properties": [
+        {
+          "csharp": "Site",
+          "field": "site",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventBombBeep",
+      "event_name": "bomb_beep",
+      "properties": [
+        {
+          "csharp": "Entindex",
+          "field": "entindex",
+          "type": "long",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventBombBegindefuse",
+      "event_name": "bomb_begindefuse",
+      "properties": [
+        {
+          "csharp": "Haskit",
+          "field": "haskit",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventBombBeginplant",
+      "event_name": "bomb_beginplant",
+      "properties": [
+        {
+          "csharp": "Site",
+          "field": "site",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventBombDefused",
+      "event_name": "bomb_defused",
+      "properties": [
+        {
+          "csharp": "Site",
+          "field": "site",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventBombDropped",
+      "event_name": "bomb_dropped",
+      "properties": [
+        {
+          "csharp": "Entindex",
+          "field": "entindex",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventBombExploded",
+      "event_name": "bomb_exploded",
+      "properties": [
+        {
+          "csharp": "Site",
+          "field": "site",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventBombPickup",
+      "event_name": "bomb_pickup",
+      "properties": [
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventBombPlanted",
+      "event_name": "bomb_planted",
+      "properties": [
+        {
+          "csharp": "Site",
+          "field": "site",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventBonusUpdated",
+      "event_name": "bonus_updated",
+      "properties": [
+        {
+          "csharp": "Numadvanced",
+          "field": "numadvanced",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Numbronze",
+          "field": "numbronze",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Numgold",
+          "field": "numgold",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Numsilver",
+          "field": "numsilver",
+          "type": "int",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventBotTakeover",
+      "event_name": "bot_takeover",
+      "properties": [
+        {
+          "csharp": "Botid",
+          "field": "botid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "csharp": "P",
+          "field": "p",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "R",
+          "field": "r",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "csharp": "Y",
+          "field": "y",
+          "type": "float",
+          "kind": "float"
+        }
+      ]
+    },
+    {
+      "class_name": "EventBreakBreakable",
+      "event_name": "break_breakable",
+      "properties": [
+        {
+          "csharp": "Entindex",
+          "field": "entindex",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "Material",
+          "field": "material",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventBreakProp",
+      "event_name": "break_prop",
+      "properties": [
+        {
+          "csharp": "Entindex",
+          "field": "entindex",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "PlayerDropped",
+          "field": "player_dropped",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "PlayerHeld",
+          "field": "player_held",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "PlayerThrown",
+          "field": "player_thrown",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventBrokenBreakable",
+      "event_name": "broken_breakable",
+      "properties": [
+        {
+          "csharp": "Entindex",
+          "field": "entindex",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "Material",
+          "field": "material",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventBulletDamage",
+      "event_name": "bullet_damage",
+      "properties": [
+        {
+          "csharp": "AimPunchX",
+          "field": "aim_punch_x",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "AimPunchY",
+          "field": "aim_punch_y",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "AimPunchZ",
+          "field": "aim_punch_z",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "Attacker",
+          "field": "attacker",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "csharp": "AttackTickCount",
+          "field": "attack_tick_count",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "AttackTickFrac",
+          "field": "attack_tick_frac",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "DamageDirX",
+          "field": "damage_dir_x",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "DamageDirY",
+          "field": "damage_dir_y",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "DamageDirZ",
+          "field": "damage_dir_z",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "Distance",
+          "field": "distance",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "InaccuracyAir",
+          "field": "inaccuracy_air",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "InaccuracyMove",
+          "field": "inaccuracy_move",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "InaccuracyTotal",
+          "field": "inaccuracy_total",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "InAir",
+          "field": "in_air",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "NoScope",
+          "field": "no_scope",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "NumPenetrations",
+          "field": "num_penetrations",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "RecoilIndex",
+          "field": "recoil_index",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "RenderTickCount",
+          "field": "render_tick_count",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "RenderTickFrac",
+          "field": "render_tick_frac",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "ShootAngX",
+          "field": "shoot_ang_x",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "ShootAngY",
+          "field": "shoot_ang_y",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "ShootAngZ",
+          "field": "shoot_ang_z",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "Type",
+          "field": "type",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Victim",
+          "field": "victim",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventBulletImpact",
+      "event_name": "bullet_impact",
+      "properties": [
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "csharp": "X",
+          "field": "x",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "Y",
+          "field": "y",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "Z",
+          "field": "z",
+          "type": "float",
+          "kind": "float"
+        }
+      ]
+    },
+    {
+      "class_name": "EventBuymenuClose",
+      "event_name": "buymenu_close",
+      "properties": [
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventBuymenuOpen",
+      "event_name": "buymenu_open",
+      "properties": []
+    },
+    {
+      "class_name": "EventBuytimeEnded",
+      "event_name": "buytime_ended",
+      "properties": []
+    },
+    {
+      "class_name": "EventCartUpdated",
+      "event_name": "cart_updated",
+      "properties": []
+    },
+    {
+      "class_name": "EventChoppersIncomingWarning",
+      "event_name": "choppers_incoming_warning",
+      "properties": [
+        {
+          "csharp": "Global",
+          "field": "global",
+          "type": "bool",
+          "kind": "bool"
+        }
+      ]
+    },
+    {
+      "class_name": "EventClientDisconnect",
+      "event_name": "client_disconnect",
+      "properties": []
+    },
+    {
+      "class_name": "EventClientLoadoutChanged",
+      "event_name": "client_loadout_changed",
+      "properties": []
+    },
+    {
+      "class_name": "EventClientsideLessonClosed",
+      "event_name": "clientside_lesson_closed",
+      "properties": [
+        {
+          "csharp": "LessonName",
+          "field": "lesson_name",
+          "type": "string",
+          "kind": "string"
+        }
+      ]
+    },
+    {
+      "class_name": "EventClientsideReloadCustomEcon",
+      "event_name": "clientside_reload_custom_econ",
+      "properties": [
+        {
+          "csharp": "Steamid",
+          "field": "steamid",
+          "type": "string",
+          "kind": "string"
+        }
+      ]
+    },
+    {
+      "class_name": "EventCsGameDisconnected",
+      "event_name": "cs_game_disconnected",
+      "properties": []
+    },
+    {
+      "class_name": "EventCsIntermission",
+      "event_name": "cs_intermission",
+      "properties": []
+    },
+    {
+      "class_name": "EventCsMatchEndRestart",
+      "event_name": "cs_match_end_restart",
+      "properties": []
+    },
+    {
+      "class_name": "EventCsPreRestart",
+      "event_name": "cs_pre_restart",
+      "properties": []
+    },
+    {
+      "class_name": "EventCsPrevNextSpectator",
+      "event_name": "cs_prev_next_spectator",
+      "properties": [
+        {
+          "csharp": "Next",
+          "field": "next",
+          "type": "bool",
+          "kind": "bool"
+        }
+      ]
+    },
+    {
+      "class_name": "EventCsRoundFinalBeep",
+      "event_name": "cs_round_final_beep",
+      "properties": []
+    },
+    {
+      "class_name": "EventCsRoundStartBeep",
+      "event_name": "cs_round_start_beep",
+      "properties": []
+    },
+    {
+      "class_name": "EventCsWinPanelMatch",
+      "event_name": "cs_win_panel_match",
+      "properties": []
+    },
+    {
+      "class_name": "EventCsWinPanelRound",
+      "event_name": "cs_win_panel_round",
+      "properties": [
+        {
+          "csharp": "FinalEvent",
+          "field": "final_event",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "FunfactData1",
+          "field": "funfact_data1",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "FunfactData2",
+          "field": "funfact_data2",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "FunfactData3",
+          "field": "funfact_data3",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "FunfactPlayer",
+          "field": "funfact_player",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "csharp": "FunfactToken",
+          "field": "funfact_token",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "ShowTimerAttack",
+          "field": "show_timer_attack",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "ShowTimerDefend",
+          "field": "show_timer_defend",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "TimerTime",
+          "field": "timer_time",
+          "type": "int",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventDecoyDetonate",
+      "event_name": "decoy_detonate",
+      "properties": [
+        {
+          "csharp": "Entityid",
+          "field": "entityid",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "csharp": "X",
+          "field": "x",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "Y",
+          "field": "y",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "Z",
+          "field": "z",
+          "type": "float",
+          "kind": "float"
+        }
+      ]
+    },
+    {
+      "class_name": "EventDecoyFiring",
+      "event_name": "decoy_firing",
+      "properties": [
+        {
+          "csharp": "Entityid",
+          "field": "entityid",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "csharp": "X",
+          "field": "x",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "Y",
+          "field": "y",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "Z",
+          "field": "z",
+          "type": "float",
+          "kind": "float"
+        }
+      ]
+    },
+    {
+      "class_name": "EventDecoyStarted",
+      "event_name": "decoy_started",
+      "properties": [
+        {
+          "csharp": "Entityid",
+          "field": "entityid",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "csharp": "X",
+          "field": "x",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "Y",
+          "field": "y",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "Z",
+          "field": "z",
+          "type": "float",
+          "kind": "float"
+        }
+      ]
+    },
+    {
+      "class_name": "EventDefuserDropped",
+      "event_name": "defuser_dropped",
+      "properties": [
+        {
+          "csharp": "Entityid",
+          "field": "entityid",
+          "type": "long",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventDefuserPickup",
+      "event_name": "defuser_pickup",
+      "properties": [
+        {
+          "csharp": "Entityid",
+          "field": "entityid",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventDemoSkip",
+      "event_name": "demo_skip",
+      "properties": [
+        {
+          "csharp": "DotaHeroChaseList",
+          "field": "dota_hero_chase_list",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Local",
+          "field": "local",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "PlaybackTick",
+          "field": "playback_tick",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "SkiptoTick",
+          "field": "skipto_tick",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "UserMessageList",
+          "field": "user_message_list",
+          "type": "int",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventDemoStart",
+      "event_name": "demo_start",
+      "properties": [
+        {
+          "csharp": "DotaCombatlogList",
+          "field": "dota_combatlog_list",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "DotaHeroChaseList",
+          "field": "dota_hero_chase_list",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "DotaPickHeroList",
+          "field": "dota_pick_hero_list",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Local",
+          "field": "local",
+          "type": "int",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventDemoStop",
+      "event_name": "demo_stop",
+      "properties": []
+    },
+    {
+      "class_name": "EventDifficultyChanged",
+      "event_name": "difficulty_changed",
+      "properties": [
+        {
+          "csharp": "Newdifficulty",
+          "field": "newDifficulty",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Olddifficulty",
+          "field": "oldDifficulty",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Strdifficulty",
+          "field": "strDifficulty",
+          "type": "string",
+          "kind": "string"
+        }
+      ]
+    },
+    {
+      "class_name": "EventDmBonusWeaponStart",
+      "event_name": "dm_bonus_weapon_start",
+      "properties": [
+        {
+          "csharp": "Pos",
+          "field": "Pos",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Time",
+          "field": "time",
+          "type": "int",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventDoorBreak",
+      "event_name": "door_break",
+      "properties": [
+        {
+          "csharp": "Dmgstate",
+          "field": "dmgstate",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "Entindex",
+          "field": "entindex",
+          "type": "long",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventDoorClose",
+      "event_name": "door_close",
+      "properties": [
+        {
+          "csharp": "Checkpoint",
+          "field": "checkpoint",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventDoorClosed",
+      "event_name": "door_closed",
+      "properties": [
+        {
+          "csharp": "Entindex",
+          "field": "entindex",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventDoorMoving",
+      "event_name": "door_moving",
+      "properties": [
+        {
+          "csharp": "Entindex",
+          "field": "entindex",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventDoorOpen",
+      "event_name": "door_open",
+      "properties": [
+        {
+          "csharp": "Entindex",
+          "field": "entindex",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventDroneAboveRoof",
+      "event_name": "drone_above_roof",
+      "properties": [
+        {
+          "csharp": "Cargo",
+          "field": "cargo",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventDroneCargoDetached",
+      "event_name": "drone_cargo_detached",
+      "properties": [
+        {
+          "csharp": "Cargo",
+          "field": "cargo",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Delivered",
+          "field": "delivered",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventDroneDispatched",
+      "event_name": "drone_dispatched",
+      "properties": [
+        {
+          "csharp": "DroneDispatchedParam",
+          "field": "drone_dispatched",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Priority",
+          "field": "priority",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventDronegunAttack",
+      "event_name": "dronegun_attack",
+      "properties": [
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventDropRateModified",
+      "event_name": "drop_rate_modified",
+      "properties": []
+    },
+    {
+      "class_name": "EventDynamicShadowLightChanged",
+      "event_name": "dynamic_shadow_light_changed",
+      "properties": []
+    },
+    {
+      "class_name": "EventDzItemInteraction",
+      "event_name": "dz_item_interaction",
+      "properties": [
+        {
+          "csharp": "Subject",
+          "field": "subject",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Type",
+          "field": "type",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventEnableRestartVoting",
+      "event_name": "enable_restart_voting",
+      "properties": [
+        {
+          "csharp": "Enable",
+          "field": "enable",
+          "type": "bool",
+          "kind": "bool"
+        }
+      ]
+    },
+    {
+      "class_name": "EventEndmatchCmmStartRevealItems",
+      "event_name": "endmatch_cmm_start_reveal_items",
+      "properties": []
+    },
+    {
+      "class_name": "EventEndmatchMapvoteSelectingMap",
+      "event_name": "endmatch_mapvote_selecting_map",
+      "properties": [
+        {
+          "csharp": "Count",
+          "field": "count",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Slot1",
+          "field": "slot1",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Slot10",
+          "field": "slot10",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Slot2",
+          "field": "slot2",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Slot3",
+          "field": "slot3",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Slot4",
+          "field": "slot4",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Slot5",
+          "field": "slot5",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Slot6",
+          "field": "slot6",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Slot7",
+          "field": "slot7",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Slot8",
+          "field": "slot8",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Slot9",
+          "field": "slot9",
+          "type": "int",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventEnterBombzone",
+      "event_name": "enter_bombzone",
+      "properties": [
+        {
+          "csharp": "Hasbomb",
+          "field": "hasbomb",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Isplanted",
+          "field": "isplanted",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventEnterBuyzone",
+      "event_name": "enter_buyzone",
+      "properties": [
+        {
+          "csharp": "Canbuy",
+          "field": "canbuy",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventEnterRescueZone",
+      "event_name": "enter_rescue_zone",
+      "properties": [
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventEntityKilled",
+      "event_name": "entity_killed",
+      "properties": [
+        {
+          "csharp": "Damagebits",
+          "field": "damagebits",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "EntindexAttacker",
+          "field": "entindex_attacker",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "EntindexInflictor",
+          "field": "entindex_inflictor",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "EntindexKilled",
+          "field": "entindex_killed",
+          "type": "long",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventEntityVisible",
+      "event_name": "entity_visible",
+      "properties": [
+        {
+          "csharp": "Classname",
+          "field": "classname",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Entityname",
+          "field": "entityname",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Subject",
+          "field": "subject",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventEventTicketModified",
+      "event_name": "event_ticket_modified",
+      "properties": []
+    },
+    {
+      "class_name": "EventExitBombzone",
+      "event_name": "exit_bombzone",
+      "properties": [
+        {
+          "csharp": "Hasbomb",
+          "field": "hasbomb",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Isplanted",
+          "field": "isplanted",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventExitBuyzone",
+      "event_name": "exit_buyzone",
+      "properties": [
+        {
+          "csharp": "Canbuy",
+          "field": "canbuy",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventExitRescueZone",
+      "event_name": "exit_rescue_zone",
+      "properties": [
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventFinaleStart",
+      "event_name": "finale_start",
+      "properties": [
+        {
+          "csharp": "Rushes",
+          "field": "rushes",
+          "type": "int",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventFirstbombsIncomingWarning",
+      "event_name": "firstbombs_incoming_warning",
+      "properties": [
+        {
+          "csharp": "Global",
+          "field": "global",
+          "type": "bool",
+          "kind": "bool"
+        }
+      ]
+    },
+    {
+      "class_name": "EventFlareIgniteNpc",
+      "event_name": "flare_ignite_npc",
+      "properties": [
+        {
+          "csharp": "Entindex",
+          "field": "entindex",
+          "type": "long",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventFlashbangDetonate",
+      "event_name": "flashbang_detonate",
+      "properties": [
+        {
+          "csharp": "Entityid",
+          "field": "entityid",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "csharp": "X",
+          "field": "x",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "Y",
+          "field": "y",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "Z",
+          "field": "z",
+          "type": "float",
+          "kind": "float"
+        }
+      ]
+    },
+    {
+      "class_name": "EventGameEnd",
+      "event_name": "game_end",
+      "properties": [
+        {
+          "csharp": "Winner",
+          "field": "winner",
+          "type": "int",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventGameInit",
+      "event_name": "game_init",
+      "properties": []
+    },
+    {
+      "class_name": "EventGameMessage",
+      "event_name": "game_message",
+      "properties": [
+        {
+          "csharp": "Target",
+          "field": "target",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Text",
+          "field": "text",
+          "type": "string",
+          "kind": "string"
+        }
+      ]
+    },
+    {
+      "class_name": "EventGameNewmap",
+      "event_name": "game_newmap",
+      "properties": [
+        {
+          "csharp": "Mapname",
+          "field": "mapname",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Transition",
+          "field": "transition",
+          "type": "bool",
+          "kind": "bool"
+        }
+      ]
+    },
+    {
+      "class_name": "EventGamePhaseChanged",
+      "event_name": "game_phase_changed",
+      "properties": [
+        {
+          "csharp": "NewPhase",
+          "field": "new_phase",
+          "type": "int",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventGameStart",
+      "event_name": "game_start",
+      "properties": [
+        {
+          "csharp": "Fraglimit",
+          "field": "fraglimit",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "Objective",
+          "field": "objective",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Roundslimit",
+          "field": "roundslimit",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "Timelimit",
+          "field": "timelimit",
+          "type": "long",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventGameinstructorDraw",
+      "event_name": "gameinstructor_draw",
+      "properties": []
+    },
+    {
+      "class_name": "EventGameinstructorNodraw",
+      "event_name": "gameinstructor_nodraw",
+      "properties": []
+    },
+    {
+      "class_name": "EventGameuiHidden",
+      "event_name": "gameui_hidden",
+      "properties": []
+    },
+    {
+      "class_name": "EventGcConnected",
+      "event_name": "gc_connected",
+      "properties": []
+    },
+    {
+      "class_name": "EventGgKilledEnemy",
+      "event_name": "gg_killed_enemy",
+      "properties": [
+        {
+          "csharp": "Attackerid",
+          "field": "attackerid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "csharp": "Bonus",
+          "field": "bonus",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Dominated",
+          "field": "dominated",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Revenge",
+          "field": "revenge",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Victimid",
+          "field": "victimid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventGrenadeBounce",
+      "event_name": "grenade_bounce",
+      "properties": [
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventGrenadeThrown",
+      "event_name": "grenade_thrown",
+      "properties": [
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "csharp": "Weapon",
+          "field": "weapon",
+          "type": "string",
+          "kind": "string"
+        }
+      ]
+    },
+    {
+      "class_name": "EventGuardianWaveRestart",
+      "event_name": "guardian_wave_restart",
+      "properties": []
+    },
+    {
+      "class_name": "EventHegrenadeDetonate",
+      "event_name": "hegrenade_detonate",
+      "properties": [
+        {
+          "csharp": "Entityid",
+          "field": "entityid",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "csharp": "X",
+          "field": "x",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "Y",
+          "field": "y",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "Z",
+          "field": "z",
+          "type": "float",
+          "kind": "float"
+        }
+      ]
+    },
+    {
+      "class_name": "EventHelicopterGrenadePuntMiss",
+      "event_name": "helicopter_grenade_punt_miss",
+      "properties": []
+    },
+    {
+      "class_name": "EventHideDeathpanel",
+      "event_name": "hide_deathpanel",
+      "properties": []
+    },
+    {
+      "class_name": "EventHostageCallForHelp",
+      "event_name": "hostage_call_for_help",
+      "properties": [
+        {
+          "csharp": "Hostage",
+          "field": "hostage",
+          "type": "int",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventHostageFollows",
+      "event_name": "hostage_follows",
+      "properties": [
+        {
+          "csharp": "Hostage",
+          "field": "hostage",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventHostageHurt",
+      "event_name": "hostage_hurt",
+      "properties": [
+        {
+          "csharp": "Hostage",
+          "field": "hostage",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventHostageKilled",
+      "event_name": "hostage_killed",
+      "properties": [
+        {
+          "csharp": "Hostage",
+          "field": "hostage",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventHostageRescued",
+      "event_name": "hostage_rescued",
+      "properties": [
+        {
+          "csharp": "Hostage",
+          "field": "hostage",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Site",
+          "field": "site",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventHostageRescuedAll",
+      "event_name": "hostage_rescued_all",
+      "properties": []
+    },
+    {
+      "class_name": "EventHostageStopsFollowing",
+      "event_name": "hostage_stops_following",
+      "properties": [
+        {
+          "csharp": "Hostage",
+          "field": "hostage",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventHostnameChanged",
+      "event_name": "hostname_changed",
+      "properties": [
+        {
+          "csharp": "Hostname",
+          "field": "hostname",
+          "type": "string",
+          "kind": "string"
+        }
+      ]
+    },
+    {
+      "class_name": "EventInfernoExpire",
+      "event_name": "inferno_expire",
+      "properties": [
+        {
+          "csharp": "Entityid",
+          "field": "entityid",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "X",
+          "field": "x",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "Y",
+          "field": "y",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "Z",
+          "field": "z",
+          "type": "float",
+          "kind": "float"
+        }
+      ]
+    },
+    {
+      "class_name": "EventInfernoExtinguish",
+      "event_name": "inferno_extinguish",
+      "properties": [
+        {
+          "csharp": "Entityid",
+          "field": "entityid",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "X",
+          "field": "x",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "Y",
+          "field": "y",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "Z",
+          "field": "z",
+          "type": "float",
+          "kind": "float"
+        }
+      ]
+    },
+    {
+      "class_name": "EventInfernoStartburn",
+      "event_name": "inferno_startburn",
+      "properties": [
+        {
+          "csharp": "Entityid",
+          "field": "entityid",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "X",
+          "field": "x",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "Y",
+          "field": "y",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "Z",
+          "field": "z",
+          "type": "float",
+          "kind": "float"
+        }
+      ]
+    },
+    {
+      "class_name": "EventInspectWeapon",
+      "event_name": "inspect_weapon",
+      "properties": [
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventInstructorCloseLesson",
+      "event_name": "instructor_close_lesson",
+      "properties": [
+        {
+          "csharp": "HintName",
+          "field": "hint_name",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventInstructorServerHintCreate",
+      "event_name": "instructor_server_hint_create",
+      "properties": [
+        {
+          "csharp": "HintActivatorCaption",
+          "field": "hint_activator_caption",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "HintActivatorUserid",
+          "field": "hint_activator_userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "csharp": "HintAllowNodrawTarget",
+          "field": "hint_allow_nodraw_target",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "HintBinding",
+          "field": "hint_binding",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "HintCaption",
+          "field": "hint_caption",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "HintColor",
+          "field": "hint_color",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "HintEntindex",
+          "field": "hint_entindex",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "HintFlags",
+          "field": "hint_flags",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "HintForcecaption",
+          "field": "hint_forcecaption",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "HintGamepadBinding",
+          "field": "hint_gamepad_binding",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "HintIconOffscreen",
+          "field": "hint_icon_offscreen",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "HintIconOffset",
+          "field": "hint_icon_offset",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "HintIconOnscreen",
+          "field": "hint_icon_onscreen",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "HintLayoutfile",
+          "field": "hint_layoutfile",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "HintLocalPlayerOnly",
+          "field": "hint_local_player_only",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "HintName",
+          "field": "hint_name",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "HintNooffscreen",
+          "field": "hint_nooffscreen",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "HintRange",
+          "field": "hint_range",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "HintReplaceKey",
+          "field": "hint_replace_key",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "HintStartSound",
+          "field": "hint_start_sound",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "HintTarget",
+          "field": "hint_target",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "HintTimeout",
+          "field": "hint_timeout",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "HintVrHeightOffset",
+          "field": "hint_vr_height_offset",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "HintVrOffsetX",
+          "field": "hint_vr_offset_x",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "HintVrOffsetY",
+          "field": "hint_vr_offset_y",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "HintVrOffsetZ",
+          "field": "hint_vr_offset_z",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "HintVrPanelType",
+          "field": "hint_vr_panel_type",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventInstructorServerHintStop",
+      "event_name": "instructor_server_hint_stop",
+      "properties": [
+        {
+          "csharp": "HintEntindex",
+          "field": "hint_entindex",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "HintName",
+          "field": "hint_name",
+          "type": "string",
+          "kind": "string"
+        }
+      ]
+    },
+    {
+      "class_name": "EventInstructorStartLesson",
+      "event_name": "instructor_start_lesson",
+      "properties": [
+        {
+          "csharp": "HintName",
+          "field": "hint_name",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "HintTarget",
+          "field": "hint_target",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "csharp": "VrControllerType",
+          "field": "vr_controller_type",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "VrMovementType",
+          "field": "vr_movement_type",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "VrSingleController",
+          "field": "vr_single_controller",
+          "type": "bool",
+          "kind": "bool"
+        }
+      ]
+    },
+    {
+      "class_name": "EventInventoryUpdated",
+      "event_name": "inventory_updated",
+      "properties": [
+        {
+          "csharp": "Itemdef",
+          "field": "itemdef",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Itemid",
+          "field": "itemid",
+          "type": "long",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventItemEquip",
+      "event_name": "item_equip",
+      "properties": [
+        {
+          "csharp": "Canzoom",
+          "field": "canzoom",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Defindex",
+          "field": "defindex",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "Hassilencer",
+          "field": "hassilencer",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Hastracers",
+          "field": "hastracers",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Ispainted",
+          "field": "ispainted",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Issilenced",
+          "field": "issilenced",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Item",
+          "field": "item",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "csharp": "Weptype",
+          "field": "weptype",
+          "type": "int",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventItemPickup",
+      "event_name": "item_pickup",
+      "properties": [
+        {
+          "csharp": "Defindex",
+          "field": "defindex",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "Item",
+          "field": "item",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Silent",
+          "field": "silent",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventItemPickupFailed",
+      "event_name": "item_pickup_failed",
+      "properties": [
+        {
+          "csharp": "Item",
+          "field": "item",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Limit",
+          "field": "limit",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Reason",
+          "field": "reason",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventItemPickupSlerp",
+      "event_name": "item_pickup_slerp",
+      "properties": [
+        {
+          "csharp": "Behavior",
+          "field": "behavior",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Index",
+          "field": "index",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventItemPurchase",
+      "event_name": "item_purchase",
+      "properties": [
+        {
+          "csharp": "Loadout",
+          "field": "loadout",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Team",
+          "field": "team",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "csharp": "Weapon",
+          "field": "weapon",
+          "type": "string",
+          "kind": "string"
+        }
+      ]
+    },
+    {
+      "class_name": "EventItemRemove",
+      "event_name": "item_remove",
+      "properties": [
+        {
+          "csharp": "Defindex",
+          "field": "defindex",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "Item",
+          "field": "item",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventItemSchemaInitialized",
+      "event_name": "item_schema_initialized",
+      "properties": []
+    },
+    {
+      "class_name": "EventJointeamFailed",
+      "event_name": "jointeam_failed",
+      "properties": [
+        {
+          "csharp": "Reason",
+          "field": "reason",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventLocalPlayerControllerTeam",
+      "event_name": "local_player_controller_team",
+      "properties": []
+    },
+    {
+      "class_name": "EventLocalPlayerPawnChanged",
+      "event_name": "local_player_pawn_changed",
+      "properties": []
+    },
+    {
+      "class_name": "EventLocalPlayerTeam",
+      "event_name": "local_player_team",
+      "properties": []
+    },
+    {
+      "class_name": "EventLootCrateOpened",
+      "event_name": "loot_crate_opened",
+      "properties": [
+        {
+          "csharp": "Type",
+          "field": "type",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventLootCrateVisible",
+      "event_name": "loot_crate_visible",
+      "properties": [
+        {
+          "csharp": "Subject",
+          "field": "subject",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Type",
+          "field": "type",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventMapShutdown",
+      "event_name": "map_shutdown",
+      "properties": []
+    },
+    {
+      "class_name": "EventMapTransition",
+      "event_name": "map_transition",
+      "properties": []
+    },
+    {
+      "class_name": "EventMatchEndConditions",
+      "event_name": "match_end_conditions",
+      "properties": [
+        {
+          "csharp": "Frags",
+          "field": "frags",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "MaxRounds",
+          "field": "max_rounds",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "Time",
+          "field": "time",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "WinRounds",
+          "field": "win_rounds",
+          "type": "long",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventMaterialDefaultComplete",
+      "event_name": "material_default_complete",
+      "properties": []
+    },
+    {
+      "class_name": "EventMbInputLockCancel",
+      "event_name": "mb_input_lock_cancel",
+      "properties": []
+    },
+    {
+      "class_name": "EventMbInputLockSuccess",
+      "event_name": "mb_input_lock_success",
+      "properties": []
+    },
+    {
+      "class_name": "EventMolotovDetonate",
+      "event_name": "molotov_detonate",
+      "properties": [
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "csharp": "X",
+          "field": "x",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "Y",
+          "field": "y",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "Z",
+          "field": "z",
+          "type": "float",
+          "kind": "float"
+        }
+      ]
+    },
+    {
+      "class_name": "EventNavBlocked",
+      "event_name": "nav_blocked",
+      "properties": [
+        {
+          "csharp": "Area",
+          "field": "area",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "Blocked",
+          "field": "blocked",
+          "type": "bool",
+          "kind": "bool"
+        }
+      ]
+    },
+    {
+      "class_name": "EventNavGenerate",
+      "event_name": "nav_generate",
+      "properties": []
+    },
+    {
+      "class_name": "EventNextlevelChanged",
+      "event_name": "nextlevel_changed",
+      "properties": [
+        {
+          "csharp": "Mapgroup",
+          "field": "mapgroup",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Nextlevel",
+          "field": "nextlevel",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Skirmishmode",
+          "field": "skirmishmode",
+          "type": "string",
+          "kind": "string"
+        }
+      ]
+    },
+    {
+      "class_name": "EventOpenCrateInstr",
+      "event_name": "open_crate_instr",
+      "properties": [
+        {
+          "csharp": "Subject",
+          "field": "subject",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Type",
+          "field": "type",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventOtherDeath",
+      "event_name": "other_death",
+      "properties": [
+        {
+          "csharp": "Attacker",
+          "field": "attacker",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Attackerblind",
+          "field": "attackerblind",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Headshot",
+          "field": "headshot",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Noscope",
+          "field": "noscope",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Otherid",
+          "field": "otherid",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Othertype",
+          "field": "othertype",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Penetrated",
+          "field": "penetrated",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Thrusmoke",
+          "field": "thrusmoke",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Weapon",
+          "field": "weapon",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "WeaponFauxitemid",
+          "field": "weapon_fauxitemid",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "WeaponItemid",
+          "field": "weapon_itemid",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "WeaponOriginalownerXuid",
+          "field": "weapon_originalowner_xuid",
+          "type": "string",
+          "kind": "string"
+        }
+      ]
+    },
+    {
+      "class_name": "EventParachuteDeploy",
+      "event_name": "parachute_deploy",
+      "properties": [
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventParachutePickup",
+      "event_name": "parachute_pickup",
+      "properties": [
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventPhysgunPickup",
+      "event_name": "physgun_pickup",
+      "properties": [
+        {
+          "csharp": "Target",
+          "field": "target",
+          "type": "IntPtr",
+          "kind": "tostring"
+        }
+      ]
+    },
+    {
+      "class_name": "EventPlayerActivate",
+      "event_name": "player_activate",
+      "properties": [
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventPlayerAvengedTeammate",
+      "event_name": "player_avenged_teammate",
+      "properties": [
+        {
+          "csharp": "AvengedPlayerId",
+          "field": "avenged_player_id",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "csharp": "AvengerId",
+          "field": "avenger_id",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventPlayerBlind",
+      "event_name": "player_blind",
+      "properties": [
+        {
+          "csharp": "Attacker",
+          "field": "attacker",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "csharp": "BlindDuration",
+          "field": "blind_duration",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "Entityid",
+          "field": "entityid",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventPlayerChangename",
+      "event_name": "player_changename",
+      "properties": [
+        {
+          "csharp": "Newname",
+          "field": "newname",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Oldname",
+          "field": "oldname",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventPlayerConnect",
+      "event_name": "player_connect",
+      "properties": [
+        {
+          "csharp": "Bot",
+          "field": "bot",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Name",
+          "field": "name",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Networkid",
+          "field": "networkid",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "csharp": "Xuid",
+          "field": "xuid",
+          "type": "ulong",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventPlayerConnectFull",
+      "event_name": "player_connect_full",
+      "properties": [
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventPlayerDeath",
+      "event_name": "player_death",
+      "properties": [
+        {
+          "csharp": "Assistedflash",
+          "field": "assistedflash",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Assister",
+          "field": "assister",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "csharp": "Attacker",
+          "field": "attacker",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "csharp": "Attackerblind",
+          "field": "attackerblind",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Attackerinair",
+          "field": "attackerinair",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Distance",
+          "field": "distance",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "DmgArmor",
+          "field": "dmg_armor",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "DmgHealth",
+          "field": "dmg_health",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Dominated",
+          "field": "dominated",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Headshot",
+          "field": "headshot",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Hitgroup",
+          "field": "hitgroup",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Noreplay",
+          "field": "noreplay",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Noscope",
+          "field": "noscope",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Penetrated",
+          "field": "penetrated",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Revenge",
+          "field": "revenge",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Thrusmoke",
+          "field": "thrusmoke",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "csharp": "Weapon",
+          "field": "weapon",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "WeaponFauxitemid",
+          "field": "weapon_fauxitemid",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "WeaponItemid",
+          "field": "weapon_itemid",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "WeaponOriginalownerXuid",
+          "field": "weapon_originalowner_xuid",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Wipe",
+          "field": "wipe",
+          "type": "int",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventPlayerDecal",
+      "event_name": "player_decal",
+      "properties": [
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventPlayerDisconnect",
+      "event_name": "player_disconnect",
+      "properties": [
+        {
+          "csharp": "EverFullyConnected",
+          "field": "ever_fully_connected",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Name",
+          "field": "name",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Networkid",
+          "field": "networkid",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Playerid",
+          "field": "PlayerID",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Reason",
+          "field": "reason",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "csharp": "Xuid",
+          "field": "xuid",
+          "type": "ulong",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventPlayerFalldamage",
+      "event_name": "player_falldamage",
+      "properties": [
+        {
+          "csharp": "Damage",
+          "field": "damage",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventPlayerFootstep",
+      "event_name": "player_footstep",
+      "properties": [
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventPlayerFullUpdate",
+      "event_name": "player_full_update",
+      "properties": [
+        {
+          "csharp": "Count",
+          "field": "count",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventPlayerGivenC4",
+      "event_name": "player_given_c4",
+      "properties": [
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventPlayerHintmessage",
+      "event_name": "player_hintmessage",
+      "properties": [
+        {
+          "csharp": "Hintmessage",
+          "field": "hintmessage",
+          "type": "string",
+          "kind": "string"
+        }
+      ]
+    },
+    {
+      "class_name": "EventPlayerHurt",
+      "event_name": "player_hurt",
+      "properties": [
+        {
+          "csharp": "Armor",
+          "field": "armor",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Attacker",
+          "field": "attacker",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "csharp": "DmgArmor",
+          "field": "dmg_armor",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "DmgHealth",
+          "field": "dmg_health",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Health",
+          "field": "health",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Hitgroup",
+          "field": "hitgroup",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "csharp": "Weapon",
+          "field": "weapon",
+          "type": "string",
+          "kind": "string"
+        }
+      ]
+    },
+    {
+      "class_name": "EventPlayerInfo",
+      "event_name": "player_info",
+      "properties": [
+        {
+          "csharp": "Bot",
+          "field": "bot",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Name",
+          "field": "name",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Steamid",
+          "field": "steamid",
+          "type": "ulong",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventPlayerJump",
+      "event_name": "player_jump",
+      "properties": [
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventPlayerPing",
+      "event_name": "player_ping",
+      "properties": [
+        {
+          "csharp": "Entityid",
+          "field": "entityid",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Urgent",
+          "field": "urgent",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "csharp": "X",
+          "field": "x",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "Y",
+          "field": "y",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "Z",
+          "field": "z",
+          "type": "float",
+          "kind": "float"
+        }
+      ]
+    },
+    {
+      "class_name": "EventPlayerPingStop",
+      "event_name": "player_ping_stop",
+      "properties": [
+        {
+          "csharp": "Entityid",
+          "field": "entityid",
+          "type": "int",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventPlayerRadio",
+      "event_name": "player_radio",
+      "properties": [
+        {
+          "csharp": "Slot",
+          "field": "slot",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventPlayerResetVote",
+      "event_name": "player_reset_vote",
+      "properties": [
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "csharp": "Vote",
+          "field": "vote",
+          "type": "bool",
+          "kind": "bool"
+        }
+      ]
+    },
+    {
+      "class_name": "EventPlayerScore",
+      "event_name": "player_score",
+      "properties": [
+        {
+          "csharp": "Deaths",
+          "field": "deaths",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Kills",
+          "field": "kills",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Score",
+          "field": "score",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventPlayerShoot",
+      "event_name": "player_shoot",
+      "properties": [
+        {
+          "csharp": "Mode",
+          "field": "mode",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "csharp": "Weapon",
+          "field": "weapon",
+          "type": "int",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventPlayerSound",
+      "event_name": "player_sound",
+      "properties": [
+        {
+          "csharp": "Duration",
+          "field": "duration",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "Radius",
+          "field": "radius",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Step",
+          "field": "step",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventPlayerSpawn",
+      "event_name": "player_spawn",
+      "properties": [
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventPlayerSpawned",
+      "event_name": "player_spawned",
+      "properties": [
+        {
+          "csharp": "Inrestart",
+          "field": "inrestart",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventPlayerStatsUpdated",
+      "event_name": "player_stats_updated",
+      "properties": [
+        {
+          "csharp": "Forceupload",
+          "field": "forceupload",
+          "type": "bool",
+          "kind": "bool"
+        }
+      ]
+    },
+    {
+      "class_name": "EventPlayerTeam",
+      "event_name": "player_team",
+      "properties": [
+        {
+          "csharp": "Disconnect",
+          "field": "disconnect",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Isbot",
+          "field": "isbot",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Name",
+          "field": "name",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Oldteam",
+          "field": "oldteam",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Silent",
+          "field": "silent",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Team",
+          "field": "team",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventRagdollDissolved",
+      "event_name": "ragdoll_dissolved",
+      "properties": [
+        {
+          "csharp": "Entindex",
+          "field": "entindex",
+          "type": "long",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventReadGameTitledata",
+      "event_name": "read_game_titledata",
+      "properties": [
+        {
+          "csharp": "Controllerid",
+          "field": "controllerId",
+          "type": "int",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventRepostXboxAchievements",
+      "event_name": "repost_xbox_achievements",
+      "properties": [
+        {
+          "csharp": "Splitscreenplayer",
+          "field": "splitscreenplayer",
+          "type": "int",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventResetGameTitledata",
+      "event_name": "reset_game_titledata",
+      "properties": [
+        {
+          "csharp": "Controllerid",
+          "field": "controllerId",
+          "type": "int",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventRoundAnnounceFinal",
+      "event_name": "round_announce_final",
+      "properties": []
+    },
+    {
+      "class_name": "EventRoundAnnounceLastRoundHalf",
+      "event_name": "round_announce_last_round_half",
+      "properties": []
+    },
+    {
+      "class_name": "EventRoundAnnounceMatchPoint",
+      "event_name": "round_announce_match_point",
+      "properties": []
+    },
+    {
+      "class_name": "EventRoundAnnounceMatchStart",
+      "event_name": "round_announce_match_start",
+      "properties": []
+    },
+    {
+      "class_name": "EventRoundAnnounceWarmup",
+      "event_name": "round_announce_warmup",
+      "properties": []
+    },
+    {
+      "class_name": "EventRoundEnd",
+      "event_name": "round_end",
+      "properties": [
+        {
+          "csharp": "Legacy",
+          "field": "legacy",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Message",
+          "field": "message",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Nomusic",
+          "field": "nomusic",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "PlayerCount",
+          "field": "player_count",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Reason",
+          "field": "reason",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Time",
+          "field": "time",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "Winner",
+          "field": "winner",
+          "type": "int",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventRoundEndUploadStats",
+      "event_name": "round_end_upload_stats",
+      "properties": []
+    },
+    {
+      "class_name": "EventRoundFreezeEnd",
+      "event_name": "round_freeze_end",
+      "properties": []
+    },
+    {
+      "class_name": "EventRoundMvp",
+      "event_name": "round_mvp",
+      "properties": [
+        {
+          "csharp": "Musickitid",
+          "field": "musickitid",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "Musickitmvps",
+          "field": "musickitmvps",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "Nomusic",
+          "field": "nomusic",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Reason",
+          "field": "reason",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "csharp": "Value",
+          "field": "value",
+          "type": "long",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventRoundOfficiallyEnded",
+      "event_name": "round_officially_ended",
+      "properties": []
+    },
+    {
+      "class_name": "EventRoundPoststart",
+      "event_name": "round_poststart",
+      "properties": []
+    },
+    {
+      "class_name": "EventRoundPrestart",
+      "event_name": "round_prestart",
+      "properties": []
+    },
+    {
+      "class_name": "EventRoundStart",
+      "event_name": "round_start",
+      "properties": [
+        {
+          "csharp": "Fraglimit",
+          "field": "fraglimit",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "Objective",
+          "field": "objective",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Timelimit",
+          "field": "timelimit",
+          "type": "long",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventRoundStartPostNav",
+      "event_name": "round_start_post_nav",
+      "properties": []
+    },
+    {
+      "class_name": "EventRoundStartPreEntity",
+      "event_name": "round_start_pre_entity",
+      "properties": []
+    },
+    {
+      "class_name": "EventRoundTimeWarning",
+      "event_name": "round_time_warning",
+      "properties": []
+    },
+    {
+      "class_name": "EventSeasoncoinLevelup",
+      "event_name": "seasoncoin_levelup",
+      "properties": [
+        {
+          "csharp": "Category",
+          "field": "category",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Rank",
+          "field": "rank",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventServerCvar",
+      "event_name": "server_cvar",
+      "properties": [
+        {
+          "csharp": "Cvarname",
+          "field": "cvarname",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Cvarvalue",
+          "field": "cvarvalue",
+          "type": "string",
+          "kind": "string"
+        }
+      ]
+    },
+    {
+      "class_name": "EventServerMessage",
+      "event_name": "server_message",
+      "properties": [
+        {
+          "csharp": "Text",
+          "field": "text",
+          "type": "string",
+          "kind": "string"
+        }
+      ]
+    },
+    {
+      "class_name": "EventServerPreShutdown",
+      "event_name": "server_pre_shutdown",
+      "properties": [
+        {
+          "csharp": "Reason",
+          "field": "reason",
+          "type": "string",
+          "kind": "string"
+        }
+      ]
+    },
+    {
+      "class_name": "EventServerShutdown",
+      "event_name": "server_shutdown",
+      "properties": [
+        {
+          "csharp": "Reason",
+          "field": "reason",
+          "type": "string",
+          "kind": "string"
+        }
+      ]
+    },
+    {
+      "class_name": "EventServerSpawn",
+      "event_name": "server_spawn",
+      "properties": [
+        {
+          "csharp": "Addonname",
+          "field": "addonname",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Address",
+          "field": "address",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Dedicated",
+          "field": "dedicated",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Game",
+          "field": "game",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Hostname",
+          "field": "hostname",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Mapname",
+          "field": "mapname",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Maxplayers",
+          "field": "maxplayers",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "Os",
+          "field": "os",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Password",
+          "field": "password",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Port",
+          "field": "port",
+          "type": "int",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventSetInstructorGroupEnabled",
+      "event_name": "set_instructor_group_enabled",
+      "properties": [
+        {
+          "csharp": "Enabled",
+          "field": "enabled",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Group",
+          "field": "group",
+          "type": "string",
+          "kind": "string"
+        }
+      ]
+    },
+    {
+      "class_name": "EventSfuievent",
+      "event_name": "sfuievent",
+      "properties": [
+        {
+          "csharp": "Action",
+          "field": "action",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Data",
+          "field": "data",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Slot",
+          "field": "slot",
+          "type": "int",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventShowDeathpanel",
+      "event_name": "show_deathpanel",
+      "properties": [
+        {
+          "csharp": "DamageGiven",
+          "field": "damage_given",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "DamageTaken",
+          "field": "damage_taken",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "HitsGiven",
+          "field": "hits_given",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "HitsTaken",
+          "field": "hits_taken",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Killer",
+          "field": "killer",
+          "type": "IntPtr",
+          "kind": "tostring"
+        },
+        {
+          "csharp": "KillerController",
+          "field": "killer_controller",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "csharp": "Victim",
+          "field": "victim",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventShowSurvivalRespawnStatus",
+      "event_name": "show_survival_respawn_status",
+      "properties": [
+        {
+          "csharp": "Duration",
+          "field": "duration",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "LocToken",
+          "field": "loc_token",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventSilencerDetach",
+      "event_name": "silencer_detach",
+      "properties": [
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventSilencerOff",
+      "event_name": "silencer_off",
+      "properties": [
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventSilencerOn",
+      "event_name": "silencer_on",
+      "properties": [
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventSmokeBeaconParadrop",
+      "event_name": "smoke_beacon_paradrop",
+      "properties": [
+        {
+          "csharp": "Paradrop",
+          "field": "paradrop",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventSmokegrenadeDetonate",
+      "event_name": "smokegrenade_detonate",
+      "properties": [
+        {
+          "csharp": "Entityid",
+          "field": "entityid",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "csharp": "X",
+          "field": "x",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "Y",
+          "field": "y",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "Z",
+          "field": "z",
+          "type": "float",
+          "kind": "float"
+        }
+      ]
+    },
+    {
+      "class_name": "EventSmokegrenadeExpired",
+      "event_name": "smokegrenade_expired",
+      "properties": [
+        {
+          "csharp": "Entityid",
+          "field": "entityid",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "csharp": "X",
+          "field": "x",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "Y",
+          "field": "y",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "Z",
+          "field": "z",
+          "type": "float",
+          "kind": "float"
+        }
+      ]
+    },
+    {
+      "class_name": "EventSpecModeUpdated",
+      "event_name": "spec_mode_updated",
+      "properties": [
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventSpecTargetUpdated",
+      "event_name": "spec_target_updated",
+      "properties": [
+        {
+          "csharp": "Target",
+          "field": "target",
+          "type": "IntPtr",
+          "kind": "tostring"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventStartHalftime",
+      "event_name": "start_halftime",
+      "properties": []
+    },
+    {
+      "class_name": "EventStartVote",
+      "event_name": "start_vote",
+      "properties": [
+        {
+          "csharp": "Type",
+          "field": "type",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "csharp": "VoteParameter",
+          "field": "vote_parameter",
+          "type": "int",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventStorePricesheetUpdated",
+      "event_name": "store_pricesheet_updated",
+      "properties": []
+    },
+    {
+      "class_name": "EventSurvivalAnnouncePhase",
+      "event_name": "survival_announce_phase",
+      "properties": [
+        {
+          "csharp": "Phase",
+          "field": "phase",
+          "type": "int",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventSurvivalNoRespawnsFinal",
+      "event_name": "survival_no_respawns_final",
+      "properties": [
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventSurvivalNoRespawnsWarning",
+      "event_name": "survival_no_respawns_warning",
+      "properties": [
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventSurvivalParadropBreak",
+      "event_name": "survival_paradrop_break",
+      "properties": [
+        {
+          "csharp": "Entityid",
+          "field": "entityid",
+          "type": "int",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventSurvivalParadropSpawn",
+      "event_name": "survival_paradrop_spawn",
+      "properties": [
+        {
+          "csharp": "Entityid",
+          "field": "entityid",
+          "type": "int",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventSurvivalTeammateRespawn",
+      "event_name": "survival_teammate_respawn",
+      "properties": [
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventSwitchTeam",
+      "event_name": "switch_team",
+      "properties": [
+        {
+          "csharp": "AvgRank",
+          "field": "avg_rank",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Numctslotsfree",
+          "field": "numCTSlotsFree",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Numplayers",
+          "field": "numPlayers",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Numspectators",
+          "field": "numSpectators",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Numtslotsfree",
+          "field": "numTSlotsFree",
+          "type": "int",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventTagrenadeDetonate",
+      "event_name": "tagrenade_detonate",
+      "properties": [
+        {
+          "csharp": "Entityid",
+          "field": "entityid",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "csharp": "X",
+          "field": "x",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "Y",
+          "field": "y",
+          "type": "float",
+          "kind": "float"
+        },
+        {
+          "csharp": "Z",
+          "field": "z",
+          "type": "float",
+          "kind": "float"
+        }
+      ]
+    },
+    {
+      "class_name": "EventTeamInfo",
+      "event_name": "team_info",
+      "properties": [
+        {
+          "csharp": "Teamid",
+          "field": "teamid",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Teamname",
+          "field": "teamname",
+          "type": "string",
+          "kind": "string"
+        }
+      ]
+    },
+    {
+      "class_name": "EventTeamIntroEnd",
+      "event_name": "team_intro_end",
+      "properties": []
+    },
+    {
+      "class_name": "EventTeamIntroStart",
+      "event_name": "team_intro_start",
+      "properties": []
+    },
+    {
+      "class_name": "EventTeamScore",
+      "event_name": "team_score",
+      "properties": [
+        {
+          "csharp": "Score",
+          "field": "score",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Teamid",
+          "field": "teamid",
+          "type": "int",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventTeamchangePending",
+      "event_name": "teamchange_pending",
+      "properties": [
+        {
+          "csharp": "Toteam",
+          "field": "toteam",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventTeamplayBroadcastAudio",
+      "event_name": "teamplay_broadcast_audio",
+      "properties": [
+        {
+          "csharp": "Sound",
+          "field": "sound",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Team",
+          "field": "team",
+          "type": "int",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventTeamplayRoundStart",
+      "event_name": "teamplay_round_start",
+      "properties": [
+        {
+          "csharp": "FullReset",
+          "field": "full_reset",
+          "type": "bool",
+          "kind": "bool"
+        }
+      ]
+    },
+    {
+      "class_name": "EventTournamentReward",
+      "event_name": "tournament_reward",
+      "properties": [
+        {
+          "csharp": "Accountid",
+          "field": "accountid",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "Defindex",
+          "field": "defindex",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "Totalrewards",
+          "field": "totalrewards",
+          "type": "long",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventTrialTimeExpired",
+      "event_name": "trial_time_expired",
+      "properties": [
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventUgcFileDownloadFinished",
+      "event_name": "ugc_file_download_finished",
+      "properties": [
+        {
+          "csharp": "Hcontent",
+          "field": "hcontent",
+          "type": "ulong",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventUgcFileDownloadStart",
+      "event_name": "ugc_file_download_start",
+      "properties": [
+        {
+          "csharp": "Hcontent",
+          "field": "hcontent",
+          "type": "ulong",
+          "kind": "int"
+        },
+        {
+          "csharp": "PublishedFileId",
+          "field": "published_file_id",
+          "type": "ulong",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventUgcMapDownloadError",
+      "event_name": "ugc_map_download_error",
+      "properties": [
+        {
+          "csharp": "ErrorCode",
+          "field": "error_code",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "PublishedFileId",
+          "field": "published_file_id",
+          "type": "ulong",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventUgcMapInfoReceived",
+      "event_name": "ugc_map_info_received",
+      "properties": [
+        {
+          "csharp": "PublishedFileId",
+          "field": "published_file_id",
+          "type": "ulong",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventUgcMapUnsubscribed",
+      "event_name": "ugc_map_unsubscribed",
+      "properties": [
+        {
+          "csharp": "PublishedFileId",
+          "field": "published_file_id",
+          "type": "ulong",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventUpdateMatchmakingStats",
+      "event_name": "update_matchmaking_stats",
+      "properties": []
+    },
+    {
+      "class_name": "EventUserDataDownloaded",
+      "event_name": "user_data_downloaded",
+      "properties": []
+    },
+    {
+      "class_name": "EventVipEscaped",
+      "event_name": "vip_escaped",
+      "properties": [
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventVipKilled",
+      "event_name": "vip_killed",
+      "properties": [
+        {
+          "csharp": "Attacker",
+          "field": "attacker",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventVoteCast",
+      "event_name": "vote_cast",
+      "properties": [
+        {
+          "csharp": "Team",
+          "field": "team",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "csharp": "VoteOption",
+          "field": "vote_option",
+          "type": "int",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventVoteCastNo",
+      "event_name": "vote_cast_no",
+      "properties": [
+        {
+          "csharp": "Entityid",
+          "field": "entityid",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "Team",
+          "field": "team",
+          "type": "int",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventVoteCastYes",
+      "event_name": "vote_cast_yes",
+      "properties": [
+        {
+          "csharp": "Entityid",
+          "field": "entityid",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "Team",
+          "field": "team",
+          "type": "int",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventVoteChanged",
+      "event_name": "vote_changed",
+      "properties": [
+        {
+          "csharp": "Novotes",
+          "field": "noVotes",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Potentialvotes",
+          "field": "potentialVotes",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "VoteOption1",
+          "field": "vote_option1",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "VoteOption2",
+          "field": "vote_option2",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "VoteOption3",
+          "field": "vote_option3",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "VoteOption4",
+          "field": "vote_option4",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "VoteOption5",
+          "field": "vote_option5",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Yesvotes",
+          "field": "yesVotes",
+          "type": "int",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventVoteEnded",
+      "event_name": "vote_ended",
+      "properties": []
+    },
+    {
+      "class_name": "EventVoteFailed",
+      "event_name": "vote_failed",
+      "properties": [
+        {
+          "csharp": "Reliable",
+          "field": "reliable",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Team",
+          "field": "team",
+          "type": "int",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventVoteOptions",
+      "event_name": "vote_options",
+      "properties": [
+        {
+          "csharp": "Count",
+          "field": "count",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Option1",
+          "field": "option1",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Option2",
+          "field": "option2",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Option3",
+          "field": "option3",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Option4",
+          "field": "option4",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Option5",
+          "field": "option5",
+          "type": "string",
+          "kind": "string"
+        }
+      ]
+    },
+    {
+      "class_name": "EventVotePassed",
+      "event_name": "vote_passed",
+      "properties": [
+        {
+          "csharp": "Details",
+          "field": "details",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Param1",
+          "field": "param1",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Reliable",
+          "field": "reliable",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Team",
+          "field": "team",
+          "type": "int",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventVoteStarted",
+      "event_name": "vote_started",
+      "properties": [
+        {
+          "csharp": "Initiator",
+          "field": "initiator",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "Issue",
+          "field": "issue",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Param1",
+          "field": "param1",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "csharp": "Reliable",
+          "field": "reliable",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Team",
+          "field": "team",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Votedata",
+          "field": "votedata",
+          "type": "string",
+          "kind": "string"
+        }
+      ]
+    },
+    {
+      "class_name": "EventWarmupEnd",
+      "event_name": "warmup_end",
+      "properties": []
+    },
+    {
+      "class_name": "EventWeaponFire",
+      "event_name": "weapon_fire",
+      "properties": [
+        {
+          "csharp": "Silenced",
+          "field": "silenced",
+          "type": "bool",
+          "kind": "bool"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "csharp": "Weapon",
+          "field": "weapon",
+          "type": "string",
+          "kind": "string"
+        }
+      ]
+    },
+    {
+      "class_name": "EventWeaponFireOnEmpty",
+      "event_name": "weapon_fire_on_empty",
+      "properties": [
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "csharp": "Weapon",
+          "field": "weapon",
+          "type": "string",
+          "kind": "string"
+        }
+      ]
+    },
+    {
+      "class_name": "EventWeaponReload",
+      "event_name": "weapon_reload",
+      "properties": [
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventWeaponZoom",
+      "event_name": "weapon_zoom",
+      "properties": [
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventWeaponZoomRifle",
+      "event_name": "weapon_zoom_rifle",
+      "properties": [
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventWeaponhudSelection",
+      "event_name": "weaponhud_selection",
+      "properties": [
+        {
+          "csharp": "Entindex",
+          "field": "entindex",
+          "type": "long",
+          "kind": "int"
+        },
+        {
+          "csharp": "Mode",
+          "field": "mode",
+          "type": "int",
+          "kind": "int"
+        },
+        {
+          "csharp": "Userid",
+          "field": "userid",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        }
+      ]
+    },
+    {
+      "class_name": "EventWriteGameTitledata",
+      "event_name": "write_game_titledata",
+      "properties": [
+        {
+          "csharp": "Controllerid",
+          "field": "controllerId",
+          "type": "int",
+          "kind": "int"
+        }
+      ]
+    },
+    {
+      "class_name": "EventWriteProfileData",
+      "event_name": "write_profile_data",
+      "properties": []
+    }
+  ],
+  "listeners": [
+    {
+      "name": "OnEntitySpawned",
+      "listener_name": "OnEntitySpawned",
+      "method": "OnEntitySpawned",
+      "return": "void",
+      "parameters": [
+        {
+          "name": "entity",
+          "type": "CEntityInstance",
+          "kind": "entity"
+        }
+      ]
+    },
+    {
+      "name": "OnEntityCreated",
+      "listener_name": "OnEntityCreated",
+      "method": "OnEntityCreated",
+      "return": "void",
+      "parameters": [
+        {
+          "name": "entity",
+          "type": "CEntityInstance",
+          "kind": "entity"
+        }
+      ]
+    },
+    {
+      "name": "OnEntityDeleted",
+      "listener_name": "OnEntityDeleted",
+      "method": "OnEntityDeleted",
+      "return": "void",
+      "parameters": [
+        {
+          "name": "entity",
+          "type": "CEntityInstance",
+          "kind": "entity"
+        }
+      ]
+    },
+    {
+      "name": "OnEntityParentChanged",
+      "listener_name": "OnEntityParentChanged",
+      "method": "OnEntityParentChanged",
+      "return": "void",
+      "parameters": [
+        {
+          "name": "entity",
+          "type": "CEntityInstance",
+          "kind": "entity"
+        },
+        {
+          "name": "newParent",
+          "type": "CEntityInstance",
+          "kind": "entity"
+        }
+      ]
+    },
+    {
+      "name": "OnEntityTakeDamagePre",
+      "listener_name": "OnEntityTakeDamagePre",
+      "method": "OnEntityTakeDamagePre",
+      "return": "HookResult",
+      "parameters": [
+        {
+          "name": "entity",
+          "type": "CBaseEntity",
+          "kind": "entity"
+        },
+        {
+          "name": "info",
+          "type": "CTakeDamageInfo",
+          "kind": "damage_info"
+        }
+      ]
+    },
+    {
+      "name": "OnEntityTakeDamagePost",
+      "listener_name": "OnEntityTakeDamagePost",
+      "method": "OnEntityTakeDamagePost",
+      "return": "void",
+      "parameters": [
+        {
+          "name": "entity",
+          "type": "CBaseEntity",
+          "kind": "entity"
+        },
+        {
+          "name": "info",
+          "type": "CTakeDamageInfo",
+          "kind": "damage_info"
+        },
+        {
+          "name": "result",
+          "type": "CTakeDamageResult",
+          "kind": "damage_result"
+        }
+      ]
+    },
+    {
+      "name": "OnPlayerTakeDamagePre",
+      "listener_name": "OnPlayerTakeDamagePre",
+      "method": "OnPlayerTakeDamagePre",
+      "return": "HookResult",
+      "parameters": [
+        {
+          "name": "player",
+          "type": "CCSPlayerPawn",
+          "kind": "pawn"
+        },
+        {
+          "name": "info",
+          "type": "CTakeDamageInfo",
+          "kind": "damage_info"
+        }
+      ]
+    },
+    {
+      "name": "OnPlayerTakeDamagePost",
+      "listener_name": "OnPlayerTakeDamagePost",
+      "method": "OnPlayerTakeDamagePost",
+      "return": "void",
+      "parameters": [
+        {
+          "name": "player",
+          "type": "CCSPlayerPawn",
+          "kind": "pawn"
+        },
+        {
+          "name": "info",
+          "type": "CTakeDamageInfo",
+          "kind": "damage_info"
+        },
+        {
+          "name": "result",
+          "type": "CTakeDamageResult",
+          "kind": "damage_result"
+        }
+      ]
+    },
+    {
+      "name": "OnMapStart",
+      "listener_name": "OnMapStart",
+      "method": "OnMapStart",
+      "return": "void",
+      "parameters": [
+        {
+          "name": "mapName",
+          "type": "string",
+          "kind": "string"
+        }
+      ]
+    },
+    {
+      "name": "OnMapEnd",
+      "listener_name": "OnMapEnd",
+      "method": "OnMapEnd",
+      "return": "void",
+      "parameters": []
+    },
+    {
+      "name": "OnClientConnect",
+      "listener_name": "OnClientConnect",
+      "method": "OnClientConnect",
+      "return": "void",
+      "parameters": [
+        {
+          "name": "playerSlot",
+          "type": "int",
+          "kind": "slot"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "name": "ipAddress",
+          "type": "string",
+          "kind": "string"
+        }
+      ]
+    },
+    {
+      "name": "OnClientConnected",
+      "listener_name": "OnClientConnected",
+      "method": "OnClientConnected",
+      "return": "void",
+      "parameters": [
+        {
+          "name": "playerSlot",
+          "type": "int",
+          "kind": "slot"
+        }
+      ]
+    },
+    {
+      "name": "OnClientPutInServer",
+      "listener_name": "OnClientPutInServer",
+      "method": "OnClientPutInServer",
+      "return": "void",
+      "parameters": [
+        {
+          "name": "playerSlot",
+          "type": "int",
+          "kind": "slot"
+        }
+      ]
+    },
+    {
+      "name": "OnClientDisconnect",
+      "listener_name": "OnClientDisconnect",
+      "method": "OnClientDisconnect",
+      "return": "void",
+      "parameters": [
+        {
+          "name": "playerSlot",
+          "type": "int",
+          "kind": "slot"
+        }
+      ]
+    },
+    {
+      "name": "OnClientDisconnectPost",
+      "listener_name": "OnClientDisconnectPost",
+      "method": "OnClientDisconnectPost",
+      "return": "void",
+      "parameters": [
+        {
+          "name": "playerSlot",
+          "type": "int",
+          "kind": "slot"
+        }
+      ]
+    },
+    {
+      "name": "OnClientVoice",
+      "listener_name": "OnClientVoice",
+      "method": "OnClientVoice",
+      "return": "void",
+      "parameters": [
+        {
+          "name": "playerSlot",
+          "type": "int",
+          "kind": "slot"
+        }
+      ]
+    },
+    {
+      "name": "OnClientAuthorized",
+      "listener_name": "OnClientAuthorized",
+      "method": "OnClientAuthorized",
+      "return": "void",
+      "parameters": [
+        {
+          "name": "playerSlot",
+          "type": "int",
+          "kind": "slot"
+        },
+        {
+          "name": "steamId",
+          "type": "SteamID",
+          "kind": "steamid"
+        }
+      ]
+    },
+    {
+      "name": "OnServerHibernationUpdate",
+      "listener_name": "OnServerHibernationUpdate",
+      "method": "OnServerHibernationUpdate",
+      "return": "void",
+      "parameters": [
+        {
+          "name": "isHibernating",
+          "type": "bool",
+          "kind": "bool"
+        }
+      ]
+    },
+    {
+      "name": "OnGameServerSteamAPIActivated",
+      "listener_name": "OnGameServerSteamAPIActivated",
+      "method": "OnGameServerSteamAPIActivated",
+      "return": "void",
+      "parameters": []
+    },
+    {
+      "name": "OnGameServerSteamAPIDeactivated",
+      "listener_name": "OnGameServerSteamAPIDeactivated",
+      "method": "OnGameServerSteamAPIDeactivated",
+      "return": "void",
+      "parameters": []
+    },
+    {
+      "name": "OnHostNameChanged",
+      "listener_name": "OnHostNameChanged",
+      "method": "OnHostNameChanged",
+      "return": "void",
+      "parameters": [
+        {
+          "name": "hostname",
+          "type": "string",
+          "kind": "string"
+        }
+      ]
+    },
+    {
+      "name": "OnServerPreFatalShutdown",
+      "listener_name": "OnPreFatalShutdown",
+      "method": "OnServerPreFatalShutdown",
+      "return": "void",
+      "parameters": []
+    },
+    {
+      "name": "OnServerPrecacheResources",
+      "listener_name": "OnServerPrecacheResources",
+      "method": "OnServerPrecacheResources",
+      "return": "void",
+      "parameters": [
+        {
+          "name": "manifest",
+          "type": "ResourceManifest",
+          "kind": "skip"
+        }
+      ]
+    },
+    {
+      "name": "OnPlayerButtonsChanged",
+      "listener_name": "OnPlayerButtonsChanged",
+      "method": "OnPlayerButtonsChanged",
+      "return": "void",
+      "parameters": [
+        {
+          "name": "player",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "name": "pressed",
+          "type": "PlayerButtons",
+          "kind": "buttons"
+        },
+        {
+          "name": "released",
+          "type": "PlayerButtons",
+          "kind": "buttons"
+        }
+      ]
+    },
+    {
+      "name": "OnPlayerChat",
+      "listener_name": "OnPlayerChat",
+      "method": "OnPlayerChat",
+      "return": "void",
+      "parameters": [
+        {
+          "name": "player",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "name": "message",
+          "type": "string",
+          "kind": "string"
+        },
+        {
+          "name": "teamChat",
+          "type": "bool",
+          "kind": "bool"
+        }
+      ]
+    },
+    {
+      "name": "OnMetamodAllPluginsLoaded",
+      "listener_name": "OnMetamodAllPluginsLoaded",
+      "method": "OnMetamodAllPluginsLoaded",
+      "return": "void",
+      "parameters": []
+    },
+    {
+      "name": "OnCustomHudClicked",
+      "listener_name": "OnCustomHudClicked",
+      "method": "OnCustomHudClicked",
+      "return": "void",
+      "parameters": [
+        {
+          "name": "player",
+          "type": "CCSPlayerController",
+          "kind": "player"
+        },
+        {
+          "name": "customLayout",
+          "type": "CCSCustomHudLayout",
+          "kind": "skip"
+        },
+        {
+          "name": "buttonId",
+          "type": "string",
+          "kind": "string"
+        }
+      ]
+    }
+  ],
+  "damage_info_fields": [
+    {
+      "csharp": "Damage",
+      "field": "damage",
+      "kind": "float",
+      "type": "float"
+    },
+    {
+      "csharp": "TotalledDamage",
+      "field": "totalled_damage",
+      "kind": "float",
+      "type": "float"
+    },
+    {
+      "csharp": "BitsDamageType",
+      "field": "bits_damage_type",
+      "kind": "tostring",
+      "type": "DamageTypes_t"
+    },
+    {
+      "csharp": "DamageCustom",
+      "field": "damage_custom",
+      "kind": "int",
+      "type": "Int32"
+    },
+    {
+      "csharp": "AmmoType",
+      "field": "ammo_type",
+      "kind": "int",
+      "type": "byte"
+    },
+    {
+      "csharp": "OriginalDamage",
+      "field": "original_damage",
+      "kind": "float",
+      "type": "float"
+    },
+    {
+      "csharp": "ShouldBleed",
+      "field": "should_bleed",
+      "kind": "bool",
+      "type": "bool"
+    },
+    {
+      "csharp": "ShouldSpark",
+      "field": "should_spark",
+      "kind": "bool",
+      "type": "bool"
+    },
+    {
+      "csharp": "DamageFlags",
+      "field": "damage_flags",
+      "kind": "tostring",
+      "type": "TakeDamageFlags_t"
+    },
+    {
+      "csharp": "HitGroupId",
+      "field": "hit_group_id",
+      "kind": "tostring",
+      "type": "HitGroup_t"
+    },
+    {
+      "csharp": "NumObjectsPenetrated",
+      "field": "num_objects_penetrated",
+      "kind": "int",
+      "type": "Int32"
+    },
+    {
+      "csharp": "FriendlyFireDamageReductionRatio",
+      "field": "friendly_fire_damage_reduction_ratio",
+      "kind": "float",
+      "type": "float"
+    },
+    {
+      "csharp": "StoppedBullet",
+      "field": "stopped_bullet",
+      "kind": "bool",
+      "type": "bool"
+    },
+    {
+      "csharp": "InTakeDamageFlow",
+      "field": "in_take_damage_flow",
+      "kind": "bool",
+      "type": "bool"
+    }
+  ],
+  "damage_result_fields": [
+    {
+      "csharp": "HealthLost",
+      "field": "health_lost",
+      "kind": "int",
+      "type": "Int32"
+    },
+    {
+      "csharp": "HealthBefore",
+      "field": "health_before",
+      "kind": "int",
+      "type": "Int32"
+    },
+    {
+      "csharp": "DamageDealt",
+      "field": "damage_dealt",
+      "kind": "float",
+      "type": "float"
+    },
+    {
+      "csharp": "PreModifiedDamage",
+      "field": "pre_modified_damage",
+      "kind": "float",
+      "type": "float"
+    },
+    {
+      "csharp": "TotalledHealthLost",
+      "field": "totalled_health_lost",
+      "kind": "int",
+      "type": "Int32"
+    },
+    {
+      "csharp": "TotalledDamageDealt",
+      "field": "totalled_damage_dealt",
+      "kind": "float",
+      "type": "float"
+    },
+    {
+      "csharp": "TotalledPreModifiedDamage",
+      "field": "totalled_pre_modified_damage",
+      "kind": "float",
+      "type": "float"
+    },
+    {
+      "csharp": "NewDamageAccumulatorValue",
+      "field": "new_damage_accumulator_value",
+      "kind": "float",
+      "type": "float"
+    },
+    {
+      "csharp": "DamageFlags",
+      "field": "damage_flags",
+      "kind": "tostring",
+      "type": "TakeDamageFlags_t"
+    },
+    {
+      "csharp": "WasDamageSuppressed",
+      "field": "was_damage_suppressed",
+      "kind": "bool",
+      "type": "bool"
+    },
+    {
+      "csharp": "SuppressFlinch",
+      "field": "suppress_flinch",
+      "kind": "bool",
+      "type": "bool"
+    },
+    {
+      "csharp": "OverrideFlinchHitGroup",
+      "field": "override_flinch_hit_group",
+      "kind": "tostring",
+      "type": "HitGroup_t"
+    }
+  ],
+  "skipped_event_name_prefixes": [
+    "hltv_"
+  ],
+  "skipped_events": [
+    "hltv_cameraman",
+    "hltv_changed_mode",
+    "hltv_chase",
+    "hltv_chat",
+    "hltv_fixed",
+    "hltv_message",
+    "hltv_rank_camera",
+    "hltv_rank_entity",
+    "hltv_replay",
+    "hltv_replay_status",
+    "hltv_status",
+    "hltv_title",
+    "hltv_versioninfo"
+  ]
+}

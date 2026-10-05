@@ -1,18 +1,8 @@
 name: Deploy Challenge Builder
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'builder/**'
-      - 'src/Challenges/extractors/**'
-      - 'src/Challenges/utils/EventData.cs'
-      - 'src/Challenges/classes/ChallengeEngine.cs'
-      - 'src/Challenges/classes/ChallengeEngine.Actions.cs'
-      - 'tools/generate_catalog.py'
-      - 'tools/catalog_weapons.json'
-      - '.github/workflows/pages.yml'
+  release:
+    types: [published]
   workflow_dispatch:
 
 permissions:

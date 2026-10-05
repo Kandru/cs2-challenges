@@ -24,6 +24,7 @@ namespace Challenges.Classes
         private Dictionary<string, List<(ChallengeDefinition Challenge, ChallengeTask Task)>> _tasksByType =
             new(StringComparer.Ordinal);
         private List<string> _boundEvents = [];
+        private List<string> _boundListeners = [];
         private bool _usesHostageKey;
         private bool? _hasHostages;
         private CCSGameRulesProxy? _gameRulesProxy;
@@ -40,6 +41,7 @@ namespace Challenges.Classes
         }
 
         public override List<string> Events => _boundEvents;
+        public override List<string> Listeners => _boundListeners;
 
         private Notifications Notes => _notifications ??= GetClass<Notifications>();
 
@@ -84,15 +86,26 @@ namespace Challenges.Classes
 
             HashSet<string> bound = new(StringComparer.Ordinal);
             List<string> events = [];
+            List<string> listeners = [];
             foreach (IExtractor extractor in Registry.All)
             {
-                if (UsesAnyType(extractor) && bound.Add(extractor.EventClassName))
+                if (!UsesAnyType(extractor) || !bound.Add(extractor.EventClassName))
+                {
+                    continue;
+                }
+
+                if (extractor.Kind == ExtractorKind.Listener)
+                {
+                    listeners.Add(extractor.EventClassName);
+                }
+                else
                 {
                     events.Add(extractor.EventClassName);
                 }
             }
 
             _boundEvents = events;
+            _boundListeners = listeners;
         }
 
         /// <summary>Drops per-player engine state when the player leaves.</summary>
@@ -105,15 +118,39 @@ namespace Challenges.Classes
             _destroyed = true;
             _tasksByType = new(StringComparer.Ordinal);
             _boundEvents = [];
+            _boundListeners = [];
             _pruned.Clear();
             _gameRulesProxy = null;
         }
 
+        /// <summary>Listener entry point used by generated <c>ChallengeEngine.Listeners.cs</c> handlers.</summary>
+        private void HandleListener(
+            string listenerName,
+            Dictionary<string, string> data,
+            List<(CCSPlayerController? Player, string Type)> targets)
+        {
+            if (!CanHandle())
+            {
+                return;
+            }
+
+            try
+            {
+                List<(CCSPlayerController Player, string Type)>? valid = FilterTargets(targets);
+                if (valid != null)
+                {
+                    Enqueue(data, valid);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[Challenges] {listenerName} failed: {ex.Message}");
+            }
+        }
+
         private HookResult HandleEvent(string eventName, GameEvent gameEvent)
         {
-            if (_destroyed
-                || _tasksByType.Count == 0
-                || !GlobalConfig.Enabled
+            if (!CanHandle()
                 || !_extractorsByEvent.TryGetValue(eventName, out List<IExtractor>? extractors))
             {
                 return HookResult.Continue;
@@ -128,17 +165,7 @@ namespace Challenges.Classes
 
                 try
                 {
-                    List<(CCSPlayerController Player, string Type)>? targets = null;
-                    foreach ((CCSPlayerController? player, string type) in extractor.Targets(gameEvent))
-                    {
-                        if (player is { IsValid: true }
-                            && (GlobalConfig.AllowBots || !player.IsBot)
-                            && _tasksByType.ContainsKey(type))
-                        {
-                            (targets ??= []).Add((player, type));
-                        }
-                    }
-
+                    List<(CCSPlayerController Player, string Type)>? targets = FilterTargets(extractor.Targets(gameEvent));
                     if (targets == null)
                     {
                         continue;
@@ -146,8 +173,7 @@ namespace Challenges.Classes
 
                     Dictionary<string, string> data = [];
                     extractor.Fill(gameEvent, data);
-                    MergeGlobalData(data);
-                    Server.NextFrame(() => ProcessTargets(targets, data));
+                    Enqueue(data, targets);
                 }
                 catch (Exception ex)
                 {
@@ -156,6 +182,34 @@ namespace Challenges.Classes
             }
 
             return HookResult.Continue;
+        }
+
+        private bool CanHandle() =>
+            !_destroyed && _tasksByType.Count > 0 && GlobalConfig.Enabled;
+
+        private List<(CCSPlayerController Player, string Type)>? FilterTargets(
+            IEnumerable<(CCSPlayerController? Player, string Type)> targets)
+        {
+            List<(CCSPlayerController Player, string Type)>? valid = null;
+            foreach ((CCSPlayerController? player, string type) in targets)
+            {
+                if (player is { IsValid: true }
+                    && (GlobalConfig.AllowBots || !player.IsBot)
+                    && _tasksByType.ContainsKey(type))
+                {
+                    (valid ??= []).Add((player, type));
+                }
+            }
+
+            return valid;
+        }
+
+        private void Enqueue(
+            Dictionary<string, string> data,
+            List<(CCSPlayerController Player, string Type)> targets)
+        {
+            MergeGlobalData(data);
+            Server.NextFrame(() => ProcessTargets(targets, data));
         }
 
         private bool UsesAnyType(IExtractor extractor)

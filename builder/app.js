@@ -1,6 +1,11 @@
 "use strict";
 
-const GLOBAL_KEYS = ["global.iswarmup", "global.isduringround", "global.mapname", "global.hashostages"];
+const GLOBAL_KEYS = [
+  { key: "global.iswarmup", type: "bool" },
+  { key: "global.isduringround", type: "bool" },
+  { key: "global.mapname", type: "string" },
+  { key: "global.hashostages", type: "bool" },
+];
 const ID_PATTERN = /^[a-z0-9_]+$/;
 const BOOL_OPERATORS = ["bool==", "bool!="];
 
@@ -59,9 +64,27 @@ function eventForType(type) {
   return catalog.events.find((e) => e.type === type);
 }
 
-function keysForType(type) {
+function normalizeKeyEntry(entry) {
+  if (typeof entry === "string") return { key: entry, type: "" };
+  return { key: entry.key, type: entry.type || "" };
+}
+
+function keyEntriesForType(type) {
   const event = eventForType(type);
-  return [...GLOBAL_KEYS, ...(event ? event.keys : [])];
+  if (!event) return [...GLOBAL_KEYS];
+  const fromEvent = event.keys;
+  const fromSet = catalog.key_sets?.[event.event_class];
+  const raw = fromEvent ?? fromSet ?? [];
+  return [...GLOBAL_KEYS, ...raw.map(normalizeKeyEntry)];
+}
+
+function keyNamesForType(type) {
+  return keyEntriesForType(type).map((e) => e.key);
+}
+
+function keyTypeFor(type, key) {
+  const hit = keyEntriesForType(type).find((e) => e.key === key);
+  return hit?.type || "";
 }
 
 function toObject() {
@@ -145,7 +168,7 @@ function validate() {
       add("warn", `${where}: visible task without any title.`, i);
     }
 
-    const validKeys = new Set(keysForType(t.type));
+    const validKeys = new Set(keyNamesForType(t.type));
     t.rules.forEach((r, ri) => {
       if (!r.key) add("error", `${where}: rule ${ri + 1} has no key.`, i);
       else if (t.type && eventForType(t.type) && !validKeys.has(r.key.toLowerCase())) add("warn", `${where}: rule key "${r.key}" is not provided by ${t.type}.`, i);
@@ -335,7 +358,11 @@ function renderEditor() {
   }
 
   const keyList = $("dl-keys");
-  keyList.replaceChildren(...keysForType(task.type).map((k) => h("option", { value: k })));
+  keyList.replaceChildren(
+    ...keyEntriesForType(task.type).map((e) =>
+      h("option", { value: e.key }, e.type ? `${e.key} (${e.type})` : e.key),
+    ),
+  );
 
   const otherIds = state.tasks.filter((t) => t !== task && t.id).map((t) => t.id);
   const typeOptions = [
@@ -420,10 +447,22 @@ function requiresEditor(task, otherIds) {
 function ruleRow(task, rule, index) {
   const valueList = /weapon|item/.test(rule.key) ? "dl-weapons" : undefined;
   const operators = catalog.operators.includes(rule.operator) ? catalog.operators : [rule.operator, ...catalog.operators];
+  const keyType = keyTypeFor(task.type, rule.key);
   return h(
     "div",
     { class: "row" },
-    h("input", { class: "keyw", type: "text", spellcheck: "false", list: "dl-keys", value: rule.key, placeholder: "key", oninput: (e) => { rule.key = e.target.value; refresh(); }, onchange: renderAll }),
+    h("input", {
+      class: "keyw",
+      type: "text",
+      spellcheck: "false",
+      list: "dl-keys",
+      value: rule.key,
+      placeholder: "key",
+      title: keyType ? `${rule.key} (${keyType})` : rule.key,
+      oninput: (e) => { rule.key = e.target.value; refresh(); },
+      onchange: renderAll,
+    }),
+    h("span", { class: "keytype", title: "Value type" }, keyType || ""),
     h("select", { class: "opw", onchange: (e) => { rule.operator = e.target.value; refresh(); } }, ...operators.map((o) => h("option", { value: o, selected: o === rule.operator }, o))),
     h("input", { class: "grow", type: "text", spellcheck: "false", list: valueList, value: rule.value, placeholder: "value", oninput: (e) => { rule.value = e.target.value; refresh(); } }),
     h("button", { class: "iconbtn", title: "Remove rule", onclick: () => { task.rules.splice(index, 1); renderAll(); } }, "×"),

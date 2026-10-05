@@ -1,0 +1,319 @@
+{
+  "_comment": "Legacy challenge type names, key spellings, prefixes, and audiences for the pre-CSS-sync extractors.",
+  "events": {
+    "EventAchievementEarned": {
+      "types": { "player": ["player_achievement_earned"] },
+      "player_prefixes": { "player": "player" },
+      "key_aliases": {}
+    },
+    "EventAddPlayerSonarIcon": {
+      "types": { "userid": ["player_add_sonar_icon"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventAmmoPickup": {
+      "types": { "userid": ["player_ammo_pickup"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventBombAbortdefuse": {
+      "types": { "userid": ["player_bomb_abortdefuse"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventBombAbortplant": {
+      "types": { "userid": ["player_bomb_abortplant"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventBombBeep": {
+      "types": { "_all": ["bomb_beep"] },
+      "audience": "all",
+      "key_aliases": {}
+    },
+    "EventBombBegindefuse": {
+      "types": { "userid": ["player_bomb_begindefuse"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventBombBeginplant": {
+      "types": { "userid": ["player_bomb_beginplant"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventBombDefused": {
+      "types": { "_all": ["bomb_defused"] },
+      "audience": "all",
+      "player_prefixes": { "userid": "defuser" },
+      "key_aliases": { "site": ["bomb_site"] }
+    },
+    "EventBombDropped": {
+      "types": { "userid": ["player_bomb_dropped"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventBombExploded": {
+      "types": { "_all": ["bomb_exploded"] },
+      "audience": "all",
+      "player_prefixes": { "userid": "exploder" },
+      "key_aliases": { "site": ["bomb_site"] }
+    },
+    "EventBombPickup": {
+      "types": { "userid": ["player_bomb_pickup"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventBombPlanted": {
+      "types": { "_all": ["player_bomb_planted"] },
+      "audience": "all",
+      "player_prefixes": { "userid": "planter" },
+      "key_aliases": { "site": ["bomb_site"] }
+    },
+    "EventBotTakeover": {
+      "types": { "userid": ["player_bot_takeover"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventBreakBreakable": {
+      "types": { "userid": ["break_breakable"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventBreakProp": {
+      "types": { "userid": ["break_prop"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventBulletDamage": {
+      "types": {
+        "attacker": ["bullet_damage_given"],
+        "victim": ["bullet_damage_taken"]
+      },
+      "player_prefixes": { "attacker": "attacker", "victim": "victim" },
+      "key_aliases": {
+        "in_air": ["attackerinair"],
+        "no_scope": ["noscope"],
+        "num_penetrations": ["numpenetrations"]
+      },
+      "derived": "team_self_damage"
+    },
+    "EventBulletImpact": {
+      "types": { "userid": ["bullet_impact"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventBuymenuClose": {
+      "types": { "userid": ["buymenu_close"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventBuytimeEnded": {
+      "types": { "_all": ["buytime_ended"] },
+      "audience": "all"
+    },
+    "EventDefuserPickup": {
+      "types": { "userid": ["player_defuser_pickup"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventDoorClosed": {
+      "types": { "userid": ["door_closed"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventDoorOpen": {
+      "types": { "userid": ["door_open"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventEnterBombzone": {
+      "types": { "userid": ["enter_bombzone"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventEnterBuyzone": {
+      "types": { "userid": ["enter_buyzone"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventEnterRescueZone": {
+      "types": { "userid": ["enter_rescuezone"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventExitBombzone": {
+      "types": { "userid": ["exit_bombzone"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventExitBuyzone": {
+      "types": { "userid": ["exit_buyzone"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventExitRescueZone": {
+      "types": { "userid": ["exit_rescuezone"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventGrenadeBounce": {
+      "types": { "userid": ["grenade_bounce"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventGrenadeThrown": {
+      "types": { "userid": ["grenade_thrown"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventHostageFollows": {
+      "types": { "userid": ["hostage_follows"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventHostageHurt": {
+      "types": { "userid": ["hostage_hurt"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventHostageKilled": {
+      "types": { "userid": ["hostage_killed"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventHostageRescued": {
+      "types": { "_all": ["hostage_rescued"] },
+      "audience": "all",
+      "player_prefixes": { "userid": "player" },
+      "key_aliases": { "site": ["rescue_site"] }
+    },
+    "EventHostageRescuedAll": {
+      "types": { "_all": ["hostage_rescued_all"] },
+      "audience": "all"
+    },
+    "EventHostageStopsFollowing": {
+      "types": { "userid": ["hostage_stops_following"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventInspectWeapon": {
+      "types": { "userid": ["inspect_weapon"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventItemPickup": {
+      "types": { "userid": ["item_pickup"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventItemPurchase": {
+      "types": { "userid": ["item_purchase"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventPlayerAvengedTeammate": {
+      "types": {
+        "avenger_id": ["player_has_avenged_teammate"],
+        "avenged_player_id": ["player_got_avenged_teammate"]
+      },
+      "player_prefixes": {
+        "avenger_id": "avenger",
+        "avenged_player_id": "victim"
+      },
+      "derived": "self_avenged"
+    },
+    "EventPlayerBlind": {
+      "types": {
+        "attacker": ["player_has_blinded"],
+        "userid": ["player_got_blinded"]
+      },
+      "player_prefixes": { "attacker": "attacker", "userid": "victim" },
+      "key_aliases": { "blind_duration": ["blindduration"] },
+      "derived": "team_self_flash"
+    },
+    "EventPlayerChangename": {
+      "types": { "userid": ["player_changed_name"] },
+      "player_prefixes": { "userid": "player" },
+      "key_aliases": { "newname": ["new_name"], "oldname": ["old_name"] }
+    },
+    "EventPlayerDeath": {
+      "types": {
+        "attacker": ["player_kill"],
+        "assister": ["player_kill_assist"],
+        "userid": ["player_death"]
+      },
+      "player_prefixes": {
+        "attacker": "attacker",
+        "assister": "assister",
+        "userid": "victim"
+      },
+      "key_aliases": {
+        "dmg_armor": ["dmgarmor"],
+        "dmg_health": ["dmghealth"],
+        "weapon_itemid": ["weaponitemid"]
+      },
+      "bool_coerce": ["dominated", "penetrated", "revenge"],
+      "derived": "team_self_kill"
+    },
+    "EventPlayerDecal": {
+      "types": { "userid": ["player_decal"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventPlayerFalldamage": {
+      "types": { "userid": ["player_falldamage"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventPlayerFootstep": {
+      "types": { "userid": ["player_footstep"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventPlayerGivenC4": {
+      "types": { "userid": ["player_givenc4"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventPlayerHurt": {
+      "types": {
+        "attacker": ["player_hurt_attacker"],
+        "userid": ["player_hurt_victim"]
+      },
+      "player_prefixes": { "attacker": "attacker", "userid": "victim" },
+      "key_aliases": {
+        "dmg_health": ["dmghealth"],
+        "dmg_armor": ["dmgarmor"]
+      },
+      "derived": "team_self_damage"
+    },
+    "EventPlayerJump": {
+      "types": { "userid": ["player_jump"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventPlayerPing": {
+      "types": { "userid": ["player_ping"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventPlayerRadio": {
+      "types": { "userid": ["player_radio"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventPlayerScore": {
+      "types": { "userid": ["player_score"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventPlayerSound": {
+      "types": { "userid": ["player_sound"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventPlayerSpawned": {
+      "types": { "userid": ["player_spawned"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventPlayerTeam": {
+      "types": { "userid": ["player_team"] },
+      "player_prefixes": { "userid": "player" },
+      "derived": "player_team_names"
+    },
+    "EventTeamScore": {
+      "types": { "_all": ["team_score"] },
+      "audience": "all"
+    },
+    "EventWeaponFire": {
+      "types": { "userid": ["weapon_fire"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventWeaponFireOnEmpty": {
+      "types": { "userid": ["weapon_fire_on_empty"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventWeaponReload": {
+      "types": { "userid": ["weapon_reload"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventWeaponZoom": {
+      "types": { "userid": ["weapon_zoom"] },
+      "player_prefixes": { "userid": "player" }
+    },
+    "EventWeaponZoomRifle": {
+      "types": { "userid": ["weapon_zoom_rifle"] },
+      "player_prefixes": { "userid": "player" }
+    }
+  },
+  "listeners": {
+    "OnPlayerChat": {
+      "types": { "player": ["player_chat"] },
+      "player_prefixes": { "player": "player" },
+      "key_aliases": {
+        "message": ["text"],
+        "teamchat": ["teamonly"]
+      }
+    }
+  }
+}

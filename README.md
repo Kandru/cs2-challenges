@@ -35,12 +35,6 @@ Other CounterstrikeSharp plugins will then be notified to take further actions. 
 - Build with Docker (`make debug` / `make release`) — no local .NET install required.
 - Challenge builder for GitHub Pages under [`builder/`](./builder/) ([live site](https://kandru.github.io/cs2-challenges/)).
 
-## Challenge Builder
-
-Static web UI in [`builder/`](./builder/). Regenerate the event catalog with `make catalog` (also runs before `make debug` / `make release`). On pushes to `main`, [`.github/workflows/pages.yml`](./.github/workflows/pages.yml) regenerates the catalog and deploys the builder to GitHub Pages.
-
-One-time repo setup (Settings → Pages → **Source: GitHub Actions**), then open https://kandru.github.io/cs2-challenges/.
-
 ## Road Map
 
 - [X] Easy Webinterface to create your own Challenges ([builder/](./builder/))
