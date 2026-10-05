@@ -17,7 +17,41 @@ permissions:
   contents: write
 
 jobs:
-  create-release:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      new_version: ${{ steps.check.outputs.new_version }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Read Version From Version.cs
+        id: version
+        run: |
+          version=$(grep -oP '(?<=ModuleVersion => ")[^"]*' "$VERSION_FILE")
+          if [ -z "$version" ]; then
+            echo "::error::Could not read ModuleVersion from $VERSION_FILE"
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Check Whether Release Already Exists
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          if gh release view "$VERSION" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "new_version=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "new_version=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  build:
+    needs: prepare
+    if: needs.prepare.outputs.new_version == 'true'
     runs-on: ubuntu-latest
 
     steps:
@@ -26,117 +60,74 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Read Version From Version.cs
-        run: |
-          version=$(grep -oP '(?<=ModuleVersion => ")[^"]*' "$VERSION_FILE")
-          if [ -z "$version" ]; then
-            echo "::error::Could not read ModuleVersion from $VERSION_FILE"
-            exit 1
-          fi
-          echo "VERSION=$version" >> "$GITHUB_ENV"
-
-      - name: Check Whether Release Already Exists
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          if gh release view "$VERSION" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            echo "NEW_VERSION=false" >> "$GITHUB_ENV"
-          else
-            echo "NEW_VERSION=true" >> "$GITHUB_ENV"
-          fi
-
       - name: Install .NET
-        if: env.NEW_VERSION == 'true'
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
 
       - name: Publish Plugin And Shared Library
-        if: env.NEW_VERSION == 'true'
         run: |
           dotnet restore "src/${PLUGIN_NAME}/${PLUGIN_NAME}.csproj"
           dotnet publish "src/${PLUGIN_NAME}/${PLUGIN_NAME}.csproj" -c Release --no-restore
           dotnet publish "src/${SHARED_NAME}/${SHARED_NAME}.csproj" -c Release
 
       - name: Package Release
-        if: env.NEW_VERSION == 'true'
+        env:
+          VERSION: ${{ needs.prepare.outputs.version }}
         run: |
-          mkdir -p "$RUNNER_TEMP/zip/plugins" "$RUNNER_TEMP/zip/shared"
-          cp -r "src/bin/Release/net10.0/publish" "$RUNNER_TEMP/zip/plugins/${PLUGIN_NAME}"
-          cp -r "src/${SHARED_NAME}/bin/Release/net10.0/publish" "$RUNNER_TEMP/zip/shared/${SHARED_NAME}"
-          cd "$RUNNER_TEMP/zip"
-          zip -r "$RUNNER_TEMP/${{ github.event.repository.name }}-release-${VERSION}.zip" plugins shared
+          mkdir -p release-artifacts/zip/plugins release-artifacts/zip/shared
+          cp -r "src/bin/Release/net10.0/publish" "release-artifacts/zip/plugins/${PLUGIN_NAME}"
+          cp -r "src/${SHARED_NAME}/bin/Release/net10.0/publish" "release-artifacts/zip/shared/${SHARED_NAME}"
+          (
+            cd release-artifacts/zip
+            zip -r "../${{ github.event.repository.name }}-release-${VERSION}.zip" plugins shared
+          )
+          rm -rf release-artifacts/zip
 
       - name: Build Release Notes
-        if: env.NEW_VERSION == 'true'
         run: |
           if last_tag=$(git describe --tags --abbrev=0 HEAD 2>/dev/null); then
             range="$last_tag..HEAD"
           else
             range="HEAD"
           fi
-          git log --pretty=format:"- [%h](https://github.com/${GITHUB_REPOSITORY}/commit/%H) %s (%an)" $range > "$RUNNER_TEMP/release_notes.md"
+          git log --pretty=format:"- [%h](https://github.com/${GITHUB_REPOSITORY}/commit/%H) %s (%an)" $range > release-artifacts/release_notes.md
 
-      - name: Publish Documentation To Wiki
-        if: env.NEW_VERSION == 'true'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          set -euo pipefail
-          wiki_dir="$RUNNER_TEMP/wiki"
-          wiki_url="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.wiki.git"
+      - name: Upload Release Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-artifacts
+          path: release-artifacts/
 
-          if ! git clone --depth 1 "$wiki_url" "$wiki_dir"; then
-            echo "::error::Could not clone the wiki repository. Enable the wiki and create at least one page in the GitHub UI, then re-run this workflow."
-            exit 1
-          fi
+  publish-wiki:
+    needs: prepare
+    if: needs.prepare.outputs.new_version == 'true'
+    uses: ./.github/workflows/wiki.yml
+    with:
+      version: ${{ needs.prepare.outputs.version }}
+    secrets: inherit
 
-          # Replace wiki content with documentation/ while keeping .git
-          find "$wiki_dir" -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
-          cp -a documentation/. "$wiki_dir/"
+  create-release:
+    needs: [prepare, build, publish-wiki]
+    if: needs.prepare.outputs.new_version == 'true'
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.prepare.outputs.version }}
 
-          cat > "$wiki_dir/Home.md" <<'EOF'
-          # Challenges Documentation
-
-          - [How to Start](howto)
-          - [Third-Party Plugin Integration](plugin-integration)
-          - [Blueprints](blueprints)
-          - [Events](events)
-          - [Rules](rules)
-          - [Actions](actions)
-          - [Schedules](schedules)
-          EOF
-
-          cat > "$wiki_dir/_Sidebar.md" <<'EOF'
-          - [Home](Home)
-          - [How to Start](howto)
-          - [Third-Party Plugin Integration](plugin-integration)
-          - [Blueprints](blueprints)
-          - [Events](events)
-          - [Rules](rules)
-          - [Actions](actions)
-          - [Schedules](schedules)
-          EOF
-
-          cd "$wiki_dir"
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
-          if git diff --cached --quiet; then
-            echo "Wiki already up to date; nothing to commit."
-            exit 0
-          fi
-          git commit -m "Sync documentation for ${VERSION}"
-          git push origin HEAD:master
+    steps:
+      - name: Download Release Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: release-artifacts
+          path: release-artifacts
 
       - name: Create GitHub Release
-        if: env.NEW_VERSION == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release create "$VERSION" \
-            "$RUNNER_TEMP/${{ github.event.repository.name }}-release-${VERSION}.zip" \
+            "release-artifacts/${{ github.event.repository.name }}-release-${VERSION}.zip" \
             --repo "$GITHUB_REPOSITORY" \
             --target "$GITHUB_SHA" \
             --title "$VERSION" \
-            --notes-file "$RUNNER_TEMP/release_notes.md"
+            --notes-file release-artifacts/release_notes.md
