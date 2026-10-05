@@ -6,6 +6,9 @@
     <Nullable>enable</Nullable>
     <RootNamespace>Challenges</RootNamespace>
     <AssemblyName>Challenges</AssemblyName>
+    <!-- CounterStrikeSharp loads plugin dependencies from the plugin folder.
+         dotnet build does not copy NuGet assemblies unless this is set. -->
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
   <ItemGroup>
