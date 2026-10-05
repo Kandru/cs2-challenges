@@ -2,15 +2,22 @@
 
 CSS game event `difficulty_changed` (`EventDifficultyChanged`).
 
-Audience: all connected players.
+Who gets credit: **all connected players**.
 
 ## Challenge types
 
+Put one of these in your task `type:` field:
+
 - `difficulty_changed`
 
-## Available rule keys
+## Rule keys
 
-- [Event Data](../rules/GlobalEventData.md)
-- `newDifficulty (int)`
-- `oldDifficulty (int)`
-- `strDifficulty (string)`
+> [!WARNING]
+> If you use an unknown key, the task will not work because that condition can never be met.
+
+| Key | Type |
+|-----|------|
+| [global event data](../rules/GlobalEventData.md) | see page |
+| `newDifficulty` | int |
+| `oldDifficulty` | int |
+| `strDifficulty` | string |

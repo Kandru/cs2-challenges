@@ -1,10 +1,15 @@
-# Rule: Global Event Data
+# Global event data
 
-The global event data consists of data which is applicable for (almost) all events.
+These keys are added to almost every event.
 
-## Available rules
+| Key | Type | Meaning |
+|-----|------|---------|
+| `global.iswarmup` | bool | Warmup is active. |
+| `global.isduringround` | bool | A round is active (warmup or live). |
+| `global.mapname` | string | Current map name. |
+| `global.hashostages` | bool | Map currently has hostage entities. Only filled when some active task uses this key. |
 
-- `global.iswarmup (bool)`: If the warmup mode is currently active
-- `global.isduringround (bool)`: If the round is currently active (both warmup and game rounds are counted)
-- `global.mapname (string)`: The name of the current map. The challenge will be invisible to the player if the map is not matching (Operator can either be == or !=)
-- `global.hashostages (bool)`: If the map has hostages. The challenge will be invisible to the player if the map is not a hostage map (Operator can either be == or !=)
+> [!NOTE]
+> `global.mapname` and `global.hashostages` only decide whether an event **counts**. They do not hide the challenge from the HUD.
+
+Use `==` / `!=` for map name, and `bool==` / `bool!=` for the bool keys.

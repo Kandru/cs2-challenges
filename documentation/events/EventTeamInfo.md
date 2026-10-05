@@ -2,14 +2,21 @@
 
 CSS game event `team_info` (`EventTeamInfo`).
 
-Audience: all connected players.
+Who gets credit: **all connected players**.
 
 ## Challenge types
 
+Put one of these in your task `type:` field:
+
 - `team_info`
 
-## Available rule keys
+## Rule keys
 
-- [Event Data](../rules/GlobalEventData.md)
-- `teamid (int)`
-- `teamname (string)`
+> [!WARNING]
+> If you use an unknown key, the task will not work because that condition can never be met.
+
+| Key | Type |
+|-----|------|
+| [global event data](../rules/GlobalEventData.md) | see page |
+| `teamid` | int |
+| `teamname` | string |

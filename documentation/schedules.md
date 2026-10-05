@@ -1,15 +1,16 @@
-> [!TIP]
-> An empty *schedules.yaml* is created in the plugin config directory on first start. Edits apply after the next map change.
-
 # Schedules
 
-A schedule activates a set of challenges for a time window. Only one schedule is active: the first entry whose UTC window contains now.
+A schedule picks which challenges are active, and for how long. Only **one** schedule runs at a time: the **first** entry in `schedules.yaml` whose UTC window contains now.
+
+File: `/addons/counterstrikesharp/configs/plugins/Challenges/schedules.yaml`
+
+An empty file is created on first start. Changes apply on the next map start, or after `challenges reload`.
 
 ```yaml
 test_challenge:
   title:
-    en: "== Challenges ({count} / {total}) =="
-    de: "== Herausforderungen ({count} / {total}) =="
+    en: "== {playerName}'s Challenges ({count} / {total}) =="
+    de: "== {playerName}'s Herausforderungen ({count} / {total}) =="
   date_start: "2026-01-01 00:00:00"
   date_end: "2027-01-01 00:00:00"
   challenges:
@@ -18,14 +19,14 @@ test_challenge:
     - weapon_ak47
 ```
 
-### title
+| Field | Meaning |
+|-------|---------|
+| `title` | Language map for the HUD. Placeholders: `{playerName}` (cut to 12 characters), `{count}`, `{total}`. Missing language → first language in the map. |
+| `date_start` / `date_end` | `"YYYY-MM-DD HH:MM:SS"` in **UTC**. |
+| `challenges` | List of challenge ids = blueprint filenames without `.yaml`. Unknown ids are skipped. |
 
-Language map for the schedule. Fallback is the first language in the map (same rule as challenge titles).
+> [!IMPORTANT]
+> Changing a schedule’s title or dates starts a **new** progress bucket. Player progress for the old title/dates is not carried over.
 
-### date_start / date_end
-
-`"YYYY-MM-DD HH:MM:SS"` in UTC. Applied after map change.
-
-### challenges
-
-List of challenge **ids** = blueprint filenames without `.yaml`. Wildcards and `file:key` ids are no longer used (one file = one challenge).
+> [!TIP]
+> Put the schedule you want first among those that overlap. Later overlapping entries are ignored.

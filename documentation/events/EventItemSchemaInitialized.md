@@ -2,12 +2,19 @@
 
 CSS game event `item_schema_initialized` (`EventItemSchemaInitialized`).
 
-Audience: all connected players.
+Who gets credit: **all connected players**.
 
 ## Challenge types
 
+Put one of these in your task `type:` field:
+
 - `item_schema_initialized`
 
-## Available rule keys
+## Rule keys
 
-- [Event Data](../rules/GlobalEventData.md)
+> [!WARNING]
+> If you use an unknown key, the task will not work because that condition can never be met.
+
+| Key | Type |
+|-----|------|
+| [global event data](../rules/GlobalEventData.md) | see page |

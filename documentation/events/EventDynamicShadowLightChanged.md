@@ -2,12 +2,19 @@
 
 CSS game event `dynamic_shadow_light_changed` (`EventDynamicShadowLightChanged`).
 
-Audience: all connected players.
+Who gets credit: **all connected players**.
 
 ## Challenge types
 
+Put one of these in your task `type:` field:
+
 - `dynamic_shadow_light_changed`
 
-## Available rule keys
+## Rule keys
 
-- [Event Data](../rules/GlobalEventData.md)
+> [!WARNING]
+> If you use an unknown key, the task will not work because that condition can never be met.
+
+| Key | Type |
+|-----|------|
+| [global event data](../rules/GlobalEventData.md) | see page |

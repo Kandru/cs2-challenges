@@ -615,15 +615,118 @@ def catalog_keys_for_listener(listener: dict, alias: dict, suffixes: list[dict],
     return keys
 
 
+COMMON_CHALLENGE_TYPES = (
+    "player_kill",
+    "player_hurt_attacker",
+    "player_bomb_planted",
+    "player_bomb_begindefuse",
+    "weapon_fire",
+    "round_start",
+    "on_player_chat",
+    "player_chat",
+)
+
+# (group_title, matchers). First match wins. Listeners always go to Listeners.
+# Each matcher is a substring of the challenge type (or event name fallback).
+# More specific groups first so player_bomb_* lands under Bomb, not Players.
+EVENT_DOC_GROUPS: list[tuple[str, tuple[str, ...]]] = [
+    ("Bomb", ("bomb_", "defuser_", "enter_bomb", "exit_bomb")),
+    ("Weapons", ("weapon_", "item_", "inspect_", "silencer_", "ammo_", "buymenu_", "buytime_", "cart_", "inventory_")),
+    ("Grenades", ("grenade_", "flashbang_", "hegrenade_", "molotov_", "decoy_", "smoke", "inferno_", "tagrenade_")),
+    ("Hostage", ("hostage_", "enter_rescue", "exit_rescue")),
+    ("Vote", ("vote_", "start_vote", "enable_restart_voting", "player_reset_vote")),
+    ("Round", ("round_", "warmup_", "announce_phase", "begin_new_match", "cs_win_", "cs_intermission", "cs_match_", "cs_pre_restart", "cs_round_", "game_phase", "game_end", "game_start", "match_end", "start_halftime", "teamplay_round")),
+    ("Players", ("player_", "bot_", "vip_", "gg_killed", "other_death", "entity_killed")),
+    ("Server", ("server_", "map_", "hostname_", "nextlevel_", "game_newmap", "game_init", "game_message", "demo_", "nav_", "difficulty_", "ugc_", "gc_connected", "user_data_", "store_", "seasoncoin_", "tournament_", "trial_", "achievement_", "instructor_", "gameinstructor_", "gameui_", "sfuievent", "spec_", "switch_team", "team_", "teamchange_", "local_player_", "client_", "clientside_")),
+]
+
+COMMON_TYPE_BLURBS = {
+    "player_kill": "Player got a kill",
+    "player_hurt_attacker": "Player dealt damage",
+    "player_bomb_planted": "Player planted the bomb",
+    "player_bomb_begindefuse": "Player started defusing",
+    "weapon_fire": "Player fired a weapon",
+    "round_start": "Round started",
+    "on_player_chat": "Player sent a chat message (listener)",
+    "player_chat": "Player sent a chat message",
+}
+
+
 def format_key_docs(keys: list[dict], prefixes: list[str]) -> list[str]:
-    lines: list[str] = []
+    lines: list[str] = [
+        "| Key | Type |",
+        "|-----|------|",
+        "| [global event data](../rules/GlobalEventData.md) | see page |",
+    ]
     if prefixes:
-        joined = ", ".join(f"*{p}*" for p in prefixes)
-        lines.append(f"- [Player Data](../rules/GlobalPlayerData.md): prefixes {joined}")
+        joined = ", ".join(f"`{p}`" for p in prefixes)
+        lines.append(
+            f"| [player data](../rules/GlobalPlayerData.md) | prefixes {joined} |"
+        )
     for entry in keys:
         if any(entry["key"].startswith(f"{p}.") for p in prefixes):
             continue
-        lines.append(f"- `{entry['key']} ({entry['type']})`")
+        lines.append(f"| `{entry['key']}` | {entry['type']} |")
+    return lines
+
+
+def audience_line(audience: str) -> str:
+    if audience == "all":
+        return "Who gets credit: **all connected players**."
+    return "Who gets credit: the **event player(s)** listed under challenge types."
+
+
+def write_event_page(
+    path: Path,
+    title: str,
+    source_line: str,
+    audience: str,
+    types: list[str],
+    keys: list[dict],
+    prefixes: list[str],
+) -> None:
+    lines = [
+        f"# {title}",
+        "",
+        source_line,
+        "",
+        audience_line(audience),
+        "",
+        "## Challenge types",
+        "",
+        "Put one of these in your task `type:` field:",
+        "",
+        *[f"- `{t}`" for t in types],
+        "",
+        "## Rule keys",
+        "",
+        "> [!WARNING]",
+        "> If you use an unknown key, the task will not work because that condition can never be met.",
+        "",
+        *format_key_docs(keys, prefixes),
+        "",
+    ]
+    path.write_text("\n".join(lines), encoding="utf-8")
+
+
+def classify_event_group(label: str, *, is_listener: bool) -> str:
+    if is_listener or label.startswith("on_"):
+        return "Listeners"
+    for group, matchers in EVENT_DOC_GROUPS:
+        for matcher in matchers:
+            if label.startswith(matcher) or matcher in label:
+                return group
+    return "Other"
+
+
+def render_index_table(rows: list[tuple[str, str]]) -> list[str]:
+    lines = [
+        "| Challenge type | Page |",
+        "|----------------|------|",
+    ]
+    for label, href in rows:
+        page = Path(href).stem
+        lines.append(f"| `{label}` | [{page}]({href}) |")
     return lines
 
 
@@ -632,7 +735,9 @@ def write_docs(snapshot: dict, aliases: dict, suffixes: list[dict]) -> None:
         shutil.rmtree(DOCS_EVENTS)
     DOCS_EVENTS.mkdir(parents=True)
 
-    index_links: list[tuple[str, str]] = []
+    # (label, href, group) — one row per challenge type that points at its page
+    index_rows: list[tuple[str, str, str]] = []
+    emitted_types: set[str] = set()
 
     for event in snapshot["events"]:
         alias = alias_for(aliases, event["class_name"])
@@ -643,25 +748,19 @@ def write_docs(snapshot: dict, aliases: dict, suffixes: list[dict]) -> None:
             [p for prop in players for p in player_prefixes_for(prop["field"], players, alias)]
         )
         doc_name = event["class_name"]
-        lines = [
-            f"# {doc_name} ({' / '.join(types)})",
-            "",
+        write_event_page(
+            DOCS_EVENTS / f"{doc_name}.md",
+            f"{doc_name} ({' / '.join(types)})",
             f"CSS game event `{event['event_name']}` (`{event['class_name']}`).",
-            "",
-            f"Audience: {'all connected players' if audience == 'all' else 'event player(s)'}.",
-            "",
-            "## Challenge types",
-            "",
-            *[f"- `{t}`" for t in types],
-            "",
-            "## Available rule keys",
-            "",
-            "- [Event Data](../rules/GlobalEventData.md)",
-            *format_key_docs(keys, prefixes),
-            "",
-        ]
-        (DOCS_EVENTS / f"{doc_name}.md").write_text("\n".join(lines), encoding="utf-8")
-        index_links.append((types[0], f"events/{doc_name}.md"))
+            audience,
+            types,
+            keys,
+            prefixes,
+        )
+        href = f"events/{doc_name}.md"
+        for t in types:
+            emitted_types.add(t)
+            index_rows.append((t, href, classify_event_group(t, is_listener=False)))
 
     for listener in snapshot["listeners"]:
         alias = alias_for(aliases, listener["name"])
@@ -672,45 +771,84 @@ def write_docs(snapshot: dict, aliases: dict, suffixes: list[dict]) -> None:
         has_player = any(p["kind"] in {"player", "pawn", "slot"} for p in listener["parameters"])
         prefixes = ["player"] if has_player else []
         doc_name = listener["name"]
-        lines = [
-            f"# {doc_name} ({' / '.join(types)})",
-            "",
+        write_event_page(
+            DOCS_EVENTS / f"{doc_name}.md",
+            f"{doc_name} ({' / '.join(types)})",
             f"CSS listener `{listener.get('listener_name', listener['name'])}`.",
-            "",
-            "## Challenge types",
-            "",
-            *[f"- `{t}`" for t in types],
-            "",
-            "## Available rule keys",
-            "",
-            "- [Event Data](../rules/GlobalEventData.md)",
-            *format_key_docs(keys, prefixes),
-            "",
-        ]
-        (DOCS_EVENTS / f"{doc_name}.md").write_text("\n".join(lines), encoding="utf-8")
-        index_links.append((types[0], f"events/{doc_name}.md"))
+            "players",
+            types,
+            keys,
+            prefixes,
+        )
+        href = f"events/{doc_name}.md"
+        for t in types:
+            emitted_types.add(t)
+            index_rows.append((t, href, classify_event_group(t, is_listener=True)))
 
-    index_links.sort(key=lambda x: x[0])
+    index_rows.sort(key=lambda x: (x[0], x[1]))
+
+    common_rows = [
+        (t, COMMON_TYPE_BLURBS[t])
+        for t in COMMON_CHALLENGE_TYPES
+        if t in emitted_types and t in COMMON_TYPE_BLURBS
+    ]
+
+    # Display order for the index (classification order is EVENT_DOC_GROUPS).
+    group_order = [
+        "Players",
+        "Round",
+        "Bomb",
+        "Weapons",
+        "Grenades",
+        "Hostage",
+        "Vote",
+        "Server",
+        "Listeners",
+        "Other",
+    ]
+    by_group: dict[str, list[tuple[str, str]]] = {g: [] for g in group_order}
+    for label, href, group in index_rows:
+        by_group.setdefault(group, []).append((label, href))
+
     ref = snapshot.get("ref", "main")
     commit = snapshot.get("commit") or ""
     commit_note = f" (synced tip `{commit[:12]}`)" if commit else ""
-    DOCS_INDEX.write_text(
-        "\n".join(
+
+    out: list[str] = [
+        "# Events",
+        "",
+        "Use a **challenge type** as the task `type:` in your blueprint. "
+        "Open an event page for the rule keys you can check.",
+        "",
+        f"Source: CounterStrikeSharp `{ref}`{commit_note}.",
+        "",
+    ]
+
+    if common_rows:
+        out.extend(
             [
-                "# Event Documentation",
+                "## Common types",
                 "",
-                "Events and listeners come from CounterStrikeSharp. Challenge types are listed below.",
-                "",
-                f"Source: CounterStrikeSharp `{ref}`{commit_note}.",
-                "",
-                "## List of events and listeners",
-                "",
-                *[f"- [{label}]({href})" for label, href in index_links],
+                "| Challenge type | Typical use |",
+                "|----------------|-------------|",
+                *[f"| `{t}` | {blurb} |" for t, blurb in common_rows],
                 "",
             ]
-        ),
-        encoding="utf-8",
-    )
+        )
+
+    out.extend(["## All types", ""])
+    for group in group_order:
+        rows = by_group.get(group) or []
+        if not rows:
+            continue
+        out.append(f"<details><summary><b>{group}</b> ({len(rows)})</summary>")
+        out.append("")
+        out.extend(render_index_table(rows))
+        out.append("")
+        out.append("</details>")
+        out.append("")
+
+    DOCS_INDEX.write_text("\n".join(out), encoding="utf-8")
 
 
 def write_catalog(snapshot: dict, aliases: dict, suffixes: list[dict]) -> None:

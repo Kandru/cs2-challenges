@@ -2,20 +2,27 @@
 
 CSS game event `vote_changed` (`EventVoteChanged`).
 
-Audience: all connected players.
+Who gets credit: **all connected players**.
 
 ## Challenge types
 
+Put one of these in your task `type:` field:
+
 - `vote_changed`
 
-## Available rule keys
+## Rule keys
 
-- [Event Data](../rules/GlobalEventData.md)
-- `noVotes (int)`
-- `potentialVotes (int)`
-- `vote_option1 (int)`
-- `vote_option2 (int)`
-- `vote_option3 (int)`
-- `vote_option4 (int)`
-- `vote_option5 (int)`
-- `yesVotes (int)`
+> [!WARNING]
+> If you use an unknown key, the task will not work because that condition can never be met.
+
+| Key | Type |
+|-----|------|
+| [global event data](../rules/GlobalEventData.md) | see page |
+| `noVotes` | int |
+| `potentialVotes` | int |
+| `vote_option1` | int |
+| `vote_option2` | int |
+| `vote_option3` | int |
+| `vote_option4` | int |
+| `vote_option5` | int |
+| `yesVotes` | int |

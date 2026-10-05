@@ -2,21 +2,28 @@
 
 CSS game event `player_team` (`EventPlayerTeam`).
 
-Audience: event player(s).
+Who gets credit: the **event player(s)** listed under challenge types.
 
 ## Challenge types
 
+Put one of these in your task `type:` field:
+
 - `player_team`
 
-## Available rule keys
+## Rule keys
 
-- [Event Data](../rules/GlobalEventData.md)
-- [Player Data](../rules/GlobalPlayerData.md): prefixes *userid*, *player*
-- `disconnect (bool)`
-- `isbot (bool)`
-- `name (string)`
-- `oldteam (int)`
-- `silent (bool)`
-- `team (int)`
-- `old_team (string)`
-- `new_team (string)`
+> [!WARNING]
+> If you use an unknown key, the task will not work because that condition can never be met.
+
+| Key | Type |
+|-----|------|
+| [global event data](../rules/GlobalEventData.md) | see page |
+| [player data](../rules/GlobalPlayerData.md) | prefixes `userid`, `player` |
+| `disconnect` | bool |
+| `isbot` | bool |
+| `name` | string |
+| `oldteam` | int |
+| `silent` | bool |
+| `team` | int |
+| `old_team` | string |
+| `new_team` | string |

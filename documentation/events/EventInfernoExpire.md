@@ -2,16 +2,23 @@
 
 CSS game event `inferno_expire` (`EventInfernoExpire`).
 
-Audience: all connected players.
+Who gets credit: **all connected players**.
 
 ## Challenge types
 
+Put one of these in your task `type:` field:
+
 - `inferno_expire`
 
-## Available rule keys
+## Rule keys
 
-- [Event Data](../rules/GlobalEventData.md)
-- `entityid (int)`
-- `x (float)`
-- `y (float)`
-- `z (float)`
+> [!WARNING]
+> If you use an unknown key, the task will not work because that condition can never be met.
+
+| Key | Type |
+|-----|------|
+| [global event data](../rules/GlobalEventData.md) | see page |
+| `entityid` | int |
+| `x` | float |
+| `y` | float |
+| `z` | float |

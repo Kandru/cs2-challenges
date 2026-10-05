@@ -1,42 +1,50 @@
-# Third-Party Plugin Integration
+# Third-party plugin integration
 
-## Basic Integration
+> [!NOTE]
+> This page is for **plugin authors**. Server owners only need another plugin that already supports Challenges (see the README “Compatible plugins” list).
 
-Integrating a third-party plugin is straightforward. First, import the latest version of our interface from the main branch of our repository. Then, refer to our example plugin to learn how to create a listener for when a challenge is completed or progresses. There is a single listener for both events, and more events may be added in the future.
+This plugin tracks challenges. Your plugin grants rewards when a player progresses or completes one.
 
-When you start listening, you will receive events from all plugins. You need to check if the data is relevant to your plugin. The Challenges-Plugin itself uses a separate thread to check for challenge goals. However, you **should** use a separate thread as well or otherwise the server may will lag if the execution time is too long.
+## Listen for events
 
-```c#
-if (@event is PlayerCompletedChallengeEvent playerCompletedChallenge)
+1. Reference `ChallengesShared` from this repository.
+2. Resolve the `challenges:events` capability (`IChallengesEventSender`).
+3. Subscribe to `Events`. You get both progress and completion on that one handler.
+
+Keep heavy work off the main thread (or keep it short) so the server does not lag.
+
+```csharp
+if (@event is PlayerCompletedChallengeEvent completed)
 {
-    // convert to CCSPlayerController by yourself
-    Console.WriteLine($"Player: {playerCompletedChallenge.UserId}");
-    // specific challenge data (can be totally custom, you NEED custom challenge data for YOUR plugin)
-    // data is ALWAYS string -> cast it to the correct type on your own!
-    // make sure to have a fallback in place and notify player in case of invalid data
-    foreach (var kvp in playerCompletedChallenge.Data)
+    // UserId → resolve CCSPlayerController yourself
+    Console.WriteLine($"Player: {completed.UserId}");
+
+    // data is string → string; cast yourself and handle bad values
+    foreach (var pluginEntry in completed.Data)
     {
-        Console.WriteLine($"Plugin: {kvp.Key}");
-        foreach (var data in kvp.Value)
+        Console.WriteLine($"Plugin: {pluginEntry.Key}");
+        foreach (var pair in pluginEntry.Value)
         {
-            Console.WriteLine($"-> {data.Key} = {data.Value}");
+            Console.WriteLine($"-> {pair.Key} = {pair.Value}");
         }
     }
 }
 ```
 
-The example above shows all the data you receive from a plugin. This data is what the blueprint creator includes in the *data* dictionary for a challenge.
+Progress uses `PlayerProgressedChallengeEvent` with the same shape.
+
+## Challenge `data`
+
+Blueprint authors put a nested map under `data`. Use your plugin name as the top-level key (compare case-insensitively if you want to forgive typos):
 
 ```yaml
 data:
-PlayerSessions:
+  PlayerSessions:
     setpoints: "30"
 ```
 
-In this example, the data is for the *PlayerSessions*. Your plugin should listen for a specific key that matches your plugin name (case-sensitive by default). It is good practice to compare the key in lowercase to handle any typos. You can then check for any key/value pairs you need. Ensure you cast them properly with error handling to fit your requirements.
+Anything you need to grant can live there. Keep values as strings in YAML; parse them in your plugin with a fallback if they are wrong.
 
-What can be in your key/value pairs? Anything you want to grant to a player when they win or progress in a challenge. Give users of your plugin the flexibility to customize the player experience. This adds significant value for everyone using challenges.
+## Advertise support
 
-## Free Advertisement
-
-To further promote your plugin and our Challenges-Plugin, we invite you to make a Pull Request to our README.md with the link to your repository once you have finished and tested the integration. This way, we can directly link back to your plugin. Please also link back to our Challenges-Plugin to make it easy for your users to discover that you support the Challenges-Plugin.
+When your integration is tested, open a pull request against this README to add your plugin under “Compatible plugins”, and link back to Challenges from your own docs.

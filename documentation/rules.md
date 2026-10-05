@@ -1,51 +1,69 @@
-> [!TIP]
-> Rules can be complex to understand. Please look into the *examples* folder of this repository before asking questions in our Discord.
+# Rules
 
-# Rules Documentation
-
-Rules make the Challenges-Plugin very powerful. Almost all events have parameters that you can compare against values you choose. In our example, we check if there is an active round. If not, we ignore this challenge until a round starts. You can also check for specific weapons, distances, teams, and more.
-
-All rules are combined with AND, meaning every rule must be met for the challenge to count. Currently, there is no option to use OR.
-
-## example rule(s)
+Rules decide whether an event counts for a task. Every rule on a task must pass (`AND`). There is no `OR`.
 
 ```yaml
-- key: global.iswarmup
+rules:
+  - key: global.iswarmup
     operator: bool==
     value: "false"
-- key: global.isduringround
+  - key: global.isduringround
+    operator: bool==
+    value: "true"
+  - key: headshot
     operator: bool==
     value: "true"
 ```
 
-### key
+| Field | Meaning |
+|-------|---------|
+| `key` | Value from the event (see [Events](events.md)) or a [global key](#global-keys). |
+| `operator` | How to compare — see below. |
+| `value` | Always a string in YAML. Match the key’s type (`true` / `false` for bools, numbers for ints/floats). |
 
-The key can be found in almost every event and is the value which will be compared against your given value.
+> [!WARNING]
+> If you use an unknown key, the task will not work because that condition can never be met. Use only keys listed on that event’s page (plus the global keys below).
 
-### operator
+## Operators
 
-The following operators can be used:
+| Operator | Use for |
+|----------|---------|
+| `==` | Equal (case-insensitive for strings) |
+| `!=` | Not equal (case-insensitive) |
+| `<` `>` `<=` `>=` | Numbers |
+| `bool==` `bool!=` | Bools (`true` / `false`) |
+| `contains` `!contains` | Substring (case-insensitive) |
 
+## Global keys
+
+Available on almost every event:
+
+- [Global event data](rules/GlobalEventData.md) — warmup, round, map, hostages
+- [Global player data](rules/GlobalPlayerData.md) — name, team, health, … (use the prefix from the event page, e.g. `attacker`, `victim`, `player`)
+
+Team names: [CsTeam](enums/CsTeam.md).
+
+## Example
+
+Require a headshot kill that is not a suicide, during a live round, against a human:
+
+```yaml
+rules:
+  - key: global.iswarmup
+    operator: bool==
+    value: "false"
+  - key: global.isduringround
+    operator: bool==
+    value: "true"
+  - key: headshot
+    operator: bool==
+    value: "true"
+  - key: isselfkill
+    operator: bool==
+    value: "false"
+  - key: victim.isbot
+    operator: bool==
+    value: "false"
 ```
-== (equal)
-!= (not equal)
-< (less than)
-> (greater than)
-<= (less or equal than)
->= (greater or equal than)
-bool== (equal for bool values)
-bool!= (not equal for bool values)
-contains (if the value of the rule contains a specific keyword)`
-!contains (if the value of the rule does not contain a specific keyword)`
-```
 
-### value
-
-The value you want to compare with the key. Make sure the value matches the type of the key (e.g., number, string, bool). Refer to the event documentation to determine the correct type. Depending on the type, only certain operators from the list above can be used.
-
-## List of global rules
-
-Global rules are applicable for almost all events.
-
-- [Event Data](rules/GlobalEventData.md)
-- [Player Data](rules/GlobalPlayerData.md)
+See `examples/blueprints/` for more.

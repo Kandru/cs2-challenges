@@ -1,8 +1,12 @@
 # Teams (CsTeam)
 
-Possible string values for the players team:
+Possible string values for `prefix.team`:
 
-- None
-- Spectator
-- Terrorist
-- CounterTerrorist
+| Value |
+|-------|
+| `None` |
+| `Spectator` |
+| `Terrorist` |
+| `CounterTerrorist` |
+
+Compare with `==` or `!=` (case-insensitive).

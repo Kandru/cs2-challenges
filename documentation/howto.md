@@ -1,41 +1,52 @@
-> [!TIP]
-> Check the examples folder for the latest examples you can use in the configuration folder of the Challenges-Plugin. Verify the timings in *schedules.yaml*. Make sure to **read all documentation**. This plugin is complex and **NOT** easy to understand. If you still have questions, join our Discord for help.
-
 # How to start
 
-## Installation & Update
+Config folder (created on first start):
 
-1. **Download the latest release** from the releases page. These releases are built automatically by GitHub whenever we update the code.
-2. **Place the folders**:
-    - *Challenges* folder into the *plugin* folder of your CounterstrikeSharp installation.
-    - *ChallengesShared* folder into the *shared* folder of your CounterstrikeSharp installation.
-3. **Restart the CS2 server**. Default configurations will be created for you.
+`/addons/counterstrikesharp/configs/plugins/Challenges/`
 
-To update the plugin:
-1. Stop your server.
-2. Follow the installation steps above by overwriting the files.
+## 1. Install
 
-## Quick start with example challenges
+1. Install [CounterStrikeSharp](https://docs.cssharp.dev/) on your CS2 server.
+2. Download the latest release from [GitHub Releases](https://github.com/Kandru/cs2-challenges/releases/).
+3. Copy the `Challenges` folder into `/game/csgo/addons/counterstrikesharp/plugins/`.
+4. Copy the `ChallengesShared` folder into `/game/csgo/addons/counterstrikesharp/shared/`.
+5. Restart the server once so it creates the config folder.
 
-1. Ensure the CS2 server is not running.
-2. After installing the Challenges-Plugin, copy:
-    - *schedules.yaml* from the *examples* folder into the plugin config folder.
-    - The *blueprints* directory (one YAML file per challenge) into that same config folder.
-3. Mount the Workshop addon content from *workshop/content* (Panorama layouts/styles) so the HUD can load.
-4. Check *schedules.yaml* dates and challenge ids (filename stems, no `file:key` prefixes).
-5. Adjust *Challenges.json*, then start the CS2 server.
+To update later: stop the server, overwrite those folders, start again.
 
-At round start (during freeze time) the tracker appears top-right. Use *!c* / *!challenges* for the fullscreen menu. Build challenges in the browser via the GitHub Pages builder under *builder/* (https://kandru.github.io/cs2-challenges/).
+## 2. Load the examples
 
-If no challenges are visible:
-- Check your CounterstrikeSharp log files.
-- Enable debug messages in the config file to get hints about any syntax errors in the *.yaml* files.
-- Regularly review the CounterstrikeSharp log files whenever you make changes to the server to avoid configuration mistakes.
+With the server stopped:
 
-## Check our documentation for further help
+1. Copy `examples/schedules.yaml` into the Challenges config folder.
+2. Copy the `examples/blueprints/` folder into that same config folder (so you have `…/Challenges/blueprints/*.yaml`).
+3. Open `schedules.yaml` and set `date_start` / `date_end` so **today** falls inside the window. Times are **UTC**.
+4. Mount the Panorama addon from [`workshop/content`](../workshop/content) on the server so the HUD and `!c` menu can load.
 
-Please read all of our documentation carefully. The Challenges-Plugin is complex and takes time to understand. The complete documentation can be accessed from the *README* of this repository.
+## 3. Start and check in game
 
-## Important: Ask your favorite Plugin developers for integration!
+1. Start the server (or change map). Files also reload with the server command `challenges reload`.
+2. During freeze time, a tracker appears top-right.
+3. Type `!c` or `!challenges` for the fullscreen menu.
 
-The Challenges-Plugin does not give rewards to players on its own. You need another plugin to handle rewards after the Challenges-Plugin completes its tasks. Without this integration, the Challenges-Plugin won't be very useful. Once you set up a third-party plugin to work with our Challenges-Plugin, you can reward players when they complete challenges. This setup allows for many possibilities. Please link to the README of this repository so that the third-party plugin developer can start the integration.
+> [!NOTE]
+> Prefer writing challenges in the browser? Use the [challenge builder](https://kandru.github.io/cs2-challenges/).
+
+## If nothing shows
+
+1. Confirm the schedule dates include now (UTC).
+2. Confirm every id under `challenges:` matches a blueprint filename without `.yaml`.
+3. Check the CounterStrikeSharp log for YAML errors.
+4. Set `"debug": true` in `Challenges.json` and change map again.
+
+## What this plugin does not do
+
+It only tracks progress. Rewards need another plugin that listens for completions — see [Third-party plugin integration](plugin-integration.md).
+
+## Next steps
+
+1. [Schedules](schedules.md) — when challenges are active
+2. [Blueprints](blueprints.md) — how one challenge file works
+3. [Settings](settings.md) — config, chat commands, Discord
+
+Stuck after that? Ask in [Discord](https://discord.gg/NtHCk5PWEt). Ready-made files live in `examples/`.

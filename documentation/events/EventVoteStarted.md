@@ -2,18 +2,25 @@
 
 CSS game event `vote_started` (`EventVoteStarted`).
 
-Audience: all connected players.
+Who gets credit: **all connected players**.
 
 ## Challenge types
 
+Put one of these in your task `type:` field:
+
 - `vote_started`
 
-## Available rule keys
+## Rule keys
 
-- [Event Data](../rules/GlobalEventData.md)
-- `initiator (int)`
-- `issue (string)`
-- `param1 (string)`
-- `reliable (int)`
-- `team (int)`
-- `votedata (string)`
+> [!WARNING]
+> If you use an unknown key, the task will not work because that condition can never be met.
+
+| Key | Type |
+|-----|------|
+| [global event data](../rules/GlobalEventData.md) | see page |
+| `initiator` | int |
+| `issue` | string |
+| `param1` | string |
+| `reliable` | int |
+| `team` | int |
+| `votedata` | string |

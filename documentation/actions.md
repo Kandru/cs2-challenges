@@ -1,35 +1,55 @@
 # Actions
 
-Actions run when a **task** completes. Values that refer to other work use **task ids in the same challenge file**.
+Actions run when a **task** completes. Values that point at other work use **task ids in the same challenge file**.
 
 ## Available actions
 
-### task.reset_progress
+| Type | What it does | `values` |
+|------|----------------|----------|
+| `task.reset_progress` | Clears progress of an **unfinished** task. | Task id(s) |
+| `task.reset_completed` | Clears progress of a **finished** task. | Task id(s) |
+| `task.mark_completed` | Marks a task complete regardless of current progress. | Task id(s) |
+| `notify.player.progress.rule_broken` | Tells the player they broke a rule. Fires only if a listed task already has progress. | Related task id(s) |
+| `notify.player.completed.rule_broken` | Same, but only if a listed task is already complete. | Related task id(s) |
+| `server.runcommand` | Runs a server console command. Placeholders: `{steamid}`, `{userid}`, `{index}`. | One command string |
 
-Deletes progress of an unfinished task. Value: task id.
+## Streak broken (hidden task)
 
-### task.reset_completed
+Use a hidden task (`visible: false`) that matches the “bad” case (for example a kill without headshot). On completion, reset the main streak and notify the player.
 
-Deletes progress of a completed task. Value: task id.
+```yaml
+- id: easy
+  type: player_kill
+  amount: 3
+  rules:
+    - key: headshot
+      operator: bool==
+      value: "true"
+  actions:
+    - type: task.mark_completed
+      values:
+        - easy_noheadshot
 
-### task.mark_completed
+- id: easy_noheadshot
+  type: player_kill
+  amount: 1
+  visible: false
+  announce_progress: false
+  announce_completion: false
+  rules:
+    - key: headshot
+      operator: bool==
+      value: "false"
+  actions:
+    - type: notify.player.progress.rule_broken
+      values:
+        - easy
+    - type: task.reset_progress
+      values:
+        - easy
+    - type: task.reset_completed
+      values:
+        - easy_noheadshot
+```
 
-Marks a task complete regardless of current progress. Value: task id.
-
-### notify.player.progress.rule_broken
-
-Notifies the player that they broke a rule while progressing. Values: related task ids to check for prior progress.
-
-### notify.player.completed.rule_broken
-
-Notifies the player that they broke a rule after completing a related task. Values: task ids that must already be completed.
-
-### server.runcommand
-
-Runs a server console command. Placeholders: `{steamid}`, `{userid}`, `{index}`.
-
-## Control tasks
-
-Use a hidden task (`visible: false`) with rules that detect a broken condition (e.g. body shot during a headshot streak). On completion, reset the main task with `task.reset_progress` and optionally notify the player.
-
-See the `examples/blueprints/` folder for full patterns.
+See `examples/blueprints/headshots_in_a_row.yaml` for the full pattern.

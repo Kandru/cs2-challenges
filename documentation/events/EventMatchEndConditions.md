@@ -2,16 +2,23 @@
 
 CSS game event `match_end_conditions` (`EventMatchEndConditions`).
 
-Audience: all connected players.
+Who gets credit: **all connected players**.
 
 ## Challenge types
 
+Put one of these in your task `type:` field:
+
 - `match_end_conditions`
 
-## Available rule keys
+## Rule keys
 
-- [Event Data](../rules/GlobalEventData.md)
-- `frags (int)`
-- `max_rounds (int)`
-- `time (int)`
-- `win_rounds (int)`
+> [!WARNING]
+> If you use an unknown key, the task will not work because that condition can never be met.
+
+| Key | Type |
+|-----|------|
+| [global event data](../rules/GlobalEventData.md) | see page |
+| `frags` | int |
+| `max_rounds` | int |
+| `time` | int |
+| `win_rounds` | int |
