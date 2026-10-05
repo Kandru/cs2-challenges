@@ -5,6 +5,9 @@ namespace Challenges.Utils
 {
     public static class EventData
     {
+        /// <summary>True when any loaded task rule uses a <c>*.isbot</c> key. Written by ChallengeEngine.</summary>
+        public static bool IncludeIsBot;
+
         public static string Bool(bool value) => value ? "true" : "false";
 
         public static string Num<T>(T value) where T : IFormattable =>
@@ -19,7 +22,11 @@ namespace Challenges.Utils
 
             var stats = player.ActionTrackingServices?.MatchStats;
             d[$"{prefix}.name"] = player.PlayerName;
-            d[$"{prefix}.isbot"] = Bool(player.IsBot);
+            if (IncludeIsBot)
+            {
+                d[$"{prefix}.isbot"] = Bool(player.IsBot);
+            }
+
             d[$"{prefix}.team"] = player.Team.ToString();
             d[$"{prefix}.alive"] = Bool(player.PawnIsAlive);
             d[$"{prefix}.ping"] = Num(player.Ping);

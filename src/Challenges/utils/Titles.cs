@@ -13,18 +13,15 @@ namespace Challenges.Utils
                 return string.Empty;
             }
 
-            if (!player.IsBot)
+            CultureInfo culture = player.GetLanguage();
+            if (Pick(titles, culture.Name) is { } regional)
             {
-                CultureInfo culture = player.GetLanguage();
-                if (Pick(titles, culture.Name) is { } regional)
-                {
-                    return regional;
-                }
+                return regional;
+            }
 
-                if (Pick(titles, culture.TwoLetterISOLanguageName) is { } localized)
-                {
-                    return localized;
-                }
+            if (Pick(titles, culture.TwoLetterISOLanguageName) is { } localized)
+            {
+                return localized;
             }
 
             return titles.Values.First();

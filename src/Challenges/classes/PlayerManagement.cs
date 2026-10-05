@@ -23,12 +23,8 @@ namespace Challenges.Classes
         {
             if (isHotReloaded)
             {
-                foreach (CCSPlayerController player in Utilities.GetPlayers().Where(p => p.IsValid))
+                foreach (CCSPlayerController player in Players.GetHumans())
                 {
-                    if (!GlobalConfig.AllowBots && player.IsBot)
-                    {
-                        continue;
-                    }
                     LoadPlayerData(player);
                 }
             }
@@ -55,12 +51,7 @@ namespace Challenges.Classes
         public HookResult EventPlayerConnectFull(EventPlayerConnectFull @event, GameEventInfo info)
         {
             CCSPlayerController? player = @event.Userid;
-            if (player == null || !player.IsValid)
-            {
-                return HookResult.Continue;
-            }
-
-            if (!GlobalConfig.AllowBots && player.IsBot)
+            if (!Players.IsHumanViewer(player))
             {
                 return HookResult.Continue;
             }
@@ -72,22 +63,15 @@ namespace Challenges.Classes
         public HookResult EventPlayerDisconnect(EventPlayerDisconnect @event, GameEventInfo info)
         {
             CCSPlayerController? player = @event.Userid;
-            if (player == null || !player.IsValid)
+            if (player == null || !PlayerStates.TryGetValue(player, out PlayerState? state))
             {
                 return HookResult.Continue;
             }
 
-            if (!GlobalConfig.AllowBots && player.IsBot)
-            {
-                return HookResult.Continue;
-            }
-
-            SavePlayerData(player);
+            WritePlayerFile(player, state);
             CustomHud.ReleasePlayer(player);
-            if (PlayerStates.Remove(player, out PlayerState? removed))
-            {
-                GetClass<ChallengeEngine>().ForgetPlayer(removed);
-            }
+            PlayerStates.Remove(player);
+            GetClass<ChallengeEngine>().ForgetPlayer(state);
             return HookResult.Continue;
         }
 
@@ -122,13 +106,15 @@ namespace Challenges.Classes
             PlayerLanguageManager.SetLanguage(new SteamID(player.NetworkIDString), new CultureInfo(language));
             Server.NextFrame(() =>
             {
-                if (Players.IsHumanViewer(player))
+                if (!player.IsValid || !PlayerStates.ContainsKey(player))
                 {
-                    Tracker.Refresh(player);
-                    if (HudMenu.IsOpen(player))
-                    {
-                        Menu.Paint(player);
-                    }
+                    return;
+                }
+
+                Tracker.Refresh(player);
+                if (HudMenu.IsOpen(player))
+                {
+                    Menu.Paint(player);
                 }
             });
             return HookResult.Continue;
@@ -149,9 +135,13 @@ namespace Challenges.Classes
 
             RunningSchedule? schedule = GetClass<Schedules>().Current;
             List<(string Name, int Current, int Total)> ranking = [];
-            foreach (CCSPlayerController human in Players.GetHumans())
+            foreach ((CCSPlayerController human, PlayerState s) in PlayerStates)
             {
-                PlayerState s = GetPlayerState(human);
+                if (!human.IsValid)
+                {
+                    continue;
+                }
+
                 int current = schedule != null
                     ? ChallengeProgress.CountSolvedInSchedule(s, schedule)
                     : 0;
@@ -200,26 +190,21 @@ namespace Challenges.Classes
 
         public override void Destroy()
         {
-            foreach (CCSPlayerController player in PlayerStates.Keys.ToList())
+            foreach ((CCSPlayerController player, PlayerState state) in PlayerStates)
             {
                 if (player.IsValid)
                 {
-                    SavePlayerData(player);
+                    WritePlayerFile(player, state);
                 }
             }
             PlayerStates.Clear();
         }
 
-        private string StorageId(CCSPlayerController player) =>
-            player.IsBot && GlobalConfig.AllowBots ? $"BOT_{player.Slot}" : player.NetworkIDString;
-
         private void LoadPlayerData(CCSPlayerController player)
         {
             PlayerState state = GetPlayerState(player);
-            string steamId = StorageId(player);
-            string safe = string.Concat(steamId.Split(Path.GetInvalidFileNameChars()));
-            Directory.CreateDirectory(PlayersDir);
-            string path = Path.Combine(PlayersDir, $"{safe}.json");
+            string steamId = player.NetworkIDString;
+            string path = PlayerFilePath(steamId);
 
             if (File.Exists(path))
             {
@@ -249,7 +234,7 @@ namespace Challenges.Classes
             {
                 try
                 {
-                    PlayerLanguageManager.SetLanguage(new SteamID(player.NetworkIDString), new CultureInfo(state.Language));
+                    PlayerLanguageManager.SetLanguage(new SteamID(steamId), new CultureInfo(state.Language));
                 }
                 catch
                 {
@@ -257,21 +242,20 @@ namespace Challenges.Classes
             }
         }
 
-        private void SavePlayerData(CCSPlayerController player)
+        private void WritePlayerFile(CCSPlayerController player, PlayerState state)
         {
-            if (!PlayerStates.TryGetValue(player, out PlayerState? state))
-            {
-                return;
-            }
-
-            string steamId = StorageId(player);
-            string safe = string.Concat(steamId.Split(Path.GetInvalidFileNameChars()));
-            Directory.CreateDirectory(PlayersDir);
-            string path = Path.Combine(PlayersDir, $"{safe}.json");
+            string steamId = player.NetworkIDString;
             state.Username = player.PlayerName;
             state.SteamId = steamId;
             state.ClanTag = player.Clan;
-            File.WriteAllText(path, JsonSerializer.Serialize(state, JsonOptions));
+            File.WriteAllText(PlayerFilePath(steamId), JsonSerializer.Serialize(state, JsonOptions));
+        }
+
+        private string PlayerFilePath(string steamId)
+        {
+            string safe = string.Concat(steamId.Split(Path.GetInvalidFileNameChars()));
+            Directory.CreateDirectory(PlayersDir);
+            return Path.Combine(PlayersDir, $"{safe}.json");
         }
     }
 }

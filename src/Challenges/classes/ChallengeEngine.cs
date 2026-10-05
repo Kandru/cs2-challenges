@@ -56,6 +56,7 @@ namespace Challenges.Classes
             Dictionary<string, List<(ChallengeDefinition Challenge, ChallengeTask Task)>> byType =
                 new(StringComparer.Ordinal);
             bool hostageKey = false;
+            bool isBotKey = false;
 
             if (CurrentSchedule is { } schedule)
             {
@@ -70,11 +71,25 @@ namespace Challenges.Classes
 
                         list.Add((challenge, task));
 
+                        if (hostageKey && isBotKey)
+                        {
+                            continue;
+                        }
+
                         foreach (ChallengeRule rule in task.Rules)
                         {
-                            if (rule.Key == "global.hashostages")
+                            if (!hostageKey && rule.Key == "global.hashostages")
                             {
                                 hostageKey = true;
+                            }
+                            else if (!isBotKey && rule.Key.EndsWith(".isbot", StringComparison.Ordinal))
+                            {
+                                isBotKey = true;
+                            }
+
+                            if (hostageKey && isBotKey)
+                            {
+                                break;
                             }
                         }
                     }
@@ -83,6 +98,7 @@ namespace Challenges.Classes
 
             _tasksByType = byType;
             _usesHostageKey = hostageKey;
+            EventData.IncludeIsBot = isBotKey;
 
             HashSet<string> bound = new(StringComparer.Ordinal);
             List<string> events = [];
@@ -121,6 +137,7 @@ namespace Challenges.Classes
             _boundListeners = [];
             _pruned.Clear();
             _gameRulesProxy = null;
+            EventData.IncludeIsBot = false;
         }
 
         /// <summary>Listener entry point used by generated <c>ChallengeEngine.Listeners.cs</c> handlers.</summary>
@@ -193,8 +210,9 @@ namespace Challenges.Classes
             List<(CCSPlayerController Player, string Type)>? valid = null;
             foreach ((CCSPlayerController? player, string type) in targets)
             {
-                if (player is { IsValid: true }
-                    && (GlobalConfig.AllowBots || !player.IsBot)
+                // Bots/HLTV are never admitted; ProcessPlayer re-checks IsValid.
+                if (player != null
+                    && PlayerStates.ContainsKey(player)
                     && _tasksByType.ContainsKey(type))
                 {
                     (valid ??= []).Add((player, type));
