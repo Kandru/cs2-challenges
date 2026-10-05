@@ -45,6 +45,10 @@ namespace Challenges.Classes
                 DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal,
                 out utc);
 
+        /// <summary>Strips a legacy <c>:*</c> suffix from a schedule challenge id.</summary>
+        public static string ChallengeId(string rawId) =>
+            rawId.EndsWith(":*", StringComparison.Ordinal) ? rawId[..^2] : rawId;
+
         public static string BuildKey(ChallengeSchedule schedule)
         {
             string firstTitle = schedule.Title.Count > 0 ? schedule.Title.First().Value : string.Empty;
@@ -83,7 +87,7 @@ namespace Challenges.Classes
                 HashSet<string> seen = new(StringComparer.OrdinalIgnoreCase);
                 foreach (string rawId in schedule.Challenges)
                 {
-                    string id = rawId.EndsWith(":*", StringComparison.Ordinal) ? rawId[..^2] : rawId;
+                    string id = ChallengeId(rawId);
                     if (!seen.Add(id))
                     {
                         continue;

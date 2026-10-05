@@ -221,6 +221,19 @@ Label.ph-stat-val
 	vertical-align: middle;
 }
 
+Label.ph-stat-when
+{
+	width: 150px;
+	height: 100%;
+	font-size: 14;
+	color: #9aa2ac;
+	text-align: right;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	vertical-align: middle;
+	margin-right: 8px;
+}
+
 .ph-stat-track
 {
 	width: 100%;
@@ -533,6 +546,13 @@ Label.MenuFilterLabel
 	width: 56px;
 	font-size: 14;
 	color: #f0a531;
+}
+
+.MenuRow Label.ph-stat-when
+{
+	width: 150px;
+	font-size: 14;
+	color: #9aa2ac;
 }
 
 .MenuRowSplit

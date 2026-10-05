@@ -39,6 +39,7 @@
 													<Panel class="MenuRowHead" hittest="false">
 														<Panel class="ph-stat-lab" hittest="false">
 															<Label class="ph-stat-name stratum-medium-tf" hittest="false" text="{s:m0_title}" />
+															<Label class="ph-stat-when stratum-medium-tf" hittest="false" text="{s:m0_when}" />
 															<Label class="ph-stat-val stratum-bold-tf" hittest="false" text="{s:m0_meta}" />
 														</Panel>
 														<Panel class="ph-stat-track" hittest="false">
@@ -98,6 +99,7 @@
 													<Panel class="MenuRowHead" hittest="false">
 														<Panel class="ph-stat-lab" hittest="false">
 															<Label class="ph-stat-name stratum-medium-tf" hittest="false" text="{s:m1_title}" />
+															<Label class="ph-stat-when stratum-medium-tf" hittest="false" text="{s:m1_when}" />
 															<Label class="ph-stat-val stratum-bold-tf" hittest="false" text="{s:m1_meta}" />
 														</Panel>
 														<Panel class="ph-stat-track" hittest="false">
@@ -157,6 +159,7 @@
 													<Panel class="MenuRowHead" hittest="false">
 														<Panel class="ph-stat-lab" hittest="false">
 															<Label class="ph-stat-name stratum-medium-tf" hittest="false" text="{s:m2_title}" />
+															<Label class="ph-stat-when stratum-medium-tf" hittest="false" text="{s:m2_when}" />
 															<Label class="ph-stat-val stratum-bold-tf" hittest="false" text="{s:m2_meta}" />
 														</Panel>
 														<Panel class="ph-stat-track" hittest="false">
@@ -216,6 +219,7 @@
 													<Panel class="MenuRowHead" hittest="false">
 														<Panel class="ph-stat-lab" hittest="false">
 															<Label class="ph-stat-name stratum-medium-tf" hittest="false" text="{s:m3_title}" />
+															<Label class="ph-stat-when stratum-medium-tf" hittest="false" text="{s:m3_when}" />
 															<Label class="ph-stat-val stratum-bold-tf" hittest="false" text="{s:m3_meta}" />
 														</Panel>
 														<Panel class="ph-stat-track" hittest="false">

@@ -48,6 +48,10 @@ body {
   height: 18px; margin-bottom: 6px; font-size: 14px; letter-spacing: 1.2px; text-transform: uppercase;
 }
 .ph-stat-name { flex: 1; color: #e8eef4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ph-stat-when {
+  width: 150px; margin-right: 8px; text-align: right; color: #9aa2ac; font-size: 14px; font-weight: 500;
+  letter-spacing: 0; text-transform: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
 .ph-stat-val {
   width: 72px; text-align: right; color: #f0a531; font-weight: 700; letter-spacing: 0;
   text-transform: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
@@ -120,6 +124,7 @@ body {
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .MenuRow .ph-stat-val { width: 56px; font-size: 14px; color: #f0a531; }
+.MenuRow .ph-stat-when { width: 150px; font-size: 14px; color: #9aa2ac; }
 .MenuRowSplit { display: flex; gap: 6px; }
 .MenuTasksCol, .MenuByCol {
   flex: 1; min-width: 0; padding: 6px 8px; background: #0b0f14aa; border: 1px solid #ffffff14; border-radius: 3px;

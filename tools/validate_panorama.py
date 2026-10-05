@@ -118,6 +118,7 @@ MENU_VARS = (
         "spin_l_tot",
     }
     | {f"m{i}_title" for i in range(MENU_LIST_SLOTS)}
+    | {f"m{i}_when" for i in range(MENU_LIST_SLOTS)}
     | {f"m{i}_meta" for i in range(MENU_LIST_SLOTS)}
     | {f"m{i}_t{t}" for i in range(MENU_LIST_SLOTS) for t in range(MENU_TASK_SLOTS)}
     | {f"m{i}_by{b}" for i in range(MENU_LIST_SLOTS) for b in range(MENU_BY_SLOTS)}

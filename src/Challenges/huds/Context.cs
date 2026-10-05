@@ -3,6 +3,7 @@ using CounterStrikeSharp.API.Core.Translations;
 using Challenges.Classes;
 using Challenges.Configs;
 using Challenges.Enums;
+using Challenges.Utils;
 using Microsoft.Extensions.Localization;
 
 namespace Challenges.Huds
@@ -88,10 +89,65 @@ namespace Challenges.Huds
         public static string FormatRank(CCSPlayerController player, int rank) =>
             Text(player, "hud.format.rank", ("{rank}", rank.ToString()));
 
-        public static string FormatDate(CCSPlayerController player, DateTime date) =>
-            Text(player, "hud.menu.date", ("{date}", date.ToString("d", player.GetLanguage())));
-
         public static string FormatOverflow(CCSPlayerController player, int count) =>
             Text(player, "hud.menu.task.overflow", ("{count}", count.ToString()));
+
+        /// <summary>
+        /// Relative schedule phrase: time left while active, otherwise time until next start
+        /// ("two days left", "in a week", "this week", …).
+        /// </summary>
+        public static string FormatWhen(CCSPlayerController player, ScheduleTiming.Info info, DateTime now)
+        {
+            if (info.Target is not { } target || target <= now)
+            {
+                return string.Empty;
+            }
+
+            TimeSpan span = target - now;
+            bool upcoming = !info.IsActive;
+
+            if (span.TotalHours < 36)
+            {
+                return WhenUnit(player, upcoming, "hour", Math.Max(1, (int)Math.Round(span.TotalHours)));
+            }
+
+            if (span.TotalDays < 3)
+            {
+                return WhenUnit(player, upcoming, "day", Math.Max(1, (int)Math.Round(span.TotalDays)));
+            }
+
+            if (!upcoming && SameUtcWeek(now, target))
+            {
+                return Text(player, "hud.menu.when.this_week");
+            }
+
+            if (span.TotalDays < 25)
+            {
+                return WhenUnit(player, upcoming, "week", Math.Max(1, (int)Math.Round(span.TotalDays / 7)));
+            }
+
+            return WhenUnit(player, upcoming, "month", Math.Max(1, (int)Math.Round(span.TotalDays / 30)));
+        }
+
+        private static string WhenUnit(CCSPlayerController player, bool upcoming, string unit, int count)
+        {
+            string side = upcoming ? "in" : "left";
+            string form = count switch
+            {
+                1 => "one",
+                2 => "two",
+                _ => "n",
+            };
+            string key = $"hud.menu.when.{side}.{unit}.{form}";
+            return form == "n"
+                ? Text(player, key, ("{n}", count.ToString()))
+                : Text(player, key);
+        }
+
+        private static bool SameUtcWeek(DateTime a, DateTime b)
+        {
+            static DateTime Monday(DateTime d) => d.Date.AddDays(-(((int)d.DayOfWeek + 6) % 7));
+            return Monday(a) == Monday(b);
+        }
     }
 }

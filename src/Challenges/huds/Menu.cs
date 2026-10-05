@@ -54,7 +54,12 @@ namespace Challenges.Huds
             ("spin_l_tot", "hud.menu.scoreboard.you.total"),
         ];
 
-        private sealed record Entry(ChallengeDefinition Challenge, int Percent, string Meta);
+        private sealed record Entry(
+            ChallengeDefinition Challenge,
+            int Percent,
+            string When,
+            bool IsActive,
+            DateTime SortTime);
         private sealed record ScoreEntry(CCSPlayerController Player, int Current, int Total);
 
         public static string ListRowId(int index) => $"ch-mrow-{index}";
@@ -267,7 +272,8 @@ namespace Challenges.Huds
                 Entry entry = entries[index];
                 bool inSchedule = schedule != null && schedule.Challenges.Contains(entry.Challenge);
                 CustomHud.SetText(player, Panel, $"m{i}_title", Titles.For(player, entry.Challenge.Title));
-                CustomHud.SetText(player, Panel, $"m{i}_meta", entry.Meta);
+                CustomHud.SetText(player, Panel, $"m{i}_when", entry.When);
+                CustomHud.SetText(player, Panel, $"m{i}_meta", Context.FormatPercent(player, entry.Percent));
                 CustomHud.SetStepPercent(player, ListFillId(i), entry.Percent);
                 CustomHud.SetHasClass(player, ListRowId(i), "empty", false);
                 CustomHud.SetHasClass(player, ListRowId(i), "is-off", false);
@@ -279,6 +285,7 @@ namespace Challenges.Huds
         private static void ClearListSlot(CCSPlayerController player, int row, bool off)
         {
             CustomHud.SetText(player, Panel, $"m{row}_title", string.Empty);
+            CustomHud.SetText(player, Panel, $"m{row}_when", string.Empty);
             CustomHud.SetText(player, Panel, $"m{row}_meta", string.Empty);
             CustomHud.SetStepPercent(player, ListFillId(row), 0);
             CustomHud.SetHasClass(player, ListRowId(row), "empty", true);
@@ -305,6 +312,7 @@ namespace Challenges.Huds
 
         private static List<Entry> BuildEntries(CCSPlayerController player, PlayerState state, RunningSchedule? schedule)
         {
+            DateTime now = DateTime.UtcNow;
             string activeKey = schedule?.Key ?? string.Empty;
             int Percent(ChallengeDefinition c) =>
                 schedule != null && schedule.Challenges.Contains(c)
@@ -312,36 +320,51 @@ namespace Challenges.Huds
                     : 0;
             Entry Make(ChallengeDefinition c)
             {
-                int percent = Percent(c);
-                return new Entry(c, percent, Context.FormatPercent(player, percent));
+                ScheduleTiming.Info timing = ScheduleTiming.ForChallenge(c, schedule, Context.ScheduleMap, now);
+                return new Entry(
+                    c,
+                    Percent(c),
+                    Context.FormatWhen(player, timing, now),
+                    timing.IsActive,
+                    timing.Target ?? DateTime.MaxValue);
             }
 
             switch (state.MenuFilter)
             {
                 case FilterAll:
-                    return OrderByProgress(Context.ChallengeMap.Values.Select(Make));
+                    return OrderEntries(Context.ChallengeMap.Values.Select(Make), byTiming: true);
                 case FilterEnding:
-                    return ScheduleEntries(player, s => ParseDate(s.EndDate), Percent);
+                    return ScheduleEntries(s => ParseDate(s.EndDate), Make, now);
                 case FilterStarting:
-                    return ScheduleEntries(player, s => ParseDate(s.StartDate), Percent);
+                    return ScheduleEntries(s => ParseDate(s.StartDate), Make, now);
                 default:
                     if (schedule == null)
                     {
                         return [];
                     }
 
-                    return OrderByProgress(
+                    return OrderEntries(
                         schedule.Challenges
                             .Where(c => !ChallengeProgress.IsChallengeSolved(state, activeKey, c))
-                            .Select(Make));
+                            .Select(Make),
+                        byTiming: false);
             }
         }
 
-        private static List<Entry> OrderByProgress(IEnumerable<Entry> entries) =>
-            entries
-                .OrderByDescending(e => e.Percent)
+        private static List<Entry> OrderEntries(IEnumerable<Entry> entries, bool byTiming)
+        {
+            IOrderedEnumerable<Entry> ordered = entries.OrderByDescending(e => e.Percent);
+            if (byTiming)
+            {
+                ordered = ordered
+                    .ThenByDescending(e => e.IsActive)
+                    .ThenBy(e => e.SortTime);
+            }
+
+            return ordered
                 .ThenBy(SortTitle, StringComparer.OrdinalIgnoreCase)
                 .ToList();
+        }
 
         private static string SortTitle(Entry entry)
         {
@@ -355,11 +378,10 @@ namespace Challenges.Huds
         }
 
         private static List<Entry> ScheduleEntries(
-            CCSPlayerController player,
             Func<ChallengeSchedule, DateTime?> dateOf,
-            Func<ChallengeDefinition, int> percent)
+            Func<ChallengeDefinition, Entry> make,
+            DateTime now)
         {
-            DateTime now = DateTime.UtcNow;
             List<(ChallengeSchedule Schedule, DateTime Date)> upcoming = [];
             foreach (ChallengeSchedule schedule in Context.ScheduleMap.Values)
             {
@@ -373,15 +395,14 @@ namespace Challenges.Huds
 
             List<Entry> entries = [];
             HashSet<string> seen = new(StringComparer.OrdinalIgnoreCase);
-            foreach ((ChallengeSchedule schedule, DateTime date) in upcoming)
+            foreach ((ChallengeSchedule schedule, DateTime _) in upcoming)
             {
-                string meta = Context.FormatDate(player, date);
                 foreach (string rawId in schedule.Challenges)
                 {
-                    string id = rawId.EndsWith(":*", StringComparison.Ordinal) ? rawId[..^2] : rawId;
+                    string id = Schedules.ChallengeId(rawId);
                     if (seen.Add(id) && Context.ChallengeMap.TryGetValue(id, out ChallengeDefinition? challenge))
                     {
-                        entries.Add(new Entry(challenge, percent(challenge), meta));
+                        entries.Add(make(challenge));
                     }
                 }
             }
