@@ -43,15 +43,13 @@ body {
 .ph-close-x-a { transform: rotate(45deg); }
 .ph-close-x-b { transform: rotate(-45deg); }
 
-.ph-stat { width: 100%; flex-shrink: 0; }
-.ph-stat.is-off { display: none; }
 .ph-stat-lab {
   display: flex; justify-content: space-between; align-items: baseline;
-  height: 14px; margin-bottom: 6px; font-size: 12px; letter-spacing: 1.4px; text-transform: uppercase;
+  height: 18px; margin-bottom: 6px; font-size: 14px; letter-spacing: 1.2px; text-transform: uppercase;
 }
-.ph-stat-name { flex: 1; color: #9aa2ac; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ph-stat-name { flex: 1; color: #e8eef4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ph-stat-val {
-  width: 72px; text-align: right; color: #f2f4f7; font-weight: 700; letter-spacing: 0;
+  width: 72px; text-align: right; color: #f0a531; font-weight: 700; letter-spacing: 0;
   text-transform: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .ph-stat-track { height: 7px; border-radius: 4px; background: #ffffff12; overflow: hidden; }
@@ -73,54 +71,145 @@ body {
 .ph-stat-fill.p100 { clip-path: inset(0 0 0 0); }
 
 /* Tracker */
-.Tracker { width: 330px; right: 20px; top: 96px; z-index: 100; }
+.Tracker { width: 420px; right: 20px; top: 20px; z-index: 100; }
 .TrackerContent { position: relative; flex: 1; display: flex; flex-direction: column; z-index: 2; }
-.TrackerBody { padding: 12px 14px 6px 18px; }
-.TrackerRow { margin-bottom: 8px; }
+.TrackerBody { padding: 8px 12px 6px 14px; }
+.TrackerRow {
+  padding: 8px; margin-bottom: 6px;
+  background: #ffffff0d; border: 1px solid #ffffff14; border-radius: 3px;
+}
+.TrackerRow.is-off { display: none; }
 .TrackerCount { margin-left: 10px; }
+.TrackerRow .ph-stat-lab { height: 16px; margin-bottom: 4px; }
+.TrackerRow .ph-stat-name {
+  flex: 1; min-width: 0; font-size: 14px; letter-spacing: 1.2px; color: #e8eef4;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.TrackerRow .ph-stat-val { width: 52px; font-size: 14px; color: #f0a531; }
+.TrackerRow .MenuRowHead { margin-bottom: 6px; }
+.TrackerRowSplit { display: flex; flex-direction: column; gap: 4px; }
+.TrackerRow .MenuTasksCol, .TrackerRow .MenuByCol { width: 100%; padding: 6px 8px; }
 
 /* Menu */
 .MenuRoot { z-index: 300; }
-.MenuContent { position: relative; flex: 1; display: flex; flex-direction: column; z-index: 2; }
+.MenuContent { position: relative; flex: 1; display: flex; flex-direction: column; z-index: 2; height: 100%; }
 .MenuRoot .ph-titlebar { padding-right: 12px; }
-.MenuBody { flex: 1; display: flex; padding: 12px 18px; min-height: 0; overflow: auto; }
-.MenuList { flex: 2; margin-right: 18px; }
-.MenuScore { flex: 1; }
-.MenuFilterBar { display: flex; margin-bottom: 10px; }
+.MenuBody { flex: 1; display: flex; flex-direction: column; padding: 12px 18px; min-height: 0; }
+.MenuColumns { flex: 1; display: flex; min-height: 0; }
+.MenuList { flex: 2; margin-right: 18px; display: flex; flex-direction: column; min-height: 0; }
+.MenuScore { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+.MenuFilterBar { display: flex; margin-bottom: 10px; flex-shrink: 0; }
 .MenuFilterBtn {
   height: 26px; padding: 0 10px; margin-right: 6px; border-radius: 3px;
   background: #ffffff0d; border: 1px solid transparent; cursor: pointer; color: inherit;
 }
 .MenuFilterBtn:hover { background: #ffffff1c; border-color: #f0a53166; }
 .MenuFilterBtn.active { background: #f0a53122; border-color: #f0a531; }
-.MenuFilterLabel { font-size: 11.55px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; white-space: nowrap; }
+.MenuFilterLabel { font-size: 12px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; white-space: nowrap; }
+.MenuRows { flex: 0 0 auto; overflow: hidden; display: flex; flex-direction: column; }
+.MenuListSpacer { flex: 1; min-height: 0; }
 .MenuRow {
-  height: 44px; padding: 7px 12px 0; margin-bottom: 5px;
-  background: #ffffff0d; border: 1px solid transparent; border-radius: 3px;
+  flex: 0 0 auto; padding: 8px; margin-bottom: 6px;
+  background: #ffffff0d; border: 1px solid #ffffff14; border-radius: 3px;
 }
-.MenuRow.is-off { display: none; }
-.MenuRow.empty { opacity: 0.35; border-color: #ffffff14; }
-.MenuRow.empty .ph-stat-lab, .MenuRow.empty .ph-stat-track { visibility: hidden; }
-.MenuRow .ph-stat-val { width: 96px; }
-.MenuFooter { display: flex; margin-top: 6px; padding-top: 8px; border-top: 1px solid #d9d9d90a; }
+.MenuRow.is-off, .MenuRow.empty { display: none; }
+.MenuRowHead { margin-bottom: 6px; }
+.MenuRow .ph-stat-lab { height: 16px; margin-bottom: 4px; }
+.MenuRow .ph-stat-name {
+  flex: 1; min-width: 0; font-size: 14px; letter-spacing: 1.2px; color: #e8eef4;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.MenuRow .ph-stat-val { width: 56px; font-size: 14px; color: #f0a531; }
+.MenuRowSplit { display: flex; gap: 6px; }
+.MenuTasksCol, .MenuByCol {
+  flex: 1; min-width: 0; padding: 6px 8px; background: #0b0f14aa; border: 1px solid #ffffff14; border-radius: 3px;
+}
+.MenuColHead {
+  display: block; margin-bottom: 4px; font-size: 12px; font-weight: 700;
+  letter-spacing: 1.2px; text-transform: uppercase; color: #f0a531;
+}
+.MenuTasks, .MenuByList { display: flex; flex-direction: column; gap: 2px; }
+.MenuByRow { display: flex; gap: 3px; }
+.MenuTask, .MenuBy {
+  display: flex; align-items: center; height: 20px; min-width: 0; padding: 0 6px 0 5px;
+  background: #ffffff0a; border: 1px solid #ffffff10; border-radius: 2px;
+}
+.MenuBy { flex: 1; padding-left: 6px; }
+.MenuTask.is-off, .MenuBy.is-off { display: none; }
+.MenuTask.is-done { background: #9ccf4f18; border-color: #9ccf4f44; }
+.MenuTaskMark {
+  width: 3px; height: 12px; margin-right: 6px; border-radius: 1px; background: #f0a531; flex-shrink: 0;
+}
+.MenuTask.is-done .MenuTaskMark { background: #9ccf4f; }
+.MenuTaskLabel {
+  flex: 1; min-width: 0; font-size: 12px; letter-spacing: 0.4px; color: #c5ccd4;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.MenuTask.is-done .MenuTaskLabel { color: #9ccf4f; }
+.MenuBy.is-empty { background: transparent; border-color: transparent; }
+.MenuByLabel {
+  min-width: 0; flex: 1; font-size: 12px; color: #e8eef4;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.MenuBy.is-empty .MenuByLabel { color: #8b8f94; }
+.MenuFooter {
+  display: flex; margin-top: 6px; padding-top: 8px; border-top: 1px solid #d9d9d90a; flex-shrink: 0;
+}
 .MenuFooterBtn {
   flex: 1; height: 28px; margin: 0 2px; background: #ffffff0d; border: 1px solid transparent;
-  border-radius: 3px; color: #e8eef4; font-size: 13px; font-weight: 700; cursor: pointer;
+  border-radius: 3px; color: #e8eef4; font-size: 12px; font-weight: 700; cursor: pointer;
 }
 .MenuFooterBtn:hover { background: #ffffff1c; border-color: #f0a53166; }
 .MenuPage { flex: 1.4; line-height: 28px; font-size: 12px; font-weight: 700; color: #f0a531; text-align: center; }
+.ScoreSortBtn {
+  display: block; width: 100%; padding: 4px 0; margin-bottom: 8px;
+  background: transparent; border: 1px solid transparent; border-radius: 3px;
+  cursor: pointer; text-align: center; flex-shrink: 0;
+}
+.ScoreSortBtn:hover { background: #ffffff0d; border-color: #f0a53166; }
 .ScoreTitle {
-  display: block; padding-top: 6px; margin-bottom: 10px; font-size: 12px; font-weight: 700;
-  letter-spacing: 1.4px; text-transform: uppercase; color: #9aa2ac;
+  display: block; font-size: 15px; font-weight: 700;
+  letter-spacing: 1.6px; text-transform: uppercase; color: #e8eef4;
+}
+.ScoreSelfCard {
+  padding: 12px; margin-bottom: 10px; flex-shrink: 0;
+  background: #f0a53118; border: 1px solid #f0a531; border-radius: 3px;
+}
+.ScoreSelfCard.empty { display: none; }
+.ScoreSelfTop { display: flex; align-items: center; margin-bottom: 10px; }
+.ScoreSelfRank { width: 48px; font-size: 18px; font-weight: 700; color: #f0a531; }
+.ScoreSelfName { flex: 1; font-size: 15px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ScoreSelfStats { display: flex; gap: 6px; }
+.ScoreSelfStat {
+  flex: 1; padding: 8px 10px; background: #0b0f14aa; border: 1px solid #ffffff14; border-radius: 3px;
+}
+.ScoreSelfStatLabel {
+  display: block; margin-bottom: 4px; font-size: 12px; letter-spacing: 1px;
+  text-transform: uppercase; color: #9aa2ac;
+}
+.ScoreSelfStatVal { display: block; font-size: 16px; font-weight: 700; color: #f0a531; }
+.ScoreHeader {
+  display: flex; align-items: center; height: 32px; padding: 0 10px; flex-shrink: 0;
+  background: #ffffff14; border-top: 1px solid #f0a53166; border-bottom: 1px solid #f0a53166;
+}
+.ScoreHead {
+  font-size: 12px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: #9aa2ac;
+}
+.ScoreHead.sort-active { color: #f0a531; }
+.ScoreRows {
+  flex: 1; display: flex; flex-direction: column; min-height: 0; overflow: auto;
+  border: 1px solid #ffffff14; border-top: 0; background: #0b0f1488;
 }
 .ScoreRow {
-  display: flex; align-items: center; height: 34px; padding: 0 10px; margin-bottom: 4px;
-  background: #ffffff0d; border: 1px solid transparent; border-radius: 3px;
+  display: flex; align-items: center; height: 32px; flex: 0 0 32px; padding: 0 10px;
+  background: transparent; border: 0; border-bottom: 1px solid #ffffff0a; border-radius: 0;
 }
-.ScoreRow.empty { opacity: 0.35; border-color: #ffffff14; }
-.ScoreRow.empty span { visibility: hidden; }
-.ScoreRow.is-self { background: #f0a53122; border-color: #f0a531; }
-.ScorePinned { margin-bottom: 8px; }
-.ScoreRank { width: 40px; font-size: 13px; font-weight: 700; color: #f0a531; }
+.ScoreRow.alt { background: #ffffff08; }
+.ScoreRow.empty, .ScoreRow.is-off { display: none; }
+.ScoreRow.is-self { background: #f0a53122; border-bottom-color: #f0a53144; }
+.ScoreRank { width: 36px; font-size: 12px; font-weight: 700; color: #f0a531; }
 .ScoreName { flex: 1; font-size: 14px; color: #e8eef4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.ScoreVal { width: 48px; text-align: right; font-size: 14px; font-weight: 700; color: #fff; }
+.ScoreCur { width: 72px; text-align: right; font-size: 12px; font-weight: 700; color: #f0a531; }
+.ScoreTot { width: 48px; text-align: right; font-size: 12px; font-weight: 700; color: #fff; }
+.ScoreHeader .ScoreCur, .ScoreHeader .ScoreTot { font-size: 12px; color: #9aa2ac; }
+.ScoreHeader .ScoreCur.sort-active, .ScoreHeader .ScoreTot.sort-active { color: #f0a531; }

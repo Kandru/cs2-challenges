@@ -34,7 +34,15 @@
     "hud.menu.filter.ending": "Ending soon",
     "hud.menu.filter.starting": "Starting soon",
     "hud.menu.scoreboard": "Scoreboard",
-    "hud.menu.empty": "Nothing to show",
-    "hud.menu.prev": "Prev",
-    "hud.menu.next": "Next"
+    "hud.menu.scoreboard.col.rank": "#",
+    "hud.menu.scoreboard.col.name": "Name",
+    "hud.menu.scoreboard.col.solved": "Solved",
+    "hud.menu.scoreboard.col.total": "Total",
+    "hud.menu.scoreboard.you.solved": "This schedule",
+    "hud.menu.scoreboard.you.total": "Lifetime",
+    "hud.menu.tasks": "Tasks",
+    "hud.menu.solved_by": "Solved by",
+    "hud.menu.solved_by.empty": "Nobody yet",
+    "hud.menu.task.overflow": "+{count} more",
+    "hud.menu.empty": "Nothing to show"
 }

@@ -5,4 +5,10 @@ namespace Challenges.Enums
         None,
         Challenges,
     }
+
+    public enum ScoreboardSort
+    {
+        Current,
+        Total,
+    }
 }

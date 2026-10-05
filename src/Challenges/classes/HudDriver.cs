@@ -10,7 +10,7 @@ using Microsoft.Extensions.Localization;
 namespace Challenges.Classes
 {
     /// <summary>Round-lifecycle driver for the tracker HUD (freeze-time mode) and per-round HUD reset.</summary>
-    public class HudDriver : Blueprint
+    public class HudDriver : ClassesBlueprint
     {
         private bool _destroyed;
 

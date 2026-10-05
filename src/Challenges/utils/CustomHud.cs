@@ -550,7 +550,9 @@ namespace Challenges.Utils
         {
             if (panelId == Tracker.Panel
                 || panelId.StartsWith("ch-trow-", StringComparison.Ordinal)
-                || panelId.StartsWith("ch-tfill-", StringComparison.Ordinal))
+                || panelId.StartsWith("ch-tfill-", StringComparison.Ordinal)
+                || panelId.StartsWith("ch-ttask-", StringComparison.Ordinal)
+                || panelId.StartsWith("ch-tby-", StringComparison.Ordinal))
             {
                 return 0;
             }

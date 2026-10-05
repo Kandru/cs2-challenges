@@ -7,7 +7,7 @@ using Microsoft.Extensions.Localization;
 
 namespace Challenges.Classes
 {
-    public class Blueprint(Dictionary<GlobalStates, object> GlobalState, IStringLocalizer Localizer, bool IsHotReloaded)
+    public class ClassesBlueprint(Dictionary<GlobalStates, object> GlobalState, IStringLocalizer Localizer, bool IsHotReloaded)
     {
         public PluginConfig GlobalConfig => (PluginConfig)_globalStates[GlobalStates.GlobalConfig];
         public readonly Dictionary<CCSPlayerController, PlayerState> PlayerStates =
@@ -39,10 +39,10 @@ namespace Challenges.Classes
             return state;
         }
 
-        protected T GetClass<T>() where T : Blueprint
+        protected T GetClass<T>() where T : ClassesBlueprint
         {
-            Dictionary<string, Blueprint> classInstances =
-                (Dictionary<string, Blueprint>)_globalStates[GlobalStates.ClassInstances];
+            Dictionary<string, ClassesBlueprint> classInstances =
+                (Dictionary<string, ClassesBlueprint>)_globalStates[GlobalStates.ClassInstances];
             return (T)classInstances[typeof(T).Name];
         }
 

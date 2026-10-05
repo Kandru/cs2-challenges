@@ -13,7 +13,7 @@ using Microsoft.Extensions.Localization;
 namespace Challenges.Classes
 {
     /// <summary>Chat, sounds and Discord webhooks.</summary>
-    public class Notifications : Blueprint
+    public class Notifications : ClassesBlueprint
     {
         private static readonly HttpClient Http = new() { Timeout = TimeSpan.FromSeconds(15) };
 

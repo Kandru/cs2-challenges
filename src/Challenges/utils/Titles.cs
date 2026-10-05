@@ -28,5 +28,9 @@ namespace Challenges.Utils
 
         public static string Expand(string title, int count, int total) =>
             title.Replace("{count}", count.ToString()).Replace("{total}", total.ToString());
+
+        /// <summary>Resolve + expand <c>{count}</c>/<c>{total}</c> for the player's language.</summary>
+        public static string For(CCSPlayerController player, Dictionary<string, string> titles, int count = 0, int total = 0) =>
+            Expand(Resolve(titles, player), count, total);
     }
 }

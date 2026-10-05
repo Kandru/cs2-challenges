@@ -47,15 +47,25 @@ REJECTED_PSEUDO = re.compile(r":(?:selected|disabled|focus)\b")
 TRACKER_FILE = "tracker.xml"
 MENU_FILE = "menu.xml"
 TRACKER_ROWS = 5
-MENU_LIST_SLOTS = 10
-MENU_SCORE_SLOTS = 8
+MENU_LIST_SLOTS = 4
+MENU_SCORE_SLOTS = 12
+MENU_TASK_SLOTS = 3
+MENU_BY_SLOTS = 6
 
-TRACKER_IDS = {"Tracker"} | {f"ch-trow-{i}" for i in range(TRACKER_ROWS)} | {
-    f"ch-tfill-{i}" for i in range(TRACKER_ROWS)
-}
-TRACKER_VARS = {"tr_title", "tr_count"} | {f"tr_t{i}" for i in range(TRACKER_ROWS)} | {
-    f"tr_v{i}" for i in range(TRACKER_ROWS)
-}
+TRACKER_IDS = (
+    {"Tracker"}
+    | {f"ch-trow-{i}" for i in range(TRACKER_ROWS)}
+    | {f"ch-tfill-{i}" for i in range(TRACKER_ROWS)}
+    | {f"ch-ttask-{i}-{t}" for i in range(TRACKER_ROWS) for t in range(MENU_TASK_SLOTS)}
+    | {f"ch-tby-{i}-{b}" for i in range(TRACKER_ROWS) for b in range(MENU_BY_SLOTS)}
+)
+TRACKER_VARS = (
+    {"tr_title", "tr_count", "tr_tasks_h", "tr_by_h"}
+    | {f"tr_t{i}" for i in range(TRACKER_ROWS)}
+    | {f"tr_v{i}" for i in range(TRACKER_ROWS)}
+    | {f"tr_{i}_t{t}" for i in range(TRACKER_ROWS) for t in range(MENU_TASK_SLOTS)}
+    | {f"tr_{i}_by{b}" for i in range(TRACKER_ROWS) for b in range(MENU_BY_SLOTS)}
+)
 MENU_IDS = (
     {
         "Menu",
@@ -64,6 +74,9 @@ MENU_IDS = (
         "ph-next",
         "ch-score-prev",
         "ch-score-next",
+        "ch-score-sort",
+        "ch-score-h-cur",
+        "ch-score-h-tot",
         "ch-filter-all",
         "ch-filter-progress",
         "ch-filter-ending",
@@ -72,6 +85,8 @@ MENU_IDS = (
     }
     | {f"ch-mrow-{i}" for i in range(MENU_LIST_SLOTS)}
     | {f"ch-mfill-{i}" for i in range(MENU_LIST_SLOTS)}
+    | {f"ch-mtask-{i}-{t}" for i in range(MENU_LIST_SLOTS) for t in range(MENU_TASK_SLOTS)}
+    | {f"ch-mby-{i}-{b}" for i in range(MENU_LIST_SLOTS) for b in range(MENU_BY_SLOTS)}
     | {f"ch-srow-{i}" for i in range(MENU_SCORE_SLOTS)}
 )
 MENU_VARS = (
@@ -83,23 +98,40 @@ MENU_VARS = (
         "menu_f_ending",
         "menu_f_starting",
         "menu_empty",
+        "menu_tasks_h",
+        "menu_by_h",
         "score_title",
         "score_page",
+        "score_h_rank",
+        "score_h_name",
+        "score_h_cur",
+        "score_h_tot",
         "spin_name",
-        "spin_val",
+        "spin_cur",
+        "spin_tot",
         "spin_rank",
+        "spin_l_cur",
+        "spin_l_tot",
     }
     | {f"m{i}_title" for i in range(MENU_LIST_SLOTS)}
     | {f"m{i}_meta" for i in range(MENU_LIST_SLOTS)}
+    | {f"m{i}_t{t}" for i in range(MENU_LIST_SLOTS) for t in range(MENU_TASK_SLOTS)}
+    | {f"m{i}_by{b}" for i in range(MENU_LIST_SLOTS) for b in range(MENU_BY_SLOTS)}
+    | {f"s{i}_rank" for i in range(MENU_SCORE_SLOTS)}
     | {f"s{i}_name" for i in range(MENU_SCORE_SLOTS)}
-    | {f"s{i}_val" for i in range(MENU_SCORE_SLOTS)}
+    | {f"s{i}_cur" for i in range(MENU_SCORE_SLOTS)}
+    | {f"s{i}_tot" for i in range(MENU_SCORE_SLOTS)}
 )
 REQUIRED_CLASSES = {
     "ph-off",
     "is-off",
+    "is-done",
+    "is-empty",
     "active",
+    "sort-active",
     "empty",
     "is-self",
+    "alt",
     *(f"p{p}" for p in range(0, 101, 10)),
 }
 

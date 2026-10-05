@@ -9,7 +9,7 @@ using Microsoft.Extensions.Localization;
 namespace Challenges.Classes
 {
     /// <summary>Picks the first schedule whose UTC window contains now and resolves its challenges.</summary>
-    public class Schedules : Blueprint
+    public class Schedules : ClassesBlueprint
     {
         private const string DateFormat = "yyyy-MM-dd HH:mm:ss";
 

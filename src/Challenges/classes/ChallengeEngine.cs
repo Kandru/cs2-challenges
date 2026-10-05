@@ -16,7 +16,7 @@ namespace Challenges.Classes
     /// Turns game events into task progress. Extraction happens inside the event hook, rules/progress/actions
     /// run on the next frame so the game thread never mutates state while the event is still being dispatched.
     /// </summary>
-    public partial class ChallengeEngine : Blueprint
+    public partial class ChallengeEngine : ClassesBlueprint
     {
         private readonly Dictionary<string, List<IExtractor>> _extractorsByEvent;
         private readonly HashSet<PlayerState> _pruned = [];
@@ -379,18 +379,8 @@ namespace Challenges.Classes
             return CompliesWithRules(task, data);
         }
 
-        private static bool CanComplete(PlayerState state, string scheduleKey, ChallengeDefinition challenge, ChallengeTask task)
-        {
-            foreach (string requiredId in task.Requires)
-            {
-                if (!challenge.TaskById.TryGetValue(requiredId, out ChallengeTask? required) || !ChallengeProgress.IsTaskComplete(state, scheduleKey, challenge.Id, required))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
+        private static bool CanComplete(PlayerState state, string scheduleKey, ChallengeDefinition challenge, ChallengeTask task) =>
+            ChallengeProgress.AreRequirementsMet(state, scheduleKey, challenge, task);
 
         private bool CompliesWithRules(ChallengeTask task, Dictionary<string, string> data)
         {

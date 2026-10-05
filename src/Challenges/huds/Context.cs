@@ -37,8 +37,8 @@ namespace Challenges.Huds
         {
             get
             {
-                if (_globals?[GlobalStates.ClassInstances] is Dictionary<string, Blueprint> classes
-                    && classes.TryGetValue(nameof(Schedules), out Blueprint? entry)
+                if (_globals?[GlobalStates.ClassInstances] is Dictionary<string, ClassesBlueprint> classes
+                    && classes.TryGetValue(nameof(Schedules), out ClassesBlueprint? entry)
                     && entry is Schedules schedules)
                 {
                     return schedules.Current;

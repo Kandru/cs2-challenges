@@ -34,7 +34,15 @@
     "hud.menu.filter.ending": "Endet bald",
     "hud.menu.filter.starting": "Startet bald",
     "hud.menu.scoreboard": "Bestenliste",
-    "hud.menu.empty": "Nichts anzuzeigen",
-    "hud.menu.prev": "Zurück",
-    "hud.menu.next": "Weiter"
+    "hud.menu.scoreboard.col.rank": "#",
+    "hud.menu.scoreboard.col.name": "Name",
+    "hud.menu.scoreboard.col.solved": "Gelöst",
+    "hud.menu.scoreboard.col.total": "Gesamt",
+    "hud.menu.scoreboard.you.solved": "Dieser Plan",
+    "hud.menu.scoreboard.you.total": "Insgesamt",
+    "hud.menu.tasks": "Aufgaben",
+    "hud.menu.solved_by": "Gelöst von",
+    "hud.menu.solved_by.empty": "Noch niemand",
+    "hud.menu.task.overflow": "+{count} weitere",
+    "hud.menu.empty": "Nichts anzuzeigen"
 }

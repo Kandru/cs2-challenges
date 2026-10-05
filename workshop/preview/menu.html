@@ -16,44 +16,160 @@
         <button class="ph-icon-btn"><span class="ph-close-x ph-close-x-a"></span><span class="ph-close-x ph-close-x-b"></span></button>
       </div>
       <div class="MenuBody">
-        <div class="MenuList">
-          <div class="MenuFilterBar">
-            <button class="MenuFilterBtn"><span class="MenuFilterLabel">All</span></button>
-            <button class="MenuFilterBtn active"><span class="MenuFilterLabel">Progress</span></button>
-            <button class="MenuFilterBtn"><span class="MenuFilterLabel">Ending soon</span></button>
-            <button class="MenuFilterBtn"><span class="MenuFilterLabel">Starting soon</span></button>
+        <div class="MenuColumns">
+          <div class="MenuList">
+            <div class="MenuFilterBar">
+              <button class="MenuFilterBtn"><span class="MenuFilterLabel">All</span></button>
+              <button class="MenuFilterBtn active"><span class="MenuFilterLabel">Progress</span></button>
+              <button class="MenuFilterBtn"><span class="MenuFilterLabel">Ending soon</span></button>
+              <button class="MenuFilterBtn"><span class="MenuFilterLabel">Starting soon</span></button>
+            </div>
+            <div class="MenuRows">
+              <!-- Sorted by completion % desc, then A–Z -->
+              <div class="MenuRow">
+                <div class="MenuRowHead">
+                  <div class="ph-stat-lab"><span class="ph-stat-name">Weapon: AK-47 With A Very Long Subtitle</span><span class="ph-stat-val">70%</span></div>
+                  <div class="ph-stat-track"><div class="ph-stat-fill p70"></div></div>
+                </div>
+                <div class="MenuRowSplit">
+                  <div class="MenuTasksCol">
+                    <span class="MenuColHead">Tasks</span>
+                    <div class="MenuTasks">
+                      <div class="MenuTask is-done"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">5/5 AK-47 kills in a single round somehow</span></div>
+                      <div class="MenuTask is-done"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">10/10 AK-47 kills</span></div>
+                      <div class="MenuTask"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">5/25 AK-47 kills</span></div>
+                    </div>
+                  </div>
+                  <div class="MenuByCol">
+                    <span class="MenuColHead">Solved by</span>
+                    <div class="MenuByList">
+                      <div class="MenuByRow">
+                        <div class="MenuBy is-empty"><span class="MenuByLabel">Nobody yet</span></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="MenuRow">
+                <div class="MenuRowHead">
+                  <div class="ph-stat-lab"><span class="ph-stat-name">Sharp and Deadly</span><span class="ph-stat-val">40%</span></div>
+                  <div class="ph-stat-track"><div class="ph-stat-fill p40"></div></div>
+                </div>
+                <div class="MenuRowSplit">
+                  <div class="MenuTasksCol">
+                    <span class="MenuColHead">Tasks</span>
+                    <div class="MenuTasks">
+                      <div class="MenuTask is-done"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">5/5 knife kills</span></div>
+                      <div class="MenuTask"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">2/10 knife kills without taking damage</span></div>
+                      <div class="MenuTask"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">0/25 knife kills</span></div>
+                    </div>
+                  </div>
+                  <div class="MenuByCol">
+                    <span class="MenuColHead">Solved by</span>
+                    <div class="MenuByList">
+                      <div class="MenuByRow">
+                        <div class="MenuBy"><span class="MenuByLabel">Alice</span></div>
+                        <div class="MenuBy"><span class="MenuByLabel">BobTheBuilderExtraLong</span></div>
+                      </div>
+                      <div class="MenuByRow">
+                        <div class="MenuBy"><span class="MenuByLabel">Carol</span></div>
+                        <div class="MenuBy"><span class="MenuByLabel">Dave</span></div>
+                      </div>
+                      <div class="MenuByRow">
+                        <div class="MenuBy"><span class="MenuByLabel">Eve</span></div>
+                        <div class="MenuBy is-empty"><span class="MenuByLabel">+3 more</span></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="MenuRow">
+                <div class="MenuRowHead">
+                  <div class="ph-stat-lab"><span class="ph-stat-name">Headshots in a row</span><span class="ph-stat-val">30%</span></div>
+                  <div class="ph-stat-track"><div class="ph-stat-fill p30"></div></div>
+                </div>
+                <div class="MenuRowSplit">
+                  <div class="MenuTasksCol">
+                    <span class="MenuColHead">Tasks</span>
+                    <div class="MenuTasks">
+                      <div class="MenuTask is-done"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">3/3 headshots</span></div>
+                      <div class="MenuTask"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">3/10 headshots</span></div>
+                      <div class="MenuTask"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">0/25 headshots</span></div>
+                    </div>
+                  </div>
+                  <div class="MenuByCol">
+                    <span class="MenuColHead">Solved by</span>
+                    <div class="MenuByList">
+                      <div class="MenuByRow">
+                        <div class="MenuBy"><span class="MenuByLabel">Alice</span></div>
+                        <div class="MenuBy"><span class="MenuByLabel">Frank</span></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="MenuRow">
+                <div class="MenuRowHead">
+                  <div class="ph-stat-lab"><span class="ph-stat-name">AWP Master</span><span class="ph-stat-val">0%</span></div>
+                  <div class="ph-stat-track"><div class="ph-stat-fill p0"></div></div>
+                </div>
+                <div class="MenuRowSplit">
+                  <div class="MenuTasksCol">
+                    <span class="MenuColHead">Tasks</span>
+                    <div class="MenuTasks">
+                      <div class="MenuTask"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">0/3 AWP kills</span></div>
+                      <div class="MenuTask"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">0/10 AWP kills</span></div>
+                      <div class="MenuTask"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">0/25 AWP kills</span></div>
+                    </div>
+                  </div>
+                  <div class="MenuByCol">
+                    <span class="MenuColHead">Solved by</span>
+                    <div class="MenuByList">
+                      <div class="MenuByRow">
+                        <div class="MenuBy is-empty"><span class="MenuByLabel">Nobody yet</span></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="MenuListSpacer"></div>
+            <div class="MenuFooter">
+              <button class="MenuFooterBtn">&lt;</button><span class="MenuPage">1 / 2</span><button class="MenuFooterBtn">&gt;</button>
+            </div>
           </div>
-          <div class="MenuRows">
-          <div class="ph-stat MenuRow"><div class="ph-stat-lab"><span class="ph-stat-name">Headshots in a row</span><span class="ph-stat-val">30%</span></div><div class="ph-stat-track"><div class="ph-stat-fill p30"></div></div></div>
-          <div class="ph-stat MenuRow"><div class="ph-stat-lab"><span class="ph-stat-name">Knife without resistance</span><span class="ph-stat-val">20%</span></div><div class="ph-stat-track"><div class="ph-stat-fill p20"></div></div></div>
-          <div class="ph-stat MenuRow"><div class="ph-stat-lab"><span class="ph-stat-name">Sharp and Deadly</span><span class="ph-stat-val">40%</span></div><div class="ph-stat-track"><div class="ph-stat-fill p40"></div></div></div>
-          <div class="ph-stat MenuRow"><div class="ph-stat-lab"><span class="ph-stat-name">AWP Master</span><span class="ph-stat-val">0%</span></div><div class="ph-stat-track"><div class="ph-stat-fill p0"></div></div></div>
-          <div class="ph-stat MenuRow"><div class="ph-stat-lab"><span class="ph-stat-name">Weapon: AK-47</span><span class="ph-stat-val">70%</span></div><div class="ph-stat-track"><div class="ph-stat-fill p70"></div></div></div>
-          <div class="ph-stat MenuRow empty"><div class="ph-stat-lab"><span class="ph-stat-name"></span><span class="ph-stat-val"></span></div><div class="ph-stat-track"><div class="ph-stat-fill p0"></div></div></div>
-          <div class="ph-stat MenuRow empty"><div class="ph-stat-lab"><span class="ph-stat-name"></span><span class="ph-stat-val"></span></div><div class="ph-stat-track"><div class="ph-stat-fill p0"></div></div></div>
-          <div class="ph-stat MenuRow empty"><div class="ph-stat-lab"><span class="ph-stat-name"></span><span class="ph-stat-val"></span></div><div class="ph-stat-track"><div class="ph-stat-fill p0"></div></div></div>
-          <div class="ph-stat MenuRow empty is-off"></div>
-          <div class="ph-stat MenuRow empty is-off"></div>
-          </div>
-          <div class="MenuFooter">
-            <button class="MenuFooterBtn">&lt;</button><span class="MenuPage">1 / 1</span><button class="MenuFooterBtn">&gt;</button>
-          </div>
-        </div>
-        <div class="MenuScore">
-          <span class="ScoreTitle">Scoreboard</span>
-          <div class="ScoreRow ScorePinned is-self"><span class="ScoreRank">#1</span><span class="ScoreName">Kalle</span><span class="ScoreVal">5</span></div>
-          <div class="MenuRows">
-          <div class="ScoreRow is-self"><span class="ScoreName">Kalle</span><span class="ScoreVal">5</span></div>
-          <div class="ScoreRow"><span class="ScoreName">Alice</span><span class="ScoreVal">3</span></div>
-          <div class="ScoreRow"><span class="ScoreName">Bob</span><span class="ScoreVal">2</span></div>
-          <div class="ScoreRow"><span class="ScoreName">Carol</span><span class="ScoreVal">1</span></div>
-          <div class="ScoreRow empty"><span class="ScoreName">.</span><span class="ScoreVal">.</span></div>
-          <div class="ScoreRow empty"><span class="ScoreName">.</span><span class="ScoreVal">.</span></div>
-          <div class="ScoreRow empty"><span class="ScoreName">.</span><span class="ScoreVal">.</span></div>
-          <div class="ScoreRow empty"><span class="ScoreName">.</span><span class="ScoreVal">.</span></div>
-          </div>
-          <div class="MenuFooter">
-            <button class="MenuFooterBtn">&lt;</button><span class="MenuPage">1 / 1</span><button class="MenuFooterBtn">&gt;</button>
+          <div class="MenuScore">
+            <button class="ScoreSortBtn"><span class="ScoreTitle">Scoreboard</span></button>
+            <div class="ScoreSelfCard">
+              <div class="ScoreSelfTop">
+                <span class="ScoreSelfRank">#1</span>
+                <span class="ScoreSelfName">KalleWithAReallyLongSteamName</span>
+              </div>
+              <div class="ScoreSelfStats">
+                <div class="ScoreSelfStat">
+                  <span class="ScoreSelfStatLabel">This schedule</span>
+                  <span class="ScoreSelfStatVal">5 / 12</span>
+                </div>
+                <div class="ScoreSelfStat">
+                  <span class="ScoreSelfStatLabel">Lifetime</span>
+                  <span class="ScoreSelfStatVal">12</span>
+                </div>
+              </div>
+            </div>
+            <div class="ScoreHeader">
+              <span class="ScoreRank ScoreHead">#</span>
+              <span class="ScoreName ScoreHead">Name</span>
+              <span class="ScoreCur ScoreHead sort-active">Solved</span>
+              <span class="ScoreTot ScoreHead">Total</span>
+            </div>
+            <div class="ScoreRows">
+              <div class="ScoreRow is-self"><span class="ScoreRank">#1</span><span class="ScoreName">KalleWithAReallyLongSteamName</span><span class="ScoreCur">5 / 12</span><span class="ScoreTot">12</span></div>
+              <div class="ScoreRow alt"><span class="ScoreRank">#2</span><span class="ScoreName">Alice</span><span class="ScoreCur">3 / 12</span><span class="ScoreTot">9</span></div>
+              <div class="ScoreRow"><span class="ScoreRank">#3</span><span class="ScoreName">Bob</span><span class="ScoreCur">2 / 12</span><span class="ScoreTot">15</span></div>
+            </div>
+            <div class="MenuFooter">
+              <button class="MenuFooterBtn">&lt;</button><span class="MenuPage">1 / 1</span><button class="MenuFooterBtn">&gt;</button>
+            </div>
           </div>
         </div>
       </div>

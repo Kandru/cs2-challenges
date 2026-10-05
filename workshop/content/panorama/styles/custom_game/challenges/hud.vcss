@@ -173,7 +173,7 @@ Label.ph-nav-label
 	horizontal-align: center;
 	vertical-align: middle;
 	text-align: center;
-	font-size: 13;
+	font-size: 12;
 	color: #e8eef4;
 }
 
@@ -191,7 +191,7 @@ Label.ph-nav-label
 .ph-stat-lab
 {
 	width: 100%;
-	height: 14px;
+	height: 18px;
 	flow-children: right;
 	margin-bottom: 6px;
 }
@@ -200,10 +200,10 @@ Label.ph-stat-name
 {
 	width: fill-parent-flow( 1.0 );
 	height: 100%;
-	font-size: 12;
-	letter-spacing: 1.4px;
+	font-size: 14;
+	letter-spacing: 1.2px;
 	text-transform: uppercase;
-	color: #9aa2ac;
+	color: #e8eef4;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	vertical-align: middle;
@@ -213,8 +213,8 @@ Label.ph-stat-val
 {
 	width: 72px;
 	height: 100%;
-	font-size: 12;
-	color: #f2f4f7;
+	font-size: 14;
+	color: #f0a531;
 	text-align: right;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -255,15 +255,15 @@ Label.ph-stat-val
 .ph-stat-fill.p0 { clip: rect( 0%, 2%, 100%, 0% ); }
 
 /* ============================================================================
-   Tracker - top-right card (sound-menu row style, ph-stat bars).
+   Tracker - top-right card; same challenge-card body as the menu (tasks | completers).
    ============================================================================ */
 
 .Tracker
 {
-	width: 330px;
+	width: 420px;
 	horizontal-align: right;
 	vertical-align: top;
-	margin-top: 96px;
+	margin-top: 20px;
 	margin-right: 20px;
 	z-index: 100;
 }
@@ -282,12 +282,19 @@ Label.ph-stat-val
 	width: 100%;
 	height: fit-children;
 	flow-children: down;
-	padding: 12px 14px 6px 18px;
+	padding: 8px 12px 6px 14px;
 }
 
 .TrackerRow
 {
-	margin-bottom: 8px;
+	width: 100%;
+	height: fit-children;
+	flow-children: down;
+	padding: 8px 8px 8px 8px;
+	margin-bottom: 6px;
+	background-color: #ffffff0d;
+	border: 1px solid #ffffff14;
+	border-radius: 3px;
 }
 
 .TrackerRow.is-off
@@ -300,8 +307,56 @@ Label.TrackerCount
 	margin-left: 10px;
 }
 
+.TrackerRow .ph-stat-lab
+{
+	height: 16px;
+	margin-bottom: 4px;
+}
+
+.TrackerRow Label.ph-stat-name
+{
+	font-size: 14;
+	letter-spacing: 1.2px;
+	color: #e8eef4;
+}
+
+.TrackerRow Label.ph-stat-val
+{
+	width: 52px;
+	font-size: 14;
+	color: #f0a531;
+}
+
+.TrackerRow .MenuRowHead
+{
+	margin-bottom: 6px;
+}
+
+.TrackerRowSplit
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: down;
+}
+
+.TrackerRow .MenuTasksCol,
+.TrackerRow .MenuByCol
+{
+	width: 100%;
+	margin-right: 0px;
+	margin-bottom: 4px;
+	padding: 6px 8px 6px 8px;
+}
+
+.TrackerRow .MenuByCol
+{
+	margin-bottom: 0px;
+}
+
 /* ============================================================================
    Menu - fullscreen frame (.ph-fs), list 2/3 + scoreboard 1/3.
+   Challenge cards: compact header + 50/50 tasks|completers (2-col names).
+   4 cards/page; list does not scroll. Footers pin via MenuListSpacer.
    ============================================================================ */
 
 .MenuRoot
@@ -326,17 +381,25 @@ Label.TrackerCount
 {
 	width: 100%;
 	height: fill-parent-flow( 1.0 );
-	flow-children: right;
+	flow-children: down;
 	padding-left: 18px;
 	padding-right: 18px;
 	padding-top: 12px;
 	padding-bottom: 12px;
 }
 
+/* Definite height under a down parent so list/score can use height:100% in a right row. */
+.MenuColumns
+{
+	width: 100%;
+	height: 100%;
+	flow-children: right;
+}
+
 .MenuList
 {
 	width: fill-parent-flow( 2.0 );
-	height: fit-children;
+	height: 100%;
 	flow-children: down;
 	margin-right: 18px;
 }
@@ -344,7 +407,7 @@ Label.TrackerCount
 .MenuScore
 {
 	width: fill-parent-flow( 1.0 );
-	height: fit-children;
+	height: 100%;
 	flow-children: down;
 }
 
@@ -400,7 +463,7 @@ Label.TrackerCount
 
 Label.MenuFilterLabel
 {
-	font-size: 11.55;
+	font-size: 12;
 	letter-spacing: 1px;
 	text-transform: uppercase;
 	color: #e8eef4;
@@ -413,17 +476,24 @@ Label.MenuFilterLabel
 	width: 100%;
 	height: fit-children;
 	flow-children: down;
+	overflow: clip;
+}
+
+.MenuListSpacer
+{
+	width: 100%;
+	height: fill-parent-flow( 1.0 );
 }
 
 .MenuRow
 {
 	width: 100%;
-	height: 44px;
+	height: fit-children;
 	flow-children: down;
-	padding: 7px 12px 0px 12px;
-	margin-bottom: 5px;
+	padding: 8px 8px 8px 8px;
+	margin-bottom: 6px;
 	background-color: #ffffff0d;
-	border: 1px solid #00000000;
+	border: 1px solid #ffffff14;
 	border-radius: 3px;
 }
 
@@ -434,19 +504,190 @@ Label.MenuFilterLabel
 
 .MenuRow.empty
 {
-	opacity: 0.35;
-	border: 1px solid #ffffff14;
+	visibility: collapse;
 }
 
-.MenuRow.empty .ph-stat-lab,
-.MenuRow.empty .ph-stat-track
+.MenuRowHead
 {
-	visibility: collapse;
+	width: 100%;
+	height: fit-children;
+	flow-children: down;
+	margin-bottom: 6px;
+}
+
+.MenuRow .ph-stat-lab
+{
+	height: 16px;
+	margin-bottom: 4px;
+}
+
+.MenuRow Label.ph-stat-name
+{
+	font-size: 14;
+	letter-spacing: 1.2px;
+	color: #e8eef4;
 }
 
 .MenuRow Label.ph-stat-val
 {
-	width: 96px;
+	width: 56px;
+	font-size: 14;
+	color: #f0a531;
+}
+
+.MenuRowSplit
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: right;
+}
+
+.MenuTasksCol,
+.MenuByCol
+{
+	width: fill-parent-flow( 1.0 );
+	height: fit-children;
+	flow-children: down;
+	padding: 6px 8px 6px 8px;
+	background-color: #0b0f14aa;
+	border: 1px solid #ffffff14;
+	border-radius: 3px;
+}
+
+.MenuTasksCol
+{
+	margin-right: 6px;
+}
+
+Label.MenuColHead
+{
+	width: 100%;
+	font-size: 12;
+	letter-spacing: 1.2px;
+	text-transform: uppercase;
+	color: #f0a531;
+	margin-bottom: 4px;
+}
+
+.MenuTasks,
+.MenuByList
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: down;
+}
+
+.MenuTask
+{
+	width: 100%;
+	height: 20px;
+	flow-children: right;
+	margin-bottom: 2px;
+	padding-left: 5px;
+	padding-right: 6px;
+	background-color: #ffffff0a;
+	border: 1px solid #ffffff10;
+	border-radius: 2px;
+}
+
+.MenuTask.is-off
+{
+	visibility: collapse;
+}
+
+.MenuTask.is-done
+{
+	background-color: #9ccf4f18;
+	border: 1px solid #9ccf4f44;
+}
+
+.MenuTaskMark
+{
+	width: 3px;
+	height: 12px;
+	margin-right: 6px;
+	vertical-align: middle;
+	background-color: #f0a531;
+	border-radius: 1px;
+}
+
+.MenuTask.is-done .MenuTaskMark
+{
+	background-color: #9ccf4f;
+}
+
+Label.MenuTaskLabel
+{
+	width: fill-parent-flow( 1.0 );
+	height: 100%;
+	font-size: 12;
+	letter-spacing: 0.4px;
+	color: #c5ccd4;
+	vertical-align: middle;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.MenuTask.is-done Label.MenuTaskLabel
+{
+	color: #9ccf4f;
+}
+
+.MenuByRow
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: right;
+	margin-bottom: 2px;
+}
+
+.MenuBy
+{
+	width: fill-parent-flow( 1.0 );
+	height: 20px;
+	flow-children: right;
+	padding-left: 6px;
+	padding-right: 6px;
+	background-color: #ffffff0a;
+	border: 1px solid #ffffff10;
+	border-radius: 2px;
+}
+
+.MenuBy.is-off
+{
+	visibility: collapse;
+}
+
+.MenuByRow .MenuBy
+{
+	margin-right: 3px;
+}
+
+.MenuByRow .MenuBy:last-child
+{
+	margin-right: 0px;
+}
+
+.MenuBy.is-empty
+{
+	background-color: #00000000;
+	border: 1px solid #00000000;
+}
+
+Label.MenuByLabel
+{
+	width: 100%;
+	height: 100%;
+	font-size: 12;
+	color: #e8eef4;
+	vertical-align: middle;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.MenuBy.is-empty Label.MenuByLabel
+{
+	color: #8b8f94;
 }
 
 .MenuEmpty
@@ -506,36 +747,188 @@ Label.MenuPage
 	vertical-align: middle;
 }
 
+.ScoreSortBtn
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: none;
+	margin-bottom: 8px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+	background-color: #00000000;
+	border: 1px solid #00000000;
+	border-radius: 3px;
+	transition-property: background-color, border;
+	transition-duration: 0.15s;
+}
+
+.ScoreSortBtn:hover
+{
+	background-color: #ffffff0d;
+	border: 1px solid #f0a53166;
+	cursor: pointer;
+	sound: "UIPanorama.generic_button_rollover";
+}
+
+.ScoreSortBtn:active
+{
+	background-color: #ffffff1c;
+	border: 1px solid #f0a531;
+	sound: "UIPanorama.generic_button_press";
+}
+
 Label.ScoreTitle
 {
 	width: 100%;
+	font-size: 15;
+	letter-spacing: 1.6px;
+	text-transform: uppercase;
+	color: #e8eef4;
+	text-align: center;
+}
+
+.ScoreSelfCard
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: down;
+	padding: 12px 12px 12px 12px;
+	margin-bottom: 10px;
+	background-color: #f0a53118;
+	border: 1px solid #f0a531;
+	border-radius: 3px;
+}
+
+.ScoreSelfCard.empty
+{
+	visibility: collapse;
+}
+
+.ScoreSelfTop
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: right;
+	margin-bottom: 10px;
+}
+
+Label.ScoreSelfRank
+{
+	width: 48px;
+	font-size: 18;
+	color: #f0a531;
+	vertical-align: middle;
+}
+
+Label.ScoreSelfName
+{
+	width: fill-parent-flow( 1.0 );
+	font-size: 15;
+	color: #ffffff;
+	vertical-align: middle;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.ScoreSelfStats
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: right;
+}
+
+.ScoreSelfStat
+{
+	width: fill-parent-flow( 1.0 );
+	height: fit-children;
+	flow-children: down;
+	padding: 8px 10px 8px 10px;
+	margin-right: 6px;
+	background-color: #0b0f14aa;
+	border: 1px solid #ffffff14;
+	border-radius: 3px;
+}
+
+.ScoreSelfStat:last-child
+{
+	margin-right: 0px;
+}
+
+Label.ScoreSelfStatLabel
+{
+	width: 100%;
 	font-size: 12;
-	letter-spacing: 1.4px;
+	letter-spacing: 1px;
 	text-transform: uppercase;
 	color: #9aa2ac;
-	margin-bottom: 10px;
-	padding-top: 6px;
+	margin-bottom: 4px;
+}
+
+Label.ScoreSelfStatVal
+{
+	width: 100%;
+	font-size: 16;
+	color: #f0a531;
+}
+
+.ScoreHeader
+{
+	width: 100%;
+	height: 32px;
+	flow-children: right;
+	padding: 0px 10px 0px 10px;
+	margin-bottom: 0px;
+	background-color: #ffffff14;
+	border-top: 1px solid #f0a53166;
+	border-bottom: 1px solid #f0a53166;
+}
+
+Label.ScoreHead
+{
+	height: 100%;
+	font-size: 12;
+	letter-spacing: 1.2px;
+	text-transform: uppercase;
+	color: #9aa2ac;
+	vertical-align: middle;
+}
+
+Label.ScoreHead.sort-active
+{
+	color: #f0a531;
+}
+
+.ScoreRows
+{
+	width: 100%;
+	height: fill-parent-flow( 1.0 );
+	flow-children: down;
+	overflow: squish scroll;
+	border: 1px solid #ffffff14;
+	border-top: 1px solid #00000000;
+	background-color: #0b0f1488;
 }
 
 .ScoreRow
 {
 	width: 100%;
-	height: 34px;
+	height: 32px;
 	flow-children: right;
 	padding: 0px 10px 0px 10px;
-	margin-bottom: 4px;
-	background-color: #ffffff0d;
+	margin-bottom: 0px;
+	background-color: #00000000;
 	border: 1px solid #00000000;
-	border-radius: 3px;
+	border-bottom: 1px solid #ffffff0a;
+	border-radius: 0px;
 }
 
-.ScoreRow.empty
+.ScoreRow.alt
 {
-	opacity: 0.35;
-	border: 1px solid #ffffff14;
+	background-color: #ffffff08;
 }
 
-.ScoreRow.empty Label
+.ScoreRow.empty,
+.ScoreRow.is-off
 {
 	visibility: collapse;
 }
@@ -543,19 +936,14 @@ Label.ScoreTitle
 .ScoreRow.is-self
 {
 	background-color: #f0a53122;
-	border: 1px solid #f0a531;
-}
-
-.ScorePinned
-{
-	margin-bottom: 8px;
+	border-bottom: 1px solid #f0a53144;
 }
 
 Label.ScoreRank
 {
-	width: 40px;
+	width: 36px;
 	height: 100%;
-	font-size: 13;
+	font-size: 12;
 	color: #f0a531;
 	vertical-align: middle;
 }
@@ -571,12 +959,35 @@ Label.ScoreName
 	white-space: nowrap;
 }
 
-Label.ScoreVal
+Label.ScoreCur
+{
+	width: 72px;
+	height: 100%;
+	font-size: 12;
+	color: #f0a531;
+	text-align: right;
+	vertical-align: middle;
+}
+
+Label.ScoreTot
 {
 	width: 48px;
 	height: 100%;
-	font-size: 14;
+	font-size: 12;
 	color: #ffffff;
 	text-align: right;
 	vertical-align: middle;
+}
+
+.ScoreHeader Label.ScoreCur,
+.ScoreHeader Label.ScoreTot
+{
+	font-size: 12;
+	color: #9aa2ac;
+}
+
+.ScoreHeader Label.ScoreCur.sort-active,
+.ScoreHeader Label.ScoreTot.sort-active
+{
+	color: #f0a531;
 }

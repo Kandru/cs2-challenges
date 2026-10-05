@@ -22,7 +22,7 @@ namespace Challenges.Utils
         private static readonly MethodInfo? AddCommandListenerApi = FindApi("AddCommandListener", 3);
         private static readonly MethodInfo? RemoveCommandListenerApi = FindApi("RemoveCommandListener", 3);
 
-        public static void BindModuleListener(BasePlugin basePlugin, string listenerName, Blueprint module, bool register)
+        public static void BindModuleListener(BasePlugin basePlugin, string listenerName, ClassesBlueprint module, bool register)
         {
             Type? listenerType = typeof(Listeners).GetNestedType(listenerName);
             MethodInfo? method = module.GetType().GetMethod(listenerName);
@@ -36,7 +36,7 @@ namespace Challenges.Utils
             _ = api.MakeGenericMethod(listenerType).Invoke(basePlugin, [handler]);
         }
 
-        public static void BindModuleEventHandler(BasePlugin basePlugin, string eventName, Blueprint module, bool register)
+        public static void BindModuleEventHandler(BasePlugin basePlugin, string eventName, ClassesBlueprint module, bool register)
         {
             Type? eventType = typeof(BasePlugin).Assembly.GetType($"CounterStrikeSharp.API.Core.{eventName}")
                 ?? typeof(GameEvent).Assembly.GetType($"CounterStrikeSharp.API.Modules.Events.{eventName}");
@@ -52,10 +52,10 @@ namespace Challenges.Utils
             _ = api.MakeGenericMethod(eventType).Invoke(basePlugin, [handler, HookMode.Pre]);
         }
 
-        public static void BindUserMessageHook(BasePlugin basePlugin, int messageId, Blueprint module, HookMode hookMode, bool register) =>
+        public static void BindUserMessageHook(BasePlugin basePlugin, int messageId, ClassesBlueprint module, HookMode hookMode, bool register) =>
             BindUserMessage(basePlugin, messageId, $"HookUserMessage{messageId}", module, hookMode, register);
 
-        public static void BindNamedUserMessageHook(BasePlugin basePlugin, string messageName, Blueprint module, HookMode hookMode, bool register)
+        public static void BindNamedUserMessageHook(BasePlugin basePlugin, string messageName, ClassesBlueprint module, HookMode hookMode, bool register)
         {
             int messageId;
             try
@@ -82,7 +82,7 @@ namespace Challenges.Utils
                 register);
         }
 
-        public static void BindCommand(BasePlugin basePlugin, string command, string? description, Blueprint module, bool register)
+        public static void BindCommand(BasePlugin basePlugin, string command, string? description, ClassesBlueprint module, bool register)
         {
             MethodInfo? method = RequireMethod(module, $"Command{ToMethodSuffix(command)}", register, "command");
             MethodInfo? api = register ? AddCommandApi : RemoveCommandApi;
@@ -102,7 +102,7 @@ namespace Challenges.Utils
             _ = api.Invoke(basePlugin, args);
         }
 
-        public static void BindCommandListener(BasePlugin basePlugin, string command, Blueprint module, HookMode hookMode, bool register)
+        public static void BindCommandListener(BasePlugin basePlugin, string command, ClassesBlueprint module, HookMode hookMode, bool register)
         {
             MethodInfo? method = RequireMethod(module, $"CommandListener{ToMethodSuffix(command)}", register, "command listener");
             MethodInfo? api = register ? AddCommandListenerApi : RemoveCommandListenerApi;
@@ -123,7 +123,7 @@ namespace Challenges.Utils
             BasePlugin basePlugin,
             int messageId,
             string methodName,
-            Blueprint module,
+            ClassesBlueprint module,
             HookMode hookMode,
             bool register)
         {
@@ -142,7 +142,7 @@ namespace Challenges.Utils
             _ = api.Invoke(basePlugin, [messageId, handler, hookMode]);
         }
 
-        private static MethodInfo? RequireMethod(Blueprint module, string methodName, bool register, string label)
+        private static MethodInfo? RequireMethod(ClassesBlueprint module, string methodName, bool register, string label)
         {
             MethodInfo? method = module.GetType().GetMethod(methodName);
             if (method == null && register)

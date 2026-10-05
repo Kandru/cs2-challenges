@@ -23,7 +23,7 @@ namespace Challenges
         private readonly PlayerLanguageManager _playerLanguageManager = new();
         private readonly Dictionary<GlobalStates, object> _globalStates = new()
         {
-            { GlobalStates.ClassInstances, new Dictionary<string, Blueprint>() },
+            { GlobalStates.ClassInstances, new Dictionary<string, ClassesBlueprint>() },
             { GlobalStates.GlobalConfig, new PluginConfig() },
             { GlobalStates.PlayerStates, new Dictionary<CCSPlayerController, PlayerState>() },
             { GlobalStates.Challenges, new Dictionary<string, ChallengeDefinition>(StringComparer.OrdinalIgnoreCase) },
@@ -34,8 +34,8 @@ namespace Challenges
 
         public required PluginConfig Config { get; set; }
 
-        private Dictionary<string, Blueprint> ClassInstances =>
-            (Dictionary<string, Blueprint>)_globalStates[GlobalStates.ClassInstances];
+        private Dictionary<string, ClassesBlueprint> ClassInstances =>
+            (Dictionary<string, ClassesBlueprint>)_globalStates[GlobalStates.ClassInstances];
 
         public override void Load(bool hotReload)
         {
@@ -120,7 +120,7 @@ namespace Challenges
         private void DestroyClasses()
         {
             BindModuleHandlers(register: false);
-            foreach (Blueprint entry in ClassInstances.Values)
+            foreach (ClassesBlueprint entry in ClassInstances.Values)
             {
                 entry.Destroy();
             }
@@ -130,7 +130,7 @@ namespace Challenges
 
         private void BindModuleHandlers(bool register)
         {
-            foreach (Blueprint entry in ClassInstances.Values)
+            foreach (ClassesBlueprint entry in ClassInstances.Values)
             {
                 foreach (string listenerName in entry.Listeners)
                 {

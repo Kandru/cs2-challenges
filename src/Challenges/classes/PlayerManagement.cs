@@ -14,7 +14,7 @@ using System.Text.Json;
 
 namespace Challenges.Classes
 {
-    public class PlayerManagement : Blueprint
+    public class PlayerManagement : ClassesBlueprint
     {
         private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
 
@@ -147,11 +147,22 @@ namespace Challenges.Classes
                 return;
             }
 
-            var ranking = Players.GetHumans()
-                .Select(p => (Player: p, Solved: GetPlayerState(p).Statistics.AmountChallengesSolved))
-                .OrderByDescending(x => x.Solved)
-                .Take(5)
-                .ToList();
+            RunningSchedule? schedule = GetClass<Schedules>().Current;
+            List<(string Name, int Current, int Total)> ranking = [];
+            foreach (CCSPlayerController human in Players.GetHumans())
+            {
+                PlayerState s = GetPlayerState(human);
+                int current = schedule != null
+                    ? ChallengeProgress.CountSolvedInSchedule(s, schedule)
+                    : 0;
+                ranking.Add((human.PlayerName, current, s.Statistics.AmountChallengesSolved));
+            }
+
+            ranking.Sort(static (a, b) =>
+            {
+                int byTotal = b.Total.CompareTo(a.Total);
+                return byTotal != 0 ? byTotal : b.Current.CompareTo(a.Current);
+            });
 
             if (ranking.Count == 0)
             {
@@ -160,11 +171,11 @@ namespace Challenges.Classes
             }
 
             player!.PrintToChat(Localizer["command.topc"]);
-            int i = 1;
-            foreach (var entry in ranking)
+            int limit = Math.Min(5, ranking.Count);
+            for (int i = 0; i < limit; i++)
             {
-                player.PrintToChat($"{i}. {entry.Player.PlayerName}: {entry.Solved}");
-                i++;
+                (string name, int current, int total) = ranking[i];
+                player.PrintToChat($"{i + 1}. {name}: {current} / {total}");
             }
         }
 

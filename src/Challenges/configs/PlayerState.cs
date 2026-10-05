@@ -18,6 +18,7 @@ namespace Challenges.Configs
         [JsonIgnore] public int MenuPage;
         [JsonIgnore] public int ScoreboardPage;
         [JsonIgnore] public string MenuFilter = "progress";
+        [JsonIgnore] public ScoreboardSort ScoreboardSort = ScoreboardSort.Current;
         [JsonIgnore] public bool TrackerFreezeVisible;
         [JsonIgnore] public DateTime? TrackerProgressUntil;
         [JsonIgnore] public HashSet<string> TrackerProgressIds = new(StringComparer.Ordinal);

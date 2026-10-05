@@ -32,6 +32,21 @@ namespace Challenges.Utils
             return count;
         }
 
+        /// <summary>Visible tasks in blueprint order. Allocation is intentional for HUD painting.</summary>
+        public static List<ChallengeTask> VisibleTasks(ChallengeDefinition challenge)
+        {
+            List<ChallengeTask> list = [];
+            foreach (ChallengeTask task in challenge.Tasks)
+            {
+                if (task.Visible)
+                {
+                    list.Add(task);
+                }
+            }
+
+            return list;
+        }
+
         /// <summary>Solved when it has at least one visible task and every visible task is complete.</summary>
         public static bool IsChallengeSolved(PlayerState state, string scheduleKey, ChallengeDefinition challenge)
         {
@@ -87,7 +102,10 @@ namespace Challenges.Utils
             return count;
         }
 
-        /// <summary>First incomplete visible task, or the last visible one when everything is done.</summary>
+        /// <summary>
+        /// First incomplete visible task whose <c>requires</c> are already complete, or the last visible
+        /// task when every visible task is done.
+        /// </summary>
         public static ChallengeTask? GetCurrentTask(PlayerState state, string scheduleKey, ChallengeDefinition challenge)
         {
             ChallengeTask? last = null;
@@ -99,13 +117,44 @@ namespace Challenges.Utils
                 }
 
                 last = task;
-                if (!IsTaskComplete(state, scheduleKey, challenge.Id, task))
+                if (!IsTaskComplete(state, scheduleKey, challenge.Id, task)
+                    && AreRequirementsMet(state, scheduleKey, challenge, task))
                 {
                     return task;
                 }
             }
 
             return last;
+        }
+
+        public static bool AreRequirementsMet(
+            PlayerState state,
+            string scheduleKey,
+            ChallengeDefinition challenge,
+            ChallengeTask task)
+        {
+            foreach (string requiredId in task.Requires)
+            {
+                if (!challenge.TaskById.TryGetValue(requiredId, out ChallengeTask? required)
+                    || !IsTaskComplete(state, scheduleKey, challenge.Id, required))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>Clamped progress count for a task (0 when <paramref name="scheduleKey"/> is null).</summary>
+        public static int GetTaskCount(PlayerState state, string? scheduleKey, string challengeId, ChallengeTask task)
+        {
+            int amount = Math.Max(1, task.Amount);
+            if (scheduleKey is null)
+            {
+                return 0;
+            }
+
+            return Math.Min(amount, GetTaskAmount(state, scheduleKey, challengeId, task.Id));
         }
     }
 }

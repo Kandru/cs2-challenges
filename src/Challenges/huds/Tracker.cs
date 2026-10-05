@@ -10,16 +10,29 @@ namespace Challenges.Huds
     {
         public const string Panel = "Tracker";
         public const int MaxRows = 5;
+        public const int TaskSlots = ChallengeCardPaint.TaskSlots;
+        public const int CompleterSlots = ChallengeCardPaint.CompleterSlots;
 
         private const string VarTitle = "tr_title";
         private const string VarCount = "tr_count";
+        private const string VarTasksHead = "tr_tasks_h";
+        private const string VarByHead = "tr_by_h";
 
         public static string RowId(int index) => $"ch-trow-{index}";
         public static string FillId(int index) => $"ch-tfill-{index}";
+        public static string TaskId(int row, int task) => $"ch-ttask-{row}-{task}";
+        public static string CompleterId(int row, int slot) => $"ch-tby-{row}-{slot}";
         private static string VarRowTitle(int index) => $"tr_t{index}";
         private static string VarRowValue(int index) => $"tr_v{index}";
 
         public static int ConfiguredRows => Math.Clamp(Context.Config.Gui.TrackerRows, 3, MaxRows);
+
+        private static ChallengeCardPaint.Slots CardSlots(int row) => new(
+            Panel,
+            t => TaskId(row, t),
+            t => $"tr_{row}_t{t}",
+            b => CompleterId(row, b),
+            b => $"tr_{row}_by{b}");
 
         public static void ShowFreeze(CCSPlayerController player)
         {
@@ -105,12 +118,11 @@ namespace Challenges.Huds
         {
             CustomHud.SetText(player, Panel, VarTitle, string.Empty);
             CustomHud.SetText(player, Panel, VarCount, string.Empty);
+            CustomHud.SetText(player, Panel, VarTasksHead, string.Empty);
+            CustomHud.SetText(player, Panel, VarByHead, string.Empty);
             for (int i = 0; i < MaxRows; i++)
             {
-                CustomHud.SetText(player, Panel, VarRowTitle(i), string.Empty);
-                CustomHud.SetText(player, Panel, VarRowValue(i), string.Empty);
-                CustomHud.SetStepPercent(player, FillId(i), 0);
-                CustomHud.SetHasClass(player, RowId(i), "is-off", true);
+                ClearRow(player, i);
             }
         }
 
@@ -134,18 +146,34 @@ namespace Challenges.Huds
             }
 
             bool progressMode = state.TrackerProgressUntil is { } until && DateTime.UtcNow < until;
-            List<(ChallengeDefinition Challenge, int Percent)> rows = progressMode
-                ? ProgressRows(state, schedule)
-                : FreezeRows(state, schedule);
+            int limit = progressMode ? MaxRows : ConfiguredRows;
+            List<(ChallengeDefinition Challenge, int Percent)> ranked = progressMode
+                ? RankedRows(state, schedule, c => state.TrackerProgressIds.Contains(c.Id), limit)
+                : RankedRows(state, schedule, c => !ChallengeProgress.IsChallengeSolved(state, schedule.Key, c), limit);
 
             string heading = Context.Text(player, "hud.tracker.title");
             string count = $"{ChallengeProgress.CountSolvedInSchedule(state, schedule)} / {schedule.Challenges.Count}";
-            string[] titles = new string[rows.Count];
-            StringBuilder fingerprint = new StringBuilder().Append(heading).Append('|').Append(count);
-            for (int i = 0; i < rows.Count; i++)
+            string tasksHead = Context.Text(player, "hud.menu.tasks");
+            string byHead = Context.Text(player, "hud.menu.solved_by");
+            StringBuilder fingerprint = new StringBuilder(heading.Length + count.Length + ranked.Count * 96)
+                .Append(heading).Append('|').Append(count);
+
+            foreach ((ChallengeDefinition challenge, int percent) in ranked)
             {
-                titles[i] = RowTitle(player, state, schedule, rows[i].Challenge);
-                fingerprint.Append('|').Append(titles[i]).Append(':').Append(rows[i].Percent);
+                string title = Titles.For(player, challenge.Title);
+                fingerprint.Append('|').Append(title).Append(':').Append(percent);
+                foreach (ChallengeTask task in ChallengeProgress.VisibleTasks(challenge))
+                {
+                    bool done = ChallengeProgress.IsTaskComplete(state, schedule.Key, challenge.Id, task);
+                    int amount = Math.Max(1, task.Amount);
+                    int taskCount = ChallengeProgress.GetTaskCount(state, schedule.Key, challenge.Id, task);
+                    fingerprint.Append('>').Append(done ? '1' : '0').Append(taskCount).Append('/').Append(amount);
+                }
+
+                foreach (string name in ChallengeCardPaint.CollectCompleters(schedule, challenge))
+                {
+                    fingerprint.Append('@').Append(name);
+                }
             }
 
             string key = fingerprint.ToString();
@@ -158,40 +186,56 @@ namespace Challenges.Huds
             CustomHud.ShowPanel(player, Panel);
             CustomHud.SetText(player, Panel, VarTitle, heading);
             CustomHud.SetText(player, Panel, VarCount, count);
+            CustomHud.SetText(player, Panel, VarTasksHead, tasksHead);
+            CustomHud.SetText(player, Panel, VarByHead, byHead);
 
             for (int i = 0; i < MaxRows; i++)
             {
-                if (i < rows.Count)
+                if (i < ranked.Count)
                 {
-                    int percent = rows[i].Percent;
-                    CustomHud.SetText(player, Panel, VarRowTitle(i), titles[i]);
+                    (ChallengeDefinition challenge, int percent) = ranked[i];
+                    CustomHud.SetText(player, Panel, VarRowTitle(i), Titles.For(player, challenge.Title));
                     CustomHud.SetText(player, Panel, VarRowValue(i), $"{percent}%");
                     CustomHud.SetStepPercent(player, FillId(i), percent);
                     CustomHud.SetHasClass(player, RowId(i), "is-off", false);
+                    ChallengeCardPaint.Slots slots = CardSlots(i);
+                    ChallengeCardPaint.PaintTasks(player, state, schedule.Key, challenge, slots);
+                    ChallengeCardPaint.PaintCompleters(player, schedule, challenge, slots);
                 }
                 else
                 {
-                    CustomHud.SetText(player, Panel, VarRowTitle(i), string.Empty);
-                    CustomHud.SetText(player, Panel, VarRowValue(i), string.Empty);
-                    CustomHud.SetStepPercent(player, FillId(i), 0);
-                    CustomHud.SetHasClass(player, RowId(i), "is-off", true);
+                    ClearRow(player, i);
                 }
             }
         }
 
-        private static List<(ChallengeDefinition, int)> FreezeRows(PlayerState state, RunningSchedule schedule)
+        private static void ClearRow(CCSPlayerController player, int index)
         {
-            int limit = ConfiguredRows;
+            CustomHud.SetText(player, Panel, VarRowTitle(index), string.Empty);
+            CustomHud.SetText(player, Panel, VarRowValue(index), string.Empty);
+            CustomHud.SetStepPercent(player, FillId(index), 0);
+            CustomHud.SetHasClass(player, RowId(index), "is-off", true);
+            ChallengeCardPaint.Slots slots = CardSlots(index);
+            ChallengeCardPaint.ClearTasks(player, slots);
+            ChallengeCardPaint.ClearCompleters(player, slots);
+        }
+
+        /// <summary>Unsolved/matching challenges, highest completion percent first, truncated to <paramref name="limit"/>.</summary>
+        private static List<(ChallengeDefinition Challenge, int Percent)> RankedRows(
+            PlayerState state,
+            RunningSchedule schedule,
+            Func<ChallengeDefinition, bool> include,
+            int limit)
+        {
             List<(ChallengeDefinition Challenge, int Percent)> rows = [];
             foreach (ChallengeDefinition challenge in schedule.Challenges)
             {
-                if (ChallengeProgress.IsChallengeSolved(state, schedule.Key, challenge))
+                if (!include(challenge))
                 {
                     continue;
                 }
 
-                int percent = ChallengeProgress.GetChallengePercent(state, schedule.Key, challenge);
-                rows.Add((challenge, percent));
+                rows.Add((challenge, ChallengeProgress.GetChallengePercent(state, schedule.Key, challenge)));
             }
 
             rows.Sort(static (a, b) => b.Percent.CompareTo(a.Percent));
@@ -201,44 +245,6 @@ namespace Challenges.Huds
             }
 
             return rows;
-        }
-
-        private static List<(ChallengeDefinition, int)> ProgressRows(PlayerState state, RunningSchedule schedule)
-        {
-            List<(ChallengeDefinition Challenge, int Percent)> rows = [];
-            foreach (ChallengeDefinition challenge in schedule.Challenges)
-            {
-                if (!state.TrackerProgressIds.Contains(challenge.Id))
-                {
-                    continue;
-                }
-
-                rows.Add((challenge, ChallengeProgress.GetChallengePercent(state, schedule.Key, challenge)));
-            }
-
-            rows.Sort(static (a, b) => b.Percent.CompareTo(a.Percent));
-            if (rows.Count > MaxRows)
-            {
-                rows.RemoveRange(MaxRows, rows.Count - MaxRows);
-            }
-
-            return rows;
-        }
-
-        /// <summary>Challenge title with {count}/{total} filled from the task the player is working on.</summary>
-        public static string RowTitle(CCSPlayerController player, PlayerState state, RunningSchedule schedule, ChallengeDefinition challenge)
-        {
-            string title = Titles.Resolve(challenge.Title, player);
-            ChallengeTask? current = ChallengeProgress.GetCurrentTask(state, schedule.Key, challenge);
-            if (current == null)
-            {
-                return Titles.Expand(title, 0, 0);
-            }
-
-            int count = Math.Min(
-                Math.Max(1, current.Amount),
-                ChallengeProgress.GetTaskAmount(state, schedule.Key, challenge.Id, current.Id));
-            return Titles.Expand(title, count, Math.Max(1, current.Amount));
         }
     }
 }

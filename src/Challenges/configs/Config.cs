@@ -8,8 +8,8 @@ namespace Challenges.Configs
         [JsonPropertyName("show_on_round_start")] public bool ShowOnRoundStart { get; set; } = true;
         [JsonPropertyName("show_on_progress")] public bool ShowOnProgress { get; set; } = true;
         [JsonPropertyName("progress_duration")] public float ProgressDuration { get; set; } = 5f;
-        [JsonPropertyName("tracker_rows")] public int TrackerRows { get; set; } = 4;
-        [JsonPropertyName("menu_page_size")] public int MenuPageSize { get; set; } = 8;
+        [JsonPropertyName("tracker_rows")] public int TrackerRows { get; set; } = 3;
+        [JsonPropertyName("menu_page_size")] public int MenuPageSize { get; set; } = 4;
     }
 
     public class PluginConfigNotifications
