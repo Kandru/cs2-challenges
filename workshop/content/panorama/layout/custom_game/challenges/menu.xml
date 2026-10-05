@@ -276,11 +276,11 @@
 							<Panel class="MenuListSpacer" hittest="false" />
 							<Panel class="MenuFooter" hittest="true">
 								<Button id="ph-prev" class="MenuFooterBtn">
-									<Label class="ph-nav-label stratum-bold-tf" hittest="false" text="&lt;" />
+									<Label class="ph-nav-label stratum-bold-tf" hittest="false" text="{s:menu_prev}" />
 								</Button>
 								<Label class="MenuPage stratum-bold-tf" hittest="false" text="{s:menu_page}" />
 								<Button id="ph-next" class="MenuFooterBtn">
-									<Label class="ph-nav-label stratum-bold-tf" hittest="false" text="&gt;" />
+									<Label class="ph-nav-label stratum-bold-tf" hittest="false" text="{s:menu_next}" />
 								</Button>
 							</Panel>
 						</Panel>
@@ -386,11 +386,11 @@
 							</Panel>
 							<Panel class="MenuFooter" hittest="true">
 								<Button id="ch-score-prev" class="MenuFooterBtn">
-									<Label class="ph-nav-label stratum-bold-tf" hittest="false" text="&lt;" />
+									<Label class="ph-nav-label stratum-bold-tf" hittest="false" text="{s:score_prev}" />
 								</Button>
 								<Label class="MenuPage stratum-bold-tf" hittest="false" text="{s:score_page}" />
 								<Button id="ch-score-next" class="MenuFooterBtn">
-									<Label class="ph-nav-label stratum-bold-tf" hittest="false" text="&gt;" />
+									<Label class="ph-nav-label stratum-bold-tf" hittest="false" text="{s:score_next}" />
 								</Button>
 							</Panel>
 						</Panel>

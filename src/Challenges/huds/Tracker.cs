@@ -152,7 +152,10 @@ namespace Challenges.Huds
                 : RankedRows(state, schedule, c => !ChallengeProgress.IsChallengeSolved(state, schedule.Key, c), limit);
 
             string heading = Context.Text(player, "hud.tracker.title");
-            string count = $"{ChallengeProgress.CountSolvedInSchedule(state, schedule)} / {schedule.Challenges.Count}";
+            string count = Context.FormatCount(
+                player,
+                ChallengeProgress.CountSolvedInSchedule(state, schedule),
+                schedule.Challenges.Count);
             string tasksHead = Context.Text(player, "hud.menu.tasks");
             string byHead = Context.Text(player, "hud.menu.solved_by");
             StringBuilder fingerprint = new StringBuilder(heading.Length + count.Length + ranked.Count * 96)
@@ -195,7 +198,7 @@ namespace Challenges.Huds
                 {
                     (ChallengeDefinition challenge, int percent) = ranked[i];
                     CustomHud.SetText(player, Panel, VarRowTitle(i), Titles.For(player, challenge.Title));
-                    CustomHud.SetText(player, Panel, VarRowValue(i), $"{percent}%");
+                    CustomHud.SetText(player, Panel, VarRowValue(i), Context.FormatPercent(player, percent));
                     CustomHud.SetStepPercent(player, FillId(i), percent);
                     CustomHud.SetHasClass(player, RowId(i), "is-off", false);
                     ChallengeCardPaint.Slots slots = CardSlots(i);

@@ -1,3 +1,4 @@
+using System.Globalization;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Translations;
 
@@ -12,15 +13,18 @@ namespace Challenges.Utils
                 return string.Empty;
             }
 
-            string lang = player.IsBot
-                ? string.Empty
-                : PlayerLanguageExtensions.GetLanguage(player).TwoLetterISOLanguageName;
-
-            if (!string.IsNullOrEmpty(lang)
-                && titles.TryGetValue(lang, out string? localized)
-                && !string.IsNullOrEmpty(localized))
+            if (!player.IsBot)
             {
-                return localized;
+                CultureInfo culture = player.GetLanguage();
+                if (Pick(titles, culture.Name) is { } regional)
+                {
+                    return regional;
+                }
+
+                if (Pick(titles, culture.TwoLetterISOLanguageName) is { } localized)
+                {
+                    return localized;
+                }
             }
 
             return titles.Values.First();
@@ -32,5 +36,12 @@ namespace Challenges.Utils
         /// <summary>Resolve + expand <c>{count}</c>/<c>{total}</c> for the player's language.</summary>
         public static string For(CCSPlayerController player, Dictionary<string, string> titles, int count = 0, int total = 0) =>
             Expand(Resolve(titles, player), count, total);
+
+        private static string? Pick(Dictionary<string, string> titles, string? key) =>
+            !string.IsNullOrEmpty(key)
+            && titles.TryGetValue(key, out string? value)
+            && !string.IsNullOrEmpty(value)
+                ? value
+                : null;
     }
 }

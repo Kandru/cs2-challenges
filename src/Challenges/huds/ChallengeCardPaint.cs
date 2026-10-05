@@ -48,9 +48,7 @@ namespace Challenges.Huds
             {
                 if (t == TaskSlots - 1 && overflow > 0)
                 {
-                    string label = Context.Text(player, "hud.menu.task.overflow")
-                        .Replace("{count}", overflow.ToString());
-                    CustomHud.SetText(player, slots.Panel, slots.TaskVar(t), label);
+                    CustomHud.SetText(player, slots.Panel, slots.TaskVar(t), Context.FormatOverflow(player, overflow));
                     CustomHud.SetHasClass(player, slots.TaskId(t), "is-off", false);
                     CustomHud.SetHasClass(player, slots.TaskId(t), "is-done", false);
                     continue;
@@ -100,9 +98,7 @@ namespace Challenges.Huds
             {
                 if (b == CompleterSlots - 1 && overflow > 0)
                 {
-                    string label = Context.Text(player, "hud.menu.task.overflow")
-                        .Replace("{count}", overflow.ToString());
-                    CustomHud.SetText(player, slots.Panel, slots.CompleterVar(b), label);
+                    CustomHud.SetText(player, slots.Panel, slots.CompleterVar(b), Context.FormatOverflow(player, overflow));
                     CustomHud.SetHasClass(player, slots.CompleterId(b), "is-off", false);
                     CustomHud.SetHasClass(player, slots.CompleterId(b), "is-empty", true);
                     continue;

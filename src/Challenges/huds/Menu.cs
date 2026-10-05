@@ -1,4 +1,3 @@
-using System.Globalization;
 using CounterStrikeSharp.API.Core;
 using Challenges.Classes;
 using Challenges.Configs;
@@ -29,10 +28,30 @@ namespace Challenges.Huds
         private static readonly string[] Filters = [FilterAll, FilterProgress, FilterEnding, FilterStarting];
         private static readonly string[] ChromeVars =
         [
-            "menu_title", "menu_page", "menu_f_all", "menu_f_progress", "menu_f_ending", "menu_f_starting",
+            "menu_title", "menu_page", "menu_prev", "menu_next",
+            "menu_f_all", "menu_f_progress", "menu_f_ending", "menu_f_starting",
             "menu_empty", "menu_tasks_h", "menu_by_h",
-            "score_title", "score_page", "score_h_rank", "score_h_name", "score_h_cur", "score_h_tot",
+            "score_title", "score_page", "score_prev", "score_next",
+            "score_h_rank", "score_h_name", "score_h_cur", "score_h_tot",
             "spin_name", "spin_cur", "spin_tot", "spin_rank", "spin_l_cur", "spin_l_tot",
+        ];
+
+        private static readonly (string Var, string Key)[] ChromeLabels =
+        [
+            ("menu_title", "hud.menu.title"),
+            ("menu_f_all", "hud.menu.filter.all"),
+            ("menu_f_progress", "hud.menu.filter.progress"),
+            ("menu_f_ending", "hud.menu.filter.ending"),
+            ("menu_f_starting", "hud.menu.filter.starting"),
+            ("menu_tasks_h", "hud.menu.tasks"),
+            ("menu_by_h", "hud.menu.solved_by"),
+            ("score_title", "hud.menu.scoreboard"),
+            ("score_h_rank", "hud.menu.scoreboard.col.rank"),
+            ("score_h_name", "hud.menu.scoreboard.col.name"),
+            ("score_h_cur", "hud.menu.scoreboard.col.solved"),
+            ("score_h_tot", "hud.menu.scoreboard.col.total"),
+            ("spin_l_cur", "hud.menu.scoreboard.you.solved"),
+            ("spin_l_tot", "hud.menu.scoreboard.you.total"),
         ];
 
         private sealed record Entry(ChallengeDefinition Challenge, int Percent, string Meta);
@@ -199,20 +218,18 @@ namespace Challenges.Huds
 
         private static void PaintChrome(CCSPlayerController player, PlayerState state)
         {
-            CustomHud.SetText(player, Panel, "menu_title", Context.Text(player, "hud.menu.title"));
-            CustomHud.SetText(player, Panel, "menu_f_all", Context.Text(player, "hud.menu.filter.all"));
-            CustomHud.SetText(player, Panel, "menu_f_progress", Context.Text(player, "hud.menu.filter.progress"));
-            CustomHud.SetText(player, Panel, "menu_f_ending", Context.Text(player, "hud.menu.filter.ending"));
-            CustomHud.SetText(player, Panel, "menu_f_starting", Context.Text(player, "hud.menu.filter.starting"));
-            CustomHud.SetText(player, Panel, "menu_tasks_h", Context.Text(player, "hud.menu.tasks"));
-            CustomHud.SetText(player, Panel, "menu_by_h", Context.Text(player, "hud.menu.solved_by"));
-            CustomHud.SetText(player, Panel, "score_title", Context.Text(player, "hud.menu.scoreboard"));
-            CustomHud.SetText(player, Panel, "score_h_rank", Context.Text(player, "hud.menu.scoreboard.col.rank"));
-            CustomHud.SetText(player, Panel, "score_h_name", Context.Text(player, "hud.menu.scoreboard.col.name"));
-            CustomHud.SetText(player, Panel, "score_h_cur", Context.Text(player, "hud.menu.scoreboard.col.solved"));
-            CustomHud.SetText(player, Panel, "score_h_tot", Context.Text(player, "hud.menu.scoreboard.col.total"));
-            CustomHud.SetText(player, Panel, "spin_l_cur", Context.Text(player, "hud.menu.scoreboard.you.solved"));
-            CustomHud.SetText(player, Panel, "spin_l_tot", Context.Text(player, "hud.menu.scoreboard.you.total"));
+            foreach ((string varName, string key) in ChromeLabels)
+            {
+                CustomHud.SetText(player, Panel, varName, Context.Text(player, key));
+            }
+
+            string prev = Context.Text(player, "hud.menu.prev");
+            string next = Context.Text(player, "hud.menu.next");
+            CustomHud.SetText(player, Panel, "menu_prev", prev);
+            CustomHud.SetText(player, Panel, "menu_next", next);
+            CustomHud.SetText(player, Panel, "score_prev", prev);
+            CustomHud.SetText(player, Panel, "score_next", next);
+
             bool sortTotal = state.ScoreboardSort == ScoreboardSort.Total;
             CustomHud.SetHasClass(player, ScoreHeadCurId, "sort-active", !sortTotal);
             CustomHud.SetHasClass(player, ScoreHeadTotId, "sort-active", sortTotal);
@@ -224,11 +241,11 @@ namespace Challenges.Huds
 
         private static void PaintList(CCSPlayerController player, PlayerState state, RunningSchedule? schedule)
         {
-            List<Entry> entries = BuildEntries(state, schedule);
+            List<Entry> entries = BuildEntries(player, state, schedule);
             int pageSize = ListPageSize;
             int pages = Math.Max(1, (entries.Count + pageSize - 1) / pageSize);
             state.MenuPage = Math.Clamp(state.MenuPage, 0, pages - 1);
-            CustomHud.SetText(player, Panel, "menu_page", $"{state.MenuPage + 1} / {pages}");
+            CustomHud.SetText(player, Panel, "menu_page", Context.FormatPage(player, state.MenuPage + 1, pages));
             CustomHud.SetText(
                 player,
                 Panel,
@@ -286,7 +303,7 @@ namespace Challenges.Huds
             int row) =>
             ChallengeCardPaint.PaintCompleters(player, schedule, challenge, CardSlots(row));
 
-        private static List<Entry> BuildEntries(PlayerState state, RunningSchedule? schedule)
+        private static List<Entry> BuildEntries(CCSPlayerController player, PlayerState state, RunningSchedule? schedule)
         {
             string activeKey = schedule?.Key ?? string.Empty;
             int Percent(ChallengeDefinition c) =>
@@ -296,7 +313,7 @@ namespace Challenges.Huds
             Entry Make(ChallengeDefinition c)
             {
                 int percent = Percent(c);
-                return new Entry(c, percent, $"{percent}%");
+                return new Entry(c, percent, Context.FormatPercent(player, percent));
             }
 
             switch (state.MenuFilter)
@@ -304,9 +321,9 @@ namespace Challenges.Huds
                 case FilterAll:
                     return OrderByProgress(Context.ChallengeMap.Values.Select(Make));
                 case FilterEnding:
-                    return ScheduleEntries(s => ParseDate(s.EndDate), Percent);
+                    return ScheduleEntries(player, s => ParseDate(s.EndDate), Percent);
                 case FilterStarting:
-                    return ScheduleEntries(s => ParseDate(s.StartDate), Percent);
+                    return ScheduleEntries(player, s => ParseDate(s.StartDate), Percent);
                 default:
                     if (schedule == null)
                     {
@@ -338,6 +355,7 @@ namespace Challenges.Huds
         }
 
         private static List<Entry> ScheduleEntries(
+            CCSPlayerController player,
             Func<ChallengeSchedule, DateTime?> dateOf,
             Func<ChallengeDefinition, int> percent)
         {
@@ -357,7 +375,7 @@ namespace Challenges.Huds
             HashSet<string> seen = new(StringComparer.OrdinalIgnoreCase);
             foreach ((ChallengeSchedule schedule, DateTime date) in upcoming)
             {
-                string meta = date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+                string meta = Context.FormatDate(player, date);
                 foreach (string rawId in schedule.Challenges)
                 {
                     string id = rawId.EndsWith(":*", StringComparison.Ordinal) ? rawId[..^2] : rawId;
@@ -405,16 +423,16 @@ namespace Challenges.Huds
 
             int pages = Math.Max(1, (board.Count + ScoreSlots - 1) / ScoreSlots);
             state.ScoreboardPage = Math.Clamp(state.ScoreboardPage, 0, pages - 1);
-            CustomHud.SetText(player, Panel, "score_page", $"{state.ScoreboardPage + 1} / {pages}");
+            CustomHud.SetText(player, Panel, "score_page", Context.FormatPage(player, state.ScoreboardPage + 1, pages));
 
             int selfIndex = board.FindIndex(x => x.Player == player);
             if (selfIndex >= 0)
             {
                 ScoreEntry self = board[selfIndex];
                 CustomHud.SetText(player, Panel, "spin_name", player.PlayerName);
-                CustomHud.SetText(player, Panel, "spin_cur", FormatSolved(self.Current, available));
+                CustomHud.SetText(player, Panel, "spin_cur", Context.FormatCount(player, self.Current, available));
                 CustomHud.SetText(player, Panel, "spin_tot", self.Total.ToString());
-                CustomHud.SetText(player, Panel, "spin_rank", $"#{selfIndex + 1}");
+                CustomHud.SetText(player, Panel, "spin_rank", Context.FormatRank(player, selfIndex + 1));
                 CustomHud.SetHasClass(player, PinnedRowId, "empty", false);
             }
             else
@@ -432,9 +450,9 @@ namespace Challenges.Huds
                 if (index < board.Count)
                 {
                     ScoreEntry entry = board[index];
-                    CustomHud.SetText(player, Panel, $"s{i}_rank", $"#{index + 1}");
+                    CustomHud.SetText(player, Panel, $"s{i}_rank", Context.FormatRank(player, index + 1));
                     CustomHud.SetText(player, Panel, $"s{i}_name", entry.Player.PlayerName);
-                    CustomHud.SetText(player, Panel, $"s{i}_cur", FormatSolved(entry.Current, available));
+                    CustomHud.SetText(player, Panel, $"s{i}_cur", Context.FormatCount(player, entry.Current, available));
                     CustomHud.SetText(player, Panel, $"s{i}_tot", entry.Total.ToString());
                     CustomHud.SetHasClass(player, ScoreRowId(i), "empty", false);
                     CustomHud.SetHasClass(player, ScoreRowId(i), "is-off", false);
@@ -447,8 +465,6 @@ namespace Challenges.Huds
                 }
             }
         }
-
-        private static string FormatSolved(int solved, int available) => $"{solved} / {available}";
 
         private static void ClearScoreSlot(CCSPlayerController player, int index)
         {

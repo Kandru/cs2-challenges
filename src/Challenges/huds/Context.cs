@@ -61,5 +61,37 @@ namespace Challenges.Huds
 
         public static string Text(CCSPlayerController player, string key) =>
             _localizer == null ? key : LocalizerExtensions.ForPlayer(_localizer, player, key);
+
+        public static string Text(
+            CCSPlayerController player,
+            string key,
+            params (string Placeholder, string Value)[] replacements)
+        {
+            string value = Text(player, key);
+            foreach ((string placeholder, string replacement) in replacements)
+            {
+                value = value.Replace(placeholder, replacement);
+            }
+
+            return value;
+        }
+
+        public static string FormatPage(CCSPlayerController player, int page, int pages) =>
+            Text(player, "hud.format.page", ("{page}", page.ToString()), ("{pages}", pages.ToString()));
+
+        public static string FormatPercent(CCSPlayerController player, int percent) =>
+            Text(player, "hud.format.percent", ("{percent}", percent.ToString()));
+
+        public static string FormatCount(CCSPlayerController player, int solved, int total) =>
+            Text(player, "hud.format.count", ("{solved}", solved.ToString()), ("{total}", total.ToString()));
+
+        public static string FormatRank(CCSPlayerController player, int rank) =>
+            Text(player, "hud.format.rank", ("{rank}", rank.ToString()));
+
+        public static string FormatDate(CCSPlayerController player, DateTime date) =>
+            Text(player, "hud.menu.date", ("{date}", date.ToString("d", player.GetLanguage())));
+
+        public static string FormatOverflow(CCSPlayerController player, int count) =>
+            Text(player, "hud.menu.task.overflow", ("{count}", count.ToString()));
     }
 }

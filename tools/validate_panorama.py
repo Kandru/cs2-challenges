@@ -93,6 +93,8 @@ MENU_VARS = (
     {
         "menu_title",
         "menu_page",
+        "menu_prev",
+        "menu_next",
         "menu_f_all",
         "menu_f_progress",
         "menu_f_ending",
@@ -102,6 +104,8 @@ MENU_VARS = (
         "menu_by_h",
         "score_title",
         "score_page",
+        "score_prev",
+        "score_next",
         "score_h_rank",
         "score_h_name",
         "score_h_cur",

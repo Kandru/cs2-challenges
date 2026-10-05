@@ -44,5 +44,12 @@
     "hud.menu.solved_by": "Solved by",
     "hud.menu.solved_by.empty": "Nobody yet",
     "hud.menu.task.overflow": "+{count} more",
-    "hud.menu.empty": "Nothing to show"
+    "hud.menu.empty": "Nothing to show",
+    "hud.menu.prev": "<",
+    "hud.menu.next": ">",
+    "hud.menu.date": "{date}",
+    "hud.format.page": "{page} / {pages}",
+    "hud.format.percent": "{percent}%",
+    "hud.format.count": "{solved} / {total}",
+    "hud.format.rank": "#{rank}"
 }
