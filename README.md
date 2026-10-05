@@ -1,3 +1,6 @@
+> [!CAUTION]
+> THIS IS NOT YET READY TO USE. DO NOT TRY TO INSTALL (YET)
+
 # CounterstrikeSharp - Challenges
 
 [![Discord Support](https://img.shields.io/discord/289448144335536138?label=Discord%20Support&color=darkgreen)](https://discord.gg/NtHCk5PWEt)
