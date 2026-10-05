@@ -1,0 +1,126 @@
+/* Web mirror of workshop/content/panorama/styles/custom_game/challenges/hud.vcss.
+   Browser approximation only - the game is authoritative. Keep class names in sync. */
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  min-height: 100vh;
+  background: #1a2330;
+  font-family: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+  color: #e8eef4;
+}
+
+.stage { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+
+.ph-card { position: absolute; border-radius: 3px; display: flex; }
+.ph-card.ph-off { display: none; }
+
+.ph-bg {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, #12171ee8, #0b0f14f2);
+  border: 1px solid #ffffff14; border-radius: 3px;
+  box-shadow: 0 8px 30px #000000c0;
+}
+.ph-bar { position: relative; width: 3px; background: #f0a531; flex-shrink: 0; z-index: 5; }
+.ph-fs { inset: 68px; }
+
+.ph-titlebar {
+  display: flex; align-items: center; height: 44px; padding: 0 18px;
+  background: #ffffff14; border-bottom: 1px solid #d9d9d90a;
+}
+.ph-title { flex: 1; font-size: 15px; letter-spacing: 1.6px; text-transform: uppercase; font-weight: 700; color: #fff; }
+.ph-money { font-size: 14px; letter-spacing: 1px; font-weight: 700; color: #9ccf4f; }
+
+.ph-icon-btn {
+  position: relative; width: 28px; height: 28px; border: 0; border-radius: 3px;
+  background: #ffffff0d; cursor: pointer;
+}
+.ph-icon-btn:hover { background: #ffffff1c; }
+.ph-close-x {
+  position: absolute; left: 8px; top: 13px; width: 12px; height: 2px;
+  background: #fff; border-radius: 1px;
+}
+.ph-close-x-a { transform: rotate(45deg); }
+.ph-close-x-b { transform: rotate(-45deg); }
+
+.ph-stat { width: 100%; flex-shrink: 0; }
+.ph-stat.is-off { display: none; }
+.ph-stat-lab {
+  display: flex; justify-content: space-between; align-items: baseline;
+  height: 14px; margin-bottom: 6px; font-size: 12px; letter-spacing: 1.4px; text-transform: uppercase;
+}
+.ph-stat-name { flex: 1; color: #9aa2ac; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ph-stat-val {
+  width: 72px; text-align: right; color: #f2f4f7; font-weight: 700; letter-spacing: 0;
+  text-transform: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ph-stat-track { height: 7px; border-radius: 4px; background: #ffffff12; overflow: hidden; }
+.ph-stat-fill {
+  height: 100%; width: 100%; border-radius: 4px;
+  background: linear-gradient(to right, #f0a531, #ffd27a);
+  clip-path: inset(0 98% 0 0);
+  transition: clip-path 0.35s;
+}
+.ph-stat-fill.p10 { clip-path: inset(0 90% 0 0); }
+.ph-stat-fill.p20 { clip-path: inset(0 80% 0 0); }
+.ph-stat-fill.p30 { clip-path: inset(0 70% 0 0); }
+.ph-stat-fill.p40 { clip-path: inset(0 60% 0 0); }
+.ph-stat-fill.p50 { clip-path: inset(0 50% 0 0); }
+.ph-stat-fill.p60 { clip-path: inset(0 40% 0 0); }
+.ph-stat-fill.p70 { clip-path: inset(0 30% 0 0); }
+.ph-stat-fill.p80 { clip-path: inset(0 20% 0 0); }
+.ph-stat-fill.p90 { clip-path: inset(0 10% 0 0); }
+.ph-stat-fill.p100 { clip-path: inset(0 0 0 0); }
+
+/* Tracker */
+.Tracker { width: 330px; right: 20px; top: 96px; z-index: 100; }
+.TrackerContent { position: relative; flex: 1; display: flex; flex-direction: column; z-index: 2; }
+.TrackerBody { padding: 12px 14px 6px 18px; }
+.TrackerRow { margin-bottom: 8px; }
+.TrackerCount { margin-left: 10px; }
+
+/* Menu */
+.MenuRoot { z-index: 300; }
+.MenuContent { position: relative; flex: 1; display: flex; flex-direction: column; z-index: 2; }
+.MenuRoot .ph-titlebar { padding-right: 12px; }
+.MenuBody { flex: 1; display: flex; padding: 12px 18px; min-height: 0; overflow: auto; }
+.MenuList { flex: 2; margin-right: 18px; }
+.MenuScore { flex: 1; }
+.MenuFilterBar { display: flex; margin-bottom: 10px; }
+.MenuFilterBtn {
+  height: 26px; padding: 0 10px; margin-right: 6px; border-radius: 3px;
+  background: #ffffff0d; border: 1px solid transparent; cursor: pointer; color: inherit;
+}
+.MenuFilterBtn:hover { background: #ffffff1c; border-color: #f0a53166; }
+.MenuFilterBtn.active { background: #f0a53122; border-color: #f0a531; }
+.MenuFilterLabel { font-size: 11.55px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; white-space: nowrap; }
+.MenuRow {
+  height: 44px; padding: 7px 12px 0; margin-bottom: 5px;
+  background: #ffffff0d; border: 1px solid transparent; border-radius: 3px;
+}
+.MenuRow.is-off { display: none; }
+.MenuRow.empty { opacity: 0.35; border-color: #ffffff14; }
+.MenuRow.empty .ph-stat-lab, .MenuRow.empty .ph-stat-track { visibility: hidden; }
+.MenuRow .ph-stat-val { width: 96px; }
+.MenuFooter { display: flex; margin-top: 6px; padding-top: 8px; border-top: 1px solid #d9d9d90a; }
+.MenuFooterBtn {
+  flex: 1; height: 28px; margin: 0 2px; background: #ffffff0d; border: 1px solid transparent;
+  border-radius: 3px; color: #e8eef4; font-size: 13px; font-weight: 700; cursor: pointer;
+}
+.MenuFooterBtn:hover { background: #ffffff1c; border-color: #f0a53166; }
+.MenuPage { flex: 1.4; line-height: 28px; font-size: 12px; font-weight: 700; color: #f0a531; text-align: center; }
+.ScoreTitle {
+  display: block; padding-top: 6px; margin-bottom: 10px; font-size: 12px; font-weight: 700;
+  letter-spacing: 1.4px; text-transform: uppercase; color: #9aa2ac;
+}
+.ScoreRow {
+  display: flex; align-items: center; height: 34px; padding: 0 10px; margin-bottom: 4px;
+  background: #ffffff0d; border: 1px solid transparent; border-radius: 3px;
+}
+.ScoreRow.empty { opacity: 0.35; border-color: #ffffff14; }
+.ScoreRow.empty span { visibility: hidden; }
+.ScoreRow.is-self { background: #f0a53122; border-color: #f0a531; }
+.ScorePinned { margin-bottom: 8px; }
+.ScoreRank { width: 40px; font-size: 13px; font-weight: 700; color: #f0a531; }
+.ScoreName { flex: 1; font-size: 14px; color: #e8eef4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ScoreVal { width: 48px; text-align: right; font-size: 14px; font-weight: 700; color: #fff; }

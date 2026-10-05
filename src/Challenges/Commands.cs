@@ -1,0 +1,48 @@
+using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Core.Attributes.Registration;
+using CounterStrikeSharp.API.Modules.Commands;
+using CounterStrikeSharp.API.Modules.Extensions;
+
+namespace Challenges
+{
+    public partial class Challenges
+    {
+        [ConsoleCommand("challenges", "Challenges admin commands: reload | enable | disable")]
+        [CommandHelper(whoCanExecute: CommandUsage.SERVER_ONLY, minArgs: 1, usage: "<reload|enable|disable>")]
+        public void CommandAdmin(CCSPlayerController? player, CommandInfo command)
+        {
+            string subCommand = command.GetArg(1);
+            switch (subCommand.ToLowerInvariant())
+            {
+                case "reload":
+                    ReloadAll();
+                    command.ReplyToCommand(Localizer["admin.reload"]);
+                    break;
+                case "disable":
+                    Config.Enabled = false;
+                    Config.Update();
+                    command.ReplyToCommand(Localizer["admin.disable"]);
+                    break;
+                case "enable":
+                    Config.Enabled = true;
+                    Config.Update();
+                    command.ReplyToCommand(Localizer["admin.enable"]);
+                    break;
+                default:
+                    command.ReplyToCommand(Localizer["admin.unknown_command"].Value
+                        .Replace("{command}", subCommand));
+                    break;
+            }
+        }
+
+        private void ReloadAll()
+        {
+            DestroyClasses();
+            Config.Reload();
+            LoadCatalog();
+            LoadChallengeFiles();
+            LoadSchedules();
+            InitializeClasses(isHotReloaded: true);
+        }
+    }
+}

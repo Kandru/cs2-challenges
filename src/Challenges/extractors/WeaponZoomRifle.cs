@@ -1,0 +1,24 @@
+using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Modules.Events;
+using Challenges.Utils;
+
+namespace Challenges.Extractors
+{
+    public sealed class WeaponZoomRifle : IExtractor
+    {
+        public string EventClassName => "EventWeaponZoomRifle";
+        public IReadOnlyList<string> ChallengeTypes { get; } = ["weapon_zoom_rifle"];
+
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        {
+            var e = (EventWeaponZoomRifle)gameEvent;
+            EventData.FillPlayer(d, e.Userid, "player");
+        }
+
+        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        {
+            var e = (EventWeaponZoomRifle)gameEvent;
+            yield return (e.Userid, "weapon_zoom_rifle");
+        }
+    }
+}

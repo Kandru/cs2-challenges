@@ -1,9 +1,17 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <RootNamespace>Challenges</RootNamespace>
+    <AssemblyName>Challenges</AssemblyName>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="ChallengesShared/**" />
+    <Compile Remove="ExampleEventListenerPlugin/**" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CounterStrikeSharp.API" Version="*">
@@ -16,7 +24,10 @@
       <Private>false</Private>
     </ProjectReference>
   </ItemGroup>
-    <ItemGroup>
-      <None Update="lang\**\*.*" CopyToOutputDirectory="PreserveNewest" />
-    </ItemGroup>
+
+  <ItemGroup>
+    <None Update="lang\**\*.*" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\builder\catalog.json" Link="catalog.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

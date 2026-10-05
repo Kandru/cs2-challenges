@@ -1,122 +1,90 @@
 name: Build Release
 
 env:
-  REPOSITORY_FOLDER: "src" # subfolder with source code
-  PLUGIN_NAME: "Challenges" # main file of the project
-  SHARED_NAME: "ChallengesShared" # main file of the project
+  PLUGIN_NAME: Challenges
+  SHARED_NAME: ChallengesShared
+  VERSION_FILE: src/Challenges/Version.cs
 
 on:
   push:
     branches:
       - main
     paths:
-      - 'src/Challenges/Version.cs' # only on change of the file with the version number string in it
+      - 'src/Challenges/Version.cs'
   workflow_dispatch:
 
-# job to create a new release
+permissions:
+  contents: write
+
 jobs:
   create-release:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Get Repository Name
-      run: echo "REPOSITORY_NAME=`basename ${{ github.repository }}`" >> $GITHUB_ENV
-  
-    - name: Checkout Repository
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: 0  # Fetch all history for all branches and tags
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    - name: Get Current Project Version Number From Version.cs
-      id: get_version
-      run: |
-        version=$(grep -oP '(?<=ModuleVersion => ")[^"]*' ${{ env.REPOSITORY_FOLDER }}/${{ env.PLUGIN_NAME }}/Version.cs)
-        echo "version=$version" >> $GITHUB_ENV
+      - name: Read Version From Version.cs
+        run: |
+          version=$(grep -oP '(?<=ModuleVersion => ")[^"]*' "$VERSION_FILE")
+          if [ -z "$version" ]; then
+            echo "::error::Could not read ModuleVersion from $VERSION_FILE"
+            exit 1
+          fi
+          echo "VERSION=$version" >> "$GITHUB_ENV"
 
-    - name: Get Current Release Version Number
-      id: get_latest_release
-      run: |
-        latest_release=$(curl -s -H "Authorization: token ${{ secrets.UPLOAD_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r .tag_name)
-        echo "latest_release=$latest_release" >> $GITHUB_ENV
+      - name: Check Whether Release Already Exists
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if gh release view "$VERSION" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "NEW_VERSION=false" >> "$GITHUB_ENV"
+          else
+            echo "NEW_VERSION=true" >> "$GITHUB_ENV"
+          fi
 
-    - name: Compare Versions
-      id: compare_versions
-      run: |
-        if [ "${{ env.version }}" != "${{ env.latest_release }}" ]; then
-          echo "new_version=true" >> $GITHUB_ENV
-        else
-          echo "new_version=false" >> $GITHUB_ENV
-        fi
+      - name: Install .NET
+        if: env.NEW_VERSION == 'true'
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
 
-    - name: Install .NET
-      uses: actions/setup-dotnet@v2
-      if: env.new_version == 'true'
-      with:
-        dotnet-version: '8.0.x'
-  
-    - name: Install Dependencies
-      if: env.new_version == 'true'
-      run: dotnet restore
+      - name: Publish Plugin And Shared Library
+        if: env.NEW_VERSION == 'true'
+        run: |
+          dotnet restore "src/${PLUGIN_NAME}/${PLUGIN_NAME}.csproj"
+          dotnet publish "src/${PLUGIN_NAME}/${PLUGIN_NAME}.csproj" -c Release --no-restore
+          dotnet publish "src/${SHARED_NAME}/${SHARED_NAME}.csproj" -c Release
 
-    - name: Build ${{ env.REPOSITORY_NAME }}
-      if: env.new_version == 'true'
-      run: dotnet publish -c Release
+      - name: Package Release
+        if: env.NEW_VERSION == 'true'
+        run: |
+          mkdir -p "$RUNNER_TEMP/zip/plugins" "$RUNNER_TEMP/zip/shared"
+          cp -r "src/bin/Release/net10.0/publish" "$RUNNER_TEMP/zip/plugins/${PLUGIN_NAME}"
+          cp -r "src/${SHARED_NAME}/bin/Release/net10.0/publish" "$RUNNER_TEMP/zip/shared/${SHARED_NAME}"
+          cd "$RUNNER_TEMP/zip"
+          zip -r "$RUNNER_TEMP/${{ github.event.repository.name }}-release-${VERSION}.zip" plugins shared
 
-#    - name: Prepare ${{ env.REPOSITORY_NAME }}.info
-#      if: env.new_version == 'true'
-#      run: |
-#        echo "version: ${{ env.version }}" > /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_FOLDER }}/${{ env.PLUGIN_NAME }}/bin/Release/net8.0/publish/${{ env.PLUGIN_NAME }}.info
-#        echo "repository: https://github.com/${{ github.repository }}" >> /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_FOLDER }}/${{ env.PLUGIN_NAME }}/bin/Release/net8.0/publish/${{ env.PLUGIN_NAME }}.info
+      - name: Build Release Notes
+        if: env.NEW_VERSION == 'true'
+        run: |
+          if last_tag=$(git describe --tags --abbrev=0 HEAD 2>/dev/null); then
+            range="$last_tag..HEAD"
+          else
+            range="HEAD"
+          fi
+          git log --pretty=format:"- [%h](https://github.com/${GITHUB_REPOSITORY}/commit/%H) %s (%an)" $range > "$RUNNER_TEMP/release_notes.md"
 
-    - name: Prepare Release
-      if: env.new_version == 'true'
-      run: |
-        mkdir -p /home/runner/work/zipfile/
-        mkdir -p /home/runner/work/zipfile/plugins/
-        mkdir -p /home/runner/work/zipfile/shared/
-        mv /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_FOLDER }}/${{ env.PLUGIN_NAME }}/bin/Release/net8.0/publish/ /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_FOLDER }}/${{ env.PLUGIN_NAME }}/bin/Release/net8.0/${{ env.PLUGIN_NAME }}/
-        mv /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_FOLDER }}/${{ env.PLUGIN_NAME }}/bin/Release/net8.0/${{ env.PLUGIN_NAME }} /home/runner/work/zipfile/plugins/
-        mv /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_FOLDER }}/${{ env.SHARED_NAME }}/bin/Release/net8.0/publish/ /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_FOLDER }}/${{ env.SHARED_NAME }}/bin/Release/net8.0/${{ env.SHARED_NAME }}/
-        mv /home/runner/work/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REPOSITORY_FOLDER }}/${{ env.SHARED_NAME }}/bin/Release/net8.0/${{ env.SHARED_NAME }} /home/runner/work/zipfile/shared/
-
-    - name: Compress Release
-      if: env.new_version == 'true'
-      run: |
-        cd /home/runner/work/zipfile/
-        zip -r /home/runner/work/zipfile/${{ env.REPOSITORY_NAME }}-release-${{ env.version }}.zip plugins shared
-
-    - name: Build Release Notes
-      if: env.new_version == 'true'
-      id: get_release_notes
-      run: |
-        if git describe --tags --abbrev=0 HEAD^ >/dev/null 2>&1; then
-          last_tag=$(git describe --tags --abbrev=0 HEAD^)
-        else
-          last_tag=$(git rev-list --max-parents=0 HEAD)
-        fi
-        release_notes=$(git log --pretty=format:"[%h](https://github.com/${{ github.repository }}/commit/%H) - %s (%an)" $last_tag..HEAD | sed '/^\s*$/d')
-        echo "$release_notes" > /home/runner/work/release_notes.md
-
-    - name: Add Release on Github
-      id: create_release
-      if: env.new_version == 'true'
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.UPLOAD_TOKEN }}
-      with:
-        tag_name: ${{ env.version }}
-        release_name: ${{ env.version }}
-        body_path: /home/runner/work/release_notes.md
-        draft: false
-        prerelease: false
-
-    - name: Upload ${{ env.REPOSITORY_NAME }}-release-${{ env.version }}.zip
-      if: env.new_version == 'true'
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.UPLOAD_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: /home/runner/work/zipfile/${{ env.REPOSITORY_NAME }}-release-${{ env.version }}.zip
-        asset_name: ${{ env.REPOSITORY_NAME }}-release-${{ env.version }}.zip
-        asset_content_type: application/zip
+      - name: Create GitHub Release
+        if: env.NEW_VERSION == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "$VERSION" \
+            "$RUNNER_TEMP/${{ github.event.repository.name }}-release-${VERSION}.zip" \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --title "$VERSION" \
+            --notes-file "$RUNNER_TEMP/release_notes.md"

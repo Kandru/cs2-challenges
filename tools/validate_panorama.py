@@ -1,0 +1,236 @@
+#!/usr/bin/env python3
+"""Validate the Challenges Panorama addon (workshop/content/panorama): XML layouts + hud.vcss."""
+from __future__ import annotations
+
+import re
+import sys
+import xml.etree.ElementTree as ET
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+WORKSHOP = ROOT / "workshop"
+CONTENT = WORKSHOP / "content" / "panorama"
+LAYOUTS = CONTENT / "layout" / "custom_game" / "challenges"
+STYLES = CONTENT / "styles" / "custom_game" / "challenges"
+HUD_VCSS = STYLES / "hud.vcss"
+HUD_CSS = STYLES / "hud.css"
+EXAMPLE_VCSS = WORKSHOP / "example" / "hud.vcss"
+PREVIEW = WORKSHOP / "preview"
+
+INCLUDE_RE = re.compile(r"s2r://panorama/styles/custom_game/challenges/([A-Za-z0-9_]+\.vcss)")
+VAR_RE = re.compile(r"\{s:([A-Za-z0-9_]+)\}")
+HIDDEN_CLASS = re.compile(r"(?<![\w-])(?:hidden|Hidden)(?![\w-])")
+PROPERTY_RE = re.compile(r"(?:^|[{;])\s*([a-z][a-z0-9-]*)\s*:", re.M)
+BLOCK_RE = re.compile(r"\{([^{}]*)\}", re.S)
+
+# Tokens Panorama drops silently (even mid-declaration).
+BAD_CSS = re.compile(
+    r"(?:"
+    r"(?:[{;]|^)\s*display\s*:"
+    r"|\b(?:rgba?|hsla?|calc|var)\s*\("
+    r"|background-size\s*:\s*contain\b"
+    r"|@media\b"
+    r"|@define\b"
+    r"|::(?:before|after)\b"
+    r"|(?:[{;]|^)\s*visibility\s*:\s*hidden\b"
+    r"|(?:[{;]|^)\s*overflow\s*:\s*[^;]*\bhidden\b"
+    r"|(?:[{;]|^)\s*background-blur\s*:"
+    r"|(?:[{;]|^)\s*vertical-align\s*:\s*center\b"
+    r"|(?:[{;]|^)\s*font-size\s*:\s*[0-9.]+[a-z%]+\b"
+    r")",
+    re.I | re.M,
+)
+REJECTED_ATTRS = frozenset({"texturewidth", "textureheight"})
+REJECTED_PSEUDO = re.compile(r":(?:selected|disabled|focus)\b")
+
+# Mirrors CustomHud.LayoutIndexForPanel: tracker ids route to layout 0, everything else to layout 1.
+TRACKER_FILE = "tracker.xml"
+MENU_FILE = "menu.xml"
+TRACKER_ROWS = 5
+MENU_LIST_SLOTS = 10
+MENU_SCORE_SLOTS = 8
+
+TRACKER_IDS = {"Tracker"} | {f"ch-trow-{i}" for i in range(TRACKER_ROWS)} | {
+    f"ch-tfill-{i}" for i in range(TRACKER_ROWS)
+}
+TRACKER_VARS = {"tr_title", "tr_count"} | {f"tr_t{i}" for i in range(TRACKER_ROWS)} | {
+    f"tr_v{i}" for i in range(TRACKER_ROWS)
+}
+MENU_IDS = (
+    {
+        "Menu",
+        "ph-close",
+        "ph-prev",
+        "ph-next",
+        "ch-score-prev",
+        "ch-score-next",
+        "ch-filter-all",
+        "ch-filter-progress",
+        "ch-filter-ending",
+        "ch-filter-starting",
+        "ch-spin",
+    }
+    | {f"ch-mrow-{i}" for i in range(MENU_LIST_SLOTS)}
+    | {f"ch-mfill-{i}" for i in range(MENU_LIST_SLOTS)}
+    | {f"ch-srow-{i}" for i in range(MENU_SCORE_SLOTS)}
+)
+MENU_VARS = (
+    {
+        "menu_title",
+        "menu_page",
+        "menu_f_all",
+        "menu_f_progress",
+        "menu_f_ending",
+        "menu_f_starting",
+        "menu_empty",
+        "score_title",
+        "score_page",
+        "spin_name",
+        "spin_val",
+        "spin_rank",
+    }
+    | {f"m{i}_title" for i in range(MENU_LIST_SLOTS)}
+    | {f"m{i}_meta" for i in range(MENU_LIST_SLOTS)}
+    | {f"s{i}_name" for i in range(MENU_SCORE_SLOTS)}
+    | {f"s{i}_val" for i in range(MENU_SCORE_SLOTS)}
+)
+REQUIRED_CLASSES = {
+    "ph-off",
+    "is-off",
+    "active",
+    "empty",
+    "is-self",
+    *(f"p{p}" for p in range(0, 101, 10)),
+}
+
+
+def strip_comments(css: str) -> str:
+    return re.sub(r"/\*.*?\*/", "", css, flags=re.S)
+
+
+def css_properties(css: str) -> set[str]:
+    props: set[str] = set()
+    for block in BLOCK_RE.findall(strip_comments(css)):
+        props.update(PROPERTY_RE.findall("{" + block))
+    return props
+
+
+def check_css(failures: list[str]) -> None:
+    if not HUD_VCSS.is_file():
+        failures.append(f"missing {HUD_VCSS.relative_to(ROOT)}")
+        return
+
+    if not (HUD_CSS.is_symlink() and HUD_CSS.resolve() == HUD_VCSS.resolve()):
+        failures.append("hud.css must be a symlink to hud.vcss")
+
+    text = HUD_VCSS.read_text(encoding="utf-8")
+    code = strip_comments(text)
+
+    for match in BAD_CSS.finditer(code):
+        line = code.count("\n", 0, match.start()) + 1
+        failures.append(f"hud.vcss:{line}: forbidden token '{match.group(0).strip()}'")
+
+    if REJECTED_PSEUDO.search(code):
+        failures.append("hud.vcss: :selected/:disabled/:focus pseudo-classes are rejected by the client")
+
+    if any(cls.lower() == "hidden" for cls in re.findall(r"\.([A-Za-z_][\w-]*)", code)):
+        failures.append("hud.vcss: class name 'hidden' collides with csgostyles - use ph-off / is-off")
+
+    if code.count("{") != code.count("}"):
+        failures.append("hud.vcss: unbalanced braces")
+
+    if EXAMPLE_VCSS.is_file():
+        known = css_properties(EXAMPLE_VCSS.read_text(encoding="utf-8"))
+        for prop in sorted(css_properties(text) - known):
+            failures.append(f"hud.vcss: property '{prop}' is not used by the known-good example sheet")
+
+    classes = set(re.findall(r"\.([A-Za-z_][\w-]*)", code))
+    for cls in sorted(REQUIRED_CLASSES - classes):
+        failures.append(f"hud.vcss: missing class .{cls}")
+    for pct in range(0, 101, 10):
+        if f".ph-stat-fill.p{pct}" not in code:
+            failures.append(f"hud.vcss: missing .ph-stat-fill.p{pct} (SetStepPercent ladder)")
+
+
+def check_layout(name: str, expected_ids: set[str], expected_vars: set[str], failures: list[str]) -> None:
+    path = LAYOUTS / name
+    rel = path.relative_to(ROOT)
+    if not path.is_file():
+        failures.append(f"missing {rel}")
+        return
+
+    try:
+        tree = ET.parse(path)
+    except ET.ParseError as exc:
+        failures.append(f"{rel}: XML parse error: {exc}")
+        return
+
+    root = tree.getroot()
+    ids: list[str] = []
+    variables: set[str] = set()
+    for element in root.iter():
+        for attr in REJECTED_ATTRS & set(element.attrib):
+            failures.append(f"{rel}: attribute '{attr}' is rejected")
+        if "id" in element.attrib:
+            ids.append(element.attrib["id"])
+        for classes in [element.attrib.get("class", "")]:
+            if HIDDEN_CLASS.search(classes):
+                failures.append(f"{rel}: class '{classes}' collides with csgostyles - use ph-off")
+        variables.update(VAR_RE.findall(element.attrib.get("text", "")))
+
+    duplicates = {i for i in ids if ids.count(i) > 1}
+    for dup in sorted(duplicates):
+        failures.append(f"{rel}: duplicate id '{dup}'")
+
+    for missing in sorted(expected_ids - set(ids)):
+        failures.append(f"{rel}: missing id '{missing}' (CustomHud routes it to this layout)")
+    for extra in sorted(set(ids) - expected_ids):
+        failures.append(f"{rel}: id '{extra}' is not routed to this layout by CustomHud.LayoutIndexForPanel")
+    for missing in sorted(expected_vars - variables):
+        failures.append(f"{rel}: dialog variable {{s:{missing}}} is never bound by a Label")
+    for extra in sorted(variables - expected_vars):
+        failures.append(f"{rel}: dialog variable {{s:{extra}}} is not written by C#")
+
+    includes = {m for el in root.iter("include") for m in INCLUDE_RE.findall(el.attrib.get("src", ""))}
+    if "hud.vcss" not in includes:
+        failures.append(f"{rel}: must include challenges/hud.vcss")
+    for include in includes:
+        if not (STYLES / include).is_file():
+            failures.append(f"{rel}: include {include} does not exist")
+
+    panel_ids_with_flag = [el for el in root.iter("Panel") if el.attrib.get("id") == name.split(".")[0].capitalize()]
+    for panel in panel_ids_with_flag:
+        if "ph-off" not in panel.attrib.get("class", "").split():
+            failures.append(f"{rel}: root card '{panel.attrib['id']}' must start with class ph-off")
+
+    root_panels = [el for el in root if el.tag == "Panel"]
+    for panel in root_panels:
+        if "id" in panel.attrib:
+            failures.append(f"{rel}: layout root panel must not have an id")
+
+
+def check_preview(failures: list[str]) -> None:
+    for name in ("kit.css", "tracker.html", "menu.html"):
+        if not (PREVIEW / name).is_file():
+            failures.append(f"missing workshop/preview/{name}")
+
+
+def main() -> int:
+    failures: list[str] = []
+    check_css(failures)
+    check_layout(TRACKER_FILE, TRACKER_IDS, TRACKER_VARS, failures)
+    check_layout(MENU_FILE, MENU_IDS, MENU_VARS, failures)
+    check_preview(failures)
+
+    if failures:
+        print("Panorama validation failed:")
+        for failure in failures:
+            print(f"  - {failure}")
+        return 1
+
+    print("Panorama validation OK (tracker.xml, menu.xml, hud.vcss)")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

@@ -1,0 +1,67 @@
+<root>
+	<styles>
+		<include src="s2r://panorama/styles/csgostyles.vcss" />
+		<include src="s2r://panorama/styles/custom_game/challenges/hud.vcss" />
+	</styles>
+
+	<!-- Top-right challenge tracker. Root has no id. Not clickable. -->
+	<Panel class="HudScreen" hittest="false">
+		<Panel id="Tracker" class="Tracker ph-card ph-off" hittest="false">
+			<Panel class="ph-bg" hittest="false" />
+			<Panel class="ph-bar ph-bar-left" hittest="false" />
+			<Panel class="TrackerContent" hittest="false">
+				<Panel class="ph-titlebar" hittest="false">
+					<Label class="ph-title additive stratum-bold-tf" hittest="false" text="{s:tr_title}" />
+					<Label class="ph-money TrackerCount stratum-bold-tf" hittest="false" text="{s:tr_count}" />
+				</Panel>
+				<Panel class="TrackerBody" hittest="false">
+					<Panel id="ch-trow-0" class="ph-stat TrackerRow is-off" hittest="false">
+						<Panel class="ph-stat-lab" hittest="false">
+							<Label class="ph-stat-name stratum-medium-tf" hittest="false" text="{s:tr_t0}" />
+							<Label class="ph-stat-val stratum-bold-tf" hittest="false" text="{s:tr_v0}" />
+						</Panel>
+						<Panel class="ph-stat-track" hittest="false">
+							<Panel id="ch-tfill-0" class="ph-stat-fill p0" hittest="false" />
+						</Panel>
+					</Panel>
+					<Panel id="ch-trow-1" class="ph-stat TrackerRow is-off" hittest="false">
+						<Panel class="ph-stat-lab" hittest="false">
+							<Label class="ph-stat-name stratum-medium-tf" hittest="false" text="{s:tr_t1}" />
+							<Label class="ph-stat-val stratum-bold-tf" hittest="false" text="{s:tr_v1}" />
+						</Panel>
+						<Panel class="ph-stat-track" hittest="false">
+							<Panel id="ch-tfill-1" class="ph-stat-fill p0" hittest="false" />
+						</Panel>
+					</Panel>
+					<Panel id="ch-trow-2" class="ph-stat TrackerRow is-off" hittest="false">
+						<Panel class="ph-stat-lab" hittest="false">
+							<Label class="ph-stat-name stratum-medium-tf" hittest="false" text="{s:tr_t2}" />
+							<Label class="ph-stat-val stratum-bold-tf" hittest="false" text="{s:tr_v2}" />
+						</Panel>
+						<Panel class="ph-stat-track" hittest="false">
+							<Panel id="ch-tfill-2" class="ph-stat-fill p0" hittest="false" />
+						</Panel>
+					</Panel>
+					<Panel id="ch-trow-3" class="ph-stat TrackerRow is-off" hittest="false">
+						<Panel class="ph-stat-lab" hittest="false">
+							<Label class="ph-stat-name stratum-medium-tf" hittest="false" text="{s:tr_t3}" />
+							<Label class="ph-stat-val stratum-bold-tf" hittest="false" text="{s:tr_v3}" />
+						</Panel>
+						<Panel class="ph-stat-track" hittest="false">
+							<Panel id="ch-tfill-3" class="ph-stat-fill p0" hittest="false" />
+						</Panel>
+					</Panel>
+					<Panel id="ch-trow-4" class="ph-stat TrackerRow is-off" hittest="false">
+						<Panel class="ph-stat-lab" hittest="false">
+							<Label class="ph-stat-name stratum-medium-tf" hittest="false" text="{s:tr_t4}" />
+							<Label class="ph-stat-val stratum-bold-tf" hittest="false" text="{s:tr_v4}" />
+						</Panel>
+						<Panel class="ph-stat-track" hittest="false">
+							<Panel id="ch-tfill-4" class="ph-stat-fill p0" hittest="false" />
+						</Panel>
+					</Panel>
+				</Panel>
+			</Panel>
+		</Panel>
+	</Panel>
+</root>

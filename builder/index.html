@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CS2 Challenges - Challenge Builder</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="bar"></span>CS2 Challenges <span class="sub">Challenge Builder</span></div>
+    <div class="actions">
+      <button id="btn-new" class="btn">New</button>
+      <label class="btn" for="file-import">Import YAML</label>
+      <input id="file-import" type="file" accept=".yaml,.yml,text/yaml" hidden />
+      <button id="btn-paste" class="btn">Paste YAML</button>
+      <button id="btn-copy" class="btn">Copy YAML</button>
+      <button id="btn-export" class="btn primary">Export YAML</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="panel" id="sidebar">
+      <section class="card">
+        <h2>Challenge</h2>
+        <label class="field">
+          <span>File name / id</span>
+          <input id="challenge-id" type="text" spellcheck="false" placeholder="my_challenge" />
+          <small>Saved as <code id="file-hint">my_challenge.yaml</code> in <code>blueprints/</code>. Use a-z, 0-9 and _.</small>
+        </label>
+        <div class="field">
+          <span>Title (per language)</span>
+          <div id="challenge-title"></div>
+          <button id="add-challenge-lang" class="btn small">Add language</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head">
+          <h2>Tasks</h2>
+          <button id="add-task" class="btn small primary">Add task</button>
+        </div>
+        <p class="hint">Order tasks from easy to hard. Put a control task directly below the task it guards.</p>
+        <ol id="task-list" class="task-list"></ol>
+      </section>
+    </aside>
+
+    <section class="panel" id="editor"></section>
+
+    <aside class="panel" id="output">
+      <section class="card">
+        <h2>Validation</h2>
+        <ul id="problems" class="problems"></ul>
+      </section>
+      <section class="card grow">
+        <h2>YAML</h2>
+        <pre id="yaml-preview"></pre>
+      </section>
+    </aside>
+  </main>
+
+  <dialog id="paste-dialog">
+    <form method="dialog">
+      <h2>Paste YAML</h2>
+      <textarea id="paste-text" spellcheck="false" placeholder="title:&#10;  en: ...&#10;tasks:&#10;  - id: easy"></textarea>
+      <div class="dialog-actions">
+        <button value="cancel" class="btn">Cancel</button>
+        <button id="paste-confirm" value="ok" class="btn primary">Import</button>
+      </div>
+    </form>
+  </dialog>
+
+  <datalist id="dl-weapons"></datalist>
+  <datalist id="dl-keys"></datalist>
+
+  <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

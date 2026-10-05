@@ -1,0 +1,582 @@
+/* ============================================================================
+   Challenges HUD - one stylesheet for tracker.xml and menu.xml.
+   Shared chrome comes from the Prophunt kit (workshop/example/hud.vcss).
+   Hex colours only; no @define/var/rgba/display. Bars use clip ladders (p0 ... p100).
+   Hide with ph-off (cards) / is-off (rows). Do not name a class "hidden".
+   ============================================================================ */
+
+/* Shared chrome */
+
+.HudScreen
+{
+	width: 100%;
+	height: 100%;
+	z-index: 99999;
+}
+
+.ph-card
+{
+	opacity: 1;
+	transform: translateY( 0px ) scale3d( 1, 1, 1 );
+	brightness: 1;
+	transition-property: opacity, transform, brightness;
+	transition-duration: 0.22s;
+	transition-timing-function: ease-out;
+	overflow: noclip noclip;
+	border-radius: 3px;
+}
+
+/* Not "hidden" — that name exists on csgostyles and would collide. */
+.ph-card.ph-off
+{
+	visibility: collapse;
+	opacity: 0;
+}
+
+.ph-bg
+{
+	width: 100%;
+	height: 100%;
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #12171ee8 ), to( #0b0f14f2 ) );
+	background-image: url("s2r://panorama/images/backgrounds/bluedots_large_png.vtex");
+	background-size: 360px 360px;
+	background-repeat: repeat;
+	background-img-opacity: 0.03;
+	border: 1px solid #ffffff14;
+	border-radius: 3px;
+	box-shadow: #000000c0 0px 8px 30px 0px;
+	world-blur: gaussian( 2 );
+	z-index: 0;
+}
+
+.ph-bar
+{
+	width: 3px;
+	height: 100%;
+	background-color: #f0a531;
+	z-index: 5;
+}
+
+.ph-bar-left
+{
+	horizontal-align: left;
+}
+
+.ph-bar-right
+{
+	horizontal-align: right;
+}
+
+/* Fullscreen shell — 68px inset clears RoundStatus (4px + 60px + 4px gap).
+   Content uses fill-parent-flow / fit-children; ph-bg uses ignore-parent-flow.
+   PropGrid cannot use this (asymmetric 68/36 inset + flow children) — see spacers. */
+.ph-fs
+{
+	width: 100%;
+	height: 100%;
+	padding-top: 68px;
+	padding-right: 68px;
+	padding-bottom: 68px;
+	padding-left: 68px;
+}
+
+/* Shared title row — Prop/Sound/Weapon/Shop/Rules. */
+.ph-titlebar
+{
+	width: 100%;
+	height: 44px;
+	flow-children: right;
+	padding-left: 18px;
+	padding-right: 18px;
+	background-color: #ffffff14;
+	border-bottom: 1px solid #d9d9d90a;
+}
+
+Label.ph-title
+{
+	width: fill-parent-flow( 1.0 );
+	vertical-align: middle;
+	font-size: 15;
+	letter-spacing: 1.6px;
+	text-transform: uppercase;
+	color: #ffffff;
+}
+
+Label.ph-money
+{
+	vertical-align: middle;
+	font-size: 14;
+	letter-spacing: 1px;
+	color: #9ccf4f;
+}
+
+/* Button label: parent must be flow-children:none. No height:100% — that
+   pins the glyph to the top and makes vertical-align a no-op. */
+Label.ph-btn-label
+{
+	width: 100%;
+	horizontal-align: center;
+	vertical-align: middle;
+	text-align: center;
+}
+
+/* Shared title-bar icon buttons (close X, stop, maximize) + Prev/Next label. */
+.ph-icon-btn
+{
+	width: 28px;
+	height: 28px;
+	flow-children: none;
+	background-color: #ffffff0d;
+	border: 0px solid transparent;
+	border-radius: 3px;
+	vertical-align: middle;
+	transition-property: background-color;
+	transition-duration: 0.15s;
+}
+
+.ph-icon-btn:hover
+{
+	background-color: #ffffff1c;
+	cursor: pointer;
+	sound: "UIPanorama.generic_button_rollover";
+}
+
+.ph-icon-btn:active
+{
+	background-color: #ffffff2e;
+	sound: "UIPanorama.generic_button_press";
+}
+
+.ph-close-x
+{
+	width: 12px;
+	height: 2px;
+	horizontal-align: center;
+	vertical-align: middle;
+	background-color: #ffffff;
+	border-radius: 1px;
+}
+
+.ph-close-x-a
+{
+	transform: rotateZ( 45deg );
+}
+
+.ph-close-x-b
+{
+	transform: rotateZ( -45deg );
+}
+
+Label.ph-nav-label
+{
+	width: 100%;
+	horizontal-align: center;
+	vertical-align: middle;
+	text-align: center;
+	font-size: 13;
+	color: #e8eef4;
+}
+
+.ph-stat
+{
+	width: 100%;
+	flow-children: down;
+}
+
+.ph-stat.is-off
+{
+	visibility: collapse;
+}
+
+.ph-stat-lab
+{
+	width: 100%;
+	height: 14px;
+	flow-children: right;
+	margin-bottom: 6px;
+}
+
+Label.ph-stat-name
+{
+	width: fill-parent-flow( 1.0 );
+	height: 100%;
+	font-size: 12;
+	letter-spacing: 1.4px;
+	text-transform: uppercase;
+	color: #9aa2ac;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	vertical-align: middle;
+}
+
+Label.ph-stat-val
+{
+	width: 72px;
+	height: 100%;
+	font-size: 12;
+	color: #f2f4f7;
+	text-align: right;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	vertical-align: middle;
+}
+
+.ph-stat-track
+{
+	width: 100%;
+	height: 7px;
+	flow-children: none;
+	border-radius: 4px;
+	background-color: #ffffff12;
+	overflow: clip;
+}
+
+.ph-stat-fill
+{
+	height: 100%;
+	width: 100%;
+	border-radius: 4px;
+	background-color: gradient( linear, 0% 0%, 100% 0%, from( #f0a531 ), to( #ffd27a ) );
+	transition-property: clip;
+	transition-duration: 0.35s;
+	clip: rect( 0%, 2%, 100%, 0% );
+}
+
+.ph-stat-fill.p100 { clip: rect( 0%, 100%, 100%, 0% ); }
+.ph-stat-fill.p90 { clip: rect( 0%, 90%, 100%, 0% ); }
+.ph-stat-fill.p80 { clip: rect( 0%, 80%, 100%, 0% ); }
+.ph-stat-fill.p70 { clip: rect( 0%, 70%, 100%, 0% ); }
+.ph-stat-fill.p60 { clip: rect( 0%, 60%, 100%, 0% ); }
+.ph-stat-fill.p50 { clip: rect( 0%, 50%, 100%, 0% ); }
+.ph-stat-fill.p40 { clip: rect( 0%, 40%, 100%, 0% ); }
+.ph-stat-fill.p30 { clip: rect( 0%, 30%, 100%, 0% ); }
+.ph-stat-fill.p20 { clip: rect( 0%, 20%, 100%, 0% ); }
+.ph-stat-fill.p10 { clip: rect( 0%, 10%, 100%, 0% ); }
+.ph-stat-fill.p0 { clip: rect( 0%, 2%, 100%, 0% ); }
+
+/* ============================================================================
+   Tracker - top-right card (sound-menu row style, ph-stat bars).
+   ============================================================================ */
+
+.Tracker
+{
+	width: 330px;
+	horizontal-align: right;
+	vertical-align: top;
+	margin-top: 96px;
+	margin-right: 20px;
+	z-index: 100;
+}
+
+.TrackerContent
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: down;
+	overflow: noclip noclip;
+	z-index: 2;
+}
+
+.TrackerBody
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: down;
+	padding: 12px 14px 6px 18px;
+}
+
+.TrackerRow
+{
+	margin-bottom: 8px;
+}
+
+.TrackerRow.is-off
+{
+	visibility: collapse;
+}
+
+Label.TrackerCount
+{
+	margin-left: 10px;
+}
+
+/* ============================================================================
+   Menu - fullscreen frame (.ph-fs), list 2/3 + scoreboard 1/3.
+   ============================================================================ */
+
+.MenuRoot
+{
+	z-index: 300;
+}
+
+.MenuContent
+{
+	width: 100%;
+	height: 100%;
+	flow-children: down;
+	z-index: 2;
+}
+
+.MenuRoot .ph-titlebar
+{
+	padding-right: 12px;
+}
+
+.MenuBody
+{
+	width: 100%;
+	height: fill-parent-flow( 1.0 );
+	flow-children: right;
+	padding-left: 18px;
+	padding-right: 18px;
+	padding-top: 12px;
+	padding-bottom: 12px;
+}
+
+.MenuList
+{
+	width: fill-parent-flow( 2.0 );
+	height: fit-children;
+	flow-children: down;
+	margin-right: 18px;
+}
+
+.MenuScore
+{
+	width: fill-parent-flow( 1.0 );
+	height: fit-children;
+	flow-children: down;
+}
+
+.MenuFilterBar
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: right;
+	margin-bottom: 10px;
+}
+
+.MenuFilterBtn
+{
+	height: 26px;
+	flow-children: none;
+	padding-left: 10px;
+	padding-right: 10px;
+	margin-right: 6px;
+	background-color: #ffffff0d;
+	border: 1px solid #00000000;
+	border-radius: 3px;
+	wash-color: none;
+	transition-property: background-color, border;
+	transition-duration: 0.15s;
+}
+
+.MenuFilterBtn:hover
+{
+	background-color: #ffffff1c;
+	border: 1px solid #f0a53166;
+	cursor: pointer;
+	sound: "UIPanorama.generic_button_rollover";
+}
+
+.MenuFilterBtn:active
+{
+	background-color: #ffffff2e;
+	border: 1px solid #f0a531;
+	sound: "UIPanorama.generic_button_press";
+}
+
+.MenuFilterBtn.active
+{
+	background-color: #f0a53122;
+	border: 1px solid #f0a531;
+}
+
+.MenuFilterBtn.active:hover
+{
+	background-color: #f0a53144;
+	border: 1px solid #f0a531;
+}
+
+Label.MenuFilterLabel
+{
+	font-size: 11.55;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	color: #e8eef4;
+	white-space: nowrap;
+	vertical-align: middle;
+}
+
+.MenuRows
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: down;
+}
+
+.MenuRow
+{
+	width: 100%;
+	height: 44px;
+	flow-children: down;
+	padding: 7px 12px 0px 12px;
+	margin-bottom: 5px;
+	background-color: #ffffff0d;
+	border: 1px solid #00000000;
+	border-radius: 3px;
+}
+
+.MenuRow.is-off
+{
+	visibility: collapse;
+}
+
+.MenuRow.empty
+{
+	opacity: 0.35;
+	border: 1px solid #ffffff14;
+}
+
+.MenuRow.empty .ph-stat-lab,
+.MenuRow.empty .ph-stat-track
+{
+	visibility: collapse;
+}
+
+.MenuRow Label.ph-stat-val
+{
+	width: 96px;
+}
+
+.MenuEmpty
+{
+	width: 100%;
+	font-size: 14;
+	color: #8b8f94;
+	text-align: center;
+	margin-top: 12px;
+}
+
+.MenuFooter
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: right;
+	margin-top: 6px;
+	padding-top: 8px;
+	border-top: 1px solid #d9d9d90a;
+}
+
+.MenuFooterBtn
+{
+	width: fill-parent-flow( 1.0 );
+	height: 28px;
+	flow-children: none;
+	margin: 0px 2px;
+	background-color: #ffffff0d;
+	border: 1px solid #00000000;
+	border-radius: 3px;
+	transition-property: background-color;
+	transition-duration: 0.15s;
+}
+
+.MenuFooterBtn:hover
+{
+	background-color: #ffffff1c;
+	border: 1px solid #f0a53166;
+	cursor: pointer;
+	sound: "UIPanorama.generic_button_rollover";
+}
+
+.MenuFooterBtn:active
+{
+	background-color: #ffffff2e;
+	border: 1px solid #f0a531;
+	sound: "UIPanorama.generic_button_press";
+}
+
+Label.MenuPage
+{
+	width: fill-parent-flow( 1.4 );
+	height: 28px;
+	font-size: 12;
+	color: #f0a531;
+	text-align: center;
+	vertical-align: middle;
+}
+
+Label.ScoreTitle
+{
+	width: 100%;
+	font-size: 12;
+	letter-spacing: 1.4px;
+	text-transform: uppercase;
+	color: #9aa2ac;
+	margin-bottom: 10px;
+	padding-top: 6px;
+}
+
+.ScoreRow
+{
+	width: 100%;
+	height: 34px;
+	flow-children: right;
+	padding: 0px 10px 0px 10px;
+	margin-bottom: 4px;
+	background-color: #ffffff0d;
+	border: 1px solid #00000000;
+	border-radius: 3px;
+}
+
+.ScoreRow.empty
+{
+	opacity: 0.35;
+	border: 1px solid #ffffff14;
+}
+
+.ScoreRow.empty Label
+{
+	visibility: collapse;
+}
+
+.ScoreRow.is-self
+{
+	background-color: #f0a53122;
+	border: 1px solid #f0a531;
+}
+
+.ScorePinned
+{
+	margin-bottom: 8px;
+}
+
+Label.ScoreRank
+{
+	width: 40px;
+	height: 100%;
+	font-size: 13;
+	color: #f0a531;
+	vertical-align: middle;
+}
+
+Label.ScoreName
+{
+	width: fill-parent-flow( 1.0 );
+	height: 100%;
+	font-size: 14;
+	color: #e8eef4;
+	vertical-align: middle;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+Label.ScoreVal
+{
+	width: 48px;
+	height: 100%;
+	font-size: 14;
+	color: #ffffff;
+	text-align: right;
+	vertical-align: middle;
+}

@@ -1,0 +1,5511 @@
+/* ============================================================================
+   Prophunt HUD — one stylesheet for every custom_hud_layout.
+   CS2-like skin (gold accent, near-black panels) inspired by hudkit.vcss,
+   written with values this client accepts. Hex only; no @define/var/rgba/display.
+   Bars use clip ladders (p0…p100), not width. Hide with ph-off / is-off.
+   ============================================================================ */
+
+/* Shared chrome */
+
+.HudScreen
+{
+	width: 100%;
+	height: 100%;
+	z-index: 99999;
+}
+
+.ph-card
+{
+	opacity: 1;
+	transform: translateY( 0px ) scale3d( 1, 1, 1 );
+	brightness: 1;
+	transition-property: opacity, transform, brightness;
+	transition-duration: 0.22s;
+	transition-timing-function: ease-out;
+	overflow: noclip noclip;
+	border-radius: 3px;
+}
+
+/* Not "hidden" — that name exists on csgostyles and would collide. */
+.ph-card.ph-off
+{
+	visibility: collapse;
+	opacity: 0;
+}
+
+.ph-bg
+{
+	width: 100%;
+	height: 100%;
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #12171ee8 ), to( #0b0f14f2 ) );
+	background-image: url("s2r://panorama/images/backgrounds/bluedots_large_png.vtex");
+	background-size: 360px 360px;
+	background-repeat: repeat;
+	background-img-opacity: 0.03;
+	border: 1px solid #ffffff14;
+	border-radius: 3px;
+	box-shadow: #000000c0 0px 8px 30px 0px;
+	world-blur: gaussian( 2 );
+	z-index: 0;
+}
+
+.ph-bar
+{
+	width: 3px;
+	height: 100%;
+	background-color: #f0a531;
+	z-index: 5;
+}
+
+.ph-bar-left
+{
+	horizontal-align: left;
+}
+
+.ph-bar-right
+{
+	horizontal-align: right;
+}
+
+/* Fullscreen shell — 68px inset clears RoundStatus (4px + 60px + 4px gap).
+   Content uses fill-parent-flow / fit-children; ph-bg uses ignore-parent-flow.
+   PropGrid cannot use this (asymmetric 68/36 inset + flow children) — see spacers. */
+.ph-fs
+{
+	width: 100%;
+	height: 100%;
+	padding-top: 68px;
+	padding-right: 68px;
+	padding-bottom: 68px;
+	padding-left: 68px;
+}
+
+/* Shared title row — Prop/Sound/Weapon/Shop/Rules. */
+.ph-titlebar
+{
+	width: 100%;
+	height: 44px;
+	flow-children: right;
+	padding-left: 18px;
+	padding-right: 18px;
+	background-color: #ffffff14;
+	border-bottom: 1px solid #d9d9d90a;
+}
+
+Label.ph-title
+{
+	width: fill-parent-flow( 1.0 );
+	vertical-align: middle;
+	font-size: 15;
+	letter-spacing: 1.6px;
+	text-transform: uppercase;
+	color: #ffffff;
+}
+
+Label.ph-money
+{
+	vertical-align: middle;
+	font-size: 14;
+	letter-spacing: 1px;
+	color: #9ccf4f;
+}
+
+/* Button label: parent must be flow-children:none. No height:100% — that
+   pins the glyph to the top and makes vertical-align a no-op. */
+Label.ph-btn-label
+{
+	width: 100%;
+	horizontal-align: center;
+	vertical-align: middle;
+	text-align: center;
+}
+
+/* Shared title-bar icon buttons (close X, stop, maximize) + Prev/Next label. */
+.ph-icon-btn
+{
+	width: 28px;
+	height: 28px;
+	flow-children: none;
+	background-color: #ffffff0d;
+	border: 0px solid transparent;
+	border-radius: 3px;
+	vertical-align: middle;
+	transition-property: background-color;
+	transition-duration: 0.15s;
+}
+
+.ph-icon-btn:hover
+{
+	background-color: #ffffff1c;
+	cursor: pointer;
+	sound: "UIPanorama.generic_button_rollover";
+}
+
+.ph-icon-btn:active
+{
+	background-color: #ffffff2e;
+	sound: "UIPanorama.generic_button_press";
+}
+
+.ph-close-x
+{
+	width: 12px;
+	height: 2px;
+	horizontal-align: center;
+	vertical-align: middle;
+	background-color: #ffffff;
+	border-radius: 1px;
+}
+
+.ph-close-x-a
+{
+	transform: rotateZ( 45deg );
+}
+
+.ph-close-x-b
+{
+	transform: rotateZ( -45deg );
+}
+
+Label.ph-nav-label
+{
+	width: 100%;
+	horizontal-align: center;
+	vertical-align: middle;
+	text-align: center;
+	font-size: 13;
+	color: #e8eef4;
+}
+
+/* Status bar — kit label + gold clip fill (sound cooldown / random-sound wait). */
+.ph-stat
+{
+	width: 100%;
+	flow-children: down;
+}
+
+.ph-stat.is-off
+{
+	visibility: collapse;
+}
+
+.PlayerInfoBody .ph-stat
+{
+	margin-top: 2px;
+}
+
+.PlayerInfoBody .ph-stat-lab
+{
+	height: 12px;
+	margin-bottom: 3px;
+}
+
+.PlayerInfoBody Label.ph-stat-name,
+.PlayerInfoBody Label.ph-stat-val
+{
+	font-size: 10;
+}
+
+.SoundBody .ph-stat
+{
+	margin-bottom: 6px;
+}
+
+.ph-stat-lab
+{
+	width: 100%;
+	height: 14px;
+	flow-children: right;
+	margin-bottom: 6px;
+}
+
+Label.ph-stat-name
+{
+	width: fill-parent-flow( 1.0 );
+	height: 100%;
+	font-size: 12;
+	letter-spacing: 1.4px;
+	text-transform: uppercase;
+	color: #9aa2ac;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	vertical-align: middle;
+}
+
+Label.ph-stat-val
+{
+	width: 72px;
+	height: 100%;
+	font-size: 12;
+	color: #f2f4f7;
+	text-align: right;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	vertical-align: middle;
+}
+
+.ph-stat-track
+{
+	width: 100%;
+	height: 7px;
+	flow-children: none;
+	border-radius: 4px;
+	background-color: #ffffff12;
+	overflow: clip;
+}
+
+.ph-stat-fill
+{
+	height: 100%;
+	width: 100%;
+	border-radius: 4px;
+	background-color: gradient( linear, 0% 0%, 100% 0%, from( #f0a531 ), to( #ffd27a ) );
+	transition-property: clip;
+	transition-duration: 0.35s;
+	clip: rect( 0%, 2%, 100%, 0% );
+}
+
+.ph-stat-fill.p100 { clip: rect( 0%, 100%, 100%, 0% ); }
+.ph-stat-fill.p90 { clip: rect( 0%, 90%, 100%, 0% ); }
+.ph-stat-fill.p80 { clip: rect( 0%, 80%, 100%, 0% ); }
+.ph-stat-fill.p70 { clip: rect( 0%, 70%, 100%, 0% ); }
+.ph-stat-fill.p60 { clip: rect( 0%, 60%, 100%, 0% ); }
+.ph-stat-fill.p50 { clip: rect( 0%, 50%, 100%, 0% ); }
+.ph-stat-fill.p40 { clip: rect( 0%, 40%, 100%, 0% ); }
+.ph-stat-fill.p30 { clip: rect( 0%, 30%, 100%, 0% ); }
+.ph-stat-fill.p20 { clip: rect( 0%, 20%, 100%, 0% ); }
+.ph-stat-fill.p10 { clip: rect( 0%, 10%, 100%, 0% ); }
+.ph-stat-fill.p0 { clip: rect( 0%, 2%, 100%, 0% ); }
+
+/* PlayerInfo — bottom-center strip over the stock logo (hider carousel / seeker class). Not clickable. */
+
+.PlayerInfo
+{
+	width: 100%;
+	height: 116px;
+	vertical-align: bottom;
+	margin-bottom: 4px;
+	flow-children: none;
+}
+
+.PlayerInfoCard
+{
+	width: 430px;
+	height: 100%;
+	horizontal-align: center;
+	flow-children: none;
+}
+
+.PlayerInfo .ph-bg
+{
+	box-shadow: #00000066 0px 8px 24px 0px;
+}
+
+.PlayerInfo .ph-bar
+{
+	width: 2px;
+}
+
+.PlayerInfoBody
+{
+	width: 100%;
+	height: 100%;
+	flow-children: down;
+	padding: 5px 10px 4px 10px;
+	z-index: 2;
+}
+
+.PlayerInfoHider
+{
+	width: 100%;
+	height: fill-parent-flow( 1.0 );
+	flow-children: down;
+}
+
+.PlayerInfoHider.is-off
+{
+	visibility: collapse;
+}
+
+.PlayerInfoStrip
+{
+	width: 100%;
+	height: 52px;
+	flow-children: right;
+}
+
+.PlayerInfoThumb
+{
+	vertical-align: middle;
+	overflow: clip;
+	border-radius: 2px;
+	background-color: #1e2834;
+	background-repeat: no-repeat;
+	background-position: center;
+	/* Fill slot height; keep aspect ratio and crop left/right (no vertical squash). */
+	background-size: auto 100%;
+	margin-right: 4px;
+}
+
+.PlayerInfoThumb:last-child
+{
+	margin-right: 0px;
+}
+
+.PlayerInfoThumbSide
+{
+	width: fill-parent-flow( 1.0 );
+	height: 36px;
+	opacity: 0.45;
+}
+
+.PlayerInfoThumbNear
+{
+	width: fill-parent-flow( 1.15 );
+	height: 44px;
+	opacity: 0.7;
+}
+
+.PlayerInfoThumbCenter
+{
+	width: fill-parent-flow( 1.45 );
+	height: 52px;
+}
+
+.PlayerInfoHint
+{
+	width: 100%;
+	font-size: 10;
+	color: #e8eef4;
+	text-align: center;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	margin-top: 3px;
+}
+
+.PlayerInfoSeeker
+{
+	width: 100%;
+	height: fill-parent-flow( 1.0 );
+	flow-children: none;
+}
+
+.PlayerInfoSeeker.is-off
+{
+	visibility: collapse;
+}
+
+.PlayerInfoSeekerText
+{
+	width: 100%;
+	flow-children: down;
+	vertical-align: middle;
+}
+
+.PlayerInfoName
+{
+	width: 100%;
+	font-size: 13.65;
+	letter-spacing: 1px;
+	color: #e8eef4;
+	text-align: center;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.PlayerInfoMeta
+{
+	width: 100%;
+	font-size: 11.55;
+	color: #f0a531;
+	text-align: center;
+	margin-top: 3px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.PlayerInfoVer
+{
+	width: 100%;
+	font-size: 10.5;
+	color: #c5ced6;
+	text-align: center;
+	margin-top: 2px;
+}
+
+/* HiderModes — transparent bottom-right pair (wall left, look right); own layout entity. */
+.HiderModes
+{
+	width: fit-children;
+	height: 100px;
+	horizontal-align: right;
+	vertical-align: bottom;
+	margin-right: 10px;
+	margin-bottom: 10px;
+	flow-children: right;
+}
+
+.HiderModes.ph-off
+{
+	visibility: collapse;
+}
+
+.InfoModeTile
+{
+	width: 100px;
+	height: 100px;
+	margin-right: 6px;
+	opacity: 0.4;
+	flow-children: none;
+	overflow: clip;
+	transition-property: opacity;
+	transition-duration: 0.15s;
+}
+
+.InfoModeTile:last-child
+{
+	margin-right: 0px;
+}
+
+.InfoModeTile.is-on
+{
+	opacity: 1;
+}
+
+.InfoWall.is-off
+{
+	visibility: collapse;
+}
+
+.InfoModeIcon
+{
+	/* Explicit px — % under flow-children:none collapses with no paint box. */
+	width: 100px;
+	height: 100px;
+	background-repeat: no-repeat;
+	background-position: center;
+	/* Stretch to fill the 100×100 square (source PNGs are ~1450px). */
+	background-size: 100% 100%;
+}
+
+.InfoLook .InfoModeIcon
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/ui/free_look.vtex");
+}
+
+.InfoWall .InfoModeIcon
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/ui/wall_snap.vtex");
+}
+
+/* PropMenu — left list card + right-side tweak sliders; grid stays fullscreen. */
+
+.PropMenuShell
+{
+	width: 100%;
+	height: fit-children;
+	vertical-align: middle;
+	padding-left: 28px;
+	padding-right: 28px;
+	flow-children: right;
+	z-index: 100;
+}
+
+.PropMenu
+{
+	width: 350px;
+}
+
+.PropMenuSpacer
+{
+	width: fill-parent-flow( 1.0 );
+	height: 1px;
+}
+
+.PropMenuSpacer.is-off
+{
+	visibility: collapse;
+	width: 0px;
+}
+
+.PropMenuSizeBtn
+{
+	flow-children: none;
+	margin-right: 6px;
+}
+
+Label.PropMenuSizeLabel
+{
+	font-size: 18;
+	color: #ffffff;
+}
+
+.PropMenuContent
+{
+	width: 100%;
+	height: fit-children;
+	horizontal-align: center;
+	flow-children: down;
+	overflow: noclip noclip;
+	z-index: 2;
+}
+
+.PropMenuBody
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: down;
+	padding: 14px 18px 16px 18px;
+}
+
+.PropMenuCatStrip
+{
+	width: 100%;
+	flow-children: right;
+	vertical-align: middle;
+}
+
+.PropMenuCatBtn
+{
+	width: 32px;
+	height: 32px;
+	background-color: #ffffff0d;
+	border: 0px solid transparent;
+	border-radius: 3px;
+	transition-property: background-color;
+	transition-duration: 0.15s;
+}
+
+.PropMenuCatBtn:hover
+{
+	background-color: #ffffff1c;
+	cursor: pointer;
+	sound: "UIPanorama.generic_button_rollover";
+}
+
+.PropMenuCatBtn:active
+{
+	background-color: #ffffff2e;
+	sound: "UIPanorama.generic_button_press";
+}
+
+.PropMenuCatArrow
+{
+	width: 100%;
+	horizontal-align: center;
+	vertical-align: middle;
+	text-align: center;
+	font-size: 18;
+	color: #e8eef4;
+}
+
+.PropMenuCatName
+{
+	width: fill-parent-flow( 1.0 );
+	horizontal-align: center;
+	vertical-align: middle;
+	text-align: center;
+	font-size: 18;
+	letter-spacing: 2px;
+	text-transform: uppercase;
+	color: #f0a531;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	margin-left: 8px;
+	margin-right: 8px;
+}
+
+.PropMenuDivider
+{
+	width: 100%;
+	height: 1px;
+	background-color: #d9d9d90a;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.PropMenuRows
+{
+	width: 100%;
+	flow-children: down;
+}
+
+.PropMenuRow
+{
+	width: 100%;
+	height: 40px;
+	margin: 2px 0px;
+	flow-children: right;
+	background-color: #ffffff0d;
+	border-radius: 3px;
+	border: 1px solid #00000000;
+	transition-property: background-color;
+	transition-duration: 0.15s;
+}
+
+.PropMenuRow.playing
+{
+	background-color: #ffffff2e;
+	border: 1px solid #f0a531;
+}
+
+.PropMenuRow.playing:hover
+{
+	background-color: #ffffff2e;
+	border: 1px solid #f0a531;
+}
+
+.PropMenuRow.is-empty
+{
+	background-color: #060a1073;
+	border: 1px dashed #6e7d8c47;
+	opacity: 0.55;
+}
+
+.PropMenuRowMain,
+.PropMenuRowMain:hover,
+.PropMenuRowMain:active
+{
+	wash-color: none;
+}
+
+
+
+
+
+
+
+.PropMenuFavBtn
+{
+	width: 22px;
+	height: 100%;
+	background-color: #00000000;
+	border: 0px solid transparent;
+	border-radius: 3px;
+	transition-property: background-color;
+	transition-duration: 0.15s;
+}
+
+.PropMenuFavBtn:hover
+{
+	background-color: #ffffff1c;
+	cursor: pointer;
+	sound: "UIPanorama.generic_button_rollover";
+}
+
+.PropMenuFavBtn:active
+{
+	background-color: #ffffff2e;
+	sound: "UIPanorama.generic_button_press";
+}
+
+.PropMenuFavBtn.is-on
+{
+	background-color: #f0a53166;
+}
+
+.PropMenuFavBtn.is-on:hover
+{
+	background-color: #f0a53155;
+}
+
+.PropMenuFavStar
+{
+	width: 100%;
+	horizontal-align: center;
+	vertical-align: middle;
+	text-align: center;
+	font-size: 14;
+	color: #8b8f94;
+}
+
+.PropMenuFavBtn.is-on .PropMenuFavStar
+{
+	color: #f0a531;
+}
+
+.PropMenuRow.is-empty .PropMenuFavBtn
+{
+	visibility: collapse;
+}
+
+.PropMenuRowMain
+{
+	width: fill-parent-flow( 1.0 );
+	height: 100%;
+	flow-children: right;
+	background-color: #00000000;
+	border: 0px solid transparent;
+	border-radius: 3px;
+	transition-property: background-color;
+	transition-duration: 0.15s;
+}
+
+.PropMenuRow:not(.is-empty) .PropMenuRowMain:hover
+{
+	background-color: #ffffff1c;
+	cursor: pointer;
+	sound: "UIPanorama.generic_button_rollover";
+}
+
+.PropMenuRow:not(.is-empty) .PropMenuRowMain:active
+{
+	background-color: #ffffff2e;
+	sound: "UIPanorama.generic_button_press";
+}
+
+.PropMenuRowImg
+{
+	width: 40px;
+	height: 28px;
+	vertical-align: middle;
+	margin-left: 4px;
+	margin-right: 8px;
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contains;
+}
+
+.PropMenuRow.is-empty .PropMenuRowImg
+{
+	visibility: collapse;
+}
+
+.PropMenuRowText
+{
+	width: fill-parent-flow( 1.0 );
+	height: fit-children;
+	flow-children: down;
+	vertical-align: middle;
+}
+
+.PropMenuRowLabel
+{
+	width: 100%;
+	font-size: 14;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	color: #e8eef4;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.PropMenuRowMeta
+{
+	width: 100%;
+	font-size: 11;
+	color: #8b8f94;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	visibility: collapse;
+}
+
+.PropMenuRow.has-meta .PropMenuRowMeta
+{
+	visibility: visible;
+}
+
+.PropMenuRow.is-empty .PropMenuRowLabel,
+.PropMenuRow.is-empty .PropMenuRowMeta
+{
+	visibility: collapse;
+}
+
+.PropMenuRowKey
+{
+	width: 22px;
+	font-size: 13;
+	color: #f0a531;
+	vertical-align: middle;
+	margin-right: 8px;
+	text-align: center;
+	visibility: collapse;
+}
+
+.PropMenu.mode-keys .PropMenuRowKey,
+.PropMenu.mode-all .PropMenuRowKey
+{
+	visibility: visible;
+}
+
+.PropMenu.mode-keys .PropMenuRow.is-empty .PropMenuRowKey,
+.PropMenu.mode-all .PropMenuRow.is-empty .PropMenuRowKey
+{
+	visibility: collapse;
+}
+
+.PropMenuFooter
+{
+	width: 100%;
+	flow-children: right;
+	vertical-align: middle;
+	horizontal-align: center;
+}
+
+.PropMenuPageBtn
+{
+	width: 64px;
+	height: 32px;
+	flow-children: none;
+	margin: 0px 4px;
+	background-color: #ffffff0d;
+	border: 0px solid transparent;
+	border-radius: 3px;
+	transition-property: background-color;
+	transition-duration: 0.15s;
+}
+
+.PropMenuPageBtn:hover
+{
+	background-color: #ffffff1c;
+	cursor: pointer;
+	sound: "UIPanorama.generic_button_rollover";
+}
+
+.PropMenuPageBtn:active
+{
+	background-color: #ffffff2e;
+	sound: "UIPanorama.generic_button_press";
+}
+
+.PropMenuPage
+{
+	width: fill-parent-flow( 1.0 );
+	font-size: 13;
+	letter-spacing: 1px;
+	color: #8b8f94;
+	vertical-align: middle;
+	text-align: center;
+}
+
+/* Fullscreen card grid. Spacers (not padding) keep flow children inside the frame —
+   width/height 100% children measure the border box and ignore padding. */
+.PropGrid
+{
+	width: 100%;
+	height: 100%;
+	flow-children: down;
+	overflow: clip;
+	z-index: 200;
+}
+
+.PropGridTopGap
+{
+	width: 100%;
+	height: 68px;
+}
+
+.PropGridBottomGap
+{
+	width: 100%;
+	height: 36px;
+}
+
+.PropGridMid
+{
+	width: 100%;
+	height: fill-parent-flow( 1.0 );
+	flow-children: down;
+}
+
+/* Definite height under a down parent so side gaps can use height:100% in a right row. */
+.PropGridHRow
+{
+	width: 100%;
+	height: 100%;
+	flow-children: right;
+}
+
+.PropGridSideGap
+{
+	width: 36px;
+	height: 100%;
+}
+
+/* flow-children:none — ph-bg / ph-bar / content overlay; no ignore-parent-flow needed. */
+.PropGridFrame
+{
+	width: fill-parent-flow( 1.0 );
+	height: 100%;
+	flow-children: none;
+	border-radius: 4px;
+	overflow: clip;
+}
+
+.PropGrid .PropMenuContent
+{
+	width: 100%;
+	height: 100%;
+	overflow: clip;
+}
+
+.PropGridBody
+{
+	height: fill-parent-flow( 1.0 );
+}
+
+/* Shop-style exclusive filters. Two rows — right-wrap is not accepted here. */
+.PropGridFilterBar
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: down;
+}
+
+.PropGridFilterRow
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: right;
+	padding-bottom: 4px;
+}
+
+.PropGridFilterBtn
+{
+	height: 26px;
+	flow-children: none;
+	padding-left: 10px;
+	padding-right: 10px;
+	margin-right: 6px;
+	margin-bottom: 2px;
+	background-color: #ffffff0d;
+	border: 1px solid #00000000;
+	border-radius: 3px;
+	transition-property: background-color, border;
+	transition-duration: 0.15s;
+}
+
+.PropGridFilterBtn:hover
+{
+	background-color: #ffffff1c;
+	border: 1px solid #f0a53166;
+	cursor: pointer;
+	sound: "UIPanorama.generic_button_rollover";
+}
+
+.PropGridFilterBtn:active
+{
+	background-color: #ffffff2e;
+	border: 1px solid #f0a531;
+	sound: "UIPanorama.generic_button_press";
+}
+
+.PropGridFilterBtn.is-on
+{
+	background-color: #f0a53122;
+	border: 1px solid #f0a531;
+}
+
+.PropGridFilterBtn.is-on:hover
+{
+	background-color: #f0a53144;
+	border: 1px solid #f0a531;
+}
+
+.PropGridFilterBtn.is-disabled
+{
+	opacity: 0.35;
+	saturation: 0.15;
+}
+
+.PropGridFilterBtn.is-disabled:hover,
+.PropGridFilterBtn.is-disabled:active
+{
+	background-color: #ffffff0d;
+	border: 1px solid #00000000;
+	cursor: default;
+	sound: none;
+}
+
+.PropGridFilterBtn.is-empty
+{
+	visibility: collapse;
+	width: 0px;
+	padding-left: 0px;
+	padding-right: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+}
+
+Label.PropGridFilterLabel
+{
+	font-size: 11.55;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	color: #e8eef4;
+	white-space: nowrap;
+	vertical-align: middle;
+}
+
+.PropGridCards
+{
+	width: 100%;
+	height: fill-parent-flow( 1.0 );
+	flow-children: down;
+}
+
+.PropGridRow
+{
+	width: 100%;
+	height: fill-parent-flow( 1.0 );
+	flow-children: down;
+}
+
+/* 12px gap between rows (margin on fill-parent-flow rows is squished). */
+.PropGridRowGap
+{
+	width: 100%;
+	height: 12px;
+}
+
+/* Inner right-flow: definite % height so card height:100% is not rewritten to fill-parent-flow. */
+.PropGridRowFlow
+{
+	width: 100%;
+	height: 100%;
+	flow-children: right;
+}
+
+.PropGridCard
+{
+	width: fill-parent-flow( 1.0 );
+	height: 100%;
+	flow-children: down;
+	background-color: #ffffff0d;
+	border-radius: 3px;
+	border: 1px solid #00000000;
+	margin-right: 12px;
+	/* Top padding for title/meta only — image is flush left / right / bottom. */
+	padding-top: 8px;
+	padding-right: 0px;
+	padding-bottom: 0px;
+	padding-left: 0px;
+	overflow: clip clip;
+	transition-property: background-color;
+	transition-duration: 0.15s;
+}
+
+.PropGridCard:last-child
+{
+	margin-right: 0px;
+}
+
+.PropGridCard.playing
+{
+	background-color: #ffffff2e;
+	border: 1px solid #f0a531;
+}
+
+.PropGridCard.playing:hover
+{
+	background-color: #ffffff2e;
+	border: 1px solid #f0a531;
+}
+
+.PropGridCard.is-empty
+{
+	background-color: #060a1073;
+	border: 1px dashed #6e7d8c47;
+	opacity: 0.45;
+}
+
+.PropGridHeader
+{
+	width: 100%;
+	height: 46px;
+	flow-children: right;
+	padding-left: 4px;
+	padding-right: 4px;
+}
+
+
+.PropGridCard.is-empty .PropMenuFavBtn
+{
+	visibility: collapse;
+}
+
+.PropGridHeader .PropMenuFavBtn
+{
+	width: 22px;
+	height: 100%;
+}
+
+.PropGridHeaderText
+{
+	width: fill-parent-flow( 1.0 );
+	height: 100%;
+	flow-children: down;
+	vertical-align: middle;
+	padding-left: 4px;
+	padding-right: 4px;
+}
+
+Label.PropGridTitle
+{
+	width: 100%;
+	height: 20px;
+	font-size: 14;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	text-align: center;
+	color: #e8eef4;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+/* Always reserved so cards with/without meta share the same header height. */
+Label.PropGridMeta
+{
+	width: 100%;
+	height: 18px;
+	font-size: 13;
+	text-align: center;
+	color: #e8eef4;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	margin-top: 2px;
+}
+
+.PropGridCard:not(.has-meta) .PropGridMeta
+{
+	opacity: 0;
+}
+
+.PropGridCardBody,
+.PropGridCardBody:hover,
+.PropGridCardBody:active
+{
+	wash-color: none;
+}
+
+.PropGridCardBody
+{
+	width: 100%;
+	height: fill-parent-flow( 1.0 );
+	flow-children: none;
+	background-color: #00000000;
+	border: 0px solid transparent;
+	border-radius: 0px;
+	margin-top: 6px;
+	transition-property: background-color;
+	transition-duration: 0.15s;
+}
+
+.PropGridCard:not(.is-empty) .PropGridCardBody:hover
+{
+	background-color: #ffffff1c;
+	cursor: pointer;
+	sound: "UIPanorama.generic_button_rollover";
+}
+
+.PropGridCard:not(.is-empty) .PropGridCardBody:active
+{
+	background-color: #ffffff2e;
+	sound: "UIPanorama.generic_button_press";
+}
+
+.PropGridImg
+{
+	width: 100%;
+	height: 100%;
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contains;
+}
+
+.PropGridCard.is-empty .PropGridHeader,
+.PropGridCard.is-empty .PropGridImg
+{
+	visibility: collapse;
+}
+
+/* Live scale / hue / intensity sliders — same ph-bg / ph-bar chrome as other overlays. */
+.PropSliders
+{
+	width: fit-children;
+	height: 100%;
+	flow-children: none;
+	border-radius: 4px;
+	overflow: noclip noclip;
+}
+
+.PropSliders.is-off
+{
+	visibility: collapse;
+	width: 0px;
+}
+
+.PropSlidersContent
+{
+	width: fit-children;
+	height: 100%;
+	flow-children: right;
+	padding: 0px 12px 0px 14px;
+	overflow: noclip noclip;
+	z-index: 2;
+}
+
+.PropSliderCol
+{
+	width: 64px;
+	height: 100%;
+	flow-children: down;
+	margin-left: 4px;
+	margin-right: 4px;
+}
+
+/* Hidden when the prop disables that axis — collapses so remaining columns shrink. */
+.PropSliderCol.is-off
+{
+	visibility: collapse;
+	width: 0px;
+	margin-left: 0px;
+	margin-right: 0px;
+}
+
+/* In-flow top margin (not content padding) so height:100% columns stay inside the panel.
+   noclip + horizontal-align so titles center (shrink left-paints). */
+Label.PropSliderLabel
+{
+	width: 100%;
+	horizontal-align: center;
+	font-size: 10;
+	text-transform: uppercase;
+	color: #8b8f94;
+	text-align: center;
+	text-overflow: noclip;
+	margin-top: 10px;
+	margin-bottom: 6px;
+	white-space: nowrap;
+}
+
+.PropSliderTrack
+{
+	width: 28px;
+	height: fill-parent-flow( 1.0 );
+	horizontal-align: center;
+	flow-children: none;
+	background-color: #ffffff0d;
+	border-radius: 3px;
+	overflow: clip clip;
+}
+
+/* Even HSV stops: 0° red → 60° yellow → 120° green → 180° cyan → 240° blue → 300° magenta → 360° red. */
+.PropSliderTrackHue
+{
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #ff0000 ), color-stop( 0.1667, #ffff00 ), color-stop( 0.3333, #00ff00 ), color-stop( 0.5, #00ffff ), color-stop( 0.6667, #0000ff ), color-stop( 0.8333, #ff00ff ), to( #ff0000 ) );
+}
+
+.PropSliderTrackValue
+{
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #ffffff ), to( #000000 ) );
+}
+
+.PropSliderHits
+{
+	width: 100%;
+	height: 100%;
+	flow-children: down;
+}
+
+.PropSliderHit
+{
+	width: 100%;
+	height: fill-parent-flow( 1.0 );
+	flow-children: none;
+	background-color: #00000000;
+	border: 0px solid transparent;
+}
+
+/* Per-hit fill so the #f0a531 ends on the same edge as the gold stripe. */
+.PropSliderSeg
+{
+	width: 100%;
+	height: 100%;
+	background-color: #f0a531;
+	opacity: 0;
+}
+
+.PropSliderHit.is-filled .PropSliderSeg
+{
+	opacity: 0.9;
+}
+
+.PropSliderHit:hover
+{
+	background-color: #ffffff22;
+	cursor: pointer;
+	sound: "UIPanorama.generic_button_rollover";
+}
+
+.PropSliderHit:active
+{
+	background-color: #ffffff33;
+	sound: "UIPanorama.generic_button_press";
+}
+
+/* Gold stripe — size/tint at top of the hit (matches high-edge value); hue centered.
+   Opacity (not visibility) so is-on can re-show after the mark moves. */
+.PropSliderStripe
+{
+	width: 100%;
+	height: 3px;
+	vertical-align: top;
+	background-color: #ffe566;
+	box-shadow: #000000aa 0px 0px 2px 0px;
+	opacity: 0;
+}
+
+.PropSliderTrackHue .PropSliderStripe
+{
+	vertical-align: middle;
+}
+
+.PropSliderHit.is-on .PropSliderStripe
+{
+	opacity: 1;
+}
+
+.PropSliderHit.is-on:hover
+{
+	background-color: #ffe56622;
+}
+
+.PropSliderReset
+{
+	width: 28px;
+	height: 22px;
+	horizontal-align: center;
+	margin-top: 6px;
+	margin-bottom: 12px;
+	background-color: #ffffff0d;
+	border: 0px solid transparent;
+	border-radius: 3px;
+	transition-property: background-color;
+	transition-duration: 0.15s;
+}
+
+.PropSliderReset:hover
+{
+	background-color: #ffffff1c;
+	cursor: pointer;
+	sound: "UIPanorama.generic_button_rollover";
+}
+
+.PropSliderReset:active
+{
+	background-color: #ffffff2e;
+	sound: "UIPanorama.generic_button_press";
+}
+
+.PropSliderResetLabel
+{
+	width: 100%;
+	horizontal-align: center;
+	vertical-align: middle;
+	text-align: center;
+	font-size: 11;
+	letter-spacing: 1px;
+	color: #8b8f94;
+}
+
+.PropSliderReset:hover .PropSliderResetLabel
+{
+	color: #ffffff;
+}
+
+/* SoundMenu — middle-left clickable list. */
+
+.SoundMenu
+{
+	width: 350px;
+	horizontal-align: left;
+	vertical-align: middle;
+	margin-left: 28px;
+	z-index: 100;
+}
+
+.SoundContent
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: down;
+	overflow: noclip noclip;
+	z-index: 2;
+}
+
+.SoundStopBtn
+{
+	flow-children: none;
+	margin-right: 6px;
+}
+
+.SoundStopBtn.active
+{
+	background-color: #ffffff1c;
+}
+
+Label.SoundStopLabel
+{
+	font-size: 12;
+	color: #8b8f94;
+}
+
+.SoundStopBtn.active Label.SoundStopLabel,
+.SoundStopBtn:hover Label.SoundStopLabel
+{
+	color: #ffffff;
+}
+
+.SoundBody
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: down;
+	padding: 12px 14px 14px 18px;
+}
+
+.SoundMeta
+{
+	width: 100%;
+	flow-children: right;
+	margin-bottom: 6px;
+}
+
+.SoundPage
+{
+	width: 100%;
+	font-size: 12;
+	color: #f0a531;
+	text-align: right;
+}
+
+.SoundMenu.cooldown .SoundOptions,
+.SoundMenu.disabled .SoundOptions
+{
+	opacity: 0.45;
+}
+
+.SoundOptions
+{
+	width: 100%;
+	flow-children: down;
+}
+
+.SoundRowOuter
+{
+	width: 100%;
+	height: 34px;
+	flow-children: right;
+	margin-bottom: 4px;
+}
+
+.SoundRow
+{
+	width: fill-parent-flow( 1.0 );
+	height: 100%;
+	flow-children: right;
+	background-color: #ffffff0d;
+	border-radius: 3px;
+	border: 1px solid #00000000;
+	overflow: clip;
+	wash-color: none;
+	transition-property: background-color;
+	transition-duration: 0.15s;
+}
+
+.SoundRow:hover
+{
+	background-color: #ffffff1c;
+	border: 1px solid #f0a53166;
+}
+
+.SoundRow:active
+{
+	background-color: #ffffff2e;
+	border: 1px solid #f0a531;
+}
+
+.SoundRow.playing
+{
+	background-color: #ffffff2e;
+	border: 1px solid #f0a531;
+}
+
+.SoundRow.playing:hover
+{
+	background-color: #ffffff2e;
+	border: 1px solid #f0a531;
+}
+
+.SoundRow.empty
+{
+	opacity: 0.3;
+}
+
+.SoundRow.empty:hover,
+.SoundRow.empty:active
+{
+	background-color: #ffffff0d;
+	border: 1px solid #00000000;
+}
+
+.SoundFlag
+{
+	width: 48px;
+	height: 100%;
+	flow-children: none;
+	border-top-left-radius: 3px;
+	border-bottom-left-radius: 3px;
+	overflow: clip;
+	opacity: 0.7;
+}
+
+.SoundFlag.is-off
+{
+	visibility: collapse;
+}
+
+/* Stock flag SVGs need <Image> — background-image drops the US blue canton. */
+.SoundFlagImg
+{
+	width: 100%;
+	height: 100%;
+	opacity: 0;
+}
+
+.SoundFlag.lang-ae .SoundFlagImg.lang-ae
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-afrc .SoundFlagImg.lang-afrc
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-ar .SoundFlagImg.lang-ar
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-asia .SoundFlagImg.lang-asia
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-at .SoundFlagImg.lang-at
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-au .SoundFlagImg.lang-au
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-ausc .SoundFlagImg.lang-ausc
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-be .SoundFlagImg.lang-be
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-bg .SoundFlagImg.lang-bg
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-br .SoundFlagImg.lang-br
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-by .SoundFlagImg.lang-by
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-ca .SoundFlagImg.lang-ca
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-cc .SoundFlagImg.lang-cc
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-ch .SoundFlagImg.lang-ch
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-cl .SoundFlagImg.lang-cl
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-cn .SoundFlagImg.lang-cn
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-cz .SoundFlagImg.lang-cz
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-de .SoundFlagImg.lang-de
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-dk .SoundFlagImg.lang-dk
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-dz .SoundFlagImg.lang-dz
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-ee .SoundFlagImg.lang-ee
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-es .SoundFlagImg.lang-es
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-eu .SoundFlagImg.lang-eu
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-euro .SoundFlagImg.lang-euro
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-fi .SoundFlagImg.lang-fi
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-fr .SoundFlagImg.lang-fr
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-gb .SoundFlagImg.lang-gb
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-gp .SoundFlagImg.lang-gp
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-gr .SoundFlagImg.lang-gr
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-hk .SoundFlagImg.lang-hk
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-hr .SoundFlagImg.lang-hr
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-hu .SoundFlagImg.lang-hu
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-id .SoundFlagImg.lang-id
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-ie .SoundFlagImg.lang-ie
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-il .SoundFlagImg.lang-il
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-in .SoundFlagImg.lang-in
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-ir .SoundFlagImg.lang-ir
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-is .SoundFlagImg.lang-is
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-it .SoundFlagImg.lang-it
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-jp .SoundFlagImg.lang-jp
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-kr .SoundFlagImg.lang-kr
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-kz .SoundFlagImg.lang-kz
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-lt .SoundFlagImg.lang-lt
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-lu .SoundFlagImg.lang-lu
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-lv .SoundFlagImg.lang-lv
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-ly .SoundFlagImg.lang-ly
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-mk .SoundFlagImg.lang-mk
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-mo .SoundFlagImg.lang-mo
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-mx .SoundFlagImg.lang-mx
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-my .SoundFlagImg.lang-my
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-namc .SoundFlagImg.lang-namc
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-nl .SoundFlagImg.lang-nl
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-no .SoundFlagImg.lang-no
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-nz .SoundFlagImg.lang-nz
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-pe .SoundFlagImg.lang-pe
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-ph .SoundFlagImg.lang-ph
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-pk .SoundFlagImg.lang-pk
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-pl .SoundFlagImg.lang-pl
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-pt .SoundFlagImg.lang-pt
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-re .SoundFlagImg.lang-re
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-ro .SoundFlagImg.lang-ro
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-rs .SoundFlagImg.lang-rs
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-ru .SoundFlagImg.lang-ru
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-sa .SoundFlagImg.lang-sa
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-samc .SoundFlagImg.lang-samc
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-se .SoundFlagImg.lang-se
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-sg .SoundFlagImg.lang-sg
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-si .SoundFlagImg.lang-si
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-sk .SoundFlagImg.lang-sk
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-sq .SoundFlagImg.lang-sq
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-th .SoundFlagImg.lang-th
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-tr .SoundFlagImg.lang-tr
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-tw .SoundFlagImg.lang-tw
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-ua .SoundFlagImg.lang-ua
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-us .SoundFlagImg.lang-us
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-ve .SoundFlagImg.lang-ve
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-vn .SoundFlagImg.lang-vn
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-world .SoundFlagImg.lang-world
+{
+	opacity: 1;
+}
+
+.SoundFlag.lang-za .SoundFlagImg.lang-za
+{
+	opacity: 1;
+}
+
+.SoundRowContent
+{
+	width: fill-parent-flow( 1.0 );
+	height: 100%;
+	flow-children: right;
+	padding: 0px 8px;
+}
+
+.SoundLabel
+{
+	width: fill-parent-flow( 1.0 );
+	font-size: 14;
+	color: #e8eef4;
+	vertical-align: middle;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.SoundDur
+{
+	font-size: 11;
+	color: #8b8f94;
+	vertical-align: middle;
+	margin-left: 6px;
+}
+
+.SoundFavBtn
+{
+	width: 22px;
+	max-width: 22px;
+	height: 100%;
+	margin-left: 2px;
+	padding: 0px;
+	background-color: #00000000;
+	border: 0px solid transparent;
+	border-radius: 3px;
+	overflow: clip;
+	wash-color: none;
+	transition-property: background-color;
+	transition-duration: 0.15s;
+}
+
+.SoundFavBtn.is-off
+{
+	visibility: collapse;
+}
+
+.SoundFavBtn:hover
+{
+	background-color: #ffffff1c;
+	cursor: pointer;
+	sound: "UIPanorama.generic_button_rollover";
+}
+
+.SoundFavBtn:active
+{
+	background-color: #ffffff2e;
+	sound: "UIPanorama.generic_button_press";
+}
+
+.SoundFavBtn.is-on
+{
+	background-color: #f0a53166;
+}
+
+.SoundFavBtn.is-on:hover
+{
+	background-color: #f0a53155;
+}
+
+.SoundFavStar
+{
+	width: 100%;
+	horizontal-align: center;
+	vertical-align: middle;
+	text-align: center;
+	font-size: 14;
+	color: #8b8f94;
+}
+
+.SoundFavBtn.is-on .SoundFavStar
+{
+	color: #f0a531;
+}
+
+/* Overlay play progress — fixed row height so idle/playing never resizes the button. */
+.SoundPlayFill
+{
+	width: 100%;
+	height: 3px;
+	ignore-parent-flow: true;
+	horizontal-align: left;
+	vertical-align: bottom;
+	background-color: #f0a531;
+	opacity: 0;
+	border-bottom-left-radius: 3px;
+	border-bottom-right-radius: 3px;
+	transition-property: clip, opacity;
+	transition-duration: 0.12s;
+	clip: rect( 0%, 2%, 100%, 0% );
+}
+
+.SoundPlayFill.playing
+{
+	opacity: 1;
+}
+
+.SoundPlayFill.complete
+{
+	opacity: 1;
+	background-color: #7dffa0;
+}
+
+.SoundPlayFill.p100 { clip: rect( 0%, 100%, 100%, 0% ); }
+.SoundPlayFill.p90 { clip: rect( 0%, 90%, 100%, 0% ); }
+.SoundPlayFill.p80 { clip: rect( 0%, 80%, 100%, 0% ); }
+.SoundPlayFill.p70 { clip: rect( 0%, 70%, 100%, 0% ); }
+.SoundPlayFill.p60 { clip: rect( 0%, 60%, 100%, 0% ); }
+.SoundPlayFill.p50 { clip: rect( 0%, 50%, 100%, 0% ); }
+.SoundPlayFill.p40 { clip: rect( 0%, 40%, 100%, 0% ); }
+.SoundPlayFill.p30 { clip: rect( 0%, 30%, 100%, 0% ); }
+.SoundPlayFill.p20 { clip: rect( 0%, 20%, 100%, 0% ); }
+.SoundPlayFill.p10 { clip: rect( 0%, 10%, 100%, 0% ); }
+.SoundPlayFill.p0 { clip: rect( 0%, 2%, 100%, 0% ); }
+
+.SoundFooter
+{
+	width: 100%;
+	flow-children: right;
+	margin-top: 8px;
+	padding-top: 6px;
+	border-top: 1px solid #d9d9d90a;
+}
+
+.SoundFooterBtn
+{
+	width: fill-parent-flow( 1.0 );
+	flow-children: none;
+	padding: 6px 4px;
+	margin: 0px 2px;
+	background-color: #ffffff0d;
+	border-radius: 3px;
+	border: 1px solid #00000000;
+	transition-property: background-color;
+	transition-duration: 0.15s;
+}
+
+.SoundFooterBtn:hover
+{
+	background-color: #ffffff1c;
+	border: 1px solid #f0a53166;
+}
+
+.SoundFooterBtn:active
+{
+	background-color: #ffffff2e;
+	border: 1px solid #f0a531;
+}
+
+/* RoundStatus — top-center phase card. z-index above fullscreen menus. */
+.HudScreen
+{
+	z-index: 100000;
+}
+
+/* HiderModes — under every other custom HUD root (menus / player info / timer). */
+.HudScreen.HiderModesScreen
+{
+	z-index: 99998;
+}
+
+.RoundStatus
+{
+	width: 82px;
+	height: 60px;
+	horizontal-align: center;
+	vertical-align: top;
+	margin-top: 4px;
+	flow-children: down;
+}
+
+.RoundStatus .ph-bg
+{
+	ignore-parent-flow: true;
+}
+
+.CdLabelRow,
+.CdTimeRow,
+.CdRail
+{
+	width: 100%;
+}
+
+/* Center by panel align — shrink left-paints and ignores text-align. */
+.CdLabelRow,
+.CdTimeRow
+{
+	height: fit-children;
+	flow-children: none;
+}
+
+Label.CdLabel,
+Label.CdTime
+{
+	width: fit-children;
+	height: fit-children;
+	horizontal-align: center;
+	white-space: nowrap;
+	text-overflow: noclip;
+}
+
+Label.CdLabel
+{
+	font-size: 16;
+	line-height: 16px;
+	color: #f0a531;
+	text-transform: uppercase;
+}
+
+Label.CdTime
+{
+	margin-top: -6px;
+	font-size: 40;
+	line-height: 32px;
+	color: #e8eef4;
+	transition-property: transform;
+	transition-duration: 0.2s;
+}
+
+.CdTime.tick-a,
+.CdTime.tick-b
+{
+	transform: scale3d( 1.06, 1.06, 1 );
+}
+
+/* Warmup count: 0 players red → full lobby green. Hue class on RoundStatus. */
+.RoundStatus.hue0 Label.CdTime { color: #ff4040ff; }
+.RoundStatus.hue1 Label.CdTime { color: #ff5428ff; }
+.RoundStatus.hue2 Label.CdTime { color: #ff6c22ff; }
+.RoundStatus.hue3 Label.CdTime { color: #f88820ff; }
+.RoundStatus.hue4 Label.CdTime { color: #e8a418ff; }
+.RoundStatus.hue5 Label.CdTime { color: #d4bc20ff; }
+.RoundStatus.hue6 Label.CdTime { color: #b4cc28ff; }
+.RoundStatus.hue7 Label.CdTime { color: #90d430ff; }
+.RoundStatus.hue8 Label.CdTime { color: #70dc38ff; }
+.RoundStatus.hue9 Label.CdTime { color: #58dc44ff; }
+.RoundStatus.hue10 Label.CdTime { color: #9ccf4f; }
+
+.CdRail
+{
+	height: 3px;
+	background-color: #ffffff1f;
+	border-radius: 0px 0px 4px 4px;
+	overflow: clip;
+}
+
+.CdRail.is-off
+{
+	visibility: collapse;
+}
+
+.CdFill
+{
+	height: 100%;
+	width: 100%;
+	background-color: #f0a53166;
+	transition-property: clip;
+	transition-duration: 0.35s;
+	clip: rect( 0%, 100%, 100%, 0% );
+}
+
+/* Tutorial tip — kit-reveal card under RoundStatus (4 + 60 + 8). Bg on the
+   sized panel; a child .ph-bg at 100% under fit-children collapses. */
+.TutorialTip
+{
+	width: 520px;
+	height: fit-children;
+	horizontal-align: center;
+	vertical-align: top;
+	margin-top: 72px;
+	flow-children: down;
+	padding-top: 10px;
+	padding-right: 16px;
+	padding-bottom: 10px;
+	padding-left: 16px;
+	border: 1px solid #ffffff14;
+	border-top: 2px solid #f0a531;
+	border-radius: 3px;
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #12171e80 ), to( #0b0f1480 ) );
+	box-shadow: #00000080 0px 4px 16px 0px;
+}
+
+Label.TutorialTipText
+{
+	width: 100%;
+	font-size: 15.4;
+	line-height: 19.8px;
+	color: #e8eef4;
+	text-align: center;
+	white-space: normal;
+}
+
+.CdFill.p100 { clip: rect( 0%, 100%, 100%, 0% ); }
+.CdFill.p90 { clip: rect( 0%, 90%, 100%, 0% ); }
+.CdFill.p80 { clip: rect( 0%, 80%, 100%, 0% ); }
+.CdFill.p70 { clip: rect( 0%, 70%, 100%, 0% ); }
+.CdFill.p60 { clip: rect( 0%, 60%, 100%, 0% ); }
+.CdFill.p50 { clip: rect( 0%, 50%, 100%, 0% ); }
+.CdFill.p40 { clip: rect( 0%, 40%, 100%, 0% ); }
+.CdFill.p30 { clip: rect( 0%, 30%, 100%, 0% ); }
+.CdFill.p20 { clip: rect( 0%, 20%, 100%, 0% ); }
+.CdFill.p10 { clip: rect( 0%, 10%, 100%, 0% ); }
+.CdFill.p0 { clip: rect( 0%, 2%, 100%, 0% ); }
+
+/* Fullscreen seeker weapon menu. Shell padding via .ph-fs. */
+
+.WeaponMenu
+{
+	z-index: 200;
+}
+
+.WeaponMenuContent
+{
+	width: 100%;
+	height: 100%;
+	flow-children: down;
+}
+
+.WeaponMenuShopLink,
+.WeaponMenuShopLink:hover,
+.WeaponMenuShopLink:active
+{
+	wash-color: none;
+}
+
+.WeaponMenuShopLink
+{
+	height: 28px;
+	flow-children: none;
+	vertical-align: middle;
+	padding-left: 12px;
+	padding-right: 12px;
+	margin-right: 12px;
+	background-color: #f0a53118;
+	border: 1px solid #f0a531;
+	border-radius: 3px;
+	transition-property: background-color;
+	transition-duration: 0.15s;
+}
+
+.WeaponMenuShopLink:hover
+{
+	background-color: #f0a53133;
+	cursor: pointer;
+	sound: "UIPanorama.generic_button_rollover";
+}
+
+.WeaponMenuShopLink:active
+{
+	background-color: #f0a53155;
+	sound: "UIPanorama.generic_button_press";
+}
+
+/* Fit-children button — no ph-btn-label (width:100% needs a sized parent). */
+Label.WeaponMenuShopLinkLabel
+{
+	vertical-align: middle;
+	font-size: 12;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	color: #f0a531;
+}
+
+.WeaponMenuMain
+{
+	width: 100%;
+	height: fill-parent-flow( 1.0 );
+	flow-children: down;
+	padding-left: 18px;
+	padding-right: 18px;
+	padding-top: 10px;
+	padding-bottom: 12px;
+}
+
+.WeaponMenuMainFlow
+{
+	width: 100%;
+	height: 100%;
+	flow-children: right;
+}
+
+.WeaponShop
+{
+	width: fill-parent-flow( 2.0 );
+	height: 100%;
+	flow-children: down;
+	padding-right: 12px;
+}
+
+.WeaponPresets
+{
+	width: fill-parent-flow( 1.0 );
+	height: 100%;
+	flow-children: down;
+	padding-left: 12px;
+	border-left: 1px solid #d9d9d90a;
+}
+
+.WeaponPresetToolbar
+{
+	width: 100%;
+	height: 32px;
+	flow-children: right;
+	margin-bottom: 8px;
+}
+
+.WeaponPresetAction,
+.WeaponPresetAction:hover,
+.WeaponPresetAction:active
+{
+	wash-color: none;
+}
+
+.WeaponPresetAction
+{
+	width: fill-parent-flow( 1.0 );
+	height: 100%;
+	flow-children: none;
+	background-color: #ffffff0d;
+	border-radius: 3px;
+	margin-right: 6px;
+	transition-property: background-color;
+	transition-duration: 0.15s;
+}
+
+.WeaponPresetAction:hover
+{
+	background-color: #ffffff1c;
+	cursor: pointer;
+	sound: "UIPanorama.generic_button_rollover";
+}
+
+.WeaponPresetAction:active
+{
+	background-color: #ffffff2e;
+	sound: "UIPanorama.generic_button_press";
+}
+
+Label.WeaponPresetActionLabel
+{
+	font-size: 14;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	color: #e8eef4;
+}
+
+.WeaponPresetList
+{
+	width: 100%;
+	height: fill-parent-flow( 1.0 );
+	flow-children: down;
+	overflow: squish scroll;
+}
+
+.WeaponPresetRow
+{
+	width: 100%;
+	height: 40px;
+	flow-children: down;
+	background-color: #ffffff0d;
+	border-radius: 3px;
+	margin-bottom: 4px;
+	padding-left: 10px;
+	padding-right: 10px;
+	border: 1px solid transparent;
+	transition-property: background-color, border;
+	transition-duration: 0.15s;
+}
+
+.WeaponPresetRow:not(.is-empty):hover
+{
+	background-color: #ffffff1c;
+	cursor: pointer;
+	sound: "UIPanorama.generic_button_rollover";
+}
+
+.WeaponPresetRow:not(.is-empty):active
+{
+	background-color: #ffffff2e;
+	sound: "UIPanorama.generic_button_press";
+}
+
+.WeaponPresetRow.is-selected
+{
+	border: 1px solid #f0a531;
+	background-color: #f0a53122;
+}
+
+.WeaponPresetRow.is-broke
+{
+	opacity: 0.45;
+}
+
+.WeaponPresetAction.is-disabled
+{
+	opacity: 0.35;
+	saturation: 0.15;
+}
+
+.WeaponPresetRow.is-empty
+{
+	visibility: collapse;
+	height: 0px;
+	margin-bottom: 0px;
+}
+
+.WeaponPresetName
+{
+	width: 100%;
+	font-size: 13;
+	color: #e8eef4;
+	vertical-align: bottom;
+}
+
+.WeaponPresetMeta
+{
+	width: 100%;
+	font-size: 11;
+	color: #8b8f94;
+	vertical-align: top;
+}
+
+.WeaponSection
+{
+	width: 100%;
+	flow-children: down;
+	margin-bottom: 8px;
+}
+
+.WeaponSectionPrimary
+{
+	height: fill-parent-flow( 2.2 );
+}
+
+.WeaponSectionSecondary
+{
+	height: fill-parent-flow( 1.0 );
+}
+
+.WeaponSectionUtils
+{
+	height: fill-parent-flow( 0.85 );
+}
+
+Label.WeaponSectionLabel
+{
+	width: 100%;
+	font-size: 13;
+	letter-spacing: 2px;
+	text-transform: uppercase;
+	color: #f0a531;
+	margin-bottom: 4px;
+}
+
+.WeaponSectionCards
+{
+	width: 100%;
+	height: fill-parent-flow( 1.0 );
+	flow-children: down;
+}
+
+.WeaponRow
+{
+	width: 100%;
+	height: fill-parent-flow( 1.0 );
+	flow-children: down;
+	margin-bottom: 6px;
+}
+
+.WeaponRowFlow
+{
+	width: 100%;
+	height: 100%;
+	flow-children: right;
+}
+
+.WeaponCard,
+.WeaponCard:hover,
+.WeaponCard:active
+{
+	wash-color: none;
+}
+
+.WeaponCard
+{
+	width: fill-parent-flow( 1.0 );
+	height: 100%;
+	flow-children: down;
+	background-color: #ffffff0d;
+	border-radius: 3px;
+	margin-right: 6px;
+	padding-top: 6px;
+	padding-left: 0px;
+	padding-right: 0px;
+	padding-bottom: 0px;
+	border: 1px solid transparent;
+	transition-property: background-color, border;
+	transition-duration: 0.15s;
+}
+
+.WeaponCard:not(.is-empty):hover
+{
+	background-color: #ffffff1c;
+	cursor: pointer;
+	sound: "UIPanorama.generic_button_rollover";
+}
+
+.WeaponCard:not(.is-empty):active
+{
+	background-color: #ffffff2e;
+	sound: "UIPanorama.generic_button_press";
+}
+
+.WeaponCard.is-selected
+{
+	border: 1px solid #f0a531;
+	background-color: #f0a53122;
+}
+
+.WeaponCard.is-broke
+{
+	opacity: 0.45;
+}
+
+.WeaponCard.is-disabled
+{
+	opacity: 0.35;
+	saturation: 0.15;
+}
+
+.WeaponCard.is-empty
+{
+	visibility: collapse;
+	width: 0px;
+	margin-right: 0px;
+}
+
+.WeaponCardHead
+{
+	width: 100%;
+	height: 16px;
+	flow-children: right;
+	padding-left: 6px;
+	padding-right: 6px;
+}
+
+Label.WeaponCardTitle
+{
+	width: fill-parent-flow( 1.0 );
+	vertical-align: middle;
+	font-size: 12;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	text-align: left;
+	color: #e8eef4;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.WeaponCardImg
+{
+	width: 100%;
+	height: fill-parent-flow( 1.0 );
+	margin-top: 4px;
+	background-repeat: no-repeat;
+	background-position: 50% 50%;
+	background-size: auto 100%;
+	overflow: clip;
+}
+
+Label.WeaponCardMeta
+{
+	vertical-align: middle;
+	font-size: 10;
+	text-align: right;
+	color: #9ccf4f;
+	white-space: nowrap;
+	margin-left: 4px;
+}
+
+.WeaponCardCount
+{
+	width: 100%;
+	font-size: 12;
+	text-align: center;
+	color: #f0a531;
+	margin-top: 0px;
+	padding-left: 6px;
+	padding-right: 6px;
+}
+
+.WeaponUtilCard
+{
+	padding-bottom: 4px;
+}
+
+.WeaponUtilBtns
+{
+	width: 100%;
+	height: 28px;
+	flow-children: right;
+	margin-top: 4px;
+	padding-left: 6px;
+	padding-right: 6px;
+}
+
+.WeaponUtilBtn
+{
+	width: fill-parent-flow( 1.0 );
+	height: 100%;
+	flow-children: none;
+	background-color: #ffffff0d;
+	border-radius: 3px;
+	margin-right: 4px;
+	transition-property: background-color;
+	transition-duration: 0.15s;
+}
+
+.WeaponUtilBtn:hover
+{
+	background-color: #ffffff1c;
+	cursor: pointer;
+	sound: "UIPanorama.generic_button_rollover";
+}
+
+.WeaponUtilBtn:active
+{
+	background-color: #ffffff2e;
+	sound: "UIPanorama.generic_button_press";
+}
+
+.WeaponUtilBtn.is-disabled
+{
+	opacity: 0.35;
+}
+
+Label.WeaponUtilBtnLabel
+{
+	font-size: 18;
+	color: #e8eef4;
+}
+
+.ph-wpn-default
+{
+	background-image: url("s2r://panorama/images/econ/weapons/base_weapons/weapon_ak47_png.vtex");
+	background-img-opacity: 0.15;
+}
+
+.ph-wpn-ak47
+{
+	background-image: url("s2r://panorama/images/econ/weapons/base_weapons/weapon_ak47_png.vtex");
+}
+
+.ph-wpn-aug
+{
+	background-image: url("s2r://panorama/images/econ/weapons/base_weapons/weapon_aug_png.vtex");
+}
+
+.ph-wpn-awp
+{
+	background-image: url("s2r://panorama/images/econ/weapons/base_weapons/weapon_awp_png.vtex");
+}
+
+.ph-wpn-bizon
+{
+	background-image: url("s2r://panorama/images/econ/weapons/base_weapons/weapon_bizon_png.vtex");
+}
+
+.ph-wpn-famas
+{
+	background-image: url("s2r://panorama/images/econ/weapons/base_weapons/weapon_famas_png.vtex");
+}
+
+.ph-wpn-g3sg1
+{
+	background-image: url("s2r://panorama/images/econ/weapons/base_weapons/weapon_g3sg1_png.vtex");
+}
+
+.ph-wpn-galilar
+{
+	background-image: url("s2r://panorama/images/econ/weapons/base_weapons/weapon_galilar_png.vtex");
+}
+
+.ph-wpn-m249
+{
+	background-image: url("s2r://panorama/images/econ/weapons/base_weapons/weapon_m249_png.vtex");
+}
+
+.ph-wpn-m4a1
+{
+	background-image: url("s2r://panorama/images/econ/weapons/base_weapons/weapon_m4a1_png.vtex");
+}
+
+.ph-wpn-m4a1_silencer
+{
+	background-image: url("s2r://panorama/images/econ/weapons/base_weapons/weapon_m4a1_silencer_png.vtex");
+}
+
+.ph-wpn-mac10
+{
+	background-image: url("s2r://panorama/images/econ/weapons/base_weapons/weapon_mac10_png.vtex");
+}
+
+.ph-wpn-mag7
+{
+	background-image: url("s2r://panorama/images/econ/weapons/base_weapons/weapon_mag7_png.vtex");
+}
+
+.ph-wpn-mp5sd
+{
+	background-image: url("s2r://panorama/images/econ/weapons/base_weapons/weapon_mp5sd_png.vtex");
+}
+
+.ph-wpn-mp7
+{
+	background-image: url("s2r://panorama/images/econ/weapons/base_weapons/weapon_mp7_png.vtex");
+}
+
+.ph-wpn-mp9
+{
+	background-image: url("s2r://panorama/images/econ/weapons/base_weapons/weapon_mp9_png.vtex");
+}
+
+.ph-wpn-negev
+{
+	background-image: url("s2r://panorama/images/econ/weapons/base_weapons/weapon_negev_png.vtex");
+}
+
+.ph-wpn-nova
+{
+	background-image: url("s2r://panorama/images/econ/weapons/base_weapons/weapon_nova_png.vtex");
+}
+
+.ph-wpn-p90
+{
+	background-image: url("s2r://panorama/images/econ/weapons/base_weapons/weapon_p90_png.vtex");
+}
+
+.ph-wpn-sawedoff
+{
+	background-image: url("s2r://panorama/images/econ/weapons/base_weapons/weapon_sawedoff_png.vtex");
+}
+
+.ph-wpn-scar20
+{
+	background-image: url("s2r://panorama/images/econ/weapons/base_weapons/weapon_scar20_png.vtex");
+}
+
+.ph-wpn-sg556
+{
+	background-image: url("s2r://panorama/images/econ/weapons/base_weapons/weapon_sg556_png.vtex");
+}
+
+.ph-wpn-ssg08
+{
+	background-image: url("s2r://panorama/images/econ/weapons/base_weapons/weapon_ssg08_png.vtex");
+}
+
+.ph-wpn-ump45
+{
+	background-image: url("s2r://panorama/images/econ/weapons/base_weapons/weapon_ump45_png.vtex");
+}
+
+.ph-wpn-xm1014
+{
+	background-image: url("s2r://panorama/images/econ/weapons/base_weapons/weapon_xm1014_png.vtex");
+}
+
+.ph-wpn-cz75a
+{
+	background-image: url("s2r://panorama/images/econ/weapons/base_weapons/weapon_cz75a_png.vtex");
+}
+
+.ph-wpn-deagle
+{
+	background-image: url("s2r://panorama/images/econ/weapons/base_weapons/weapon_deagle_png.vtex");
+}
+
+.ph-wpn-elite
+{
+	background-image: url("s2r://panorama/images/econ/weapons/base_weapons/weapon_elite_png.vtex");
+}
+
+.ph-wpn-fiveseven
+{
+	background-image: url("s2r://panorama/images/econ/weapons/base_weapons/weapon_fiveseven_png.vtex");
+}
+
+.ph-wpn-glock
+{
+	background-image: url("s2r://panorama/images/econ/weapons/base_weapons/weapon_glock_png.vtex");
+}
+
+.ph-wpn-p250
+{
+	background-image: url("s2r://panorama/images/econ/weapons/base_weapons/weapon_p250_png.vtex");
+}
+
+.ph-wpn-revolver
+{
+	background-image: url("s2r://panorama/images/econ/weapons/base_weapons/weapon_revolver_png.vtex");
+}
+
+.ph-wpn-tec9
+{
+	background-image: url("s2r://panorama/images/econ/weapons/base_weapons/weapon_tec9_png.vtex");
+}
+
+.ph-wpn-usp_silencer
+{
+	background-image: url("s2r://panorama/images/econ/weapons/base_weapons/weapon_usp_silencer_png.vtex");
+}
+
+.ph-wpn-hkp2000
+{
+	background-image: url("s2r://panorama/images/econ/weapons/base_weapons/weapon_hkp2000_png.vtex");
+}
+
+.ph-wpn-flashbang
+{
+	background-image: url("s2r://panorama/images/econ/weapons/base_weapons/weapon_flashbang_png.vtex");
+}
+
+.ph-wpn-hegrenade
+{
+	background-image: url("s2r://panorama/images/econ/weapons/base_weapons/weapon_hegrenade_png.vtex");
+}
+
+.ph-wpn-smokegrenade
+{
+	background-image: url("s2r://panorama/images/econ/weapons/base_weapons/weapon_smokegrenade_png.vtex");
+}
+
+.ph-wpn-incgrenade
+{
+	background-image: url("s2r://panorama/images/econ/weapons/base_weapons/weapon_incgrenade_png.vtex");
+}
+
+.ph-wpn-decoy
+{
+	background-image: url("s2r://panorama/images/econ/weapons/base_weapons/weapon_decoy_png.vtex");
+}
+
+/* Fullscreen shop. Shell padding via .ph-fs. Above weapon menu. */
+
+.ShopMenu
+{
+	z-index: 300;
+}
+
+.ShopMenuContent
+{
+	width: 100%;
+	height: 100%;
+	flow-children: down;
+}
+
+/* Close sits after money — tighter right padding than shared .ph-titlebar. */
+.ShopMenu .ph-titlebar
+{
+	padding-right: 12px;
+}
+
+.ShopMenu Label.ph-money
+{
+	margin-right: 10px;
+}
+
+.ShopFilterBar
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: right;
+	padding-left: 18px;
+	padding-right: 18px;
+	padding-top: 8px;
+	padding-bottom: 2px;
+}
+
+.ShopFilterBtn
+{
+	height: 26px;
+	flow-children: none;
+	padding-left: 10px;
+	padding-right: 10px;
+	margin-right: 6px;
+	background-color: #ffffff0d;
+	border: 1px solid #00000000;
+	border-radius: 3px;
+	transition-property: background-color, border;
+	transition-duration: 0.15s;
+}
+
+.ShopFilterBtn:hover
+{
+	background-color: #ffffff1c;
+	border: 1px solid #f0a53166;
+	cursor: pointer;
+	sound: "UIPanorama.generic_button_rollover";
+}
+
+.ShopFilterBtn:active
+{
+	background-color: #ffffff2e;
+	border: 1px solid #f0a531;
+	sound: "UIPanorama.generic_button_press";
+}
+
+.ShopFilterBtn.is-on
+{
+	background-color: #f0a53122;
+	border: 1px solid #f0a531;
+}
+
+.ShopFilterBtn.is-on:hover
+{
+	background-color: #f0a53144;
+	border: 1px solid #f0a531;
+}
+
+.ShopFilterBtn.is-disabled
+{
+	opacity: 0.35;
+	saturation: 0.15;
+}
+
+.ShopFilterBtn.is-disabled:hover,
+.ShopFilterBtn.is-disabled:active
+{
+	background-color: #ffffff0d;
+	border: 1px solid #00000000;
+	cursor: default;
+	sound: none;
+}
+
+.ShopFilterBtn.is-empty
+{
+	visibility: collapse;
+	width: 0px;
+	padding-left: 0px;
+	padding-right: 0px;
+	margin-right: 0px;
+}
+
+Label.ShopFilterLabel
+{
+	/* Fit-children button — no ph-btn-label (width:100% needs a sized parent). */
+	font-size: 11.55;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	color: #e8eef4;
+	white-space: nowrap;
+	vertical-align: middle;
+}
+
+.ShopGrid
+{
+	width: 100%;
+	height: fill-parent-flow( 1.0 );
+	flow-children: down;
+	padding-left: 18px;
+	padding-right: 18px;
+	padding-top: 10px;
+	padding-bottom: 4px;
+}
+
+.ShopFooter
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: right;
+	padding-left: 18px;
+	padding-right: 18px;
+	padding-top: 6px;
+	padding-bottom: 10px;
+	border-top: 1px solid #d9d9d90a;
+}
+
+.ShopFooterBtn
+{
+	width: fill-parent-flow( 1.0 );
+	flow-children: none;
+	padding: 6px 4px;
+	margin: 0px 2px;
+	background-color: #ffffff0d;
+	border-radius: 3px;
+	border: 1px solid #00000000;
+	transition-property: background-color;
+	transition-duration: 0.15s;
+}
+
+.ShopFooterBtn:hover
+{
+	background-color: #ffffff1c;
+	border: 1px solid #f0a53166;
+	cursor: pointer;
+	sound: "UIPanorama.generic_button_rollover";
+}
+
+.ShopFooterBtn:active
+{
+	background-color: #ffffff2e;
+	border: 1px solid #f0a531;
+	sound: "UIPanorama.generic_button_press";
+}
+
+.ShopFooterBtn.is-disabled
+{
+	opacity: 0.35;
+	saturation: 0.15;
+}
+
+.ShopFooterBtn.is-disabled:hover,
+.ShopFooterBtn.is-disabled:active
+{
+	background-color: #ffffff0d;
+	border: 1px solid #00000000;
+	cursor: default;
+	sound: none;
+}
+
+Label.ShopPage
+{
+	width: 72px;
+	vertical-align: middle;
+	horizontal-align: center;
+	text-align: center;
+	font-size: 12.6;
+	letter-spacing: 1px;
+	color: #d5dde6;
+	white-space: nowrap;
+}
+
+.ShopRow
+{
+	width: 100%;
+	height: fill-parent-flow( 1.0 );
+	flow-children: down;
+}
+
+/* 6px gap between rows (margin on fill-parent-flow rows is squished). */
+.ShopRowGap
+{
+	width: 100%;
+	height: 6px;
+}
+
+.ShopRowFlow
+{
+	width: 100%;
+	height: 100%;
+	flow-children: right;
+}
+
+.ShopCard
+{
+	width: fill-parent-flow( 1.0 );
+	height: 100%;
+	flow-children: down;
+	background-color: #ffffff0d;
+	border-radius: 3px;
+	padding-top: 8px;
+	padding-bottom: 8px;
+	padding-left: 0px;
+	padding-right: 0px;
+	margin-right: 6px;
+	border: 1px solid transparent;
+	transition-property: background-color, border;
+	transition-duration: 0.15s;
+}
+
+.ShopCard:last-child
+{
+	margin-right: 0px;
+}
+
+.ShopCard.is-selected
+{
+	border: 1px solid #f0a531;
+	background-color: #f0a53122;
+}
+
+.ShopCard.is-broke
+{
+	opacity: 0.45;
+}
+
+/* Keep the slot (four columns); hide chrome only. */
+.ShopCard.is-empty
+{
+	background-color: #060a1073;
+	border: 1px dashed #6e7d8c47;
+	opacity: 0.45;
+}
+
+.ShopCard.is-empty .ShopCardHead,
+.ShopCard.is-empty Label.ShopCardSub,
+.ShopCard.is-empty .ShopCardImg,
+.ShopCard.is-empty .ShopBuyBtn
+{
+	visibility: collapse;
+}
+
+.ShopCardHead
+{
+	width: 100%;
+	height: fit-children;
+	min-height: 16px;
+	flow-children: right;
+	padding-left: 6px;
+	padding-right: 6px;
+	margin-bottom: 4px;
+}
+
+Label.ShopCardTitle
+{
+	width: fill-parent-flow( 1.0 );
+	vertical-align: middle;
+	font-size: 12.6;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	text-align: left;
+	color: #e8eef4;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+Label.ShopCardMeta
+{
+	vertical-align: middle;
+	font-size: 10.5;
+	letter-spacing: 1px;
+	color: #9ccf4f;
+	text-align: right;
+	white-space: nowrap;
+}
+
+Label.ShopCardSub
+{
+	width: 100%;
+	height: fill-parent-flow( 1.0 );
+	font-size: 11.55;
+	color: #d5dde6;
+	padding-left: 6px;
+	padding-right: 6px;
+	white-space: normal;
+	text-overflow: ellipsis;
+}
+
+/* With an image the subtitle stays compact; the thumb fills the rest above Buy. */
+.ShopCard.has-image Label.ShopCardSub
+{
+	height: fit-children;
+}
+
+.ShopCardImg
+{
+	width: 100%;
+	height: fill-parent-flow( 1.0 );
+	margin-top: 4px;
+	background-repeat: no-repeat;
+	background-position: 50% 50%;
+	background-size: 100% 100%;
+	overflow: clip;
+}
+
+.ShopCardImg.is-off
+{
+	visibility: collapse;
+	height: 0px;
+	margin-top: 0px;
+}
+
+/* Default = no art. Add .ph-shop-img-{key} rules when shipping thumbs under
+   panorama/images/custom_game/prophunt/shop/{key}.vtex */
+.ph-shop-img-default
+{
+	background-image: none;
+}
+
+.ShopBuyBtn,
+.ShopBuyBtn:hover,
+.ShopBuyBtn:active
+{
+	wash-color: none;
+}
+
+.ShopBuyBtn
+{
+	width: 100%;
+	height: 28px;
+	flow-children: none;
+	margin-left: 6px;
+	margin-right: 6px;
+	margin-top: 6px;
+	background-color: #f0a53122;
+	border: 1px solid #f0a531;
+	border-radius: 3px;
+	transition-property: background-color;
+	transition-duration: 0.15s;
+}
+
+.ShopBuyBtn:hover
+{
+	background-color: #f0a53144;
+	cursor: pointer;
+	sound: "UIPanorama.generic_button_rollover";
+}
+
+.ShopBuyBtn:active
+{
+	background-color: #f0a53166;
+	sound: "UIPanorama.generic_button_press";
+}
+
+.ShopBuyBtn.is-broke,
+.ShopBuyBtn.is-disabled
+{
+	opacity: 0.35;
+	saturation: 0.15;
+}
+
+.ShopBuyBtn.is-empty
+{
+	visibility: collapse;
+	height: 0px;
+	margin-top: 0px;
+}
+
+Label.ShopBuyLabel
+{
+	font-size: 12.6;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	color: #e8eef4;
+}
+
+/* Fullscreen server rules. Shell padding via .ph-fs. Above shop. */
+
+.RulesMenu
+{
+	z-index: 400;
+}
+
+.RulesMenuContent
+{
+	width: 100%;
+	height: 100%;
+	flow-children: down;
+}
+
+.RulesBody
+{
+	width: 100%;
+	height: fill-parent-flow( 1.0 );
+	padding-left: 18px;
+	padding-right: 18px;
+	padding-top: 12px;
+	padding-bottom: 8px;
+}
+
+.RulesScroll
+{
+	width: 100%;
+	height: 100%;
+	flow-children: down;
+	overflow: squish scroll;
+}
+
+.RulesLine
+{
+	width: 100%;
+	margin-bottom: 6px;
+}
+
+.RulesLine.is-off
+{
+	visibility: collapse;
+}
+
+.RulesLine.is-blank
+{
+	height: 20px;
+}
+
+Label.RulesLineText
+{
+	width: 100%;
+	font-size: 15;
+	color: #e8eef4;
+	white-space: normal;
+}
+
+.RulesFooter
+{
+	width: 100%;
+	height: 56px;
+	flow-children: right;
+	padding-left: 18px;
+	padding-right: 18px;
+	padding-bottom: 10px;
+	border-top: 1px solid #d9d9d90a;
+}
+
+.RulesAgreeBtn,
+.RulesAgreeBtn:hover,
+.RulesAgreeBtn:active,
+.RulesDenyBtn,
+.RulesDenyBtn:hover,
+.RulesDenyBtn:active
+{
+	wash-color: none;
+}
+
+.RulesAgreeBtn
+{
+	width: fill-parent-flow( 1.0 );
+	height: 40px;
+	flow-children: none;
+	vertical-align: middle;
+	margin-right: 8px;
+	background-color: #9ccf4f33;
+	border: 1px solid #9ccf4f;
+	border-radius: 3px;
+	transition-property: background-color;
+	transition-duration: 0.15s;
+}
+
+.RulesAgreeBtn:hover
+{
+	background-color: #9ccf4f55;
+	cursor: pointer;
+	sound: "UIPanorama.generic_button_rollover";
+}
+
+.RulesAgreeBtn:active
+{
+	background-color: #9ccf4f77;
+	sound: "UIPanorama.generic_button_press";
+}
+
+Label.RulesAgreeLabel
+{
+	font-size: 18;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	color: #9ccf4f;
+}
+
+.RulesDenyBtn
+{
+	width: fill-parent-flow( 1.0 );
+	height: 40px;
+	flow-children: none;
+	vertical-align: middle;
+	margin-left: 8px;
+	background-color: #ff6b6b22;
+	border: 1px solid #ff6b6baa;
+	border-radius: 3px;
+	transition-property: background-color;
+	transition-duration: 0.15s;
+}
+
+.RulesDenyBtn:hover
+{
+	background-color: #ff6b6b44;
+	cursor: pointer;
+	sound: "UIPanorama.generic_button_rollover";
+}
+
+.RulesDenyBtn:active
+{
+	background-color: #ff6b6b66;
+	sound: "UIPanorama.generic_button_press";
+}
+
+Label.RulesDenyLabel
+{
+	font-size: 18;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	color: #ff9a9aff;
+	overflow: squish;
+	text-overflow: shrink;
+}
+
+/* Prop thumb classes */
+/* Auto-generated prop thumb classes. Regenerate when props/ images change.
+   Run: make prop-thumbs
+   background-image paths: s2r://…/*.vtex (no _c). */
+
+.ph-prop-default
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/default.vtex");
+}
+
+.ph-prop-ac_unit_rooftop_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/ac_unit_rooftop_01.vtex");
+}
+
+.ph-prop-ac_unit_rooftop_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/ac_unit_rooftop_02.vtex");
+}
+
+.ph-prop-ac_unit_small
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/ac_unit_small.vtex");
+}
+
+.ph-prop-ac_vent_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/ac_vent_01.vtex");
+}
+
+.ph-prop-ac_vent_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/ac_vent_02.vtex");
+}
+
+.ph-prop-ac_vent_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/ac_vent_03.vtex");
+}
+
+.ph-prop-airplane
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/airplane.vtex");
+}
+
+.ph-prop-aluminium_ladder_closed
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/aluminium_ladder_closed.vtex");
+}
+
+.ph-prop-aluminium_ladder_half
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/aluminium_ladder_half.vtex");
+}
+
+.ph-prop-aluminium_ladder_open
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/aluminium_ladder_open.vtex");
+}
+
+.ph-prop-ammo_crate_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/ammo_crate_01.vtex");
+}
+
+.ph-prop-ammo_crate_02_closed
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/ammo_crate_02_closed.vtex");
+}
+
+.ph-prop-ammo_crate_02_open
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/ammo_crate_02_open.vtex");
+}
+
+.ph-prop-ammo_crate_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/ammo_crate_03.vtex");
+}
+
+.ph-prop-ancient_wall_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/ancient_wall_01.vtex");
+}
+
+.ph-prop-ancient_wall_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/ancient_wall_02.vtex");
+}
+
+.ph-prop-ancient_wall_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/ancient_wall_03.vtex");
+}
+
+.ph-prop-antique_chair
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/antique_chair.vtex");
+}
+
+.ph-prop-antique_table
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/antique_table.vtex");
+}
+
+.ph-prop-anubis_panel_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/anubis_panel_01.vtex");
+}
+
+.ph-prop-anubis_panel_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/anubis_panel_02.vtex");
+}
+
+.ph-prop-anubis_panel_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/anubis_panel_03.vtex");
+}
+
+.ph-prop-anubis_panel_04
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/anubis_panel_04.vtex");
+}
+
+.ph-prop-anubis_panel_05
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/anubis_panel_05.vtex");
+}
+
+.ph-prop-apc
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/apc.vtex");
+}
+
+.ph-prop-armchair_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/armchair_01.vtex");
+}
+
+.ph-prop-armchair_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/armchair_02.vtex");
+}
+
+.ph-prop-armchair_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/armchair_03.vtex");
+}
+
+.ph-prop-armchair_04
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/armchair_04.vtex");
+}
+
+.ph-prop-armchair_05
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/armchair_05.vtex");
+}
+
+.ph-prop-atm_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/atm_01.vtex");
+}
+
+.ph-prop-atm_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/atm_02.vtex");
+}
+
+.ph-prop-bag_cart_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/bag_cart_01.vtex");
+}
+
+.ph-prop-bag_cart_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/bag_cart_02.vtex");
+}
+
+.ph-prop-balloon
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/balloon.vtex");
+}
+
+.ph-prop-bar_table
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/bar_table.vtex");
+}
+
+.ph-prop-barber_chair
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/barber_chair.vtex");
+}
+
+.ph-prop-barrel_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/barrel_01.vtex");
+}
+
+.ph-prop-barrel_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/barrel_02.vtex");
+}
+
+.ph-prop-barrel_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/barrel_03.vtex");
+}
+
+.ph-prop-barrel_04
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/barrel_04.vtex");
+}
+
+.ph-prop-barrel_05
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/barrel_05.vtex");
+}
+
+.ph-prop-barrel_06
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/barrel_06.vtex");
+}
+
+.ph-prop-barrel_07
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/barrel_07.vtex");
+}
+
+.ph-prop-barrel_08
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/barrel_08.vtex");
+}
+
+.ph-prop-barrel_09
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/barrel_09.vtex");
+}
+
+.ph-prop-barrel_10
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/barrel_10.vtex");
+}
+
+.ph-prop-barrel_11
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/barrel_11.vtex");
+}
+
+.ph-prop-barrel_12
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/barrel_12.vtex");
+}
+
+.ph-prop-barrel_13
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/barrel_13.vtex");
+}
+
+.ph-prop-barrel_14
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/barrel_14.vtex");
+}
+
+.ph-prop-barricade_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/barricade_01.vtex");
+}
+
+.ph-prop-barricade_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/barricade_02.vtex");
+}
+
+.ph-prop-bbq_grill
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/bbq_grill.vtex");
+}
+
+.ph-prop-bench
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/bench.vtex");
+}
+
+.ph-prop-bench_church
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/bench_church.vtex");
+}
+
+.ph-prop-bench_locker_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/bench_locker_01.vtex");
+}
+
+.ph-prop-bench_locker_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/bench_locker_02.vtex");
+}
+
+.ph-prop-bench_park_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/bench_park_01.vtex");
+}
+
+.ph-prop-bench_park_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/bench_park_02.vtex");
+}
+
+.ph-prop-bench_park_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/bench_park_03.vtex");
+}
+
+.ph-prop-bench_street
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/bench_street.vtex");
+}
+
+.ph-prop-bench_wood_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/bench_wood_01.vtex");
+}
+
+.ph-prop-bench_wood_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/bench_wood_02.vtex");
+}
+
+.ph-prop-bike_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/bike_01.vtex");
+}
+
+.ph-prop-bike_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/bike_02.vtex");
+}
+
+.ph-prop-bike_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/bike_03.vtex");
+}
+
+.ph-prop-bike_04
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/bike_04.vtex");
+}
+
+.ph-prop-bike_05
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/bike_05.vtex");
+}
+
+.ph-prop-bomb_tanks
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/bomb_tanks.vtex");
+}
+
+.ph-prop-bookshelf_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/bookshelf_01.vtex");
+}
+
+.ph-prop-bookshelf_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/bookshelf_02.vtex");
+}
+
+.ph-prop-bookshelf_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/bookshelf_03.vtex");
+}
+
+.ph-prop-broken_military_car
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/broken_military_car.vtex");
+}
+
+.ph-prop-bucket_inferno
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/bucket_inferno.vtex");
+}
+
+.ph-prop-bucket_italy
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/bucket_italy.vtex");
+}
+
+.ph-prop-bucket_junk
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/bucket_junk.vtex");
+}
+
+.ph-prop-bucket_overpass_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/bucket_overpass_01.vtex");
+}
+
+.ph-prop-bucket_overpass_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/bucket_overpass_02.vtex");
+}
+
+.ph-prop-bucket_vertigo
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/bucket_vertigo.vtex");
+}
+
+.ph-prop-bus
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/bus.vtex");
+}
+
+.ph-prop-bust_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/bust_01.vtex");
+}
+
+.ph-prop-bust_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/bust_02.vtex");
+}
+
+.ph-prop-cardboard_box_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/cardboard_box_01.vtex");
+}
+
+.ph-prop-cardboard_box_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/cardboard_box_02.vtex");
+}
+
+.ph-prop-cardboard_box_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/cardboard_box_03.vtex");
+}
+
+.ph-prop-cardboard_box_04
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/cardboard_box_04.vtex");
+}
+
+.ph-prop-cardboard_box_05
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/cardboard_box_05.vtex");
+}
+
+.ph-prop-cardboard_box_06
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/cardboard_box_06.vtex");
+}
+
+.ph-prop-cardboard_box_stacks_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/cardboard_box_stacks_01.vtex");
+}
+
+.ph-prop-cardboard_box_stacks_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/cardboard_box_stacks_02.vtex");
+}
+
+.ph-prop-cardboard_box_stacks_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/cardboard_box_stacks_03.vtex");
+}
+
+.ph-prop-cardboard_box_stacks_04
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/cardboard_box_stacks_04.vtex");
+}
+
+.ph-prop-cement_mixer
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/cement_mixer.vtex");
+}
+
+.ph-prop-chalkboard_sign_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/chalkboard_sign_01.vtex");
+}
+
+.ph-prop-chalkboard_sign_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/chalkboard_sign_02.vtex");
+}
+
+.ph-prop-chianti_bottle_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/chianti_bottle_01.vtex");
+}
+
+.ph-prop-chianti_bottle_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/chianti_bottle_02.vtex");
+}
+
+.ph-prop-cinderblock_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/cinderblock_01.vtex");
+}
+
+.ph-prop-cinderblock_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/cinderblock_02.vtex");
+}
+
+.ph-prop-claypot_inferno
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/claypot_inferno.vtex");
+}
+
+.ph-prop-coffee_table
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/coffee_table.vtex");
+}
+
+.ph-prop-coffin_closed
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/coffin_closed.vtex");
+}
+
+.ph-prop-coffin_open
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/coffin_open.vtex");
+}
+
+.ph-prop-compact_car_01_normal
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/compact_car_01_normal.vtex");
+}
+
+.ph-prop-compact_car_01_opaque
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/compact_car_01_opaque.vtex");
+}
+
+.ph-prop-compact_car_02_normal
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/compact_car_02_normal.vtex");
+}
+
+.ph-prop-compact_car_02_opaque
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/compact_car_02_opaque.vtex");
+}
+
+.ph-prop-computer_cart
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/computer_cart.vtex");
+}
+
+.ph-prop-computer_case
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/computer_case.vtex");
+}
+
+.ph-prop-computer_monitor_off
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/computer_monitor_off.vtex");
+}
+
+.ph-prop-computer_monitor_on
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/computer_monitor_on.vtex");
+}
+
+.ph-prop-computer_setup_off
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/computer_setup_off.vtex");
+}
+
+.ph-prop-computer_setup_on
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/computer_setup_on.vtex");
+}
+
+.ph-prop-concrete_bag_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/concrete_bag_01.vtex");
+}
+
+.ph-prop-concrete_bag_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/concrete_bag_02.vtex");
+}
+
+.ph-prop-concrete_bag_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/concrete_bag_03.vtex");
+}
+
+.ph-prop-concrete_bags_stack_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/concrete_bags_stack_01.vtex");
+}
+
+.ph-prop-concrete_bags_stack_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/concrete_bags_stack_02.vtex");
+}
+
+.ph-prop-concrete_bags_stack_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/concrete_bags_stack_03.vtex");
+}
+
+.ph-prop-couch_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/couch_01.vtex");
+}
+
+.ph-prop-couch_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/couch_02.vtex");
+}
+
+.ph-prop-couch_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/couch_03.vtex");
+}
+
+.ph-prop-couch_inferno
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/couch_inferno.vtex");
+}
+
+.ph-prop-couch_office
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/couch_office.vtex");
+}
+
+.ph-prop-dock_bollard
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/dock_bollard.vtex");
+}
+
+.ph-prop-dolly_italy
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/dolly_italy.vtex");
+}
+
+.ph-prop-dolly_overpass
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/dolly_overpass.vtex");
+}
+
+.ph-prop-dust_cart_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/dust_cart_01.vtex");
+}
+
+.ph-prop-dust_cart_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/dust_cart_02.vtex");
+}
+
+.ph-prop-dust_crate_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/dust_crate_01.vtex");
+}
+
+.ph-prop-dust_crate_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/dust_crate_02.vtex");
+}
+
+.ph-prop-dust_crate_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/dust_crate_03.vtex");
+}
+
+.ph-prop-dust_crate_04
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/dust_crate_04.vtex");
+}
+
+.ph-prop-dust_crate_05
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/dust_crate_05.vtex");
+}
+
+.ph-prop-dust_crate_06
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/dust_crate_06.vtex");
+}
+
+.ph-prop-dust_crate_07
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/dust_crate_07.vtex");
+}
+
+.ph-prop-dust_crate_08
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/dust_crate_08.vtex");
+}
+
+.ph-prop-dust_crate_09
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/dust_crate_09.vtex");
+}
+
+.ph-prop-dust_crate_10
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/dust_crate_10.vtex");
+}
+
+.ph-prop-dust_crate_11
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/dust_crate_11.vtex");
+}
+
+.ph-prop-dust_crate_12
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/dust_crate_12.vtex");
+}
+
+.ph-prop-dust_crate_13
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/dust_crate_13.vtex");
+}
+
+.ph-prop-dust_crate_14
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/dust_crate_14.vtex");
+}
+
+.ph-prop-dust_crate_15
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/dust_crate_15.vtex");
+}
+
+.ph-prop-dust_crate_16
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/dust_crate_16.vtex");
+}
+
+.ph-prop-dust_crate_17
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/dust_crate_17.vtex");
+}
+
+.ph-prop-dust_crate_18
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/dust_crate_18.vtex");
+}
+
+.ph-prop-dust_crate_19
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/dust_crate_19.vtex");
+}
+
+.ph-prop-dust_crate_20
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/dust_crate_20.vtex");
+}
+
+.ph-prop-dvd_vhs_player
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/dvd_vhs_player.vtex");
+}
+
+.ph-prop-electric_generator
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/electric_generator.vtex");
+}
+
+.ph-prop-file_cabinet_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/file_cabinet_01.vtex");
+}
+
+.ph-prop-file_cabinet_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/file_cabinet_02.vtex");
+}
+
+.ph-prop-file_cabinet_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/file_cabinet_03.vtex");
+}
+
+.ph-prop-file_cabinet_04
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/file_cabinet_04.vtex");
+}
+
+.ph-prop-file_cabinets_stack
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/file_cabinets_stack.vtex");
+}
+
+.ph-prop-fire_extinguisher
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/fire_extinguisher.vtex");
+}
+
+.ph-prop-fire_hydrant
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/fire_hydrant.vtex");
+}
+
+.ph-prop-flagpole
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/flagpole.vtex");
+}
+
+.ph-prop-floodlight_large
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/floodlight_large.vtex");
+}
+
+.ph-prop-floodlight_small
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/floodlight_small.vtex");
+}
+
+.ph-prop-flour_sack_big
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/flour_sack_big.vtex");
+}
+
+.ph-prop-flour_sack_small
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/flour_sack_small.vtex");
+}
+
+.ph-prop-folding_chair_closed
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/folding_chair_closed.vtex");
+}
+
+.ph-prop-folding_chair_open
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/folding_chair_open.vtex");
+}
+
+.ph-prop-food_cooler_closed
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/food_cooler_closed.vtex");
+}
+
+.ph-prop-food_crate_big
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/food_crate_big.vtex");
+}
+
+.ph-prop-food_crate_small
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/food_crate_small.vtex");
+}
+
+.ph-prop-forklift_fork_down
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/forklift_fork_down.vtex");
+}
+
+.ph-prop-forklift_fork_up
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/forklift_fork_up.vtex");
+}
+
+.ph-prop-fountain_big
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/fountain_big.vtex");
+}
+
+.ph-prop-fountain_small
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/fountain_small.vtex");
+}
+
+.ph-prop-fox
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/fox.vtex");
+}
+
+.ph-prop-fruit_crate_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/fruit_crate_01.vtex");
+}
+
+.ph-prop-fruit_crate_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/fruit_crate_02.vtex");
+}
+
+.ph-prop-fruit_crate_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/fruit_crate_03.vtex");
+}
+
+.ph-prop-fruit_crate_04
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/fruit_crate_04.vtex");
+}
+
+.ph-prop-fruit_crate_stack_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/fruit_crate_stack_01.vtex");
+}
+
+.ph-prop-fruit_crate_stack_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/fruit_crate_stack_02.vtex");
+}
+
+.ph-prop-garbage_bin_nuke_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/garbage_bin_nuke_01.vtex");
+}
+
+.ph-prop-garbage_bin_nuke_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/garbage_bin_nuke_02.vtex");
+}
+
+.ph-prop-garbage_bin_nuke_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/garbage_bin_nuke_03.vtex");
+}
+
+.ph-prop-garbage_bin_overpass
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/garbage_bin_overpass.vtex");
+}
+
+.ph-prop-garbage_container_01_closed
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/garbage_container_01_closed.vtex");
+}
+
+.ph-prop-garbage_container_01_open
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/garbage_container_01_open.vtex");
+}
+
+.ph-prop-garbage_container_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/garbage_container_02.vtex");
+}
+
+.ph-prop-garbage_container_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/garbage_container_03.vtex");
+}
+
+.ph-prop-garbage_dumpster_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/garbage_dumpster_01.vtex");
+}
+
+.ph-prop-garbage_dumpster_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/garbage_dumpster_02.vtex");
+}
+
+.ph-prop-gardening_broom
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/gardening_broom.vtex");
+}
+
+.ph-prop-gardening_fork
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/gardening_fork.vtex");
+}
+
+.ph-prop-gardening_rake
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/gardening_rake.vtex");
+}
+
+.ph-prop-gardening_shovel
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/gardening_shovel.vtex");
+}
+
+.ph-prop-generic_painting_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/generic_painting_01.vtex");
+}
+
+.ph-prop-generic_painting_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/generic_painting_02.vtex");
+}
+
+.ph-prop-grain_basket_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/grain_basket_01.vtex");
+}
+
+.ph-prop-grain_basket_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/grain_basket_02.vtex");
+}
+
+.ph-prop-grain_basket_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/grain_basket_03.vtex");
+}
+
+.ph-prop-grain_basket_04
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/grain_basket_04.vtex");
+}
+
+.ph-prop-grain_basket_05
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/grain_basket_05.vtex");
+}
+
+.ph-prop-grocerystore_chiller
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/grocerystore_chiller.vtex");
+}
+
+.ph-prop-guard_rails_01_large
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/guard_rails_01_large.vtex");
+}
+
+.ph-prop-guard_rails_01_small
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/guard_rails_01_small.vtex");
+}
+
+.ph-prop-guard_rails_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/guard_rails_02.vtex");
+}
+
+.ph-prop-hand_truck
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/hand_truck.vtex");
+}
+
+.ph-prop-inflatable_boat
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/inflatable_boat.vtex");
+}
+
+.ph-prop-junction_box_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/junction_box_01.vtex");
+}
+
+.ph-prop-junction_box_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/junction_box_02.vtex");
+}
+
+.ph-prop-lawn_mower
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/lawn_mower.vtex");
+}
+
+.ph-prop-lift
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/lift.vtex");
+}
+
+.ph-prop-lobby_chair
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/lobby_chair.vtex");
+}
+
+.ph-prop-lockers
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/lockers.vtex");
+}
+
+.ph-prop-luggage_01_closed
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/luggage_01_closed.vtex");
+}
+
+.ph-prop-luggage_01_open
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/luggage_01_open.vtex");
+}
+
+.ph-prop-luggage_02_closed
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/luggage_02_closed.vtex");
+}
+
+.ph-prop-luggage_02_open
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/luggage_02_open.vtex");
+}
+
+.ph-prop-mailbox_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/mailbox_01.vtex");
+}
+
+.ph-prop-mailbox_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/mailbox_02.vtex");
+}
+
+.ph-prop-mailbox_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/mailbox_03.vtex");
+}
+
+.ph-prop-manhole_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/manhole_01.vtex");
+}
+
+.ph-prop-manhole_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/manhole_02.vtex");
+}
+
+.ph-prop-manhole_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/manhole_03.vtex");
+}
+
+.ph-prop-manhole_04
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/manhole_04.vtex");
+}
+
+.ph-prop-market_bag_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/market_bag_01.vtex");
+}
+
+.ph-prop-market_bag_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/market_bag_02.vtex");
+}
+
+.ph-prop-market_table_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/market_table_01.vtex");
+}
+
+.ph-prop-market_table_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/market_table_02.vtex");
+}
+
+.ph-prop-market_table_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/market_table_03.vtex");
+}
+
+.ph-prop-market_table_04
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/market_table_04.vtex");
+}
+
+.ph-prop-metal_crate_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/metal_crate_01.vtex");
+}
+
+.ph-prop-metal_crate_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/metal_crate_02.vtex");
+}
+
+.ph-prop-metal_crate_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/metal_crate_03.vtex");
+}
+
+.ph-prop-metal_ladder_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/metal_ladder_01.vtex");
+}
+
+.ph-prop-metal_ladder_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/metal_ladder_02.vtex");
+}
+
+.ph-prop-metal_ladder_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/metal_ladder_03.vtex");
+}
+
+.ph-prop-metal_ladder_04
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/metal_ladder_04.vtex");
+}
+
+.ph-prop-metal_ladder_05
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/metal_ladder_05.vtex");
+}
+
+.ph-prop-metal_shelf_empty
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/metal_shelf_empty.vtex");
+}
+
+.ph-prop-metal_shelf_filled
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/metal_shelf_filled.vtex");
+}
+
+.ph-prop-microwave
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/microwave.vtex");
+}
+
+.ph-prop-military_crate
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/military_crate.vtex");
+}
+
+.ph-prop-mobile_platform
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/mobile_platform.vtex");
+}
+
+.ph-prop-museum_table
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/museum_table.vtex");
+}
+
+.ph-prop-nuclear_container_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/nuclear_container_01.vtex");
+}
+
+.ph-prop-nuclear_container_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/nuclear_container_02.vtex");
+}
+
+.ph-prop-nuke_car
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/nuke_car.vtex");
+}
+
+.ph-prop-obelisk
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/obelisk.vtex");
+}
+
+.ph-prop-office_chair_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/office_chair_01.vtex");
+}
+
+.ph-prop-office_chair_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/office_chair_02.vtex");
+}
+
+.ph-prop-office_chair_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/office_chair_03.vtex");
+}
+
+.ph-prop-office_desk_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/office_desk_01.vtex");
+}
+
+.ph-prop-office_desk_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/office_desk_02.vtex");
+}
+
+.ph-prop-office_painting_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/office_painting_01.vtex");
+}
+
+.ph-prop-office_painting_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/office_painting_02.vtex");
+}
+
+.ph-prop-office_painting_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/office_painting_03.vtex");
+}
+
+.ph-prop-office_painting_04
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/office_painting_04.vtex");
+}
+
+.ph-prop-office_painting_05
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/office_painting_05.vtex");
+}
+
+.ph-prop-office_painting_06
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/office_painting_06.vtex");
+}
+
+.ph-prop-office_plant_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/office_plant_01.vtex");
+}
+
+.ph-prop-office_plant_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/office_plant_02.vtex");
+}
+
+.ph-prop-pallet_cinderblock
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/pallet_cinderblock.vtex");
+}
+
+.ph-prop-pallet_wine
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/pallet_wine.vtex");
+}
+
+.ph-prop-park_info_sign
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/park_info_sign.vtex");
+}
+
+.ph-prop-patio_table
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/patio_table.vtex");
+}
+
+.ph-prop-pillar_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/pillar_01.vtex");
+}
+
+.ph-prop-pillar_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/pillar_02.vtex");
+}
+
+.ph-prop-planter_empty
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/planter_empty.vtex");
+}
+
+.ph-prop-plastic_chair_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/plastic_chair_01.vtex");
+}
+
+.ph-prop-plastic_chair_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/plastic_chair_02.vtex");
+}
+
+.ph-prop-plastic_chair_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/plastic_chair_03.vtex");
+}
+
+.ph-prop-plastic_chair_04
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/plastic_chair_04.vtex");
+}
+
+.ph-prop-plastic_chair_05
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/plastic_chair_05.vtex");
+}
+
+.ph-prop-playground_horse
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/playground_horse.vtex");
+}
+
+.ph-prop-playground_sign_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/playground_sign_01.vtex");
+}
+
+.ph-prop-playground_sign_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/playground_sign_02.vtex");
+}
+
+.ph-prop-playground_slide
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/playground_slide.vtex");
+}
+
+.ph-prop-plywood
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/plywood.vtex");
+}
+
+.ph-prop-podium
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/podium.vtex");
+}
+
+.ph-prop-porta_pottie_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/porta_pottie_01.vtex");
+}
+
+.ph-prop-porta_pottie_02_closed
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/porta_pottie_02_closed.vtex");
+}
+
+.ph-prop-porta_pottie_02_open
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/porta_pottie_02_open.vtex");
+}
+
+.ph-prop-pottery_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/pottery_01.vtex");
+}
+
+.ph-prop-pottery_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/pottery_02.vtex");
+}
+
+.ph-prop-pottery_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/pottery_03.vtex");
+}
+
+.ph-prop-pottery_04
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/pottery_04.vtex");
+}
+
+.ph-prop-pottery_05
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/pottery_05.vtex");
+}
+
+.ph-prop-pottery_06
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/pottery_06.vtex");
+}
+
+.ph-prop-pottery_07
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/pottery_07.vtex");
+}
+
+.ph-prop-pottery_08
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/pottery_08.vtex");
+}
+
+.ph-prop-pottery_cluster_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/pottery_cluster_01.vtex");
+}
+
+.ph-prop-pottery_cluster_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/pottery_cluster_02.vtex");
+}
+
+.ph-prop-pottery_cluster_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/pottery_cluster_03.vtex");
+}
+
+.ph-prop-printer_big
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/printer_big.vtex");
+}
+
+.ph-prop-printer_small
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/printer_small.vtex");
+}
+
+.ph-prop-projector
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/projector.vtex");
+}
+
+.ph-prop-projector_screen
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/projector_screen.vtex");
+}
+
+.ph-prop-propane_tank_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/propane_tank_01.vtex");
+}
+
+.ph-prop-propane_tank_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/propane_tank_02.vtex");
+}
+
+.ph-prop-pvc_roll
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/pvc_roll.vtex");
+}
+
+.ph-prop-radio
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/radio.vtex");
+}
+
+.ph-prop-radios_retro
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/radios_retro.vtex");
+}
+
+.ph-prop-rebar_stack
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/rebar_stack.vtex");
+}
+
+.ph-prop-retro_computer_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/retro_computer_01.vtex");
+}
+
+.ph-prop-retro_computer_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/retro_computer_02.vtex");
+}
+
+.ph-prop-retro_monitor_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/retro_monitor_01.vtex");
+}
+
+.ph-prop-retro_monitor_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/retro_monitor_02.vtex");
+}
+
+.ph-prop-river_rock_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/river_rock_01.vtex");
+}
+
+.ph-prop-river_rock_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/river_rock_02.vtex");
+}
+
+.ph-prop-river_rock_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/river_rock_03.vtex");
+}
+
+.ph-prop-river_rock_04
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/river_rock_04.vtex");
+}
+
+.ph-prop-river_rock_05
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/river_rock_05.vtex");
+}
+
+.ph-prop-rustic_bed
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/rustic_bed.vtex");
+}
+
+.ph-prop-sawhorse_metal
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/sawhorse_metal.vtex");
+}
+
+.ph-prop-sawhorse_wooden
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/sawhorse_wooden.vtex");
+}
+
+.ph-prop-scissor_lift
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/scissor_lift.vtex");
+}
+
+.ph-prop-sedan
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/sedan.vtex");
+}
+
+.ph-prop-sheetrocks_leaning
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/sheetrocks_leaning.vtex");
+}
+
+.ph-prop-sheetrocks_stack
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/sheetrocks_stack.vtex");
+}
+
+.ph-prop-signalbox
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/signalbox.vtex");
+}
+
+.ph-prop-soccer_ball
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/soccer_ball.vtex");
+}
+
+.ph-prop-spool_empty
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/spool_empty.vtex");
+}
+
+.ph-prop-spool_wires
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/spool_wires.vtex");
+}
+
+.ph-prop-square_table_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/square_table_01.vtex");
+}
+
+.ph-prop-square_table_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/square_table_02.vtex");
+}
+
+.ph-prop-statue_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/statue_01.vtex");
+}
+
+.ph-prop-statue_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/statue_02.vtex");
+}
+
+.ph-prop-statue_02_mirror
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/statue_02_mirror.vtex");
+}
+
+.ph-prop-steps
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/steps.vtex");
+}
+
+.ph-prop-stool_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/stool_01.vtex");
+}
+
+.ph-prop-stool_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/stool_02.vtex");
+}
+
+.ph-prop-stool_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/stool_03.vtex");
+}
+
+.ph-prop-street_light_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/street_light_01.vtex");
+}
+
+.ph-prop-street_light_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/street_light_02.vtex");
+}
+
+.ph-prop-street_light_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/street_light_03.vtex");
+}
+
+.ph-prop-street_light_04
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/street_light_04.vtex");
+}
+
+.ph-prop-stuffed_elephant
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/stuffed_elephant.vtex");
+}
+
+.ph-prop-stuffed_giraffe
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/stuffed_giraffe.vtex");
+}
+
+.ph-prop-supercomputer_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/supercomputer_01.vtex");
+}
+
+.ph-prop-supercomputer_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/supercomputer_02.vtex");
+}
+
+.ph-prop-support_jack
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/support_jack.vtex");
+}
+
+.ph-prop-swat_van
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/swat_van.vtex");
+}
+
+.ph-prop-table_lamp
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/table_lamp.vtex");
+}
+
+.ph-prop-terrace_chair_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/terrace_chair_01.vtex");
+}
+
+.ph-prop-terrace_chair_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/terrace_chair_02.vtex");
+}
+
+.ph-prop-terrace_chair_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/terrace_chair_03.vtex");
+}
+
+.ph-prop-tire
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/tire.vtex");
+}
+
+.ph-prop-tire_stack
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/tire_stack.vtex");
+}
+
+.ph-prop-toy_motorbike
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/toy_motorbike.vtex");
+}
+
+.ph-prop-traffic_cone_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/traffic_cone_01.vtex");
+}
+
+.ph-prop-traffic_cone_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/traffic_cone_02.vtex");
+}
+
+.ph-prop-traffic_cone_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/traffic_cone_03.vtex");
+}
+
+.ph-prop-traffic_cone_04
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/traffic_cone_04.vtex");
+}
+
+.ph-prop-traffic_cone_05
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/traffic_cone_05.vtex");
+}
+
+.ph-prop-traffic_cone_06
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/traffic_cone_06.vtex");
+}
+
+.ph-prop-train_track_bumper
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/train_track_bumper.vtex");
+}
+
+.ph-prop-trash_bag_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/trash_bag_01.vtex");
+}
+
+.ph-prop-trash_bag_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/trash_bag_02.vtex");
+}
+
+.ph-prop-trash_bag_pile_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/trash_bag_pile_01.vtex");
+}
+
+.ph-prop-trash_bag_pile_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/trash_bag_pile_02.vtex");
+}
+
+.ph-prop-trash_can_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/trash_can_01.vtex");
+}
+
+.ph-prop-trash_can_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/trash_can_02.vtex");
+}
+
+.ph-prop-trash_can_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/trash_can_03.vtex");
+}
+
+.ph-prop-trash_can_04
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/trash_can_04.vtex");
+}
+
+.ph-prop-trash_can_05
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/trash_can_05.vtex");
+}
+
+.ph-prop-trash_can_06
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/trash_can_06.vtex");
+}
+
+.ph-prop-trash_can_07
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/trash_can_07.vtex");
+}
+
+.ph-prop-trash_can_08
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/trash_can_08.vtex");
+}
+
+.ph-prop-trash_can_09
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/trash_can_09.vtex");
+}
+
+.ph-prop-trike_flattbed
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/trike_flattbed.vtex");
+}
+
+.ph-prop-trike_trailer
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/trike_trailer.vtex");
+}
+
+.ph-prop-truck
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/truck.vtex");
+}
+
+.ph-prop-tv_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/tv_01.vtex");
+}
+
+.ph-prop-tv_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/tv_02.vtex");
+}
+
+.ph-prop-urban_pot
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/urban_pot.vtex");
+}
+
+.ph-prop-vending_machine_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/vending_machine_01.vtex");
+}
+
+.ph-prop-vending_machine_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/vending_machine_02.vtex");
+}
+
+.ph-prop-vending_machine_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/vending_machine_03.vtex");
+}
+
+.ph-prop-vending_machine_04
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/vending_machine_04.vtex");
+}
+
+.ph-prop-vending_machine_05
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/vending_machine_05.vtex");
+}
+
+.ph-prop-vespa
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/vespa.vtex");
+}
+
+.ph-prop-wagon_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/wagon_01.vtex");
+}
+
+.ph-prop-wagon_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/wagon_02.vtex");
+}
+
+.ph-prop-washing_machine
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/washing_machine.vtex");
+}
+
+.ph-prop-watering_can
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/watering_can.vtex");
+}
+
+.ph-prop-wheel_barrow
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/wheel_barrow.vtex");
+}
+
+.ph-prop-wooden_chair_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/wooden_chair_01.vtex");
+}
+
+.ph-prop-wooden_chair_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/wooden_chair_02.vtex");
+}
+
+.ph-prop-wooden_crate_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/wooden_crate_01.vtex");
+}
+
+.ph-prop-wooden_crate_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/wooden_crate_02.vtex");
+}
+
+.ph-prop-wooden_crate_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/wooden_crate_03.vtex");
+}
+
+.ph-prop-wooden_crate_04
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/wooden_crate_04.vtex");
+}
+
+.ph-prop-wooden_crate_05
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/wooden_crate_05.vtex");
+}
+
+.ph-prop-wooden_dresser_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/wooden_dresser_01.vtex");
+}
+
+.ph-prop-wooden_dresser_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/wooden_dresser_02.vtex");
+}
+
+.ph-prop-wooden_ladder_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/wooden_ladder_01.vtex");
+}
+
+.ph-prop-wooden_ladder_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/wooden_ladder_02.vtex");
+}
+
+.ph-prop-wooden_ladder_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/wooden_ladder_03.vtex");
+}
+
+.ph-prop-wooden_pallet_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/wooden_pallet_01.vtex");
+}
+
+.ph-prop-wooden_pallet_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/wooden_pallet_02.vtex");
+}
+
+.ph-prop-wooden_pallet_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/wooden_pallet_03.vtex");
+}
+
+.ph-prop-wooden_pallet_04
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/wooden_pallet_04.vtex");
+}
+
+.ph-prop-wooden_pallet_stack_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/wooden_pallet_stack_01.vtex");
+}
+
+.ph-prop-wooden_pallet_stack_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/wooden_pallet_stack_02.vtex");
+}
+
+.ph-prop-wooden_pallet_stack_03
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/wooden_pallet_stack_03.vtex");
+}
+
+.ph-prop-wooden_table_01
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/wooden_table_01.vtex");
+}
+
+.ph-prop-wooden_table_02
+{
+	background-image: url("s2r://panorama/images/custom_game/prophunt/props/wooden_table_02.vtex");
+}

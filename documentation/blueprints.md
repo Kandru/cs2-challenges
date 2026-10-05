@@ -1,109 +1,105 @@
-> [!TIP]
-> Blueprints can be complex. Please check the *examples* folder in this repository before asking questions in our Discord.
-
 # Blueprints Documentation
 
-Blueprints are files which contain definitions for in-game challenges that players can see and complete.
+Blueprints are YAML files that define one challenge each. A challenge is self-contained: titles live in the file (not in plugin `lang/`), and work is split into ordered **tasks**.
 
-## Creating a Blueprint File
+## Creating a Challenge File
 
-To create your first challenge, follow these steps:
-
-1. Create a new file with a `.yaml` extension (e.g., `example.yaml`).
-2. Place this file in the `blueprints` folder of the Challenges-Plugin.
-3. You can create multiple files and organize them as you prefer (e.g., one file per blueprint type or plugin).
-
-Each blueprint file must contain at least one challenge. A challenge is defined by an event type and various settings. Each challenge needs a unique name within the same blueprint file. The Challenges-Plugin will automatically generate a global identifier for each challenge.
-
-For example:
-- Blueprint filename: `example.yaml`
-- Unique Challenge name: `YourUniqueChallengeName`
-- Resulting global identifier: `example:YourUniqueChallengeName`
-
-When the blueprint file is loaded into the Challenges-Plugin, it will be referenced by this global identifier. The **":"** is reserved within the plugin. Do **NOT** use it for any challenge name or blueprint filename. Only use it *once* to set the blueprint filename of your identifier within the *actions* and/or *dependencies* when referencing another file.
-
-Each YAML file should be structured as follows and can contain multiple blueprints, each with a unique name:
+1. Create a `.yaml` file (e.g. `headshots_in_a_row.yaml`).
+2. Place it in the `blueprints` folder of the Challenges plugin config directory.
+3. The challenge id is the **filename without extension** (e.g. `headshots_in_a_row`). Schedules reference that id.
 
 ```yaml
-YourUniqueChallengeName:
-  title:
-    en: "My Unique Challenge ({count}/{total})"
-    de: "Meine einzigartige Herausforderung ({count}/{total})"
-  type: player_kill
-  amount: 10
-  cooldown: 0
-  is_visible: true
-  announce_progress: true
-  announce_completion: true
-  data:
-    ExamplePlugin:
-      setpoints: "30"
-  rules:
-    - key: global.iswarmup
-      operator: bool==
-      value: "false"
-    - key: global.isduringround
-      operator: bool==
-      value: "true"
-    - key: weapon
-      operator: contains
-      value: taser
-    - key: isteamkill
-      operator: bool==
-      value: "false"
-    - key: victim.isbot
-      operator: bool==
-      value: "false"
-  actions:
-  dependencies:
+title:
+  en: Headshots in a row
+  de: Kopfschüsse hintereinander
+data:
+  PlayerSessions:
+    setpoints: "10"
+tasks:
+  - id: easy
+    title:
+      en: "{count}/{total} headshots"
+      de: "{count}/{total} Kopfschüsse"
+    type: player_kill
+    amount: 3
+    cooldown: 0
+    visible: true
+    announce_progress: true
+    announce_completion: true
+    data: {}
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: "false"
+      - key: headshot
+        operator: bool==
+        value: "true"
+    actions:
+      - type: task.mark_completed
+        values:
+          - easy_noheadshot
+    requires: []
+  - id: easy_noheadshot
+    title:
+      en: "Rule broken: without headshot"
+    type: player_kill
+    amount: 1
+    visible: false
+    announce_progress: false
+    announce_completion: false
+    rules:
+      - key: headshot
+        operator: bool==
+        value: "false"
+    actions:
+      - type: task.reset_progress
+        values:
+          - easy
+    requires: []
+  - id: medium
+    title:
+      en: "{count}/{total} headshots"
+    type: player_kill
+    amount: 10
+    requires:
+      - easy
 ```
 
 ### title
 
-The title is what the player sees in the upper right corner of the GUI by default or in the text chat when progress is made or the challenge is completed. You can use the placeholders *{count}* and *{total}* to show the current and required number of events needed to complete the challenge.
-
-The default language is the player's language (changeable with !lang en/de/...). If that language is not available, it will fall back to the server's language (set this default in the CounterstrikeSharp settings json). If neither is available, the first entry in the list will be used.
-
-### type
-
-The type is the event that triggers this blueprint. In our example, we use the *player_jump* event. This means that every time a player jumps, this challenge will be activated.
-
-### amount
-
-The number of times this event must occur to complete the challenge. Choose a reasonable number based on the duration the blueprint will be active. For example, if the challenge lasts only 24 hours, the required amount should not exceed 1,000. Jumping 1,000 times in regular gameplay is difficult, and players should focus on playing rather than just jumping.
-
-### cooldown
-
-The cooldown is the time in seconds that must pass before the event can be counted again. For example, if you set the cooldown to 10 seconds, a player can only trigger the event once every 10 seconds. This can make the challenge more difficult by limiting how often the event can occur.
-
-### is_visible
-
-Whether this challenge should be visible to the player. If set to false, the challenge can still be completed, but the player will not see any notifications or progress updates.
-
-### announce_progress
-
-Whether you want to notify the player about their progress. This setting does not affect notifications sent to third-party plugins.
-
-### announce_completion
-
-Whether you want to notify the player when this challenge is completed. This setting does not affect notifications sent to third-party plugins.
+Language map for the challenge name shown in the HUD. Lookup uses the player's language (`!lang`). If that key is missing, the **first** language written in the map is used. Do not rely on the server language for challenge titles.
 
 ### data
 
-This section contains a dictionary of strings, where each string represents data to be sent to a third-party plugin. The Challenges-Plugin itself does not manage the actions taken when a player completes a challenge. You can include multiple plugins here. If your preferred plugin does not support the Challenges-Plugin, you can request the plugin developer to add support. We provide documentation and an example plugin to facilitate easy integration.
+Optional payload forwarded to third-party plugins when the **whole challenge** is completed (all visible tasks done). Task-level `data` is sent on that task's progress/completion events.
 
-### rules
+### tasks
 
-Rules make the Challenges-Plugin very powerful. Almost all events have parameters that you can compare against values you choose. In our example, we check if there is an active round. If not, we ignore this challenge until a round starts. You can also check for specific weapons, distances, teams, and more.
+Ordered list. The plugin evaluates matching tasks **top to bottom**. Tasks with an empty `requires` list are available immediately and can run in parallel. A task that lists one id waits for that task. A task that lists several ids waits until **all** of them are complete (`AND`).
 
-### actions
+Hidden tasks (`visible: false`) are control rules. They do not count toward progress bars or the solved total. Put controls directly under the task they reset, with the same `requires`.
 
-Actions modify challenges of your choice after completion. Please refer to the actions documentation for further information.
+### Task fields
 
-### dependencies
+| Field | Meaning |
+|-------|---------|
+| `id` | Unique within the file |
+| `title` | Language map; supports `{count}` / `{total}` |
+| `type` | Game event type (see Events docs / `catalog.json`) |
+| `amount` | Times the event must match |
+| `cooldown` | Seconds between credits |
+| `visible` | Show in HUD / count toward solved |
+| `announce_*` | Chat notifications |
+| `rules` | Conditions on event data |
+| `actions` | Side effects when the task completes |
+| `requires` | Other task ids in this file that must be finished first |
 
-Dependencies are conditions that must be met before a challenge becomes available to the player. These conditions are other challenges that the player must complete first. This allows you to create a series of challenges with increasing difficulty.
+### Actions
 
-To set a dependency, list the unique name of the required challenge. If the required challenge is in the same file, just use its unique name. For example, *YourUniqueChallengeName*. If the required challenge is in a different file, include the filename. For example, *example:YourUniqueChallengeName*.
+- `task.reset_progress` / `task.reset_completed` / `task.mark_completed` — values are task ids in the same file
+- `notify.player.progress.rule_broken` / `notify.player.completed.rule_broken`
+- `server.runcommand` — supports `{steamid}`, `{userid}`, `{index}`
 
-**Important**: Challenges are executed in the order they appear, from top to bottom. If you have multiple challenges of the same type (e.g., *player_kill*) and they depend on each other, you should list them from the most dependent (bottom) to the least dependent (top). This way, the next challenge won't trigger prematurely.
+### Ordering note
+
+List stages from the **first** unlockable task at the top to the **last** at the bottom. The plugin snapshots eligibility before applying progress, so finishing a task cannot unlock and credit the next task on the same event.

@@ -11,7 +11,7 @@
     "core.event.trigger": "[Herausforderungen] Ereignis {eventName} ausgelöst",
     "core.tasks.stopped": "[Herausforderungen] Alle Aufgaben gestoppt!",
     "admin.unknown_command": "[Herausforderungen] Unbekannter Befehl.",
-    "admin.reload:": "[Herausforderungen] Konfiguration neu geladen.",
+    "admin.reload": "[Herausforderungen] Konfiguration neu geladen.",
     "admin.disable": "[Herausforderungen] Herausforderungen deaktiviert.",
     "admin.enable": "[Herausforderungen] Herausforderungen aktiviert.",
     "command.nochallenges": "[Herausforderungen] Keine aktiven Herausforderungen.",
@@ -26,5 +26,15 @@
     "challenges.deleted": "{default}Herausforderung gelöscht: {green}{challenge}",
     "challenges.completed.other": "{green}{player} {default}hat die Herausforderung abgeschlossen: {green}{challenge}",
     "discord.webhook.challenge.completed": "**{player}** *hat eine Herausforderung abgeschlossen*: **{challenge}**",
-    "discord.webhook.schedule.new": "*Neue serverweite Herausforderungen*\n**{schedule}**\n**Beginn:** *{startDate}*\n**Ende:** *{endDate}*"
+    "discord.webhook.schedule.new": "*Neue serverweite Herausforderungen*\n**{schedule}**\n**Beginn:** *{startDate}*\n**Ende:** *{endDate}*",
+    "hud.tracker.title": "Herausforderungen",
+    "hud.menu.title": "Herausforderungen",
+    "hud.menu.filter.all": "Alle",
+    "hud.menu.filter.progress": "Fortschritt",
+    "hud.menu.filter.ending": "Endet bald",
+    "hud.menu.filter.starting": "Startet bald",
+    "hud.menu.scoreboard": "Bestenliste",
+    "hud.menu.empty": "Nichts anzuzeigen",
+    "hud.menu.prev": "Zurück",
+    "hud.menu.next": "Weiter"
 }

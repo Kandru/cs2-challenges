@@ -1,0 +1,194 @@
+<root>
+	<styles>
+		<include src="s2r://panorama/styles/csgostyles.vcss" />
+		<include src="s2r://panorama/styles/custom_game/challenges/hud.vcss" />
+	</styles>
+
+	<!-- Fullscreen challenge menu. Root has no id. List 2/3, scoreboard 1/3. -->
+	<Panel class="HudScreen" hittest="false">
+		<Panel id="Menu" class="MenuRoot ph-fs ph-card ph-off" hittest="true">
+			<Panel class="ph-bg" hittest="false" />
+			<Panel class="ph-bar ph-bar-left" hittest="false" />
+			<Panel class="MenuContent" hittest="true">
+				<Panel class="ph-titlebar" hittest="true">
+					<Label class="ph-title additive stratum-bold-tf" hittest="false" text="{s:menu_title}" />
+					<Button id="ph-close" class="ph-icon-btn">
+						<Panel class="ph-close-x ph-close-x-a" hittest="false" />
+						<Panel class="ph-close-x ph-close-x-b" hittest="false" />
+					</Button>
+				</Panel>
+				<Panel class="MenuBody" hittest="true">
+					<Panel class="MenuList" hittest="true">
+						<Panel class="MenuFilterBar" hittest="true">
+						<Button id="ch-filter-all" class="MenuFilterBtn">
+							<Label class="MenuFilterLabel stratum-bold-tf" hittest="false" text="{s:menu_f_all}" />
+						</Button>
+						<Button id="ch-filter-progress" class="MenuFilterBtn">
+							<Label class="MenuFilterLabel stratum-bold-tf" hittest="false" text="{s:menu_f_progress}" />
+						</Button>
+						<Button id="ch-filter-ending" class="MenuFilterBtn">
+							<Label class="MenuFilterLabel stratum-bold-tf" hittest="false" text="{s:menu_f_ending}" />
+						</Button>
+						<Button id="ch-filter-starting" class="MenuFilterBtn">
+							<Label class="MenuFilterLabel stratum-bold-tf" hittest="false" text="{s:menu_f_starting}" />
+						</Button>
+						</Panel>
+						<Panel class="MenuRows" hittest="false">
+						<Panel id="ch-mrow-0" class="ph-stat MenuRow empty" hittest="false">
+							<Panel class="ph-stat-lab" hittest="false">
+								<Label class="ph-stat-name stratum-medium-tf" hittest="false" text="{s:m0_title}" />
+								<Label class="ph-stat-val stratum-bold-tf" hittest="false" text="{s:m0_meta}" />
+							</Panel>
+							<Panel class="ph-stat-track" hittest="false">
+								<Panel id="ch-mfill-0" class="ph-stat-fill p0" hittest="false" />
+							</Panel>
+						</Panel>
+						<Panel id="ch-mrow-1" class="ph-stat MenuRow empty" hittest="false">
+							<Panel class="ph-stat-lab" hittest="false">
+								<Label class="ph-stat-name stratum-medium-tf" hittest="false" text="{s:m1_title}" />
+								<Label class="ph-stat-val stratum-bold-tf" hittest="false" text="{s:m1_meta}" />
+							</Panel>
+							<Panel class="ph-stat-track" hittest="false">
+								<Panel id="ch-mfill-1" class="ph-stat-fill p0" hittest="false" />
+							</Panel>
+						</Panel>
+						<Panel id="ch-mrow-2" class="ph-stat MenuRow empty" hittest="false">
+							<Panel class="ph-stat-lab" hittest="false">
+								<Label class="ph-stat-name stratum-medium-tf" hittest="false" text="{s:m2_title}" />
+								<Label class="ph-stat-val stratum-bold-tf" hittest="false" text="{s:m2_meta}" />
+							</Panel>
+							<Panel class="ph-stat-track" hittest="false">
+								<Panel id="ch-mfill-2" class="ph-stat-fill p0" hittest="false" />
+							</Panel>
+						</Panel>
+						<Panel id="ch-mrow-3" class="ph-stat MenuRow empty" hittest="false">
+							<Panel class="ph-stat-lab" hittest="false">
+								<Label class="ph-stat-name stratum-medium-tf" hittest="false" text="{s:m3_title}" />
+								<Label class="ph-stat-val stratum-bold-tf" hittest="false" text="{s:m3_meta}" />
+							</Panel>
+							<Panel class="ph-stat-track" hittest="false">
+								<Panel id="ch-mfill-3" class="ph-stat-fill p0" hittest="false" />
+							</Panel>
+						</Panel>
+						<Panel id="ch-mrow-4" class="ph-stat MenuRow empty" hittest="false">
+							<Panel class="ph-stat-lab" hittest="false">
+								<Label class="ph-stat-name stratum-medium-tf" hittest="false" text="{s:m4_title}" />
+								<Label class="ph-stat-val stratum-bold-tf" hittest="false" text="{s:m4_meta}" />
+							</Panel>
+							<Panel class="ph-stat-track" hittest="false">
+								<Panel id="ch-mfill-4" class="ph-stat-fill p0" hittest="false" />
+							</Panel>
+						</Panel>
+						<Panel id="ch-mrow-5" class="ph-stat MenuRow empty" hittest="false">
+							<Panel class="ph-stat-lab" hittest="false">
+								<Label class="ph-stat-name stratum-medium-tf" hittest="false" text="{s:m5_title}" />
+								<Label class="ph-stat-val stratum-bold-tf" hittest="false" text="{s:m5_meta}" />
+							</Panel>
+							<Panel class="ph-stat-track" hittest="false">
+								<Panel id="ch-mfill-5" class="ph-stat-fill p0" hittest="false" />
+							</Panel>
+						</Panel>
+						<Panel id="ch-mrow-6" class="ph-stat MenuRow empty" hittest="false">
+							<Panel class="ph-stat-lab" hittest="false">
+								<Label class="ph-stat-name stratum-medium-tf" hittest="false" text="{s:m6_title}" />
+								<Label class="ph-stat-val stratum-bold-tf" hittest="false" text="{s:m6_meta}" />
+							</Panel>
+							<Panel class="ph-stat-track" hittest="false">
+								<Panel id="ch-mfill-6" class="ph-stat-fill p0" hittest="false" />
+							</Panel>
+						</Panel>
+						<Panel id="ch-mrow-7" class="ph-stat MenuRow empty" hittest="false">
+							<Panel class="ph-stat-lab" hittest="false">
+								<Label class="ph-stat-name stratum-medium-tf" hittest="false" text="{s:m7_title}" />
+								<Label class="ph-stat-val stratum-bold-tf" hittest="false" text="{s:m7_meta}" />
+							</Panel>
+							<Panel class="ph-stat-track" hittest="false">
+								<Panel id="ch-mfill-7" class="ph-stat-fill p0" hittest="false" />
+							</Panel>
+						</Panel>
+						<Panel id="ch-mrow-8" class="ph-stat MenuRow empty" hittest="false">
+							<Panel class="ph-stat-lab" hittest="false">
+								<Label class="ph-stat-name stratum-medium-tf" hittest="false" text="{s:m8_title}" />
+								<Label class="ph-stat-val stratum-bold-tf" hittest="false" text="{s:m8_meta}" />
+							</Panel>
+							<Panel class="ph-stat-track" hittest="false">
+								<Panel id="ch-mfill-8" class="ph-stat-fill p0" hittest="false" />
+							</Panel>
+						</Panel>
+						<Panel id="ch-mrow-9" class="ph-stat MenuRow empty" hittest="false">
+							<Panel class="ph-stat-lab" hittest="false">
+								<Label class="ph-stat-name stratum-medium-tf" hittest="false" text="{s:m9_title}" />
+								<Label class="ph-stat-val stratum-bold-tf" hittest="false" text="{s:m9_meta}" />
+							</Panel>
+							<Panel class="ph-stat-track" hittest="false">
+								<Panel id="ch-mfill-9" class="ph-stat-fill p0" hittest="false" />
+							</Panel>
+						</Panel>
+						</Panel>
+						<Label class="MenuEmpty stratum-medium-tf" hittest="false" text="{s:menu_empty}" />
+						<Panel class="MenuFooter" hittest="true">
+							<Button id="ph-prev" class="MenuFooterBtn">
+								<Label class="ph-nav-label stratum-bold-tf" hittest="false" text="&lt;" />
+							</Button>
+							<Label class="MenuPage stratum-bold-tf" hittest="false" text="{s:menu_page}" />
+							<Button id="ph-next" class="MenuFooterBtn">
+								<Label class="ph-nav-label stratum-bold-tf" hittest="false" text="&gt;" />
+							</Button>
+						</Panel>
+					</Panel>
+					<Panel class="MenuScore" hittest="true">
+						<Label class="ScoreTitle stratum-bold-tf" hittest="false" text="{s:score_title}" />
+						<Panel id="ch-spin" class="ScoreRow ScorePinned is-self empty" hittest="false">
+							<Label class="ScoreRank stratum-bold-tf" hittest="false" text="{s:spin_rank}" />
+							<Label class="ScoreName stratum-bold-tf" hittest="false" text="{s:spin_name}" />
+							<Label class="ScoreVal stratum-bold-tf" hittest="false" text="{s:spin_val}" />
+						</Panel>
+						<Panel class="MenuRows" hittest="false">
+						<Panel id="ch-srow-0" class="ScoreRow empty" hittest="false">
+							<Label class="ScoreName stratum-medium-tf" hittest="false" text="{s:s0_name}" />
+							<Label class="ScoreVal stratum-bold-tf" hittest="false" text="{s:s0_val}" />
+						</Panel>
+						<Panel id="ch-srow-1" class="ScoreRow empty" hittest="false">
+							<Label class="ScoreName stratum-medium-tf" hittest="false" text="{s:s1_name}" />
+							<Label class="ScoreVal stratum-bold-tf" hittest="false" text="{s:s1_val}" />
+						</Panel>
+						<Panel id="ch-srow-2" class="ScoreRow empty" hittest="false">
+							<Label class="ScoreName stratum-medium-tf" hittest="false" text="{s:s2_name}" />
+							<Label class="ScoreVal stratum-bold-tf" hittest="false" text="{s:s2_val}" />
+						</Panel>
+						<Panel id="ch-srow-3" class="ScoreRow empty" hittest="false">
+							<Label class="ScoreName stratum-medium-tf" hittest="false" text="{s:s3_name}" />
+							<Label class="ScoreVal stratum-bold-tf" hittest="false" text="{s:s3_val}" />
+						</Panel>
+						<Panel id="ch-srow-4" class="ScoreRow empty" hittest="false">
+							<Label class="ScoreName stratum-medium-tf" hittest="false" text="{s:s4_name}" />
+							<Label class="ScoreVal stratum-bold-tf" hittest="false" text="{s:s4_val}" />
+						</Panel>
+						<Panel id="ch-srow-5" class="ScoreRow empty" hittest="false">
+							<Label class="ScoreName stratum-medium-tf" hittest="false" text="{s:s5_name}" />
+							<Label class="ScoreVal stratum-bold-tf" hittest="false" text="{s:s5_val}" />
+						</Panel>
+						<Panel id="ch-srow-6" class="ScoreRow empty" hittest="false">
+							<Label class="ScoreName stratum-medium-tf" hittest="false" text="{s:s6_name}" />
+							<Label class="ScoreVal stratum-bold-tf" hittest="false" text="{s:s6_val}" />
+						</Panel>
+						<Panel id="ch-srow-7" class="ScoreRow empty" hittest="false">
+							<Label class="ScoreName stratum-medium-tf" hittest="false" text="{s:s7_name}" />
+							<Label class="ScoreVal stratum-bold-tf" hittest="false" text="{s:s7_val}" />
+						</Panel>
+						</Panel>
+						<Panel class="MenuFooter" hittest="true">
+							<Button id="ch-score-prev" class="MenuFooterBtn">
+								<Label class="ph-nav-label stratum-bold-tf" hittest="false" text="&lt;" />
+							</Button>
+							<Label class="MenuPage stratum-bold-tf" hittest="false" text="{s:score_page}" />
+							<Button id="ch-score-next" class="MenuFooterBtn">
+								<Label class="ph-nav-label stratum-bold-tf" hittest="false" text="&gt;" />
+							</Button>
+						</Panel>
+					</Panel>
+				</Panel>
+			</Panel>
+		</Panel>
+	</Panel>
+</root>

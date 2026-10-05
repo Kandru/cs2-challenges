@@ -1,0 +1,25 @@
+using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Modules.Events;
+using Challenges.Utils;
+
+namespace Challenges.Extractors
+{
+    public sealed class WeaponFireOnEmpty : IExtractor
+    {
+        public string EventClassName => "EventWeaponFireOnEmpty";
+        public IReadOnlyList<string> ChallengeTypes { get; } = ["weapon_fire_on_empty"];
+
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        {
+            var e = (EventWeaponFireOnEmpty)gameEvent;
+            d["weapon"] = e.Weapon.ToString();
+            EventData.FillPlayer(d, e.Userid, "player");
+        }
+
+        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        {
+            var e = (EventWeaponFireOnEmpty)gameEvent;
+            yield return (e.Userid, "weapon_fire_on_empty");
+        }
+    }
+}

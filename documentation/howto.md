@@ -19,13 +19,13 @@ To update the plugin:
 
 1. Ensure the CS2 server is not running.
 2. After installing the Challenges-Plugin, copy:
-    - *schedules.yaml* file from the *examples* folder of this repository.
-    - Entire *blueprints* directory to your server's *config* folder of the Challenges-Plugin.
-3. Check the *schedules.yaml* file to ensure the start and end times of the example challenge are correct.
-4. Adjust the settings in the *Challenges.json* file to your preferences.
-5. Start the CS2 server to load everything.
+    - *schedules.yaml* from the *examples* folder into the plugin config folder.
+    - The *blueprints* directory (one YAML file per challenge) into that same config folder.
+3. Mount the Workshop addon content from *workshop/content* (Panorama layouts/styles) so the HUD can load.
+4. Check *schedules.yaml* dates and challenge ids (filename stems, no `file:key` prefixes).
+5. Adjust *Challenges.json*, then start the CS2 server.
 
-Join your server and check if the challenges GUI appears in the top right corner. You can also use the chat commands *!c* or *!challenges* to toggle the GUI on or off.
+At round start (during freeze time) the tracker appears top-right. Use *!c* / *!challenges* for the fullscreen menu. Build challenges in the browser via the GitHub Pages builder under *builder/* (https://kandru.github.io/cs2-challenges/).
 
 If no challenges are visible:
 - Check your CounterstrikeSharp log files.

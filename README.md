@@ -28,16 +28,22 @@ Other CounterstrikeSharp plugins will then be notified to take further actions. 
 
 ## Features
 
-- Create custom challenges for your players.
-- Track challenge progress and completion, and send this data to other plugins.
-- Set challenges to depend on each other (e.g., complete one challenge to unlock another).
-- Define rules that can reset a challenge (e.g., make 10 headshots in a row, but reset if only 9 or less headshots are made).
-- Challenges GUI which can be opened with *!c* or *!challenges*
-- Player language chosen with *!lang en* gets saved and load again upon re-joining (no more setting !lang every map <3)
+- One YAML file per challenge, with ordered tasks and `requires` dependencies inside the file.
+- Track progress/completion and notify other plugins via `ChallengesShared`.
+- Panorama HUD: round-start tracker and fullscreen `!c` / `!challenges` menu (Workshop addon under `workshop/content`).
+- Player language from `!lang` is stored on the player and restored on reconnect.
+- Build with Docker (`make debug` / `make release`) — no local .NET install required.
+- Challenge builder for GitHub Pages under [`builder/`](./builder/) ([live site](https://kandru.github.io/cs2-challenges/)).
+
+## Challenge Builder
+
+Static web UI in [`builder/`](./builder/). Regenerate the event catalog with `make catalog` (also runs before `make debug` / `make release`). On pushes to `main`, [`.github/workflows/pages.yml`](./.github/workflows/pages.yml) regenerates the catalog and deploys the builder to GitHub Pages.
+
+One-time repo setup (Settings → Pages → **Source: GitHub Actions**), then open https://kandru.github.io/cs2-challenges/.
 
 ## Road Map
 
-- [ ] Easy Webinterface to create your own Challenges
+- [X] Easy Webinterface to create your own Challenges ([builder/](./builder/))
 - [ ] Add ability to spawn custom props on the map as a challenge
 - [ ] Link possible values for all rules in documentation
 - [ ] Discord integration

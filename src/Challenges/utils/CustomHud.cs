@@ -1,0 +1,626 @@
+using CounterStrikeSharp.API;
+using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Modules.Extensions;
+using CounterStrikeSharp.API.Modules.Utils;
+using Challenges.Huds;
+
+namespace Challenges.Utils
+{
+    /// <summary>
+    /// Shared CCSCustomHudLayout driver for Challenges tracker + menu overlays.
+    /// </summary>
+    public static class CustomHud
+    {
+        private const int MaxSlots = 64;
+        private const int SlotsPerTick = 2;
+
+        private static readonly string[] RootPanels =
+        [
+            Tracker.Panel,
+            Menu.Panel,
+        ];
+
+        private static readonly string[] LayoutResources =
+        [
+            "panorama/layout/custom_game/challenges/tracker.vxml_c",
+            "panorama/layout/custom_game/challenges/menu.vxml_c",
+        ];
+
+        private static readonly string[] StepClass =
+            [.. Enumerable.Range(0, 11).Select(i => $"p{i * 10}")];
+
+        private static readonly string[] CaptureRoots = [Menu.Panel];
+        private static readonly TimeSpan CloseTransmitGrace = TimeSpan.FromSeconds(1);
+
+        private static readonly CCSCustomHudLayout?[] _layouts = new CCSCustomHudLayout?[2];
+        private static readonly Dictionary<int, HashSet<string>> _visibleBySlot = [];
+        private static readonly Dictionary<int, Dictionary<string, DateTime>> _closingRootsBySlot = [];
+        private static readonly Dictionary<int, Dictionary<string, Dictionary<string, bool>>> _classBySlot = [];
+        private static readonly Dictionary<int, Dictionary<string, Dictionary<string, string>>> _textBySlot = [];
+        private static readonly Dictionary<int, Dictionary<string, int>> _stepBySlot = [];
+        private static int _refreshCursor;
+
+        public static bool IsPanelVisible(CCSPlayerController player, string panelId) =>
+            player is { IsValid: true }
+            && _visibleBySlot.TryGetValue(player.Slot, out HashSet<string>? set)
+            && set.Contains(panelId);
+
+        public static bool EnsureSpawned(CCSPlayerController player) =>
+            Players.IsHumanViewer(player) && EnsureLayouts();
+
+        private static bool EnsureLayouts()
+        {
+            bool allOk = true;
+            for (int i = 0; i < LayoutResources.Length; i++)
+            {
+                if (!EnsureOne(i))
+                {
+                    allOk = false;
+                }
+            }
+            return allOk;
+        }
+
+        public static bool TryGetLayout(CCSPlayerController player, string rootPanelId, out CCSCustomHudLayout hud)
+        {
+            hud = null!;
+            if (!EnsureSpawned(player))
+            {
+                return false;
+            }
+
+            int index = Array.IndexOf(RootPanels, rootPanelId);
+            if (index < 0 || _layouts[index] is not { IsValid: true } layout)
+            {
+                return false;
+            }
+
+            hud = layout;
+            return true;
+        }
+
+        public static bool IsLayout(CCSCustomHudLayout layout, string rootPanelId)
+        {
+            int index = Array.IndexOf(RootPanels, rootPanelId);
+            return index >= 0
+                && _layouts[index] is { IsValid: true } live
+                && live.Handle == layout.Handle;
+        }
+
+        public static void ShowPanel(CCSPlayerController player, string panelId)
+        {
+            if (player is not { IsValid: true })
+            {
+                return;
+            }
+
+            if (!_visibleBySlot.TryGetValue(player.Slot, out HashSet<string>? set))
+            {
+                _visibleBySlot[player.Slot] = set = [];
+            }
+
+            set.Add(panelId);
+            ClearClosingRoot(player.Slot, TransmitRoot(panelId));
+            SetHasClass(player, panelId, "ph-off", false);
+        }
+
+        public static void HidePanel(CCSPlayerController player, string panelId)
+        {
+            if (player is not { IsValid: true })
+            {
+                return;
+            }
+
+            SetHasClass(player, panelId, "ph-off", true);
+            MarkClosingRoot(player.Slot, TransmitRoot(panelId));
+
+            if (!_visibleBySlot.TryGetValue(player.Slot, out HashSet<string>? set))
+            {
+                return;
+            }
+
+            set.Remove(panelId);
+            if (set.Count == 0)
+            {
+                _visibleBySlot.Remove(player.Slot);
+            }
+        }
+
+        public static void SetText(CCSPlayerController player, string panelId, string name, string value)
+        {
+            if (player is not { IsValid: true })
+            {
+                return;
+            }
+
+            string text = value ?? string.Empty;
+            if (_textBySlot.TryGetValue(player.Slot, out Dictionary<string, Dictionary<string, string>>? byPanel)
+                && byPanel.TryGetValue(panelId, out Dictionary<string, string>? vars)
+                && vars.TryGetValue(name, out string? prev)
+                && prev == text)
+            {
+                return;
+            }
+
+            if (!TryWrite(player, panelId, out CCSCustomHudLayout hud))
+            {
+                return;
+            }
+
+            hud.SetDialogVariableStringForPlayer(player, panelId, name, text);
+
+            if (!_textBySlot.TryGetValue(player.Slot, out byPanel))
+            {
+                _textBySlot[player.Slot] = byPanel = new Dictionary<string, Dictionary<string, string>>(StringComparer.Ordinal);
+            }
+
+            if (!byPanel.TryGetValue(panelId, out vars))
+            {
+                byPanel[panelId] = vars = new Dictionary<string, string>(StringComparer.Ordinal);
+            }
+
+            vars[name] = text;
+        }
+
+        public static bool SetHasClass(CCSPlayerController player, string panelId, string className, bool enabled)
+        {
+            if (player is not { IsValid: true } || string.IsNullOrEmpty(className))
+            {
+                return false;
+            }
+
+            if (_classBySlot.TryGetValue(player.Slot, out Dictionary<string, Dictionary<string, bool>>? byPanel)
+                && byPanel.TryGetValue(panelId, out Dictionary<string, bool>? classes)
+                && classes.TryGetValue(className, out bool prev)
+                && prev == enabled)
+            {
+                return true;
+            }
+
+            if (!TryWrite(player, panelId, out CCSCustomHudLayout hud))
+            {
+                return false;
+            }
+
+            hud.SetHasClassForPlayer(player, panelId, className, enabled);
+
+            if (!_classBySlot.TryGetValue(player.Slot, out byPanel))
+            {
+                _classBySlot[player.Slot] = byPanel = new Dictionary<string, Dictionary<string, bool>>(StringComparer.Ordinal);
+            }
+
+            if (!byPanel.TryGetValue(panelId, out classes))
+            {
+                byPanel[panelId] = classes = new Dictionary<string, bool>(StringComparer.Ordinal);
+            }
+
+            classes[className] = enabled;
+            return true;
+        }
+
+        public static void SetStepPercent(CCSPlayerController player, string panelId, int percent)
+        {
+            if (player is not { IsValid: true })
+            {
+                return;
+            }
+
+            int pct = (int)Math.Clamp(Math.Round(percent / 10.0) * 10, 0, 100);
+            if (!_stepBySlot.TryGetValue(player.Slot, out Dictionary<string, int>? byPanel))
+            {
+                _stepBySlot[player.Slot] = byPanel = new Dictionary<string, int>(StringComparer.Ordinal);
+            }
+
+            bool written;
+            if (byPanel.TryGetValue(panelId, out int previous))
+            {
+                if (previous == pct)
+                {
+                    return;
+                }
+
+                SetHasClass(player, panelId, StepClass[previous / 10], false);
+                written = SetHasClass(player, panelId, StepClass[pct / 10], true);
+            }
+            else
+            {
+                written = true;
+                for (int p = 0; p <= 100; p += 10)
+                {
+                    written &= SetHasClass(player, panelId, StepClass[p / 10], p == pct);
+                }
+            }
+
+            if (written)
+            {
+                byPanel[panelId] = pct;
+            }
+            else
+            {
+                byPanel.Remove(panelId);
+            }
+        }
+
+        public static void OnTick()
+        {
+            for (int n = 0; n < SlotsPerTick; n++)
+            {
+                int slot = _refreshCursor;
+                _refreshCursor = (_refreshCursor + 1) % MaxSlots;
+
+                CCSPlayerController? player = Utilities.GetPlayerFromSlot(slot);
+                if (!Players.IsHumanViewer(player))
+                {
+                    continue;
+                }
+
+                Tracker.Refresh(player);
+            }
+        }
+
+        public static void OnCheckTransmit(CCheckTransmitInfoList infoList)
+        {
+            ExpireClosingRoots();
+
+            for (int i = 0; i < _layouts.Length; i++)
+            {
+                if (_layouts[i] is not { IsValid: true } layout)
+                {
+                    continue;
+                }
+
+                int index = (int)layout.Index;
+                string root = RootPanels[i];
+                foreach ((CCheckTransmitInfo info, CCSPlayerController? viewer) in infoList)
+                {
+                    if (!Players.IsHumanViewer(viewer))
+                    {
+                        continue;
+                    }
+
+                    if (ShouldTransmit(viewer.Slot, root))
+                    {
+                        info.TransmitEntities.Add(index);
+                    }
+                    else
+                    {
+                        info.TransmitEntities.Remove(index);
+                    }
+                }
+            }
+        }
+
+        public static void ResetRound()
+        {
+            HashSet<int> liveSlots = [];
+            foreach (CCSPlayerController player in Players.GetHumans())
+            {
+                liveSlots.Add(player.Slot);
+                HudMenu.ReleasePlayer(player);
+                RestorePlayerDefaults(player);
+            }
+
+            ClearOrphanedSlots(liveSlots);
+        }
+
+        public static void ReleasePlayer(CCSPlayerController? player)
+        {
+            if (player is null || !player.IsValid)
+            {
+                return;
+            }
+
+            HudMenu.ReleasePlayer(player);
+            RestorePlayerDefaults(player);
+            foreach (string root in CaptureRoots)
+            {
+                if (TryGetLayout(player, root, out CCSCustomHudLayout hud))
+                {
+                    hud.SetInputCaptureEnabled(player, false);
+                }
+            }
+        }
+
+        public static void Shutdown()
+        {
+            HudMenu.Shutdown();
+            ClearAllSlotState();
+            for (int i = 0; i < _layouts.Length; i++)
+            {
+                if (_layouts[i] is { IsValid: true } layout)
+                {
+                    layout.AcceptInput("Kill");
+                }
+                _layouts[i] = null;
+            }
+        }
+
+        private static void RestorePlayerDefaults(CCSPlayerController player)
+        {
+            if (player is not { IsValid: true })
+            {
+                return;
+            }
+
+            int slot = player.Slot;
+            bool dirty = _classBySlot.ContainsKey(slot)
+                || _textBySlot.ContainsKey(slot)
+                || _visibleBySlot.ContainsKey(slot);
+            if (!dirty)
+            {
+                return;
+            }
+
+            _classBySlot.TryGetValue(slot, out Dictionary<string, Dictionary<string, bool>>? classes);
+            _textBySlot.TryGetValue(slot, out Dictionary<string, Dictionary<string, string>>? texts);
+            ClearSlotCaches(slot);
+
+            if (classes is not null)
+            {
+                foreach ((string panelId, Dictionary<string, bool> map) in classes)
+                {
+                    foreach ((string className, bool enabled) in map)
+                    {
+                        if (enabled)
+                        {
+                            SetHasClass(player, panelId, className, false);
+                        }
+                    }
+                }
+            }
+
+            if (texts is not null)
+            {
+                foreach ((string panelId, Dictionary<string, string> vars) in texts)
+                {
+                    foreach ((string name, string value) in vars)
+                    {
+                        if (value.Length > 0)
+                        {
+                            SetText(player, panelId, name, string.Empty);
+                        }
+                    }
+                }
+            }
+
+            foreach (string root in RootPanels)
+            {
+                SetHasClass(player, root, "ph-off", true);
+                MarkClosingRoot(slot, root);
+            }
+
+            Tracker.WriteDefaults(player);
+            Menu.WriteDefaults(player);
+            ClearSlotCaches(slot);
+        }
+
+        private static void ClearSlotCaches(int slot)
+        {
+            _visibleBySlot.Remove(slot);
+            _classBySlot.Remove(slot);
+            _textBySlot.Remove(slot);
+            _stepBySlot.Remove(slot);
+        }
+
+        private static void ClearOrphanedSlots(HashSet<int> liveSlots)
+        {
+            void Purge<T>(Dictionary<int, T> map)
+            {
+                foreach (int slot in map.Keys.Where(s => !liveSlots.Contains(s)).ToList())
+                {
+                    map.Remove(slot);
+                }
+            }
+
+            Purge(_visibleBySlot);
+            Purge(_classBySlot);
+            Purge(_textBySlot);
+            Purge(_stepBySlot);
+            Purge(_closingRootsBySlot);
+        }
+
+        private static void ClearAllSlotState()
+        {
+            _visibleBySlot.Clear();
+            _closingRootsBySlot.Clear();
+            _classBySlot.Clear();
+            _textBySlot.Clear();
+            _stepBySlot.Clear();
+        }
+
+        private static void ExpireClosingRoots()
+        {
+            if (_closingRootsBySlot.Count == 0)
+            {
+                return;
+            }
+
+            DateTime now = DateTime.UtcNow;
+            foreach (int slot in _closingRootsBySlot.Keys.ToList())
+            {
+                Dictionary<string, DateTime> closing = _closingRootsBySlot[slot];
+                foreach (string root in closing.Where(kv => now >= kv.Value).Select(kv => kv.Key).ToList())
+                {
+                    closing.Remove(root);
+                }
+
+                if (closing.Count == 0)
+                {
+                    _closingRootsBySlot.Remove(slot);
+                }
+            }
+        }
+
+        private static bool EnsureOne(int index)
+        {
+            string resource = LayoutResources[index];
+            if (_layouts[index] is { IsValid: true } existing && LayoutPath(existing) == resource)
+            {
+                return true;
+            }
+
+            if (_layouts[index] is { IsValid: true } stale)
+            {
+                stale.AcceptInput("Kill");
+                _layouts[index] = null;
+            }
+
+            foreach (CCSCustomHudLayout found in
+                     Utilities.FindAllEntitiesByDesignerName<CCSCustomHudLayout>("custom_hud_layout"))
+            {
+                if (found is not { IsValid: true })
+                {
+                    continue;
+                }
+
+                string? path = LayoutPath(found);
+                if (path == resource)
+                {
+                    _layouts[index] = found;
+                    return true;
+                }
+            }
+
+            return Create(index);
+        }
+
+        private static bool Create(int index)
+        {
+            string resource = LayoutResources[index];
+            try
+            {
+                CCSCustomHudLayout? hud = Utilities.CreateEntityByName<CCSCustomHudLayout>("custom_hud_layout");
+                if (hud is null || hud.Handle == IntPtr.Zero)
+                {
+                    Console.WriteLine($"[Challenges][CustomHud] CreateEntityByName failed for {resource}");
+                    return false;
+                }
+
+                using (CEntityKeyValues kv = new())
+                {
+                    kv.SetVector("origin", 0f, 0f, 0f);
+                    kv.SetString("layout", resource);
+                    kv.SetBool("observable", false);
+                    hud.DispatchSpawn(kv);
+                }
+
+                if (hud is not { IsValid: true })
+                {
+                    Console.WriteLine($"[Challenges][CustomHud] DispatchSpawn left entity invalid for {resource}");
+                    return false;
+                }
+
+                _layouts[index] = hud;
+                Console.WriteLine($"[Challenges][CustomHud] Spawned #{hud.Index} → {resource}");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[Challenges][CustomHud] Spawn failed for {resource}: {ex.Message}");
+                return false;
+            }
+        }
+
+        private static bool TryWrite(CCSPlayerController player, string panelId, out CCSCustomHudLayout hud)
+        {
+            hud = null!;
+            int index = LayoutIndexForPanel(panelId);
+            if (index < 0)
+            {
+                return false;
+            }
+
+            if (!EnsureSpawned(player) || _layouts[index] is not { IsValid: true } layout)
+            {
+                return false;
+            }
+
+            hud = layout;
+            try
+            {
+                return player.Slot >= 0 && player.Slot < hud.PlayerLayoutStates.Count;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static int LayoutIndexForPanel(string panelId)
+        {
+            if (panelId == Tracker.Panel
+                || panelId.StartsWith("ch-trow-", StringComparison.Ordinal)
+                || panelId.StartsWith("ch-tfill-", StringComparison.Ordinal))
+            {
+                return 0;
+            }
+
+            if (panelId == Menu.Panel
+                || panelId.StartsWith("ch-", StringComparison.Ordinal)
+                || panelId.StartsWith("ph-", StringComparison.Ordinal))
+            {
+                return 1;
+            }
+
+            return -1;
+        }
+
+        private static bool ShouldTransmit(int slot, string rootPanelId)
+        {
+            if (_visibleBySlot.TryGetValue(slot, out HashSet<string>? set) && set.Contains(rootPanelId))
+            {
+                return true;
+            }
+
+            if (_closingRootsBySlot.TryGetValue(slot, out Dictionary<string, DateTime>? closing)
+                && closing.TryGetValue(rootPanelId, out DateTime until))
+            {
+                return DateTime.UtcNow < until;
+            }
+
+            return false;
+        }
+
+        private static string TransmitRoot(string panelId)
+        {
+            int index = LayoutIndexForPanel(panelId);
+            return index >= 0 ? RootPanels[index] : panelId;
+        }
+
+        private static void MarkClosingRoot(int slot, string rootPanelId)
+        {
+            if (!_closingRootsBySlot.TryGetValue(slot, out Dictionary<string, DateTime>? closing))
+            {
+                _closingRootsBySlot[slot] = closing = new Dictionary<string, DateTime>(StringComparer.Ordinal);
+            }
+
+            closing[rootPanelId] = DateTime.UtcNow + CloseTransmitGrace;
+        }
+
+        private static void ClearClosingRoot(int slot, string rootPanelId)
+        {
+            if (!_closingRootsBySlot.TryGetValue(slot, out Dictionary<string, DateTime>? closing))
+            {
+                return;
+            }
+
+            closing.Remove(rootPanelId);
+            if (closing.Count == 0)
+            {
+                _closingRootsBySlot.Remove(slot);
+            }
+        }
+
+        private static string? LayoutPath(CCSCustomHudLayout layout)
+        {
+            try
+            {
+                return layout.StrLayout;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+    }
+}

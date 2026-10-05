@@ -11,7 +11,7 @@
     "core.event.trigger": "[Challenges] Triggered event {eventName}",
     "core.tasks.stopped": "[Challenges] Stopped all tasks!",
     "admin.unknown_command": "[Challenges] Unknown command.",
-    "admin.reload:": "[Challenges] Reloaded Configuration.",
+    "admin.reload": "[Challenges] Reloaded Configuration.",
     "admin.disable": "[Challenges] Disabled Challenges.",
     "admin.enable": "[Challenges] Enabled Challenges.",
     "command.nochallenges": "[Challenges] no active challenges.",
@@ -26,5 +26,15 @@
     "challenges.deleted": "{default}Challenge deleted: {green}{challenge}",
     "challenges.completed.other": "{green}{player} {default}completed challenge: {green}{challenge}",
     "discord.webhook.challenge.completed": "**{player}** *completed a challenge*: **{challenge}**",
-    "discord.webhook.schedule.new": "*New server-wide Challenges*\n**{schedule}**\n**Starting:** *{startDate}*\n**Ending:** *{endDate}*"
+    "discord.webhook.schedule.new": "*New server-wide Challenges*\n**{schedule}**\n**Starting:** *{startDate}*\n**Ending:** *{endDate}*",
+    "hud.tracker.title": "Challenges",
+    "hud.menu.title": "Challenges",
+    "hud.menu.filter.all": "All",
+    "hud.menu.filter.progress": "Progress",
+    "hud.menu.filter.ending": "Ending soon",
+    "hud.menu.filter.starting": "Starting soon",
+    "hud.menu.scoreboard": "Scoreboard",
+    "hud.menu.empty": "Nothing to show",
+    "hud.menu.prev": "Prev",
+    "hud.menu.next": "Next"
 }
