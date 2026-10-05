@@ -4,6 +4,12 @@ UID       := $(shell id -u)
 GID       := $(shell id -g)
 DEBUG_OUTPUT := $(shell sed -n 's/.*<OutputPath>\(.*\)<\/OutputPath>.*/\1/p' $(PROJECT))
 
+# Optional absolute OutputPath in the csproj (for example a local game-server
+# plugins folder). When unset, build output stays under the repo bind mount.
+ifneq ($(DEBUG_OUTPUT),)
+OUTPUT_VOLUME := -v "$(DEBUG_OUTPUT)":"$(DEBUG_OUTPUT)"
+endif
+
 # Run the SDK as the host user so files written to bind mounts are not root-owned.
 DOCKER_RUN = docker run --rm \
 	--user $(UID):$(GID) \
@@ -12,7 +18,7 @@ DOCKER_RUN = docker run --rm \
 	-e DOTNET_CLI_TELEMETRY_OPTOUT=1 \
 	-v "$(CURDIR)":/src \
 	-v "$(HOME)/.nuget":/tmp/.nuget \
-	-v "$(DEBUG_OUTPUT)":"$(DEBUG_OUTPUT)" \
+	$(OUTPUT_VOLUME) \
 	-w /src \
 	$(SDK_IMAGE)
 
@@ -28,7 +34,10 @@ help: ## Show this help
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
 dirs:
-	@mkdir -p "$(HOME)/.nuget" "$(DEBUG_OUTPUT)"
+	@mkdir -p "$(HOME)/.nuget"
+ifneq ($(DEBUG_OUTPUT),)
+	@mkdir -p "$(DEBUG_OUTPUT)"
+endif
 
 catalog: ## Generate builder/catalog.json from extractors
 	python3 tools/generate_catalog.py
