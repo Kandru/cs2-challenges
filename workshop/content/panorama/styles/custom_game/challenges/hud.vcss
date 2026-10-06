@@ -420,11 +420,11 @@ Label.TrackerCount
 	padding-bottom: 12px;
 }
 
-/* Definite height under a down parent so list/score can use height:100% in a right row. */
+/* fill-parent-flow leaves room for MenuCredit under the columns. */
 .MenuColumns
 {
 	width: 100%;
-	height: 100%;
+	height: fill-parent-flow( 1.0 );
 	flow-children: right;
 }
 
@@ -814,6 +814,20 @@ Label.MenuByLabel
 	margin-top: 6px;
 	padding-top: 8px;
 	border-top: 1px solid #d9d9d90a;
+}
+
+/* Hardcoded credit in menu.xml — not a dialog variable. */
+Label.MenuCredit
+{
+	width: 100%;
+	height: fit-children;
+	margin-top: 8px;
+	padding-top: 8px;
+	border-top: 1px solid #d9d9d90a;
+	font-size: 14;
+	color: #8b8f94;
+	text-align: center;
+	text-overflow: shrink;
 }
 
 .MenuFooterBtn

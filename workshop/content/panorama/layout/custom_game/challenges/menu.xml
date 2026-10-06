@@ -481,6 +481,7 @@
 							</Panel>
 						</Panel>
 					</Panel>
+					<Label class="MenuCredit stratum-bold-tf" hittest="false" text="Free plugin by kandru.net. Donations are welcome if you enjoy it. More plugins: github.com/kandru" />
 				</Panel>
 			</Panel>
 		</Panel>
