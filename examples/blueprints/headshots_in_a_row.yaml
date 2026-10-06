@@ -168,9 +168,6 @@ tasks:
       - type: task.mark_completed
         values:
           - hard_noheadshot
-      - type: task.mark_completed
-        values:
-          - hard_donotdie
     requires:
       - medium
   - id: hard_noheadshot
@@ -209,40 +206,5 @@ tasks:
       - type: task.reset_completed
         values:
           - hard_noheadshot
-    requires:
-      - medium
-  - id: hard_donotdie
-    title:
-      en: 'Rule broken: do not die'
-      de: 'Regel verletzt: ohne sterben'
-    type: player_death
-    amount: 1
-    cooldown: 0
-    visible: false
-    announce_progress: false
-    announce_completion: false
-    rules:
-      - key: global.iswarmup
-        operator: bool==
-        value: 'false'
-      - key: global.isduringround
-        operator: bool==
-        value: 'true'
-      - key: headshot
-        operator: bool==
-        value: 'false'
-      - key: attacker.isbot
-        operator: bool==
-        value: 'false'
-    actions:
-      - type: notify.player.progress.rule_broken
-        values:
-          - hard
-      - type: task.reset_progress
-        values:
-          - hard
-      - type: task.reset_completed
-        values:
-          - hard_donotdie
     requires:
       - medium
