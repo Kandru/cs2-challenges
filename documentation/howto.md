@@ -6,7 +6,9 @@ Config folder (created on first start):
 
 ## 1. Install
 
-1. Install [CounterStrikeSharp](https://docs.cssharp.dev/) on your CS2 server.
+1. Install [Metamod:Source](https://www.metamodsource.net/downloads.php?branch=dev).
+2. Install [MultiAddonManager](https://github.com/Source2ZE/MultiAddonManager/releases) and configure it to use the workshop Add-On [3814533794](https://steamcommunity.com/sharedfiles/filedetails/?id=3814533794).
+3. Install [CounterStrikeSharp](https://docs.cssharp.dev/) and configure it (Admins, ...).
 2. Download the latest release from [GitHub Releases](https://github.com/Kandru/cs2-challenges/releases/).
 3. Copy the `Challenges` folder into `/game/csgo/addons/counterstrikesharp/plugins/`.
 4. Copy the `ChallengesShared` folder into `/game/csgo/addons/counterstrikesharp/shared/`.
@@ -21,18 +23,12 @@ With the server stopped:
 1. Copy `examples/schedules.yaml` into the Challenges config folder.
 2. Copy the `examples/blueprints/` folder into that same config folder (so you have `…/Challenges/blueprints/*.yaml`).
 3. Open `schedules.yaml` and set `date_start` / `date_end` so **today** falls inside the window. Times are **UTC**.
-4. Mount the Panorama addon from [`workshop/content`](../workshop/content) on the server so the HUD and `!c` menu can load.
 
 ## 3. Start and check in game
 
 1. Start the server (or change map). Files also reload with the server command `challenges reload`.
 2. During freeze time, a tracker appears top-right.
 3. Type `!c` or `!challenges` for the fullscreen menu.
-
-> [!NOTE]
-> Prefer writing challenges in the browser? Use the [challenge builder](https://kandru.github.io/cs2-challenges/).
-
-<a id="using-the-builder"></a>
 
 ## Using the builder
 
