@@ -147,9 +147,9 @@ namespace Challenges
                     DynamicHandlers.BindNamedUserMessageHook(this, messageName, entry, hookMode, register);
                 }
 
-                foreach ((string command, string description) in entry.Commands)
+                foreach ((string command, CommandBinding binding) in entry.Commands)
                 {
-                    DynamicHandlers.BindCommand(this, command, description, entry, register);
+                    DynamicHandlers.BindCommand(this, command, binding.Description, binding.Method, entry, register);
                 }
 
                 foreach ((string command, HookMode hookMode) in entry.CommandListeners)

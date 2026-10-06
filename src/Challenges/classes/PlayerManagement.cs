@@ -1,5 +1,6 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Modules.Commands;
 using CounterStrikeSharp.API.Modules.Extensions;
 using CounterStrikeSharp.API.Core.Translations;
 using CounterStrikeSharp.API.Modules.Entities;
@@ -17,10 +18,13 @@ namespace Challenges.Classes
     public class PlayerManagement : ClassesBlueprint
     {
         private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
+        private const string MenuCommandDescription = "Toggle challenges menu";
 
         public PlayerManagement(Dictionary<GlobalStates, object> globalState, IStringLocalizer localizer, bool isHotReloaded)
             : base(globalState, localizer, isHotReloaded)
         {
+            Commands = BuildMenuCommands(GlobalConfig.MenuCommands);
+
             if (isHotReloaded)
             {
                 foreach (CCSPlayerController player in Players.GetHumans())
@@ -37,11 +41,35 @@ namespace Challenges.Classes
             "EventPlayerChat",
         ];
 
-        public override Dictionary<string, string> Commands => new()
+        public override Dictionary<string, CommandBinding> Commands { get; }
+
+        private static Dictionary<string, CommandBinding> BuildMenuCommands(IEnumerable<string> entries)
         {
-            ["css_c"] = "Toggle challenges menu",
-            ["css_challenges"] = "Toggle challenges menu",
-        };
+            Dictionary<string, CommandBinding> commands = new(StringComparer.OrdinalIgnoreCase);
+            foreach (string entry in entries)
+            {
+                string? name = NormalizeMenuCommand(entry);
+                if (name != null)
+                {
+                    commands.TryAdd(name, new CommandBinding(MenuCommandDescription, nameof(CommandMenu)));
+                }
+            }
+
+            return commands;
+        }
+
+        private static string? NormalizeMenuCommand(string entry)
+        {
+            string name = entry.Trim().TrimStart('!', '/').Trim();
+            if (name.Length == 0)
+            {
+                return null;
+            }
+
+            return name.StartsWith("css_", StringComparison.OrdinalIgnoreCase)
+                ? name
+                : "css_" + name;
+        }
 
         private string PlayersDir => Path.Combine(
             Path.GetDirectoryName(GlobalConfig.GetConfigPath()) ?? ".",
@@ -127,13 +155,7 @@ namespace Challenges.Classes
             return HookResult.Continue;
         }
 
-        public void CommandCss_c(CCSPlayerController? player, CounterStrikeSharp.API.Modules.Commands.CommandInfo info) =>
-            ToggleMenu(player);
-
-        public void CommandCss_challenges(CCSPlayerController? player, CounterStrikeSharp.API.Modules.Commands.CommandInfo info) =>
-            ToggleMenu(player);
-
-        private void ToggleMenu(CCSPlayerController? player)
+        public void CommandMenu(CCSPlayerController? player, CommandInfo _)
         {
             if (!Players.IsHumanViewer(player) || !GlobalConfig.Enabled)
             {

@@ -40,6 +40,7 @@ namespace Challenges.Configs
     {
         [JsonPropertyName("enabled")] public bool Enabled { get; set; } = true;
         [JsonPropertyName("debug")] public bool Debug { get; set; } = false;
+        [JsonPropertyName("menu_commands")] public List<string> MenuCommands { get; set; } = ["c", "challenges"];
         [JsonPropertyName("gui")] public PluginConfigGui Gui { get; set; } = new();
         [JsonPropertyName("notifications")] public PluginConfigNotifications Notifications { get; set; } = new();
         [JsonPropertyName("discord")] public PluginConfigDiscord Discord { get; set; } = new();

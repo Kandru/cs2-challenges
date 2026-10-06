@@ -11,6 +11,7 @@ Created on first start. Example:
   "enabled": true,
   "debug": false,
   "allow_bots": false,
+  "menu_commands": ["c", "challenges"],
   "gui": {
     "show_on_round_start": true,
     "show_on_progress": true,
@@ -40,6 +41,7 @@ Created on first start. Example:
 | `enabled` | Turns the whole plugin on or off. |
 | `debug` | Extra log messages (YAML / matching hints). |
 | `allow_bots` | Let bots earn challenges (default `false`). |
+| `menu_commands` | Chat names that open the challenges menu (default `["c", "challenges"]`). Leading `!` or `/` is optional. Empty list disables chat menu commands. |
 | `gui.show_on_round_start` | Show the tracker during freeze time. |
 | `gui.show_on_progress` | Show the tracker when a visible task advances. |
 | `gui.progress_duration` | Seconds the progress tracker stays up. |
@@ -54,7 +56,7 @@ Created on first start. Example:
 
 | Command | Who | Effect |
 |---------|-----|--------|
-| `!c` / `!challenges` | Players | Toggle the fullscreen challenges menu. |
+| Names in `menu_commands` (default `!c` / `!challenges`) | Players | Toggle the fullscreen challenges menu. |
 | `!lang <language>` | Players | Set language (e.g. `!lang en`, `!lang de`). Stored and restored on reconnect. |
 
 ## Server console

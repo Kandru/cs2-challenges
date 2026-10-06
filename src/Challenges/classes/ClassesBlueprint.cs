@@ -7,6 +7,8 @@ using Microsoft.Extensions.Localization;
 
 namespace Challenges.Classes
 {
+    public readonly record struct CommandBinding(string Description, string Method);
+
     public class ClassesBlueprint(Dictionary<GlobalStates, object> GlobalState, IStringLocalizer Localizer, bool IsHotReloaded)
     {
         public PluginConfig GlobalConfig => (PluginConfig)_globalStates[GlobalStates.GlobalConfig];
@@ -22,7 +24,7 @@ namespace Challenges.Classes
         public virtual List<string> Listeners => [];
         public virtual Dictionary<int, HookMode> UserMessages => [];
         public virtual Dictionary<string, HookMode> UserMessageNames => [];
-        public virtual Dictionary<string, string> Commands => [];
+        public virtual Dictionary<string, CommandBinding> Commands => [];
         public virtual Dictionary<string, HookMode> CommandListeners => [];
 
         public virtual void Destroy()

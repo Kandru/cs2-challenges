@@ -82,9 +82,15 @@ namespace Challenges.Utils
                 register);
         }
 
-        public static void BindCommand(BasePlugin basePlugin, string command, string? description, ClassesBlueprint module, bool register)
+        public static void BindCommand(
+            BasePlugin basePlugin,
+            string command,
+            string? description,
+            string methodName,
+            ClassesBlueprint module,
+            bool register)
         {
-            MethodInfo? method = RequireMethod(module, $"Command{ToMethodSuffix(command)}", register, "command");
+            MethodInfo? method = RequireMethod(module, methodName, register, "command");
             MethodInfo? api = register ? AddCommandApi : RemoveCommandApi;
             if (method == null || api == null)
             {
