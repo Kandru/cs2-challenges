@@ -62,7 +62,7 @@ namespace Challenges.Classes
 
                 if (self)
                 {
-                    PlaySound(player, GlobalConfig.Notifications.ChallengeCompleteSound);
+                    PlayClientSound(player, GlobalConfig.Notifications.ChallengeCompleteSound);
                 }
 
                 string key = self ? "challenges.completed.user" : "challenges.completed.other";
@@ -196,12 +196,23 @@ namespace Challenges.Classes
 
             if (sound.StartsWith("sounds/", StringComparison.Ordinal))
             {
-                player.ExecuteClientCommand($"play {sound}");
+                PlayClientSound(player, sound);
                 return;
             }
 
             RecipientFilter filter = [player];
             player.EmitSound(sound, filter);
+        }
+
+        /// <summary>Client-local <c>play</c> only — never audible to other players.</summary>
+        private static void PlayClientSound(CCSPlayerController player, string sound)
+        {
+            if (string.IsNullOrEmpty(sound) || !player.IsValid)
+            {
+                return;
+            }
+
+            player.ExecuteClientCommand($"play {sound}");
         }
 
         private async Task SendWebhook(string webhookUrl, string message)
