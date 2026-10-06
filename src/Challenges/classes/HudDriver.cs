@@ -1,6 +1,5 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
-using CounterStrikeSharp.API.Modules.Cvars;
 using Challenges.Configs;
 using Challenges.Enums;
 using Challenges.Huds;
@@ -48,8 +47,15 @@ namespace Challenges.Classes
             _globalStates[GlobalStates.DuringRound] = true;
             GetClass<ChallengeEngine>().InvalidateRoundCache();
 
-            bool freeze = GetFreezeTime() > 0;
-            _globalStates[GlobalStates.FreezeActive] = freeze;
+            int freezeTime = Tracker.FreezeTimeSeconds;
+            if (freezeTime <= 0)
+            {
+                _globalStates[GlobalStates.FreezeActive] = false;
+            }
+            else
+            {
+                _globalStates[GlobalStates.FreezeActive] = true;
+            }
 
             try
             {
@@ -65,11 +71,17 @@ namespace Challenges.Classes
                 PlayerState state = GetPlayerState(player);
                 state.ActiveMenu = ActiveMenu.None;
                 state.TrackerFreezeVisible = false;
+                state.TrackerFreezeUntil = null;
+                state.TrackerFreezeDuration = 0;
                 state.TrackerProgressUntil = null;
-                state.TrackerProgressIds.Clear();
+                state.TrackerFadeUntil = null;
+                state.TrackerUpNextPending = false;
+                state.TrackerShowingUpNext = false;
+                state.TrackerProgressItems.Clear();
+                state.TrackerFingerprint = null;
             }
 
-            if (GlobalConfig.Gui.ShowOnRoundStart && freeze)
+            if (GlobalConfig.Gui.ShowOnRoundStart && freezeTime > 0)
             {
                 Server.NextFrame(() =>
                 {
@@ -114,8 +126,5 @@ namespace Challenges.Classes
             _destroyed = true;
             Context.Unbind();
         }
-
-        private static int GetFreezeTime() =>
-            ConVar.Find("mp_freezetime")?.GetPrimitiveValue<int>() ?? 0;
     }
 }

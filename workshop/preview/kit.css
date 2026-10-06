@@ -12,8 +12,12 @@ body {
 
 .stage { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
 
-.ph-card { position: absolute; border-radius: 3px; display: flex; }
-.ph-card.ph-off { display: none; }
+.ph-card {
+  position: absolute; border-radius: 3px; display: flex;
+  opacity: 1; transition: opacity 1s ease-out;
+}
+.ph-card.ph-fading { opacity: 0; }
+.ph-card.ph-off { display: none; opacity: 0; transition: none; }
 
 .ph-bg {
   position: absolute; inset: 0;
@@ -47,7 +51,7 @@ body {
   display: flex; justify-content: space-between; align-items: baseline;
   height: 18px; margin-bottom: 6px; font-size: 14px; letter-spacing: 1.2px; text-transform: uppercase;
 }
-.ph-stat-name { flex: 1; color: #e8eef4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ph-stat-name { flex: 1; font-weight: 700; color: #e8eef4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ph-stat-when {
   width: 150px; margin-right: 8px; text-align: right; color: #9aa2ac; font-size: 14px; font-weight: 500;
   letter-spacing: 0; text-transform: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
@@ -60,9 +64,10 @@ body {
 .ph-stat-fill {
   height: 100%; width: 100%; border-radius: 4px;
   background: linear-gradient(to right, #f0a531, #ffd27a);
-  clip-path: inset(0 98% 0 0);
+  clip-path: inset(0 100% 0 0);
   transition: clip-path 0.35s;
 }
+.ph-stat-fill.p0 { clip-path: inset(0 100% 0 0); }
 .ph-stat-fill.p10 { clip-path: inset(0 90% 0 0); }
 .ph-stat-fill.p20 { clip-path: inset(0 80% 0 0); }
 .ph-stat-fill.p30 { clip-path: inset(0 70% 0 0); }
@@ -72,12 +77,24 @@ body {
 .ph-stat-fill.p70 { clip-path: inset(0 30% 0 0); }
 .ph-stat-fill.p80 { clip-path: inset(0 20% 0 0); }
 .ph-stat-fill.p90 { clip-path: inset(0 10% 0 0); }
+.ph-stat-fill.p0 { clip-path: inset(0 100% 0 0); }
 .ph-stat-fill.p100 { clip-path: inset(0 0 0 0); }
 
 /* Tracker */
-.Tracker { width: 420px; right: 20px; top: 20px; z-index: 100; }
+.Tracker { width: 420px; right: 10px; top: 10px; z-index: 100; }
 .TrackerContent { position: relative; flex: 1; display: flex; flex-direction: column; z-index: 2; }
 .TrackerBody { padding: 8px 12px 6px 14px; }
+.TrackerTimer {
+  margin: 0 12px 8px 14px; flex-shrink: 0;
+}
+.TrackerTimer.is-off { display: none; }
+.TrackerTimer.running .ph-stat-fill {
+  animation: tracker-timer-drain var(--tracker-hold, 5s) linear forwards;
+}
+@keyframes tracker-timer-drain {
+  from { clip-path: inset(0 0 0 0); }
+  to { clip-path: inset(0 100% 0 0); }
+}
 .TrackerRow {
   padding: 8px; margin-bottom: 6px;
   background: #ffffff0d; border: 1px solid #ffffff14; border-radius: 3px;
@@ -86,7 +103,7 @@ body {
 .TrackerCount { margin-left: 10px; }
 .TrackerRow .ph-stat-lab { height: 16px; margin-bottom: 4px; }
 .TrackerRow .ph-stat-name {
-  flex: 1; min-width: 0; font-size: 14px; letter-spacing: 1.2px; color: #e8eef4;
+  flex: 1; min-width: 0; font-size: 14px; font-weight: 700; letter-spacing: 1.2px; color: #e8eef4;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .TrackerRow .ph-stat-val { width: 52px; font-size: 14px; color: #f0a531; }
@@ -109,7 +126,7 @@ body {
 }
 .MenuFilterBtn:hover { background: #ffffff1c; border-color: #f0a53166; }
 .MenuFilterBtn.active { background: #f0a53122; border-color: #f0a531; }
-.MenuFilterLabel { font-size: 12px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; white-space: nowrap; }
+.MenuFilterLabel { font-size: 14px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; white-space: nowrap; }
 .MenuRows { flex: 0 0 auto; overflow: hidden; display: flex; flex-direction: column; }
 .MenuListSpacer { flex: 1; min-height: 0; }
 .MenuRow {
@@ -120,7 +137,7 @@ body {
 .MenuRowHead { margin-bottom: 6px; }
 .MenuRow .ph-stat-lab { height: 16px; margin-bottom: 4px; }
 .MenuRow .ph-stat-name {
-  flex: 1; min-width: 0; font-size: 14px; letter-spacing: 1.2px; color: #e8eef4;
+  flex: 1; min-width: 0; font-size: 14px; font-weight: 700; letter-spacing: 1.2px; color: #e8eef4;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .MenuRow .ph-stat-val { width: 56px; font-size: 14px; color: #f0a531; }
@@ -130,7 +147,7 @@ body {
   flex: 1; min-width: 0; padding: 6px 8px; background: #0b0f14aa; border: 1px solid #ffffff14; border-radius: 3px;
 }
 .MenuColHead {
-  display: block; margin-bottom: 4px; font-size: 12px; font-weight: 700;
+  display: block; margin-bottom: 4px; font-size: 14px; font-weight: 700;
   letter-spacing: 1.2px; text-transform: uppercase; color: #f0a531;
 }
 .MenuTasks, .MenuByList { display: flex; flex-direction: column; gap: 2px; }
@@ -142,18 +159,21 @@ body {
 .MenuBy { flex: 1; padding-left: 6px; }
 .MenuTask.is-off, .MenuBy.is-off { display: none; }
 .MenuTask.is-done { background: #9ccf4f18; border-color: #9ccf4f44; }
+.MenuTask.is-broken { background: #e05a5a22; border-color: #e05a5a66; }
 .MenuTaskMark {
   width: 3px; height: 12px; margin-right: 6px; border-radius: 1px; background: #f0a531; flex-shrink: 0;
 }
 .MenuTask.is-done .MenuTaskMark { background: #9ccf4f; }
+.MenuTask.is-broken .MenuTaskMark { background: #e05a5a; }
 .MenuTaskLabel {
-  flex: 1; min-width: 0; font-size: 12px; letter-spacing: 0.4px; color: #c5ccd4;
+  flex: 1; min-width: 0; font-size: 14px; font-weight: 700; letter-spacing: 0.4px; color: #c5ccd4;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .MenuTask.is-done .MenuTaskLabel { color: #9ccf4f; }
+.MenuTask.is-broken .MenuTaskLabel { color: #e05a5a; }
 .MenuBy.is-empty { background: transparent; border-color: transparent; }
 .MenuByLabel {
-  min-width: 0; flex: 1; font-size: 12px; color: #e8eef4;
+  min-width: 0; flex: 1; font-size: 14px; font-weight: 700; color: #e8eef4;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .MenuBy.is-empty .MenuByLabel { color: #8b8f94; }
@@ -162,16 +182,14 @@ body {
 }
 .MenuFooterBtn {
   flex: 1; height: 28px; margin: 0 2px; background: #ffffff0d; border: 1px solid transparent;
-  border-radius: 3px; color: #e8eef4; font-size: 12px; font-weight: 700; cursor: pointer;
+  border-radius: 3px; color: #e8eef4; font-size: 14px; font-weight: 700; cursor: pointer;
 }
 .MenuFooterBtn:hover { background: #ffffff1c; border-color: #f0a53166; }
-.MenuPage { flex: 1.4; line-height: 28px; font-size: 12px; font-weight: 700; color: #f0a531; text-align: center; }
-.ScoreSortBtn {
+.MenuPage { flex: 1.4; line-height: 28px; font-size: 14px; font-weight: 700; color: #f0a531; text-align: center; }
+.ScoreTitleBar {
   display: block; width: 100%; padding: 4px 0; margin-bottom: 8px;
-  background: transparent; border: 1px solid transparent; border-radius: 3px;
-  cursor: pointer; text-align: center; flex-shrink: 0;
+  text-align: center; flex-shrink: 0;
 }
-.ScoreSortBtn:hover { background: #ffffff0d; border-color: #f0a53166; }
 .ScoreTitle {
   display: block; font-size: 15px; font-weight: 700;
   letter-spacing: 1.6px; text-transform: uppercase; color: #e8eef4;
@@ -189,7 +207,7 @@ body {
   flex: 1; padding: 8px 10px; background: #0b0f14aa; border: 1px solid #ffffff14; border-radius: 3px;
 }
 .ScoreSelfStatLabel {
-  display: block; margin-bottom: 4px; font-size: 12px; letter-spacing: 1px;
+  display: block; margin-bottom: 4px; font-size: 14px; letter-spacing: 1px;
   text-transform: uppercase; color: #9aa2ac;
 }
 .ScoreSelfStatVal { display: block; font-size: 16px; font-weight: 700; color: #f0a531; }
@@ -198,7 +216,7 @@ body {
   background: #ffffff14; border-top: 1px solid #f0a53166; border-bottom: 1px solid #f0a53166;
 }
 .ScoreHead {
-  font-size: 12px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: #9aa2ac;
+  font-size: 14px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: #9aa2ac;
 }
 .ScoreHead.sort-active { color: #f0a531; }
 .ScoreRows {
@@ -212,9 +230,98 @@ body {
 .ScoreRow.alt { background: #ffffff08; }
 .ScoreRow.empty, .ScoreRow.is-off { display: none; }
 .ScoreRow.is-self { background: #f0a53122; border-bottom-color: #f0a53144; }
-.ScoreRank { width: 36px; font-size: 12px; font-weight: 700; color: #f0a531; }
-.ScoreName { flex: 1; font-size: 14px; color: #e8eef4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.ScoreCur { width: 72px; text-align: right; font-size: 12px; font-weight: 700; color: #f0a531; }
-.ScoreTot { width: 48px; text-align: right; font-size: 12px; font-weight: 700; color: #fff; }
-.ScoreHeader .ScoreCur, .ScoreHeader .ScoreTot { font-size: 12px; color: #9aa2ac; }
+.ScoreRank { width: 36px; font-size: 14px; font-weight: 700; color: #f0a531; }
+.ScoreName { flex: 1; font-size: 14px; font-weight: 700; color: #e8eef4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ScoreCur { width: 96px; margin-right: 10px; text-align: right; font-size: 14px; font-weight: 700; color: #f0a531; }
+.ScoreTot { width: 72px; text-align: right; font-size: 14px; font-weight: 700; color: #fff; }
+.ScoreHeader .ScoreCur, .ScoreHeader .ScoreTot { font-size: 14px; color: #9aa2ac; }
 .ScoreHeader .ScoreCur.sort-active, .ScoreHeader .ScoreTot.sort-active { color: #f0a531; }
+
+
+.MenuFilterBtn.is-disabled, .MenuFooterBtn.is-disabled { opacity: 0.35; pointer-events: none; }
+.ScoreFilterBar { display: flex; align-items: center; margin-bottom: 8px; flex-shrink: 0; }
+.ScoreFilterGroup { display: flex; align-items: center; }
+.ScoreFilterSpacer { flex: 1; min-width: 8px; }
+.ScoreFilterGroup .MenuFilterBtn:last-child { margin-right: 0; }
+.MenuBy.is-you { background: #3d8f4522; border-color: #3d8f45; }
+.MenuBy.is-you .MenuByLabel { color: #6fdc78; font-weight: 700; }
+.MenuRow { padding: 6px 8px; margin-bottom: 4px; }
+
+/* Themes */
+.theme-ct .ph-bar { background: #96c8fa; }
+.theme-ct .ph-stat-fill { background: linear-gradient(to right, #5a9fd4, #96c8fa); }
+.theme-ct .ph-stat-val, .theme-ct .ScoreSelfRank, .theme-ct .ScoreSelfStatVal,
+.theme-ct .ScoreRank, .theme-ct .ScoreCur, .theme-ct .MenuPage, .theme-ct .ScoreHead.sort-active { color: #96c8fa; }
+.theme-ct .MenuFilterBtn.active { background: #96c8fa22; border-color: #96c8fa; }
+.theme-ct .ScoreSelfCard { background: #96c8fa18; border-color: #96c8fa; }
+.theme-ct .ScoreRow.is-self { background: #96c8fa22; }
+
+.theme-t .ph-bar { background: #eabe54; }
+.theme-t .ph-stat-fill { background: linear-gradient(to right, #c9a03a, #eabe54); }
+.theme-t .ph-stat-val, .theme-t .ScoreSelfRank, .theme-t .ScoreSelfStatVal,
+.theme-t .ScoreRank, .theme-t .ScoreCur, .theme-t .MenuPage, .theme-t .ScoreHead.sort-active { color: #eabe54; }
+.theme-t .MenuFilterBtn.active { background: #eabe5422; border-color: #eabe54; }
+.theme-t .ScoreSelfCard { background: #eabe5418; border-color: #eabe54; }
+.theme-t .ScoreRow.is-self { background: #eabe5422; }
+
+.theme-green .ph-bar { background: #6fdc78; }
+.theme-green .ph-stat-fill { background: linear-gradient(to right, #3d8f45, #6fdc78); }
+.theme-green .ph-stat-val, .theme-green .ScoreSelfRank, .theme-green .ScoreSelfStatVal,
+.theme-green .ScoreRank, .theme-green .ScoreCur, .theme-green .MenuPage, .theme-green .ScoreHead.sort-active { color: #6fdc78; }
+.theme-green .MenuFilterBtn.active { background: #6fdc7822; border-color: #6fdc78; }
+.theme-green .ScoreSelfCard { background: #6fdc7818; border-color: #6fdc78; }
+.theme-green .ScoreRow.is-self { background: #6fdc7822; }
+
+.theme-red .ph-bar { background: #e05a5a; }
+.theme-red .ph-stat-fill { background: linear-gradient(to right, #a83a3a, #e05a5a); }
+.theme-red .ph-stat-val, .theme-red .ScoreSelfRank, .theme-red .ScoreSelfStatVal,
+.theme-red .ScoreRank, .theme-red .ScoreCur, .theme-red .MenuPage, .theme-red .ScoreHead.sort-active { color: #e05a5a; }
+.theme-red .MenuFilterBtn.active { background: #e05a5a22; border-color: #e05a5a; }
+.theme-red .ScoreSelfCard { background: #e05a5a18; border-color: #e05a5a; }
+.theme-red .ScoreRow.is-self { background: #e05a5a22; }
+
+.theme-purple .ph-bar { background: #b07cff; }
+.theme-purple .ph-stat-fill { background: linear-gradient(to right, #7a4fc4, #b07cff); }
+.theme-purple .ph-stat-val, .theme-purple .ScoreSelfRank, .theme-purple .ScoreSelfStatVal,
+.theme-purple .ScoreRank, .theme-purple .ScoreCur, .theme-purple .MenuPage, .theme-purple .ScoreHead.sort-active { color: #b07cff; }
+.theme-purple .MenuFilterBtn.active { background: #b07cff22; border-color: #b07cff; }
+.theme-purple .ScoreSelfCard { background: #b07cff18; border-color: #b07cff; }
+.theme-purple .ScoreRow.is-self { background: #b07cff22; }
+
+/* Preview chrome: theme picker (mirrors gui.theme) */
+.preview-controls {
+  position: absolute; left: 20px; top: 20px; z-index: 200;
+  display: flex; flex-direction: column; gap: 8px; max-width: 280px;
+}
+.preview-controls button[data-mode] {
+  font: 700 13px "Barlow Condensed", sans-serif; letter-spacing: 1px; text-transform: uppercase;
+  padding: 8px 12px; border: 1px solid #ffffff22; border-radius: 3px;
+  background: #ffffff0d; color: #e8eef4; cursor: pointer; text-align: left;
+}
+.preview-controls button[data-mode]:hover { border-color: #ffffff44; background: #ffffff1c; }
+.preview-controls button[data-mode].active {
+  border-color: var(--preview-accent, #f0a531);
+  color: var(--preview-accent, #f0a531);
+  background: #ffffff14;
+}
+.preview-note { font-size: 12px; color: #9aa2ac; line-height: 1.4; }
+.preview-themes { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+.preview-theme-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.preview-theme {
+  width: 28px; height: 28px; padding: 0; border-radius: 3px;
+  border: 2px solid #ffffff33; cursor: pointer; background: #666;
+}
+.preview-theme:hover { border-color: #ffffff88; }
+.preview-theme.active { border-color: #ffffff; box-shadow: 0 0 0 1px #00000088, 0 0 0 3px var(--swatch, #fff); }
+.preview-theme[data-theme="gold"] { --swatch: #f0a531; background: #f0a531; }
+.preview-theme[data-theme="ct"] { --swatch: #96c8fa; background: #96c8fa; }
+.preview-theme[data-theme="t"] { --swatch: #eabe54; background: #eabe54; }
+.preview-theme[data-theme="green"] { --swatch: #6fdc78; background: #6fdc78; }
+.preview-theme[data-theme="red"] { --swatch: #e05a5a; background: #e05a5a; }
+.preview-theme[data-theme="purple"] { --swatch: #b07cff; background: #b07cff; }
+.stage[data-theme="gold"] { --preview-accent: #f0a531; }
+.stage[data-theme="ct"] { --preview-accent: #96c8fa; }
+.stage[data-theme="t"] { --preview-accent: #eabe54; }
+.stage[data-theme="green"] { --preview-accent: #6fdc78; }
+.stage[data-theme="red"] { --preview-accent: #e05a5a; }
+.stage[data-theme="purple"] { --preview-accent: #b07cff; }

@@ -1,12 +1,20 @@
 # HUD (AI)
 
-Shared driver: [`src/Challenges/utils/CustomHud.cs`](../src/Challenges/utils/CustomHud.cs) (layout spawn, transmit, `SetText` / `SetHasClass`, staggered `OnTick`). One painter per HUD under [`src/Challenges/huds/`](../src/Challenges/huds/): `Tracker` and `Menu` (`Context` gives them plugin state, bound by `HudDriver`). Menu input: [`src/Challenges/utils/HudMenu.cs`](../src/Challenges/utils/HudMenu.cs). **One stylesheet** for both layouts: [`hud.vcss`](content/panorama/styles/custom_game/challenges/hud.vcss) (validator-safe, see [panorama-css.md](panorama-css.md)). [`example/hud.vcss`](example/hud.vcss) is the full Prophunt sheet, **reference only** and never loaded by the game.
+Shared driver: [`src/Challenges/utils/CustomHud.cs`](../src/Challenges/utils/CustomHud.cs) (layout spawn, transmit, `SetText` / `SetHasClass`, staggered `OnTick`, 1s opacity fade via `ph-fading` then `ph-off`). One painter per HUD under [`src/Challenges/huds/`](../src/Challenges/huds/): `Tracker` and `Menu` (`Context` gives them plugin state, bound by `HudDriver`). Menu input: [`src/Challenges/utils/HudMenu.cs`](../src/Challenges/utils/HudMenu.cs). **One stylesheet** for both layouts: [`hud.vcss`](content/panorama/styles/custom_game/challenges/hud.vcss) (validator-safe, see [panorama-css.md](panorama-css.md)). [`example/hud.vcss`](example/hud.vcss) is the full Prophunt sheet, **reference only** and never loaded by the game.
 
 `workshop/content` is the addon root: copy that folder into `csgo_addons/<addon>/` and publish. `AGENTS.md`, `panorama-css.md`, `example/` and `preview/` stay beside it and are not part of the paste. Layouts are loaded as `panorama/layout/custom_game/challenges/<name>.vxml_c`.
 
+## Theme / UX design
+
+Baseline chrome: dark gradient card (`#12171e` → `#0b0f14`), hairline borders `#ffffff14`, gold accent `#f0a531` (default `gui.theme` = `gold`). Accent themes swap that gold via root classes `theme-gold|ct|t|green|red|purple` (`HudTheme.Apply`). CT / T use stock CS2 colours `#96c8fa` / `#eabe54`.
+
+**Type scale (unitless Panorama `font-size`):** floor is **14** (tracker challenge title / `Label.ph-stat-name`). Small labels (filter chips, task lines, completer names, score cells, nav glyphs, column heads) are **14** and usually `stratum-bold-tf`. Titles / self-card values stay **15–18**. Do not grow panel padding just to fit larger type; tighten padding only when five menu cards no longer fit.
+
+**Bars:** clip ladder `p0`…`p100` in 10% steps. `p0` clips to **0%** (no sliver). Prefer bold text over enlarging containers.
+
 ## Text and translation
 
-Every visible Label uses `text="{s:…}"`. The server fills those dialog variables from the player's language (`lang/en.json`, `lang/de.json` via `Context.Text` / `LocalizerExtensions.ForPlayer`). Blueprint and task titles stay in the YAML title map and resolve through `Titles.For` (full culture name, then two-letter code, then first entry). Format templates: `hud.format.page` (`{page} / {pages}`), `hud.format.percent`, `hud.format.count`, `hud.format.rank`, `hud.menu.when.*` (relative schedule phrases). Nav glyphs: `hud.menu.prev` / `hud.menu.next` → `{s:menu_prev}`, `{s:menu_next}`, `{s:score_prev}`, `{s:score_next}`. Player names are not translated. Preview HTML is an English mock only.
+Every visible Label uses `text="{s:…}"`. The server fills those dialog variables from the player's language (`lang/en.json`, `lang/de.json` via `Context.Text` / `LocalizerExtensions.ForPlayer`). Blueprint and task titles stay in the YAML title map and resolve through `Titles.For` (full culture name, then two-letter code, then first entry). Format templates: `hud.format.page` (`{page} / {pages}`), `hud.format.percent`, `hud.format.count`, `hud.format.rank`, `hud.menu.when.*` (relative schedule phrases). Integers use `Context.FormatNumber` (`N0` culture: `1,000` / `1.000`). Nav glyphs: `hud.menu.prev` / `hud.menu.next` → `{s:menu_prev}`, `{s:menu_next}`, `{s:score_prev}`, `{s:score_next}`. Player names are not translated except the viewer’s completer slot → `hud.menu.you` (`YOU` / `DU`) with class `is-you`. Preview HTML is an English mock only.
 
 ## Terminology
 
@@ -25,39 +33,42 @@ No panel creation, no width/colour/image from C#. Bars = `clip` class ladder (`p
 
 **Round restart:** `custom_hud_layout` entities stay alive across rounds. The client rebuilds panels from XML defaults while the server would keep last round's classes/dialog vars, and repainting identical values is a zero netvar diff. `HudDriver.EventRoundStart` calls `CustomHud.ResetRound()`, which writes the XML defaults through `Tracker.WriteDefaults` / `Menu.WriteDefaults` and drops the per-slot ledger. **Whatever an XML file ships as default must match `WriteDefaults`.** Never Kill/respawn a live layout; `CustomHud.Shutdown` only runs on map end / unload.
 
-**Staggered refresh:** `CustomHud.OnTick` walks slots at 2 slots/tick and calls `Tracker.Refresh`, which only paints while freeze mode or the progress timer is active and hides the card when both are over.
+**Fade:** `ShowPanel` mounts with `ph-fading` then clears it next frame (~1s opacity in). `HidePanel` / `BeginFadeOut` set `ph-fading` and keep transmit for 1s, then collapse with `ph-off`. Do not set `ph-off` in the same write as the fade-out start.
+
+**Staggered refresh:** `CustomHud.OnTick` walks slots at 2 slots/tick and calls `Tracker.Refresh`, which only paints while freeze mode or the progress timer is active and hides the card when both are over (including Up-next sequencing).
 
 ## Layouts
 
 | Layout | Root card id | Routed ids (see `CustomHud.LayoutIndexForPanel`) |
 | --- | --- | --- |
-| `tracker.xml` | `Tracker` | `Tracker`, `ch-trow-*`, `ch-tfill-*`, `ch-ttask-*`, `ch-tby-*` |
+| `tracker.xml` | `Tracker` | `Tracker`, `ch-trow-*`, `ch-tfill-*`, `ch-ttask-*` |
 | `menu.xml` | `Menu` | every other `ch-*` / `ph-*` id |
 
 `tools/validate_panorama.py` (`make panorama`) checks that the ids and `{s:…}` variables in both XML files are exactly the set the C# writes.
 
 ### Tracker ([`Tracker`](../src/Challenges/huds/Tracker.cs))
 
-Top-right card (`margin-top` = `margin-right` = 20px, width 420px), never clickable. Title `{s:tr_title}` (`hud.tracker.title`), `{s:tr_count}` = `hud.format.count` (`{solved} / {total}`) of the active schedule. Up to `MaxRows = 5` rows `ch-trow-N` (`is-off` hides a row): challenge title `{s:tr_tN}`, value `{s:tr_vN}` (`hud.format.percent`), bar `ch-tfill-N`. Body stacks full-width `MenuTasksCol` then `MenuByCol` (`TrackerRowSplit`): headers `{s:tr_tasks_h}` / `{s:tr_by_h}`, up to 3 tasks `ch-ttask-N-T` / `{s:tr_N_tT}`, and up to 6 completers in a 2-column grid `ch-tby-N-B` / `{s:tr_N_byB}` (ellipsis on long titles/tasks/names). Rows are ordered by completion percentage, highest first. Default `gui.tracker_rows` = 3 (clamped 3–5).
+Top-right card (`margin-top` = `margin-right` = 10px, width 420px), never clickable. No “solved by” column. Title `{s:tr_title}`, `{s:tr_count}` = `hud.format.count` of the active schedule. Up to `MaxRows = 5` rows `ch-trow-N` (`is-off` hides a row): challenge title `{s:tr_tN}`, value `{s:tr_vN}`, bar `ch-tfill-N`, tasks header `{s:tr_tasks_h}`, up to 3 tasks `ch-ttask-N-T` / `{s:tr_N_tT}`. Default `gui.tracker_rows` = 3 (clamped 3–5).
 
-- **Freeze mode:** `HudDriver.EventRoundStart` shows it for T/CT humans when `gui.show_on_round_start` and `mp_freezetime > 0`; `EventRoundFreezeEnd` hides it. Rows: unsolved challenges, highest percent first, `gui.tracker_rows`.
-- **Progress mode:** `ChallengeEngine` calls `Tracker.ShowProgress(player, challengeIds)` when visible tasks advance (`gui.show_on_progress`, `gui.progress_duration`). Up to 5 rows from those challenges, percent descending. It replaces freeze rows and freeze mode returns until freeze end.
+- **Freeze mode:** only when `mp_freezetime > 0` (skip when `<= 0`). Unsolved challenges only, highest percent first; each card lists **unsolved** visible tasks only. Bottom drain bar (`ch-ttimer`) tracks remaining freezetime.
+- **Progress mode:** `ChallengeEngine` calls `Tracker.ShowProgress` with per-task kinds (`Progress` / `TaskSolved` / `ChallengeSolved`). Compact rows for touched challenges, percent descending. Progress = that task; task solved = that task done + next unsolved tasks; challenge solved = that challenge, then after `gui.progress_duration` fade out/in with `hud.tracker.up_next` and the next unsolved challenge’s remaining tasks. Same drain bar tracks remaining hold time.
+- **Rule broken:** no center alert; tracker title `hud.tracker.rule_broken` with that task (`Notifications.NotifyRuleBroken` → `Tracker.ShowRuleBroken`). The broken task row gets class `is-broken` (red background).
 
 ### Menu ([`Menu`](../src/Challenges/huds/Menu.cs))
 
-`!c` / `!challenges` → `Menu.Open` → `HudMenu.Open` (mouse capture, no freeze). Root uses `.ph-fs` (68px inset). `MenuBody` is `fill-parent-flow`; inner `MenuColumns` is `height: 100%` + `flow-children: right` so list/score can stretch and pin their footers.
+`!c` / `!challenges` → `Menu.Open` → `HudMenu.Open` (mouse capture, no freeze). Root uses `.ph-fs` (68px inset). `MenuBody` is `fill-parent-flow`; inner `MenuColumns` is `height: 100%` + `flow-children: right`.
 
-- Filters (`ch-filter-all|progress|ending|starting`, exclusive `active` class): All, Progress (default), Ending soon, Starting soon.
-- Challenge cards `ch-mrow-0…3` (max 4 per page, no list scroll): title `{s:mN_title}`, schedule phrase `{s:mN_when}` (relative "two days left" / "in a week" via `hud.menu.when.*`), meta `{s:mN_meta}` (`hud.format.percent`), bar `ch-mfill-N`. Compact body is a 50/50 split: left `MenuTasksCol` (header `{s:menu_tasks_h}` + up to 3 tasks `ch-mtask-N-T` / `{s:mN_tT}`, `is-done` when complete; last slot becomes `+N more` when needed) and right `MenuByCol` (header `{s:menu_by_h}` + up to 6 completer slots in 2-column `MenuByRow`s, `ch-mby-N-B` / `{s:mN_byB}`; if more than 6, show 5 names + `+N more`; `is-empty` for nobody/overflow; long names ellipsis). **All** list order: completion % desc, then active before inactive, then soonest next start, then title A–Z. Progress filter: unsolved in the current schedule, % desc. Ending/Starting soon keep date-ordered subsets with the same phrase + percent header. `gui.menu_page_size` defaults to 4 (clamped 1–4). `MenuListSpacer` + `ph-prev` / `ph-next` (`{s:menu_prev}` / `{s:menu_next}`) + `{s:menu_page}` (`hud.format.page`) pin the footer.
-- Scoreboard: connected humans with **current** (active schedule, shown as `solved / available` via `hud.format.count`) and **total** (`statistics.amount_challenges_solved`) counts. Title is always `Scoreboard`; click toggles sort (active column highlighted via `sort-active`). Self card `ch-spin` (`ScoreSelfCard`: rank via `hud.format.rank`, name, labeled schedule/lifetime stats). Table header `# | Name | Solved | Total`. Rows `ch-srow-0…11` are fixed 32px height with rank and zebra `alt`; unused slots collapse; the row list scrolls when full. `ch-score-prev` / `ch-score-next` (`{s:score_prev}` / `{s:score_next}`) + `{s:score_page}` at the bottom.
-- `ph-close` closes. `HudDriver` forwards `OnCustomHudClicked` to `HudMenu`.
+- Filters (`ch-filter-all|solved|progress|ending|starting`, exclusive `active`): All, Solved, Progress (default), Ending soon, Starting soon. Empty filters get `is-disabled`. Prev/next under list and scoreboard get `is-disabled` when they cannot move.
+- Challenge cards `ch-mrow-0…4` (max 5 per page, `gui.menu_page_size` default 5). Compact body 50/50 tasks|completers. Viewer in completers = green `is-you` + `hud.menu.you`.
+- **Ending soon:** schedule end in `(now, now+7d]`. Sort: % desc, end time, title A–Z. **Starting soon:** % desc, start time, A–Z. **All:** % desc, active before inactive, time, A–Z. **Progress** / **Solved:** % desc, A–Z.
+- Scoreboard: audience filters All / Online (`ch-score-f-*`). Online = connected humans; All = online + saved `players/*.json`. Sort filters Solved / Lifetime (`ch-score-s-*`, default Solved). Column + self-card label is **Lifetime** (not Total). Lifetime counts use grouped `FormatNumber`.
 
 ## Shared classes (`hud.vcss`)
 
-`.ph-fs` fullscreen inset · `.ph-card` / `.ph-off` · `.ph-bg` / `.ph-bar` · `.ph-titlebar` / `Label.ph-title` / `Label.ph-money` · `Label.ph-btn-label` · `.ph-icon-btn` / `.ph-close-x` · `.ph-stat` (label + gold clip fill) · `.MenuFilterBtn` / `.MenuFooterBtn` / `.MenuRow` / `.MenuRowSplit` / `.MenuTask` / `.MenuBy` / `.ScoreRow` / `.ScoreSortBtn` · `.Tracker*`.
+`.ph-fs` · `.ph-card` / `.ph-fading` / `.ph-off` · `.ph-bg` / `.ph-bar` · `.ph-titlebar` / `Label.ph-title` / `Label.ph-money` · `Label.ph-btn-label` · `.ph-icon-btn` / `.ph-close-x` · `.ph-stat` · `.MenuFilterBtn` / `.is-disabled` / `.MenuFooterBtn` / `.MenuRow` / `.MenuTask` / `.is-done` / `.is-broken` / `.MenuBy` / `.is-you` · `.ScoreRow` / `.ScoreFilterBar` · `.Tracker*` · `.theme-*`.
 
 ## Check before inventing CSS
 
-[panorama-css.md](panorama-css.md) for the layout model. `make panorama` for the reject list (unknown properties, `@define` / bareword colours, `font-size` with units, `vertical-align: center`, `background-size: contain`, `rgba`, `background-blur`, class `hidden`, …). Unknown properties are detected against the known-good [`example/hud.vcss`](example/hud.vcss). Browser previews: [`preview/tracker.html`](preview/tracker.html), [`preview/menu.html`](preview/menu.html), styled by [`preview/kit.css`](preview/kit.css) (a web approximation; the game is authoritative).
+[panorama-css.md](panorama-css.md) for the layout model. `make panorama` for the reject list. Previews: [`preview/tracker.html`](preview/tracker.html) (JS mode cycle; freeze drains over mocked `mp_freezetime`, progress over `gui.progress_duration`), [`preview/menu.html`](preview/menu.html), [`preview/kit.css`](preview/kit.css), [`preview/theme.js`](preview/theme.js) (theme swatches: gold/ct/t/green/red/purple).
 
 Update this file when HUD behaviour changes.

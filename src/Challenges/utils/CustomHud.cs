@@ -30,7 +30,8 @@ namespace Challenges.Utils
             [.. Enumerable.Range(0, 11).Select(i => $"p{i * 10}")];
 
         private static readonly string[] CaptureRoots = [Menu.Panel];
-        private static readonly TimeSpan CloseTransmitGrace = TimeSpan.FromSeconds(1);
+        public const double FadeSeconds = 1.0;
+        private static readonly TimeSpan CloseTransmitGrace = TimeSpan.FromSeconds(FadeSeconds);
 
         private static readonly CCSCustomHudLayout?[] _layouts = new CCSCustomHudLayout?[2];
         private static readonly Dictionary<int, HashSet<string>> _visibleBySlot = [];
@@ -99,9 +100,59 @@ namespace Challenges.Utils
                 _visibleBySlot[player.Slot] = set = [];
             }
 
+            bool wasVisible = set.Contains(panelId);
             set.Add(panelId);
             ClearClosingRoot(player.Slot, TransmitRoot(panelId));
             SetHasClass(player, panelId, "ph-off", false);
+            if (wasVisible)
+            {
+                SetHasClass(player, panelId, "ph-fading", false);
+            }
+            else
+            {
+                ScheduleFadeIn(player, panelId);
+            }
+        }
+
+        /// <summary>
+        /// Start opacity fade-out. When <paramref name="collapseAfter"/> is true, transmit stays for
+        /// <see cref="FadeSeconds"/> then the card collapses. When false, the card stays mounted for a content swap.
+        /// </summary>
+        public static void BeginFadeOut(CCSPlayerController player, string panelId, bool collapseAfter = true)
+        {
+            if (player is not { IsValid: true })
+            {
+                return;
+            }
+
+            SetHasClass(player, panelId, "ph-fading", true);
+            if (collapseAfter)
+            {
+                MarkClosingRoot(player.Slot, TransmitRoot(panelId));
+            }
+        }
+
+        public static void PulseFadeIn(CCSPlayerController player, string panelId)
+        {
+            if (player is not { IsValid: true })
+            {
+                return;
+            }
+
+            SetHasClass(player, panelId, "ph-off", false);
+            ScheduleFadeIn(player, panelId);
+        }
+
+        public static void FinishFadeOut(CCSPlayerController player, string panelId)
+        {
+            if (player is not { IsValid: true })
+            {
+                return;
+            }
+
+            SetHasClass(player, panelId, "ph-off", true);
+            SetHasClass(player, panelId, "ph-fading", false);
+            ForgetVisible(player.Slot, panelId);
         }
 
         public static void HidePanel(CCSPlayerController player, string panelId)
@@ -111,10 +162,28 @@ namespace Challenges.Utils
                 return;
             }
 
-            SetHasClass(player, panelId, "ph-off", true);
-            MarkClosingRoot(player.Slot, TransmitRoot(panelId));
+            BeginFadeOut(player, panelId, collapseAfter: true);
+            ForgetVisible(player.Slot, panelId);
+        }
 
-            if (!_visibleBySlot.TryGetValue(player.Slot, out HashSet<string>? set))
+        private static void ScheduleFadeIn(CCSPlayerController player, string panelId)
+        {
+            SetHasClass(player, panelId, "ph-fading", true);
+            int slot = player.Slot;
+            string id = panelId;
+            Server.NextFrame(() =>
+            {
+                CCSPlayerController? live = Utilities.GetPlayerFromSlot(slot);
+                if (live is { IsValid: true } && IsPanelVisible(live, id))
+                {
+                    SetHasClass(live, id, "ph-fading", false);
+                }
+            });
+        }
+
+        private static void ForgetVisible(int slot, string panelId)
+        {
+            if (!_visibleBySlot.TryGetValue(slot, out HashSet<string>? set))
             {
                 return;
             }
@@ -122,7 +191,7 @@ namespace Challenges.Utils
             set.Remove(panelId);
             if (set.Count == 0)
             {
-                _visibleBySlot.Remove(player.Slot);
+                _visibleBySlot.Remove(slot);
             }
         }
 
@@ -161,6 +230,13 @@ namespace Challenges.Utils
 
             vars[name] = text;
         }
+
+        public static bool HasClass(CCSPlayerController player, string panelId, string className) =>
+            player is { IsValid: true }
+            && _classBySlot.TryGetValue(player.Slot, out Dictionary<string, Dictionary<string, bool>>? byPanel)
+            && byPanel.TryGetValue(panelId, out Dictionary<string, bool>? classes)
+            && classes.TryGetValue(className, out bool enabled)
+            && enabled;
 
         public static bool SetHasClass(CCSPlayerController player, string panelId, string className, bool enabled)
         {
@@ -385,6 +461,7 @@ namespace Challenges.Utils
 
             foreach (string root in RootPanels)
             {
+                SetHasClass(player, root, "ph-fading", false);
                 SetHasClass(player, root, "ph-off", true);
                 MarkClosingRoot(slot, root);
             }
@@ -442,6 +519,11 @@ namespace Challenges.Utils
                 foreach (string root in closing.Where(kv => now >= kv.Value).Select(kv => kv.Key).ToList())
                 {
                     closing.Remove(root);
+                    if (Utilities.GetPlayerFromSlot(slot) is { IsValid: true } player)
+                    {
+                        SetHasClass(player, root, "ph-off", true);
+                        SetHasClass(player, root, "ph-fading", false);
+                    }
                 }
 
                 if (closing.Count == 0)
@@ -552,7 +634,7 @@ namespace Challenges.Utils
                 || panelId.StartsWith("ch-trow-", StringComparison.Ordinal)
                 || panelId.StartsWith("ch-tfill-", StringComparison.Ordinal)
                 || panelId.StartsWith("ch-ttask-", StringComparison.Ordinal)
-                || panelId.StartsWith("ch-tby-", StringComparison.Ordinal))
+                || panelId.StartsWith("ch-ttimer", StringComparison.Ordinal))
             {
                 return 0;
             }

@@ -314,7 +314,7 @@ namespace Challenges.Classes
                 return;
             }
 
-            HashSet<string> touched = new(StringComparer.Ordinal);
+            List<TrackerProgressItem> touched = [];
             foreach ((ChallengeDefinition challenge, ChallengeTask task) in eligible)
             {
                 if (!player.IsValid)
@@ -327,10 +327,15 @@ namespace Challenges.Classes
                     continue;
                 }
 
-                ApplyProgress(player, state, schedule, challenge, task, now);
+                TrackerProgressKind kind = ApplyProgress(player, state, schedule, challenge, task, now);
                 if (task.Visible)
                 {
-                    touched.Add(challenge.Id);
+                    touched.Add(new TrackerProgressItem
+                    {
+                        ChallengeId = challenge.Id,
+                        TaskId = task.Id,
+                        Kind = kind,
+                    });
                 }
             }
 
@@ -463,7 +468,7 @@ namespace Challenges.Classes
             return true;
         }
 
-        private void ApplyProgress(
+        private TrackerProgressKind ApplyProgress(
             CCSPlayerController player,
             PlayerState state,
             RunningSchedule schedule,
@@ -480,7 +485,7 @@ namespace Challenges.Classes
             {
                 Notes.NotifyProgress(player, challenge, task, progress.Amount);
                 TriggerProgress(player, challenge, task, progress.Amount);
-                return;
+                return TrackerProgressKind.Progress;
             }
 
             DebugPrint($"{player.PlayerName} completed {challenge.Id}/{task.Id}");
@@ -500,7 +505,10 @@ namespace Challenges.Classes
             if (solvedNow)
             {
                 TriggerChallengeSolved(player, challenge);
+                return TrackerProgressKind.ChallengeSolved;
             }
+
+            return TrackerProgressKind.TaskSolved;
         }
 
         private static TaskProgress GetOrCreateProgress(PlayerState state, string scheduleKey, string challengeId, string taskId)

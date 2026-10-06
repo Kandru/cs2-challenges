@@ -6,8 +6,12 @@
 <link rel="stylesheet" href="kit.css" />
 </head>
 <body>
-<div class="stage">
-  <div id="Menu" class="MenuRoot ph-fs ph-card">
+<div class="stage" data-theme="gold">
+  <div class="preview-controls">
+    <div class="preview-note">Fullscreen menu mock. Use theme swatches to preview <code>gui.theme</code>.</div>
+    <div id="preview-themes" class="preview-themes"></div>
+  </div>
+  <div id="Menu" class="MenuRoot ph-fs ph-card theme-gold">
     <div class="ph-bg"></div>
     <div class="ph-bar"></div>
     <div class="MenuContent">
@@ -20,9 +24,10 @@
           <div class="MenuList">
             <div class="MenuFilterBar">
               <button class="MenuFilterBtn"><span class="MenuFilterLabel">All</span></button>
+              <button class="MenuFilterBtn"><span class="MenuFilterLabel">Solved</span></button>
               <button class="MenuFilterBtn active"><span class="MenuFilterLabel">Progress</span></button>
               <button class="MenuFilterBtn"><span class="MenuFilterLabel">Ending soon</span></button>
-              <button class="MenuFilterBtn"><span class="MenuFilterLabel">Starting soon</span></button>
+              <button class="MenuFilterBtn is-disabled"><span class="MenuFilterLabel">Starting soon</span></button>
             </div>
             <div class="MenuRows">
               <!-- Sorted by % desc, then active, then soonest start -->
@@ -68,7 +73,7 @@
                     <span class="MenuColHead">Solved by</span>
                     <div class="MenuByList">
                       <div class="MenuByRow">
-                        <div class="MenuBy"><span class="MenuByLabel">Alice</span></div>
+                        <div class="MenuBy is-you"><span class="MenuByLabel">YOU</span></div>
                         <div class="MenuBy"><span class="MenuByLabel">BobTheBuilderExtraLong</span></div>
                       </div>
                       <div class="MenuByRow">
@@ -139,7 +144,18 @@
             </div>
           </div>
           <div class="MenuScore">
-            <button class="ScoreSortBtn"><span class="ScoreTitle">Scoreboard</span></button>
+            <div class="ScoreTitleBar"><span class="ScoreTitle">Scoreboard</span></div>
+            <div class="ScoreFilterBar">
+              <div class="ScoreFilterGroup">
+                <button class="MenuFilterBtn"><span class="MenuFilterLabel">All</span></button>
+                <button class="MenuFilterBtn active"><span class="MenuFilterLabel">Online</span></button>
+              </div>
+              <div class="ScoreFilterSpacer"></div>
+              <div class="ScoreFilterGroup">
+                <button class="MenuFilterBtn active"><span class="MenuFilterLabel">Solved</span></button>
+                <button class="MenuFilterBtn"><span class="MenuFilterLabel">Lifetime</span></button>
+              </div>
+            </div>
             <div class="ScoreSelfCard">
               <div class="ScoreSelfTop">
                 <span class="ScoreSelfRank">#1</span>
@@ -152,7 +168,7 @@
                 </div>
                 <div class="ScoreSelfStat">
                   <span class="ScoreSelfStatLabel">Lifetime</span>
-                  <span class="ScoreSelfStatVal">12</span>
+                  <span class="ScoreSelfStatVal">1,000</span>
                 </div>
               </div>
             </div>
@@ -160,15 +176,15 @@
               <span class="ScoreRank ScoreHead">#</span>
               <span class="ScoreName ScoreHead">Name</span>
               <span class="ScoreCur ScoreHead sort-active">Solved</span>
-              <span class="ScoreTot ScoreHead">Total</span>
+              <span class="ScoreTot ScoreHead">Lifetime</span>
             </div>
             <div class="ScoreRows">
-              <div class="ScoreRow is-self"><span class="ScoreRank">#1</span><span class="ScoreName">KalleWithAReallyLongSteamName</span><span class="ScoreCur">5 / 12</span><span class="ScoreTot">12</span></div>
+              <div class="ScoreRow is-self"><span class="ScoreRank">#1</span><span class="ScoreName">KalleWithAReallyLongSteamName</span><span class="ScoreCur">5 / 12</span><span class="ScoreTot">1,000</span></div>
               <div class="ScoreRow alt"><span class="ScoreRank">#2</span><span class="ScoreName">Alice</span><span class="ScoreCur">3 / 12</span><span class="ScoreTot">9</span></div>
               <div class="ScoreRow"><span class="ScoreRank">#3</span><span class="ScoreName">Bob</span><span class="ScoreCur">2 / 12</span><span class="ScoreTot">15</span></div>
             </div>
             <div class="MenuFooter">
-              <button class="MenuFooterBtn">&lt;</button><span class="MenuPage">1 / 1</span><button class="MenuFooterBtn">&gt;</button>
+              <button class="MenuFooterBtn is-disabled">&lt;</button><span class="MenuPage">1 / 1</span><button class="MenuFooterBtn is-disabled">&gt;</button>
             </div>
           </div>
         </div>
@@ -176,5 +192,7 @@
     </div>
   </div>
 </div>
+<script src="theme.js"></script>
+<script>PreviewTheme.mount('#Menu');</script>
 </body>
 </html>

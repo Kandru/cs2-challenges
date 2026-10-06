@@ -1,3 +1,4 @@
+using System.Globalization;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Translations;
 using Challenges.Classes;
@@ -84,10 +85,20 @@ namespace Challenges.Huds
             Text(player, "hud.format.percent", ("{percent}", percent.ToString()));
 
         public static string FormatCount(CCSPlayerController player, int solved, int total) =>
-            Text(player, "hud.format.count", ("{solved}", solved.ToString()), ("{total}", total.ToString()));
+            Text(
+                player,
+                "hud.format.count",
+                ("{solved}", FormatNumber(player, solved)),
+                ("{total}", FormatNumber(player, total)));
+
+        public static string FormatNumber(CCSPlayerController player, int value)
+        {
+            CultureInfo culture = player.GetLanguage();
+            return value.ToString("N0", culture);
+        }
 
         public static string FormatRank(CCSPlayerController player, int rank) =>
-            Text(player, "hud.format.rank", ("{rank}", rank.ToString()));
+            Text(player, "hud.format.rank", ("{rank}", FormatNumber(player, rank)));
 
         public static string FormatOverflow(CCSPlayerController player, int count) =>
             Text(player, "hud.menu.task.overflow", ("{count}", count.ToString()));

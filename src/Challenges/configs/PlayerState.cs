@@ -18,11 +18,24 @@ namespace Challenges.Configs
         [JsonIgnore] public int MenuPage;
         [JsonIgnore] public int ScoreboardPage;
         [JsonIgnore] public string MenuFilter = "progress";
-        [JsonIgnore] public ScoreboardSort ScoreboardSort = ScoreboardSort.Current;
+        [JsonIgnore] public ScoreboardSort ScoreboardSort = ScoreboardSort.Solved;
+        [JsonIgnore] public ScoreboardFilter ScoreboardFilter = ScoreboardFilter.Online;
         [JsonIgnore] public bool TrackerFreezeVisible;
+        [JsonIgnore] public DateTime? TrackerFreezeUntil;
+        [JsonIgnore] public float TrackerFreezeDuration;
         [JsonIgnore] public DateTime? TrackerProgressUntil;
-        [JsonIgnore] public HashSet<string> TrackerProgressIds = new(StringComparer.Ordinal);
+        [JsonIgnore] public DateTime? TrackerFadeUntil;
+        [JsonIgnore] public bool TrackerUpNextPending;
+        [JsonIgnore] public bool TrackerShowingUpNext;
+        [JsonIgnore] public List<TrackerProgressItem> TrackerProgressItems = [];
         [JsonIgnore] public string? TrackerFingerprint;
+    }
+
+    public sealed class TrackerProgressItem
+    {
+        public string ChallengeId { get; set; } = string.Empty;
+        public string TaskId { get; set; } = string.Empty;
+        public TrackerProgressKind Kind { get; set; }
     }
 
     public sealed class TaskProgress

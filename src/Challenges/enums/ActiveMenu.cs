@@ -8,7 +8,21 @@ namespace Challenges.Enums
 
     public enum ScoreboardSort
     {
-        Current,
-        Total,
+        Solved,
+        Lifetime,
+    }
+
+    public enum ScoreboardFilter
+    {
+        Online,
+        All,
+    }
+
+    public enum TrackerProgressKind
+    {
+        Progress,
+        TaskSolved,
+        ChallengeSolved,
+        RuleBroken,
     }
 }

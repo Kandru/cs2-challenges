@@ -6,89 +6,199 @@
 <link rel="stylesheet" href="kit.css" />
 </head>
 <body>
-<div class="stage">
-  <div id="Tracker" class="Tracker ph-card">
+<div class="stage" data-theme="gold">
+  <div class="preview-controls">
+    <div class="preview-note">Cycles tracker modes (English mock). Drain bar: freeze uses <code>mp_freezetime</code> (15s mock; skipped when ≤0), progress modes use <code>gui.progress_duration</code> (5s).</div>
+    <button type="button" data-mode="freeze" class="active">Freeze overview</button>
+    <button type="button" data-mode="progress">Single task progress</button>
+    <button type="button" data-mode="taskSolved">Task solved + next</button>
+    <button type="button" data-mode="challengeSolved">Challenge solved → Up next</button>
+    <button type="button" data-mode="ruleBroken">Rule broken</button>
+    <button type="button" data-mode="multi">Two challenges</button>
+    <button type="button" data-mode="hide">Hide (fade out)</button>
+    <div id="preview-themes" class="preview-themes"></div>
+  </div>
+
+  <div id="Tracker" class="Tracker ph-card theme-gold ph-off">
     <div class="ph-bg"></div>
     <div class="ph-bar"></div>
     <div class="TrackerContent">
-      <div class="ph-titlebar"><span class="ph-title">Challenges</span><span class="ph-money TrackerCount">2 / 12</span></div>
-      <div class="TrackerBody">
-        <div class="TrackerRow">
-          <div class="MenuRowHead">
-            <div class="ph-stat-lab"><span class="ph-stat-name">Sharp and Deadly With Extra Words</span><span class="ph-stat-val">40%</span></div>
-            <div class="ph-stat-track"><div class="ph-stat-fill p40"></div></div>
-          </div>
-          <div class="TrackerRowSplit">
-            <div class="MenuTasksCol">
-              <span class="MenuColHead">Tasks</span>
-              <div class="MenuTasks">
-                <div class="MenuTask is-done"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">5/5 knife kills without taking any damage at all</span></div>
-                <div class="MenuTask"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">2/10 knife kills while flashing the enemy</span></div>
-                <div class="MenuTask"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">0/25 knife kills</span></div>
-              </div>
-            </div>
-            <div class="MenuByCol">
-              <span class="MenuColHead">Solved by</span>
-              <div class="MenuByList">
-                <div class="MenuByRow">
-                  <div class="MenuBy"><span class="MenuByLabel">Bob</span></div>
-                  <div class="MenuBy"><span class="MenuByLabel">CarolWithAVeryLongName</span></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="TrackerRow">
-          <div class="MenuRowHead">
-            <div class="ph-stat-lab"><span class="ph-stat-name">Headshots in a row</span><span class="ph-stat-val">30%</span></div>
-            <div class="ph-stat-track"><div class="ph-stat-fill p30"></div></div>
-          </div>
-          <div class="TrackerRowSplit">
-            <div class="MenuTasksCol">
-              <span class="MenuColHead">Tasks</span>
-              <div class="MenuTasks">
-                <div class="MenuTask is-done"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">3/3 headshots</span></div>
-                <div class="MenuTask"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">3/10 headshots through smoke</span></div>
-                <div class="MenuTask"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">0/25 headshots</span></div>
-              </div>
-            </div>
-            <div class="MenuByCol">
-              <span class="MenuColHead">Solved by</span>
-              <div class="MenuByList">
-                <div class="MenuByRow">
-                  <div class="MenuBy is-empty"><span class="MenuByLabel">Nobody yet</span></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="TrackerRow">
-          <div class="MenuRowHead">
-            <div class="ph-stat-lab"><span class="ph-stat-name">AWP Master</span><span class="ph-stat-val">0%</span></div>
-            <div class="ph-stat-track"><div class="ph-stat-fill p0"></div></div>
-          </div>
-          <div class="TrackerRowSplit">
-            <div class="MenuTasksCol">
-              <span class="MenuColHead">Tasks</span>
-              <div class="MenuTasks">
-                <div class="MenuTask"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">0/3 AWP kills</span></div>
-                <div class="MenuTask"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">0/10 AWP kills</span></div>
-                <div class="MenuTask"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">0/25 AWP kills</span></div>
-              </div>
-            </div>
-            <div class="MenuByCol">
-              <span class="MenuColHead">Solved by</span>
-              <div class="MenuByList">
-                <div class="MenuByRow">
-                  <div class="MenuBy is-empty"><span class="MenuByLabel">Nobody yet</span></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div class="ph-titlebar">
+        <span class="ph-title" id="tr_title">Challenges</span>
+        <span class="ph-money TrackerCount" id="tr_count">2 / 12</span>
+      </div>
+      <div class="TrackerBody" id="tr_body"></div>
+      <div id="tr_timer" class="TrackerTimer ph-stat-track is-off" style="--tracker-hold: 5s">
+        <div class="ph-stat-fill p100"></div>
       </div>
     </div>
   </div>
 </div>
+<script>
+const PROGRESS_HOLD_MS = 5000; // mirrors gui.progress_duration
+const FREEZE_HOLD_MS = 15000; // mirrors a typical mp_freezetime
+const FADE_MS = 1000;
+
+const card = document.getElementById('Tracker');
+const body = document.getElementById('tr_body');
+const titleEl = document.getElementById('tr_title');
+const countEl = document.getElementById('tr_count');
+const timerEl = document.getElementById('tr_timer');
+
+function taskHtml(task) {
+  const cls = task.broken ? ' is-broken' : task.done ? ' is-done' : '';
+  return `<div class="MenuTask${cls}"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">${task.label}</span></div>`;
+}
+function rowHtml(name, pct, fill, tasks) {
+  return `<div class="TrackerRow">
+    <div class="MenuRowHead">
+      <div class="ph-stat-lab"><span class="ph-stat-name">${name}</span><span class="ph-stat-val">${pct}</span></div>
+      <div class="ph-stat-track"><div class="ph-stat-fill ${fill}"></div></div>
+    </div>
+    <div class="TrackerRowSplit">
+      <div class="MenuTasksCol">
+        <span class="MenuColHead">Tasks</span>
+        <div class="MenuTasks">${tasks.map(taskHtml).join('')}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+const scenes = {
+  freeze: {
+    title: 'Challenges', count: '2 / 12', timed: true, holdMs: FREEZE_HOLD_MS,
+    rows: [
+      rowHtml('Sharp and Deadly', '40%', 'p40', [
+        { label: '2/10 knife kills while flashing', done: false },
+        { label: '0/25 knife kills', done: false },
+      ]),
+      rowHtml('Headshots in a row', '30%', 'p30', [
+        { label: '3/10 headshots through smoke', done: false },
+        { label: '0/25 headshots', done: false },
+      ]),
+      rowHtml('AWP Master', '0%', 'p0', [
+        { label: '0/3 AWP kills', done: false },
+        { label: '0/10 AWP kills', done: false },
+        { label: '0/25 AWP kills', done: false },
+      ]),
+    ],
+  },
+  progress: {
+    title: 'Challenges', count: '2 / 12', timed: true, holdMs: PROGRESS_HOLD_MS,
+    rows: [rowHtml('Sharp and Deadly', '40%', 'p40', [{ label: '2/10 knife kills while flashing', done: false }])],
+  },
+  taskSolved: {
+    title: 'Challenges', count: '2 / 12', timed: true, holdMs: PROGRESS_HOLD_MS,
+    rows: [rowHtml('Sharp and Deadly', '50%', 'p50', [
+      { label: '5/5 knife kills without damage', done: true },
+      { label: '2/10 knife kills while flashing', done: false },
+      { label: '0/25 knife kills', done: false },
+    ])],
+  },
+  challengeSolved: {
+    title: 'Challenges', count: '3 / 12', timed: true, holdMs: PROGRESS_HOLD_MS,
+    rows: [rowHtml('Sharp and Deadly', '100%', 'p100', [{ label: '25/25 knife kills', done: true }])],
+    upNext: {
+      title: 'Up next', count: '3 / 12', timed: true, holdMs: PROGRESS_HOLD_MS,
+      rows: [rowHtml('Headshots in a row', '30%', 'p30', [
+        { label: '3/10 headshots through smoke', done: false },
+        { label: '0/25 headshots', done: false },
+      ])],
+    },
+  },
+  ruleBroken: {
+    title: 'Rule broken', count: '2 / 12', timed: true, holdMs: PROGRESS_HOLD_MS,
+    rows: [rowHtml('Sharp and Deadly', '40%', 'p40', [{ label: '0/10 knife kills while flashing', broken: true }])],
+  },
+  multi: {
+    title: 'Challenges', count: '2 / 12', timed: true, holdMs: PROGRESS_HOLD_MS,
+    rows: [
+      rowHtml('Sharp and Deadly', '50%', 'p50', [{ label: '5/10 knife kills while flashing', done: false }]),
+      rowHtml('Headshots in a row', '40%', 'p40', [{ label: '4/10 headshots through smoke', done: false }]),
+    ],
+  },
+};
+
+function paint(scene) {
+  titleEl.textContent = scene.title;
+  countEl.textContent = scene.count;
+  body.innerHTML = scene.rows.join('');
+}
+
+function showCard() {
+  card.classList.remove('ph-off');
+  card.classList.add('ph-fading');
+  requestAnimationFrame(() => requestAnimationFrame(() => card.classList.remove('ph-fading')));
+}
+
+function hideCard(done) {
+  stopTimer();
+  card.classList.add('ph-fading');
+  setTimeout(() => {
+    card.classList.add('ph-off');
+    card.classList.remove('ph-fading');
+    if (done) done();
+  }, FADE_MS);
+}
+
+let holdTimer = null;
+function stopTimer() {
+  clearTimeout(holdTimer);
+  holdTimer = null;
+  timerEl.classList.remove('running');
+  timerEl.classList.add('is-off');
+  // restart CSS animation cleanly next time
+  void timerEl.offsetWidth;
+}
+
+function startTimer(holdMs, onDone) {
+  stopTimer();
+  timerEl.style.setProperty('--tracker-hold', `${holdMs / 1000}s`);
+  timerEl.classList.remove('is-off');
+  // force reflow so re-adding running restarts the animation
+  void timerEl.offsetWidth;
+  timerEl.classList.add('running');
+  holdTimer = setTimeout(() => {
+    holdTimer = null;
+    onDone();
+  }, holdMs);
+}
+
+function showScene(scene) {
+  paint(scene);
+  showCard();
+  if (!scene.timed) {
+    stopTimer();
+    return;
+  }
+  const holdMs = scene.holdMs ?? PROGRESS_HOLD_MS;
+  startTimer(holdMs, () => {
+    if (scene.upNext) {
+      hideCard(() => showScene(scene.upNext));
+    } else {
+      hideCard();
+    }
+  });
+}
+
+function setMode(mode) {
+  stopTimer();
+  document.querySelectorAll('.preview-controls button[data-mode]').forEach(b => {
+    b.classList.toggle('active', b.dataset.mode === mode);
+  });
+  if (mode === 'hide') {
+    hideCard();
+    return;
+  }
+  showScene(scenes[mode]);
+}
+
+document.querySelectorAll('.preview-controls button[data-mode]').forEach(btn => {
+  btn.addEventListener('click', () => setMode(btn.dataset.mode));
+});
+setMode('freeze');
+</script>
+<script src="theme.js"></script>
+<script>PreviewTheme.mount('#Tracker');</script>
 </body>
 </html>

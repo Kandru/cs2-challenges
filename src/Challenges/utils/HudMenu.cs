@@ -22,11 +22,15 @@ namespace Challenges.Utils
         public const string BtnNext = "ph-next";
         public const string BtnScorePrev = "ch-score-prev";
         public const string BtnScoreNext = "ch-score-next";
-        public const string BtnScoreSort = "ch-score-sort";
         public const string BtnFilterAll = "ch-filter-all";
+        public const string BtnFilterSolved = "ch-filter-solved";
         public const string BtnFilterProgress = "ch-filter-progress";
         public const string BtnFilterEnding = "ch-filter-ending";
         public const string BtnFilterStarting = "ch-filter-starting";
+        public const string BtnScoreFilterAll = "ch-score-f-all";
+        public const string BtnScoreFilterOnline = "ch-score-f-online";
+        public const string BtnScoreSortSolved = "ch-score-s-solved";
+        public const string BtnScoreSortLifetime = "ch-score-s-lifetime";
 
         private const float CaptureDelaySeconds = 0.2f;
 

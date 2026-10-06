@@ -7,6 +7,7 @@ using CounterStrikeSharp.API.Core.Translations;
 using CounterStrikeSharp.API.Modules.Utils;
 using Challenges.Configs;
 using Challenges.Enums;
+using Challenges.Huds;
 using Challenges.Utils;
 using Microsoft.Extensions.Localization;
 
@@ -84,7 +85,7 @@ namespace Challenges.Classes
             string title = TaskTitle(player, challenge, task, 0);
             player.PrintToChat(LocalizerExtensions.ForPlayer(Localizer, player, "challenges.rule.broken"));
             player.PrintToChat(title);
-            player.PrintToCenterAlert(title);
+            Tracker.ShowRuleBroken(player, challenge.Id, task.Id);
         }
 
         public void NotifyTaskReset(CCSPlayerController player, ChallengeDefinition challenge, ChallengeTask task)

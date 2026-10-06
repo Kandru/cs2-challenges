@@ -47,24 +47,22 @@ REJECTED_PSEUDO = re.compile(r":(?:selected|disabled|focus)\b")
 TRACKER_FILE = "tracker.xml"
 MENU_FILE = "menu.xml"
 TRACKER_ROWS = 5
-MENU_LIST_SLOTS = 4
+MENU_LIST_SLOTS = 5
 MENU_SCORE_SLOTS = 12
 MENU_TASK_SLOTS = 3
 MENU_BY_SLOTS = 6
 
 TRACKER_IDS = (
-    {"Tracker"}
+    {"Tracker", "ch-ttimer", "ch-ttimer-fill"}
     | {f"ch-trow-{i}" for i in range(TRACKER_ROWS)}
     | {f"ch-tfill-{i}" for i in range(TRACKER_ROWS)}
     | {f"ch-ttask-{i}-{t}" for i in range(TRACKER_ROWS) for t in range(MENU_TASK_SLOTS)}
-    | {f"ch-tby-{i}-{b}" for i in range(TRACKER_ROWS) for b in range(MENU_BY_SLOTS)}
 )
 TRACKER_VARS = (
-    {"tr_title", "tr_count", "tr_tasks_h", "tr_by_h"}
+    {"tr_title", "tr_count", "tr_tasks_h"}
     | {f"tr_t{i}" for i in range(TRACKER_ROWS)}
     | {f"tr_v{i}" for i in range(TRACKER_ROWS)}
     | {f"tr_{i}_t{t}" for i in range(TRACKER_ROWS) for t in range(MENU_TASK_SLOTS)}
-    | {f"tr_{i}_by{b}" for i in range(TRACKER_ROWS) for b in range(MENU_BY_SLOTS)}
 )
 MENU_IDS = (
     {
@@ -74,10 +72,14 @@ MENU_IDS = (
         "ph-next",
         "ch-score-prev",
         "ch-score-next",
-        "ch-score-sort",
         "ch-score-h-cur",
         "ch-score-h-tot",
+        "ch-score-f-all",
+        "ch-score-f-online",
+        "ch-score-s-solved",
+        "ch-score-s-lifetime",
         "ch-filter-all",
+        "ch-filter-solved",
         "ch-filter-progress",
         "ch-filter-ending",
         "ch-filter-starting",
@@ -96,6 +98,7 @@ MENU_VARS = (
         "menu_prev",
         "menu_next",
         "menu_f_all",
+        "menu_f_solved",
         "menu_f_progress",
         "menu_f_ending",
         "menu_f_starting",
@@ -106,6 +109,10 @@ MENU_VARS = (
         "score_page",
         "score_prev",
         "score_next",
+        "score_f_all",
+        "score_f_online",
+        "score_s_solved",
+        "score_s_lifetime",
         "score_h_rank",
         "score_h_name",
         "score_h_cur",
@@ -129,14 +136,23 @@ MENU_VARS = (
 )
 REQUIRED_CLASSES = {
     "ph-off",
+    "ph-fading",
     "is-off",
     "is-done",
     "is-empty",
+    "is-disabled",
+    "is-you",
     "active",
     "sort-active",
     "empty",
     "is-self",
     "alt",
+    "theme-gold",
+    "theme-ct",
+    "theme-t",
+    "theme-green",
+    "theme-red",
+    "theme-purple",
     *(f"p{p}" for p in range(0, 101, 10)),
 }
 
