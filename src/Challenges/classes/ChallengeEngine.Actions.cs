@@ -41,7 +41,7 @@ namespace Challenges.Classes
                     case "task.mark_completed":
                         foreach (string id in action.Values)
                         {
-                            MarkCompleted(state, schedule, challenge, id, now);
+                            MarkCompleted(player, state, schedule, challenge, owner, id, now);
                         }
                         break;
                     case "notify.player.progress.rule_broken":
@@ -63,7 +63,12 @@ namespace Challenges.Classes
                             .Replace("{index}", player.Index.ToString()));
                         break;
                     default:
-                        DebugPrint($"action {action.Type} not usable for {challenge.Id}/{owner.Id}");
+                        if (GlobalConfig.Debug)
+                        {
+                            DebugPrint(
+                                $"{player.PlayerName} {action.Type} {challenge.Id}/{owner.Id} skip unknown");
+                        }
+
                         break;
                 }
             }
@@ -92,13 +97,26 @@ namespace Challenges.Classes
             }
 
             state.Challenges[schedule.Key][challenge.Id].Remove(taskId);
+            if (GlobalConfig.Debug)
+            {
+                string action = mode == ResetMode.Progress ? "task.reset_progress" : "task.reset_completed";
+                DebugPrint($"{player.PlayerName} {action} {challenge.Id}/{owner.Id} reset {taskId}");
+            }
+
             if (target.Visible && target.Id != owner.Id)
             {
                 Notes.NotifyTaskReset(player, challenge, target);
             }
         }
 
-        private static void MarkCompleted(PlayerState state, RunningSchedule schedule, ChallengeDefinition challenge, string taskId, long now)
+        private void MarkCompleted(
+            CCSPlayerController player,
+            PlayerState state,
+            RunningSchedule schedule,
+            ChallengeDefinition challenge,
+            ChallengeTask owner,
+            string taskId,
+            long now)
         {
             ChallengeTask? target = FindTask(challenge, taskId);
             if (target == null)
@@ -109,6 +127,10 @@ namespace Challenges.Classes
             TaskProgress progress = GetOrCreateProgress(state, schedule.Key, challenge.Id, taskId);
             progress.Amount = Math.Max(progress.Amount, Math.Max(1, target.Amount));
             progress.LastUpdate = now;
+            if (GlobalConfig.Debug)
+            {
+                DebugPrint($"{player.PlayerName} task.mark_completed {challenge.Id}/{owner.Id} mark {taskId}");
+            }
         }
 
         private static bool HasProgress(PlayerState state, RunningSchedule schedule, ChallengeDefinition challenge, string taskId) =>

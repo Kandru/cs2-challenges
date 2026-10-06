@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Text;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Events;
@@ -7,7 +8,6 @@ using Challenges.Enums;
 using Challenges.Extractors;
 using Challenges.Huds;
 using Challenges.Utils;
-using ChallengesShared.Events;
 using Microsoft.Extensions.Localization;
 
 namespace Challenges.Classes
@@ -154,10 +154,17 @@ namespace Challenges.Classes
             try
             {
                 List<(CCSPlayerController Player, string Type)>? valid = FilterTargets(targets);
-                if (valid != null)
+                if (valid == null)
                 {
-                    Enqueue(data, valid);
+                    if (GlobalConfig.Debug)
+                    {
+                        DebugPrint($"{listenerName} no targets");
+                    }
+
+                    return;
                 }
+
+                Enqueue(listenerName, data, valid);
             }
             catch (Exception ex)
             {
@@ -185,12 +192,17 @@ namespace Challenges.Classes
                     List<(CCSPlayerController Player, string Type)>? targets = FilterTargets(extractor.Targets(gameEvent));
                     if (targets == null)
                     {
+                        if (GlobalConfig.Debug)
+                        {
+                            DebugPrint($"{eventName} no targets");
+                        }
+
                         continue;
                     }
 
                     Dictionary<string, string> data = [];
                     extractor.Fill(gameEvent, data);
-                    Enqueue(data, targets);
+                    Enqueue(eventName, data, targets);
                 }
                 catch (Exception ex)
                 {
@@ -223,11 +235,12 @@ namespace Challenges.Classes
         }
 
         private void Enqueue(
+            string source,
             Dictionary<string, string> data,
             List<(CCSPlayerController Player, string Type)> targets)
         {
             MergeGlobalData(data);
-            Server.NextFrame(() => ProcessTargets(targets, data));
+            Server.NextFrame(() => ProcessTargets(source, targets, data));
         }
 
         private bool UsesAnyType(IExtractor extractor)
@@ -266,7 +279,10 @@ namespace Challenges.Classes
             return _gameRulesProxy?.GameRules;
         }
 
-        private void ProcessTargets(List<(CCSPlayerController Player, string Type)> targets, Dictionary<string, string> data)
+        private void ProcessTargets(
+            string source,
+            List<(CCSPlayerController Player, string Type)> targets,
+            Dictionary<string, string> data)
         {
             if (_destroyed)
             {
@@ -277,7 +293,7 @@ namespace Challenges.Classes
             {
                 try
                 {
-                    ProcessPlayer(player, type, data);
+                    ProcessPlayer(player, source, type, data);
                 }
                 catch (Exception ex)
                 {
@@ -286,7 +302,11 @@ namespace Challenges.Classes
             }
         }
 
-        private void ProcessPlayer(CCSPlayerController player, string type, Dictionary<string, string> data)
+        private void ProcessPlayer(
+            CCSPlayerController player,
+            string source,
+            string type,
+            Dictionary<string, string> data)
         {
             if (!player.IsValid
                 || CurrentSchedule is not { } schedule
@@ -298,14 +318,22 @@ namespace Challenges.Classes
 
             PruneOutdated(state, schedule.Key);
             long now = UnixNow();
+            bool debug = GlobalConfig.Debug;
+            string scheduleKey = schedule.Key;
 
             // Snapshot first: finishing a task on this event must not unlock and credit the next one.
             List<(ChallengeDefinition Challenge, ChallengeTask Task)> eligible = [];
             foreach ((ChallengeDefinition challenge, ChallengeTask task) in candidates)
             {
-                if (IsEligible(state, schedule.Key, challenge, task, data, now))
+                if (!IsSkipped(state, scheduleKey, challenge, task, data, now, debug, out string? skip))
                 {
                     eligible.Add((challenge, task));
+                    continue;
+                }
+
+                if (debug)
+                {
+                    DebugPrint($"{player.PlayerName} {source} {challenge.Id}/{task.Id} skip {skip}");
                 }
             }
 
@@ -314,7 +342,7 @@ namespace Challenges.Classes
                 return;
             }
 
-            List<TrackerProgressItem> touched = [];
+            List<TrackerProgressItem>? touched = null;
             foreach ((ChallengeDefinition challenge, ChallengeTask task) in eligible)
             {
                 if (!player.IsValid)
@@ -322,24 +350,32 @@ namespace Challenges.Classes
                     return;
                 }
 
-                if (ChallengeProgress.IsTaskComplete(state, schedule.Key, challenge.Id, task))
+                // A prior eligible task's actions may have marked this one complete.
+                if (ChallengeProgress.IsTaskComplete(state, scheduleKey, challenge.Id, task))
+                {
+                    if (debug)
+                    {
+                        DebugPrint($"{player.PlayerName} {source} {challenge.Id}/{task.Id} skip done");
+                    }
+
+                    continue;
+                }
+
+                TrackerProgressKind kind = ApplyProgress(player, state, schedule, challenge, task, now, source, data, debug);
+                if (!task.Visible)
                 {
                     continue;
                 }
 
-                TrackerProgressKind kind = ApplyProgress(player, state, schedule, challenge, task, now);
-                if (task.Visible)
+                (touched ??= []).Add(new TrackerProgressItem
                 {
-                    touched.Add(new TrackerProgressItem
-                    {
-                        ChallengeId = challenge.Id,
-                        TaskId = task.Id,
-                        Kind = kind,
-                    });
-                }
+                    ChallengeId = challenge.Id,
+                    TaskId = task.Id,
+                    Kind = kind,
+                });
             }
 
-            if (touched.Count == 0)
+            if (touched == null)
             {
                 return;
             }
@@ -373,50 +409,103 @@ namespace Challenges.Classes
 
             foreach (string key in _pruneScratch)
             {
-                DebugPrint($"deleting outdated progress for schedule {key}");
+                if (GlobalConfig.Debug)
+                {
+                    DebugPrint($"deleting outdated progress for schedule {key}");
+                }
+
                 state.Challenges.Remove(key);
             }
-
         }
 
-        private bool IsEligible(
+        /// <summary>
+        /// Returns true when the task must not receive progress.
+        /// <paramref name="reason"/> is only populated when <paramref name="explain"/> is true.
+        /// </summary>
+        private static bool IsSkipped(
             PlayerState state,
             string scheduleKey,
             ChallengeDefinition challenge,
             ChallengeTask task,
             Dictionary<string, string> data,
-            long now)
+            long now,
+            bool explain,
+            out string? reason)
         {
-            if (ChallengeProgress.IsTaskComplete(state, scheduleKey, challenge.Id, task)
-                || !CanComplete(state, scheduleKey, challenge, task))
+            reason = null;
+
+            if (ChallengeProgress.IsTaskComplete(state, scheduleKey, challenge.Id, task))
             {
-                return false;
+                if (explain)
+                {
+                    reason = "done";
+                }
+
+                return true;
             }
 
-            TaskProgress? progress = ChallengeProgress.GetProgress(state, scheduleKey, challenge.Id, task.Id);
-            if (task.Cooldown > 0 && progress != null && progress.LastUpdate + task.Cooldown > now)
+            if (!ChallengeProgress.AreRequirementsMet(state, scheduleKey, challenge, task))
             {
-                return false;
+                if (explain)
+                {
+                    reason = "locked";
+                }
+
+                return true;
             }
 
-            return CompliesWithRules(task, data);
+            if (task.Cooldown > 0
+                && ChallengeProgress.GetProgress(state, scheduleKey, challenge.Id, task.Id) is { } progress
+                && progress.LastUpdate + task.Cooldown > now)
+            {
+                if (explain)
+                {
+                    reason = $"cooldown {progress.LastUpdate + task.Cooldown - now}s";
+                }
+
+                return true;
+            }
+
+            return !RulesPass(task, data, explain, out reason);
         }
 
-        private static bool CanComplete(PlayerState state, string scheduleKey, ChallengeDefinition challenge, ChallengeTask task) =>
-            ChallengeProgress.AreRequirementsMet(state, scheduleKey, challenge, task);
-
-        private bool CompliesWithRules(ChallengeTask task, Dictionary<string, string> data)
+        /// <summary>False when a rule fails; <paramref name="reason"/> set only when <paramref name="explain"/>.</summary>
+        private static bool RulesPass(
+            ChallengeTask task,
+            Dictionary<string, string> data,
+            bool explain,
+            out string? reason)
         {
+            reason = null;
             foreach (ChallengeRule rule in task.Rules)
             {
                 if (!data.TryGetValue(rule.Key, out string? current))
                 {
-                    DebugPrint($"rule {rule.Key} not found in data for type {task.Type}");
+                    if (explain)
+                    {
+                        reason = $"{rule.Key} {rule.Operator} {rule.Value} (missing)";
+                    }
+
                     return false;
                 }
 
-                if (!EvaluateRule(rule, current))
+                if (!TryEvaluateRule(rule, current, out bool matched))
                 {
+                    if (explain)
+                    {
+                        reason = $"{rule.Key} unknown operator {rule.Operator}";
+                    }
+
+                    return false;
+                }
+
+                if (!matched)
+                {
+                    if (explain)
+                    {
+                        reason = $"{rule.Key} {rule.Operator} {rule.Value} ({current})";
+                    }
+
                     return false;
                 }
             }
@@ -424,48 +513,84 @@ namespace Challenges.Classes
             return true;
         }
 
-        private bool EvaluateRule(ChallengeRule rule, string current)
+        /// <summary>False when the operator is unknown; otherwise <paramref name="matched"/> is the comparison result.</summary>
+        private static bool TryEvaluateRule(ChallengeRule rule, string current, out bool matched)
         {
             string target = rule.Value;
             switch (rule.Operator)
             {
                 case "==":
-                    return string.Equals(current, target, StringComparison.OrdinalIgnoreCase);
+                    matched = string.Equals(current, target, StringComparison.OrdinalIgnoreCase);
+                    return true;
                 case "!=":
-                    return !string.Equals(current, target, StringComparison.OrdinalIgnoreCase);
+                    matched = !string.Equals(current, target, StringComparison.OrdinalIgnoreCase);
+                    return true;
                 case ">":
-                    return TryCompare(current, target, out int gt) && gt > 0;
+                    matched = TryCompare(current, target, out int gt) && gt > 0;
+                    return true;
                 case "<":
-                    return TryCompare(current, target, out int lt) && lt < 0;
+                    matched = TryCompare(current, target, out int lt) && lt < 0;
+                    return true;
                 case ">=":
-                    return TryCompare(current, target, out int ge) && ge >= 0;
+                    matched = TryCompare(current, target, out int ge) && ge >= 0;
+                    return true;
                 case "<=":
-                    return TryCompare(current, target, out int le) && le <= 0;
+                    matched = TryCompare(current, target, out int le) && le <= 0;
+                    return true;
                 case "bool==":
-                    return bool.TryParse(current, out bool a) && bool.TryParse(target, out bool b) && a == b;
+                    matched = bool.TryParse(current, out bool a) && bool.TryParse(target, out bool b) && a == b;
+                    return true;
                 case "bool!=":
-                    return bool.TryParse(current, out bool c) && bool.TryParse(target, out bool d) && c != d;
+                    matched = bool.TryParse(current, out bool c) && bool.TryParse(target, out bool d) && c != d;
+                    return true;
                 case "contains":
-                    return current.Contains(target, StringComparison.OrdinalIgnoreCase);
+                    matched = current.Contains(target, StringComparison.OrdinalIgnoreCase);
+                    return true;
                 case "!contains":
-                    return !current.Contains(target, StringComparison.OrdinalIgnoreCase);
+                    matched = !current.Contains(target, StringComparison.OrdinalIgnoreCase);
+                    return true;
                 default:
-                    DebugPrint($"unknown operator {rule.Operator}");
+                    matched = false;
                     return false;
             }
         }
 
         private static bool TryCompare(string current, string target, out int result)
         {
-            result = 0;
             if (!float.TryParse(current, NumberStyles.Float, CultureInfo.InvariantCulture, out float left)
                 || !float.TryParse(target, NumberStyles.Float, CultureInfo.InvariantCulture, out float right))
             {
+                result = 0;
                 return false;
             }
 
             result = left.CompareTo(right);
             return true;
+        }
+
+        private static string FormatRuleParams(ChallengeTask task, Dictionary<string, string> data)
+        {
+            int count = task.Rules.Count;
+            if (count == 0)
+            {
+                return string.Empty;
+            }
+
+            StringBuilder sb = new();
+            for (int i = 0; i < count; i++)
+            {
+                ChallengeRule rule = task.Rules[i];
+                if (i > 0)
+                {
+                    sb.Append(' ');
+                }
+
+                sb.Append(rule.Key);
+                sb.Append('=');
+                sb.Append(data.TryGetValue(rule.Key, out string? value) ? value : "?");
+            }
+
+            return sb.ToString();
         }
 
         private TrackerProgressKind ApplyProgress(
@@ -474,27 +599,49 @@ namespace Challenges.Classes
             RunningSchedule schedule,
             ChallengeDefinition challenge,
             ChallengeTask task,
-            long now)
+            long now,
+            string source,
+            Dictionary<string, string> data,
+            bool debug)
         {
             bool wasSolved = ChallengeProgress.IsChallengeSolved(state, schedule.Key, challenge);
             TaskProgress progress = GetOrCreateProgress(state, schedule.Key, challenge.Id, task.Id);
             progress.Amount++;
             progress.LastUpdate = now;
 
-            if (progress.Amount < Math.Max(1, task.Amount))
+            int goal = Math.Max(1, task.Amount);
+            int amount = progress.Amount;
+
+            if (amount < goal)
             {
-                Notes.NotifyProgress(player, challenge, task, progress.Amount);
-                TriggerProgress(player, challenge, task, progress.Amount);
+                if (debug)
+                {
+                    string parms = FormatRuleParams(task, data);
+                    DebugPrint(parms.Length == 0
+                        ? $"{player.PlayerName} {source} {challenge.Id}/{task.Id} +1 {amount}/{goal}"
+                        : $"{player.PlayerName} {source} {challenge.Id}/{task.Id} +1 {amount}/{goal} {parms}");
+                }
+
+                Notes.NotifyProgress(player, challenge, task, amount);
+                TriggerProgress(player, challenge, task, amount);
                 return TrackerProgressKind.Progress;
             }
 
-            DebugPrint($"{player.PlayerName} completed {challenge.Id}/{task.Id}");
             bool solvedNow = task.Visible
                 && !wasSolved
                 && ChallengeProgress.IsChallengeSolved(state, schedule.Key, challenge);
             if (solvedNow)
             {
                 state.Statistics.AmountChallengesSolved++;
+            }
+
+            if (debug)
+            {
+                string outcome = solvedNow ? "solved" : "complete";
+                string parms = FormatRuleParams(task, data);
+                DebugPrint(parms.Length == 0
+                    ? $"{player.PlayerName} {source} {challenge.Id}/{task.Id} {outcome} {amount}/{goal}"
+                    : $"{player.PlayerName} {source} {challenge.Id}/{task.Id} {outcome} {amount}/{goal} {parms}");
             }
 
             Notes.NotifyCompletion(player, challenge, task);

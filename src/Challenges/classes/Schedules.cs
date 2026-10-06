@@ -104,7 +104,7 @@ namespace Challenges.Classes
                 }
 
                 Current = running;
-                DebugPrint($"running schedule {scheduleId} with {running.Challenges.Count} challenges");
+                DebugPrint($"schedule {scheduleId} running, {running.Challenges.Count} challenges");
 
                 if (running.Key != GlobalConfig.TempData.CurrentScheduleKey)
                 {
