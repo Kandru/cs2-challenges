@@ -32,6 +32,18 @@ With the server stopped:
 > [!NOTE]
 > Prefer writing challenges in the browser? Use the [challenge builder](https://kandru.github.io/cs2-challenges/).
 
+<a id="using-the-builder"></a>
+
+## Using the builder
+
+The [challenge builder](https://kandru.github.io/cs2-challenges/) writes **one blueprint file**. After you export:
+
+1. Copy the `.yaml` into `…/Challenges/blueprints/`.
+2. Add that filename (without `.yaml`) under `challenges:` in [schedules.yaml](schedules.md).
+3. Change map or run `challenges reload`.
+
+Each `?` in the builder opens the matching wiki page.
+
 ## If nothing shows
 
 1. Confirm the schedule dates include now (UTC).

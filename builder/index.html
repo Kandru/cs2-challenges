@@ -10,37 +10,45 @@
   <header class="topbar">
     <div class="brand"><span class="bar"></span>CS2 Challenges <span class="sub">Challenge Builder</span></div>
     <div class="actions">
-      <button id="btn-new" class="btn">New</button>
+      <a class="btn" href="https://github.com/Kandru/cs2-challenges/wiki" target="_blank" rel="noopener">Docs</a>
+      <button id="btn-new" class="btn" type="button">New</button>
       <label class="btn" for="file-import">Import YAML</label>
       <input id="file-import" type="file" accept=".yaml,.yml,text/yaml" hidden />
-      <button id="btn-paste" class="btn">Paste YAML</button>
-      <button id="btn-copy" class="btn">Copy YAML</button>
-      <button id="btn-export" class="btn primary">Export YAML</button>
+      <button id="btn-paste" class="btn" type="button">Paste YAML</button>
+      <button id="btn-copy" class="btn" type="button">Copy YAML</button>
+      <button id="btn-export" class="btn primary" type="button">Export YAML</button>
     </div>
   </header>
 
   <main class="layout">
     <aside class="panel" id="sidebar">
       <section class="card">
-        <h2>Challenge</h2>
+        <h2 class="with-help">Challenge <a class="helplink" href="https://github.com/Kandru/cs2-challenges/wiki/blueprints#challenge" target="_blank" rel="noopener" title="Open documentation">?</a></h2>
         <label class="field">
-          <span>File name / id</span>
-          <input id="challenge-id" type="text" spellcheck="false" placeholder="my_challenge" />
-          <small>Saved as <code id="file-hint">my_challenge.yaml</code> in <code>blueprints/</code>. Use a-z, 0-9 and _.</small>
+          <span class="label-row">File name / id <a class="helplink" href="https://github.com/Kandru/cs2-challenges/wiki/blueprints#challenge-id" target="_blank" rel="noopener" title="Open documentation">?</a></span>
+          <input id="challenge-id" type="text" spellcheck="false" placeholder="my_challenge" autocomplete="off" />
+          <small>Saved as <code id="file-hint">my_challenge.yaml</code> in <code>blueprints/</code>. Use a-z, 0-9 and _. Must match the id in schedules.yaml.</small>
         </label>
         <div class="field">
-          <span>Title (per language)</span>
+          <span class="label-row">Title (per language) <a class="helplink" href="https://github.com/Kandru/cs2-challenges/wiki/blueprints#challenge-title" target="_blank" rel="noopener" title="Open documentation">?</a></span>
           <div id="challenge-title"></div>
-          <button id="add-challenge-lang" class="btn small">Add language</button>
+          <button id="add-challenge-lang" class="btn small" type="button">Add language</button>
+          <small>At least one language with text. The first language is the default if the player’s language is missing.</small>
+        </div>
+        <div class="field">
+          <span class="label-row">Challenge data (other plugins) <a class="helplink" href="https://github.com/Kandru/cs2-challenges/wiki/plugin-integration#challenge-data" target="_blank" rel="noopener" title="Open documentation">?</a></span>
+          <div id="challenge-data"></div>
+          <button id="add-challenge-data" class="btn small" type="button">Add data row</button>
+          <small>Optional. Sent when every visible task is done. This plugin does not grant rewards.</small>
         </div>
       </section>
 
       <section class="card">
         <div class="card-head">
-          <h2>Tasks</h2>
-          <button id="add-task" class="btn small primary">Add task</button>
+          <h2 class="with-help">Tasks <a class="helplink" href="https://github.com/Kandru/cs2-challenges/wiki/blueprints#how-tasks-unlock" target="_blank" rel="noopener" title="Open documentation">?</a></h2>
+          <button id="add-task" class="btn small primary" type="button">Add task</button>
         </div>
-        <p class="hint">Order tasks from easy to hard. Put a control task directly below the task it guards.</p>
+        <p class="hint">Order from first unlockable (top) to last. Put a hidden rule-breaker task directly below the streak it guards.</p>
         <ol id="task-list" class="task-list"></ol>
       </section>
     </aside>
@@ -55,6 +63,14 @@
       <section class="card grow">
         <h2>YAML</h2>
         <pre id="yaml-preview"></pre>
+        <p class="hint deploy-hint">
+          Copy this file into <code>…/Challenges/blueprints/</code>, then list its id in
+          <a href="https://github.com/Kandru/cs2-challenges/wiki/schedules#challenge-list" target="_blank" rel="noopener">schedules.yaml</a>.
+          See
+          <a href="https://github.com/Kandru/cs2-challenges/wiki/howto#using-the-builder" target="_blank" rel="noopener">using the builder</a>
+          and
+          <a href="https://github.com/Kandru/cs2-challenges/wiki/schedules#dates" target="_blank" rel="noopener">UTC schedule dates</a>.
+        </p>
       </section>
     </aside>
   </main>
@@ -64,14 +80,13 @@
       <h2>Paste YAML</h2>
       <textarea id="paste-text" spellcheck="false" placeholder="title:&#10;  en: ...&#10;tasks:&#10;  - id: easy"></textarea>
       <div class="dialog-actions">
-        <button value="cancel" class="btn">Cancel</button>
-        <button id="paste-confirm" value="ok" class="btn primary">Import</button>
+        <button value="cancel" class="btn" type="submit">Cancel</button>
+        <button id="paste-confirm" value="ok" class="btn primary" type="submit">Import</button>
       </div>
     </form>
   </dialog>
 
   <datalist id="dl-weapons"></datalist>
-  <datalist id="dl-keys"></datalist>
 
   <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
   <script src="app.js"></script>

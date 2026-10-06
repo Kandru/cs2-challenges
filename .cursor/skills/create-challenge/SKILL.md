@@ -69,7 +69,7 @@ Weapon short names: [tools/catalog_weapons.json](../../../tools/catalog_weapons.
 Rules:
 
 - Challenge id = filename without `.yaml` (snake_case).
-- Provide `title` (and task titles) with at least `en` and `de`.
+- Provide `title` (and optional task titles) with at least one language. Missing player language falls back to the first language in the map.
 - Task titles may use `{count}` and `{total}`.
 - Use only rule keys listed on that event’s page plus global keys. Unknown keys never match.
 - Every rule `value` is a **string** in YAML (`"true"`, `"false"`, numbers as strings).

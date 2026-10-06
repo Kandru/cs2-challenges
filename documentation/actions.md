@@ -4,14 +4,43 @@ Actions run when a **task** completes. Values that point at other work use **tas
 
 ## Available actions
 
-| Type | What it does | `values` |
-|------|----------------|----------|
-| `task.reset_progress` | Clears progress of an **unfinished** task. | Task id(s) |
-| `task.reset_completed` | Clears progress of a **finished** task. | Task id(s) |
-| `task.mark_completed` | Marks a task complete regardless of current progress. | Task id(s) |
-| `notify.player.progress.rule_broken` | Tells the player they broke a rule. Fires only if a listed task already has progress. | Related task id(s) |
-| `notify.player.completed.rule_broken` | Same, but only if a listed task is already complete. | Related task id(s) |
-| `server.runcommand` | Runs a server console command. Placeholders: `{steamid}`, `{userid}`, `{index}`. | One command string |
+<a id="task-reset-progress"></a>
+
+### `task.reset_progress`
+
+Clears progress of an **unfinished** task. `values`: task id(s).
+
+<a id="task-reset-completed"></a>
+
+### `task.reset_completed`
+
+Clears progress of a **finished** task. `values`: task id(s).
+
+<a id="task-mark-completed"></a>
+
+### `task.mark_completed`
+
+Marks a task complete regardless of current progress. `values`: task id(s).
+
+<a id="notify-player-progress-rule-broken"></a>
+
+### `notify.player.progress.rule_broken`
+
+Tells the player they broke a rule. Fires only if a listed task already has progress. `values`: related task id(s).
+
+<a id="notify-player-completed-rule-broken"></a>
+
+### `notify.player.completed.rule_broken`
+
+Same as above, but only if a listed task is already complete. `values`: related task id(s).
+
+<a id="server-runcommand"></a>
+
+### `server.runcommand`
+
+Runs a server console command. Placeholders: `{steamid}`, `{userid}`, `{index}`. `values`: one command string.
+
+<a id="streak-broken"></a>
 
 ## Streak broken (hidden task)
 

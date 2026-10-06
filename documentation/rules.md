@@ -24,6 +24,8 @@ rules:
 > [!WARNING]
 > If you use an unknown key, the task will not work because that condition can never be met. Use only keys listed on that event’s page (plus the global keys below).
 
+<a id="operators"></a>
+
 ## Operators
 
 | Operator | Use for |
@@ -33,6 +35,8 @@ rules:
 | `<` `>` `<=` `>=` | Numbers |
 | `bool==` `bool!=` | Bools (`true` / `false`) |
 | `contains` `!contains` | Substring (case-insensitive) |
+
+<a id="global-keys"></a>
 
 ## Global keys
 

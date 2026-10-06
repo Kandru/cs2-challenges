@@ -33,9 +33,11 @@ if (@event is PlayerCompletedChallengeEvent completed)
 
 Progress uses `PlayerProgressedChallengeEvent` with the same shape.
 
+<a id="challenge-data"></a>
+
 ## Challenge `data`
 
-Blueprint authors put a nested map under `data`. Use your plugin name as the top-level key (compare case-insensitively if you want to forgive typos):
+Blueprint authors put a nested map under `data` on the challenge or on a task. Use your plugin name as the top-level key (compare case-insensitively if you want to forgive typos). This plugin only tracks progress; it does not grant rewards.
 
 ```yaml
 data:
