@@ -1,0 +1,36 @@
+title:
+  en: Range day
+  de: Schießstand
+tasks:
+  - id: easy
+    title:
+      en: '{count}/{total} AK-47 kills'
+      de: '{count}/{total} AK-47 Kills'
+    type: player_kill
+    amount: 15
+    cooldown: 0
+    announce_progress: true
+    announce_completion: true
+    data:
+      PlayerSessions:
+        setpoints: '10'
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: 'false'
+      - key: global.isduringround
+        operator: bool==
+        value: 'true'
+      - key: weapon
+        operator: contains
+        value: ak47
+      - key: isteamkill
+        operator: bool==
+        value: 'false'
+      - key: isselfkill
+        operator: bool==
+        value: 'false'
+      - key: victim.isbot
+        operator: bool==
+        value: 'false'
+    requires: []

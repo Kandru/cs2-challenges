@@ -1,0 +1,33 @@
+title:
+  en: Entry flash
+  de: Entry-Flash
+tasks:
+  - id: easy
+    title:
+      en: '{count}/{total} enemies blinded'
+      de: '{count}/{total} Gegner geblendet'
+    type: player_has_blinded
+    amount: 8
+    cooldown: 0
+    announce_progress: true
+    announce_completion: true
+    data:
+      PlayerSessions:
+        setpoints: '10'
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: 'false'
+      - key: global.isduringround
+        operator: bool==
+        value: 'true'
+      - key: isteamflash
+        operator: bool==
+        value: 'false'
+      - key: isselfflash
+        operator: bool==
+        value: 'false'
+      - key: victim.isbot
+        operator: bool==
+        value: 'false'
+    requires: []

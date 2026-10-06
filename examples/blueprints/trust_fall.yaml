@@ -1,0 +1,24 @@
+title:
+  en: Trust fall
+  de: Vertrauensfall
+tasks:
+  - id: funny
+    title:
+      en: '{count}/{total} times fall damage'
+      de: '{count}/{total} mal Fallschaden'
+    type: player_falldamage
+    amount: 10
+    cooldown: 0
+    announce_progress: true
+    announce_completion: true
+    data:
+      PlayerSessions:
+        setpoints: '10'
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: 'false'
+      - key: global.isduringround
+        operator: bool==
+        value: 'true'
+    requires: []

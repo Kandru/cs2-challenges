@@ -7,15 +7,27 @@ test_challenge:
   date_start: "2026-01-01 00:00:00"
   date_end: "2027-01-01 00:00:00"
   challenges:
+    - awp_noscope_streak
+    - bhop_clips
     - blind_them_by_the_light
+    - entry_flash
     - headshots_in_a_row
     - hostage_rescue
     - inflatable_castle
+    - jump_marathon
     - knife_challenge
+    - long_range
     - noscopes_in_a_row
+    - one_ways
+    - radio_comms
+    - range_day
     - revolver_challenge
     - scout_challenge
+    - site_take
     - taser_challenge
+    - through_the_wall
+    - trust_fall
+    - while_flashed
     - weapon_ak47
     - weapon_aug
     - weapon_awp

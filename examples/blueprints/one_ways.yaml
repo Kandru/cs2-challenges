@@ -1,0 +1,36 @@
+title:
+  en: One-ways
+  de: One-Ways
+tasks:
+  - id: medium
+    title:
+      en: '{count}/{total} kills through smoke'
+      de: '{count}/{total} Kills durch den Rauch'
+    type: player_kill
+    amount: 5
+    cooldown: 0
+    announce_progress: true
+    announce_completion: true
+    data:
+      PlayerSessions:
+        setpoints: '25'
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: 'false'
+      - key: global.isduringround
+        operator: bool==
+        value: 'true'
+      - key: thrusmoke
+        operator: bool==
+        value: 'true'
+      - key: isteamkill
+        operator: bool==
+        value: 'false'
+      - key: isselfkill
+        operator: bool==
+        value: 'false'
+      - key: victim.isbot
+        operator: bool==
+        value: 'false'
+    requires: []

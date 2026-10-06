@@ -1,0 +1,36 @@
+title:
+  en: Long range
+  de: Weitschuss
+tasks:
+  - id: hard
+    title:
+      en: '{count}/{total} long-range kills'
+      de: '{count}/{total} Weitschuss-Kills'
+    type: player_kill
+    amount: 5
+    cooldown: 0
+    announce_progress: true
+    announce_completion: true
+    data:
+      PlayerSessions:
+        setpoints: '40'
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: 'false'
+      - key: global.isduringround
+        operator: bool==
+        value: 'true'
+      - key: distance
+        operator: '>='
+        value: '1500'
+      - key: isteamkill
+        operator: bool==
+        value: 'false'
+      - key: isselfkill
+        operator: bool==
+        value: 'false'
+      - key: victim.isbot
+        operator: bool==
+        value: 'false'
+    requires: []

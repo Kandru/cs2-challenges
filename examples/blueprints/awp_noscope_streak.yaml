@@ -1,0 +1,126 @@
+title:
+  en: AWP noscope streak
+  de: AWP-Noscope-Serie
+tasks:
+  - id: hard
+    title:
+      en: '{count}/{total} AWP noscopes in a row'
+      de: '{count}/{total} AWP-Noscopes hintereinander'
+    type: player_kill
+    amount: 3
+    cooldown: 0
+    announce_progress: true
+    announce_completion: true
+    data:
+      PlayerSessions:
+        setpoints: '40'
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: 'false'
+      - key: global.isduringround
+        operator: bool==
+        value: 'true'
+      - key: noscope
+        operator: bool==
+        value: 'true'
+      - key: weapon
+        operator: contains
+        value: awp
+      - key: isteamkill
+        operator: bool==
+        value: 'false'
+      - key: isselfkill
+        operator: bool==
+        value: 'false'
+      - key: victim.isbot
+        operator: bool==
+        value: 'false'
+    actions:
+      - type: task.mark_completed
+        values:
+          - hard_scoped
+      - type: task.mark_completed
+        values:
+          - hard_notawp
+    requires: []
+  - id: hard_scoped
+    title:
+      en: 'Rule broken: scoped kill'
+      de: 'Regel verletzt: Kill mit Scope'
+    type: player_kill
+    amount: 1
+    cooldown: 0
+    visible: false
+    announce_progress: false
+    announce_completion: false
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: 'false'
+      - key: global.isduringround
+        operator: bool==
+        value: 'true'
+      - key: noscope
+        operator: bool==
+        value: 'false'
+      - key: isteamkill
+        operator: bool==
+        value: 'false'
+      - key: isselfkill
+        operator: bool==
+        value: 'false'
+      - key: victim.isbot
+        operator: bool==
+        value: 'false'
+    actions:
+      - type: notify.player.progress.rule_broken
+        values:
+          - hard
+      - type: task.reset_progress
+        values:
+          - hard
+      - type: task.reset_completed
+        values:
+          - hard_scoped
+    requires: []
+  - id: hard_notawp
+    title:
+      en: 'Rule broken: not an AWP'
+      de: 'Regel verletzt: keine AWP'
+    type: player_kill
+    amount: 1
+    cooldown: 0
+    visible: false
+    announce_progress: false
+    announce_completion: false
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: 'false'
+      - key: global.isduringround
+        operator: bool==
+        value: 'true'
+      - key: weapon
+        operator: '!contains'
+        value: awp
+      - key: isteamkill
+        operator: bool==
+        value: 'false'
+      - key: isselfkill
+        operator: bool==
+        value: 'false'
+      - key: victim.isbot
+        operator: bool==
+        value: 'false'
+    actions:
+      - type: notify.player.progress.rule_broken
+        values:
+          - hard
+      - type: task.reset_progress
+        values:
+          - hard
+      - type: task.reset_completed
+        values:
+          - hard_notawp
+    requires: []
