@@ -51,7 +51,6 @@ namespace Challenges
 
             if (hotReload)
             {
-                LoadCatalog();
                 LoadChallengeFiles();
                 LoadSchedules();
             }
@@ -75,7 +74,7 @@ namespace Challenges
             Config.Update();
             _globalStates[GlobalStates.GlobalConfig] = config;
             Console.WriteLine(Localizer["core.config"]);
-            LoadCatalog();
+            LogCatalogMismatches();
             LoadChallengeFiles();
             LoadSchedules();
         }
@@ -83,7 +82,6 @@ namespace Challenges
         private void OnMapStart(string mapName)
         {
             Reset();
-            LoadCatalog();
             LoadChallengeFiles();
             LoadSchedules();
             InitializeClasses();
@@ -167,7 +165,7 @@ namespace Challenges
         public string GetConfigDir() =>
             Path.GetDirectoryName(Config.GetConfigPath()) ?? ".";
 
-        private void LoadCatalog()
+        public List<string> CheckCatalog()
         {
             string path = Path.Combine(ModuleDirectory, "catalog.json");
             if (!File.Exists(path))
@@ -175,22 +173,34 @@ namespace Challenges
                 path = Path.Combine(GetConfigDir(), "catalog.json");
             }
 
-            Catalog catalog = new();
-            if (File.Exists(path))
+            if (!File.Exists(path))
             {
-                try
-                {
-                    catalog = JsonSerializer.Deserialize<Catalog>(File.ReadAllText(path), JsonOptions) ?? new();
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(Localizer["core.faultyconfig"].Value
-                        .Replace("{config}", path)
-                        .Replace("{error}", ex.Message));
-                }
+                return [Localizer["core.faultyconfig"].Value
+                    .Replace("{config}", "catalog.json")
+                    .Replace("{error}", "file not found")];
             }
 
-            Catalog.Validate(catalog, Localizer);
+            Catalog catalog;
+            try
+            {
+                catalog = JsonSerializer.Deserialize<Catalog>(File.ReadAllText(path), JsonOptions) ?? new();
+            }
+            catch (Exception ex)
+            {
+                return [Localizer["core.faultyconfig"].Value
+                    .Replace("{config}", path)
+                    .Replace("{error}", ex.Message)];
+            }
+
+            return Catalog.Mismatches(catalog, Localizer);
+        }
+
+        private void LogCatalogMismatches()
+        {
+            foreach (string message in CheckCatalog())
+            {
+                Console.WriteLine(message);
+            }
         }
 
         private void LoadChallengeFiles()

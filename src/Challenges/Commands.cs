@@ -7,8 +7,8 @@ namespace Challenges
 {
     public partial class Challenges
     {
-        [ConsoleCommand("challenges", "Challenges admin commands: reload | enable | disable")]
-        [CommandHelper(whoCanExecute: CommandUsage.SERVER_ONLY, minArgs: 1, usage: "<reload|enable|disable>")]
+        [ConsoleCommand("challenges", "Challenges admin commands: reload | enable | disable | check-catalog")]
+        [CommandHelper(whoCanExecute: CommandUsage.SERVER_ONLY, minArgs: 1, usage: "<reload|enable|disable|check-catalog>")]
         public void CommandAdmin(CCSPlayerController? player, CommandInfo command)
         {
             string subCommand = command.GetArg(1);
@@ -28,6 +28,20 @@ namespace Challenges
                     Config.Update();
                     command.ReplyToCommand(Localizer["admin.enable"]);
                     break;
+                case "check-catalog":
+                    List<string> mismatches = CheckCatalog();
+                    if (mismatches.Count == 0)
+                    {
+                        command.ReplyToCommand(Localizer["admin.catalog.ok"]);
+                        break;
+                    }
+
+                    foreach (string message in mismatches)
+                    {
+                        Console.WriteLine(message);
+                        command.ReplyToCommand(message);
+                    }
+                    break;
                 default:
                     command.ReplyToCommand(Localizer["admin.unknown_command"].Value
                         .Replace("{command}", subCommand));
@@ -39,7 +53,7 @@ namespace Challenges
         {
             DestroyClasses();
             Config.Reload();
-            LoadCatalog();
+            LogCatalogMismatches();
             LoadChallengeFiles();
             LoadSchedules();
             InitializeClasses(isHotReloaded: true);

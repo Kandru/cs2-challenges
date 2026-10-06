@@ -14,6 +14,7 @@
     "admin.reload": "[Herausforderungen] Konfiguration neu geladen.",
     "admin.disable": "[Herausforderungen] Herausforderungen deaktiviert.",
     "admin.enable": "[Herausforderungen] Herausforderungen aktiviert.",
+    "admin.catalog.ok": "[Herausforderungen] catalog.json stimmt mit den geladenen Extractors überein.",
     "command.nochallenges": "[Herausforderungen] Keine aktiven Herausforderungen.",
     "command.showgui": "[Herausforderungen] {default}Herausforderungsfenster geöffnet",
     "command.hidegui": "[Herausforderungen] {default}Herausforderungsfenster geschlossen",

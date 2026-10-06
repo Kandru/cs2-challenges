@@ -12,8 +12,9 @@ namespace Challenges.Configs
         [JsonPropertyName("key_sets")] public Dictionary<string, List<CatalogKey>> KeySets { get; set; } = new(StringComparer.Ordinal);
         [JsonPropertyName("events")] public List<CatalogEvent> Events { get; set; } = [];
 
-        public static void Validate(Catalog catalog, IStringLocalizer localizer)
+        public static List<string> Mismatches(Catalog catalog, IStringLocalizer localizer)
         {
+            List<string> messages = [];
             HashSet<string> catalogClasses = catalog.Events
                 .Select(e => e.EventClass)
                 .Where(s => !string.IsNullOrWhiteSpace(s))
@@ -24,16 +25,12 @@ namespace Challenges.Configs
 
             foreach (string missing in extractorClasses.Except(catalogClasses))
             {
-                Console.WriteLine(localizer["core.faultyconfig"].Value
-                    .Replace("{config}", "catalog.json")
-                    .Replace("{error}", $"extractor {missing} has no catalog entry"));
+                messages.Add(Format(localizer, $"extractor {missing} has no catalog entry"));
             }
 
             foreach (string missing in catalogClasses.Except(extractorClasses))
             {
-                Console.WriteLine(localizer["core.faultyconfig"].Value
-                    .Replace("{config}", "catalog.json")
-                    .Replace("{error}", $"catalog event {missing} has no extractor"));
+                messages.Add(Format(localizer, $"catalog event {missing} has no extractor"));
             }
 
             HashSet<string> catalogTypes = catalog.Events
@@ -46,18 +43,21 @@ namespace Challenges.Configs
 
             foreach (string missing in extractorTypes.Except(catalogTypes))
             {
-                Console.WriteLine(localizer["core.faultyconfig"].Value
-                    .Replace("{config}", "catalog.json")
-                    .Replace("{error}", $"extractor type {missing} has no catalog entry"));
+                messages.Add(Format(localizer, $"extractor type {missing} has no catalog entry"));
             }
 
             foreach (string missing in catalogTypes.Except(extractorTypes))
             {
-                Console.WriteLine(localizer["core.faultyconfig"].Value
-                    .Replace("{config}", "catalog.json")
-                    .Replace("{error}", $"catalog type {missing} has no extractor"));
+                messages.Add(Format(localizer, $"catalog type {missing} has no extractor"));
             }
+
+            return messages;
         }
+
+        private static string Format(IStringLocalizer localizer, string error) =>
+            localizer["core.faultyconfig"].Value
+                .Replace("{config}", "catalog.json")
+                .Replace("{error}", error);
     }
 
     public sealed class CatalogEvent
