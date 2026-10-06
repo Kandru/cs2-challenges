@@ -238,6 +238,8 @@ def check_layout(name: str, expected_ids: set[str], expected_vars: set[str], fai
     for element in root.iter():
         for attr in REJECTED_ATTRS & set(element.attrib):
             failures.append(f"{rel}: attribute '{attr}' is rejected")
+        if element.tag == "Button" and "hittest" in element.attrib:
+            failures.append(f"{rel}: attribute 'hittest' is disallowed on Button")
         if "id" in element.attrib:
             ids.append(element.attrib["id"])
         for classes in [element.attrib.get("class", "")]:
