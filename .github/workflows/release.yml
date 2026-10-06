@@ -76,7 +76,7 @@ jobs:
           VERSION: ${{ needs.prepare.outputs.version }}
         run: |
           mkdir -p release-artifacts/zip/plugins release-artifacts/zip/shared
-          cp -r "src/bin/Release/net10.0/publish" "release-artifacts/zip/plugins/${PLUGIN_NAME}"
+          cp -r "src/${PLUGIN_NAME}/bin/Release/net10.0/publish" "release-artifacts/zip/plugins/${PLUGIN_NAME}"
           cp -r "src/${SHARED_NAME}/bin/Release/net10.0/publish" "release-artifacts/zip/shared/${SHARED_NAME}"
           (
             cd release-artifacts/zip
