@@ -4,7 +4,7 @@
     "core.defaultconfig": "[Herausforderungen] Keine kartenspezifische Konfiguration für {mapName} gefunden, Standardkonfiguration wird verwendet!",
     "core.noconfig": "[Herausforderungen] Keine kartenspezifische Konfiguration für {mapName} oder Standardkonfiguration gefunden. Überspringen!",
     "core.faultyconfig": "[Herausforderungen] Fehlerhafte Konfiguration {config}: {error}",
-    "core.config": "[Herausforderungen] Konfiguration geladen!",
+    "core.config": "[Herausforderungen] Konfiguration geladen ({challenges} Herausforderungen, {schedules} Zeitpläne).",
     "core.disabled": "[Herausforderungen] {default}Herausforderungen sind deaktiviert!",
     "core.debugprint": "[Herausforderungen]{red}[DEBUG] {default}{message}",
     "core.event.trigger.error": "[Herausforderungen] {red}Fehler beim Auslösen des Ereignisses {eventName}: {error}",

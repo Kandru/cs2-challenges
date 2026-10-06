@@ -4,7 +4,7 @@
     "core.defaultconfig": "[Challenges] Found no map-specific configuration for {mapName}, using default one!",
     "core.noconfig": "[Challenges] No map-specific configuration for {mapName} or default one found. Skipping!",
     "core.faultyconfig": "[Challenges] Faulty configuration {config}: {error}",
-    "core.config": "[Challenges] Configuration loaded!",
+    "core.config": "[Challenges] Configuration loaded ({challenges} challenges, {schedules} schedules).",
     "core.disabled": "[Challenges] {default}Challenges is disabled!",
     "core.debugprint": "[Challenges]{red}[DEBUG] {default}{message}",
     "core.event.trigger.error": "[Challenges] {red}Error while triggering event {eventName}: {error}",

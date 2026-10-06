@@ -2,6 +2,7 @@ using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Modules.Commands;
 using CounterStrikeSharp.API.Modules.Extensions;
+using Challenges.Enums;
 
 namespace Challenges
 {
@@ -52,7 +53,9 @@ namespace Challenges
         private void ReloadAll()
         {
             DestroyClasses();
+            // Config.Reload updates the config instance in place; it does not call OnConfigParsed.
             Config.Reload();
+            _globalStates[GlobalStates.GlobalConfig] = Config;
             LogCatalogMismatches();
             LoadChallengeFiles();
             LoadSchedules();

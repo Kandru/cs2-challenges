@@ -49,12 +49,7 @@ namespace Challenges
             CustomEventsSender.Instance = sender;
             Capabilities.RegisterPluginCapability(ChallengesEvents, () => sender);
 
-            if (hotReload)
-            {
-                LoadChallengeFiles();
-                LoadSchedules();
-            }
-
+            // Blueprints/schedules are loaded in OnConfigParsed (and again on map start).
             InitializeClasses(hotReload);
         }
 
@@ -73,10 +68,12 @@ namespace Challenges
             Config = config;
             Config.Update();
             _globalStates[GlobalStates.GlobalConfig] = config;
-            Console.WriteLine(Localizer["core.config"]);
             LogCatalogMismatches();
-            LoadChallengeFiles();
-            LoadSchedules();
+            int challenges = LoadChallengeFiles();
+            int schedules = LoadSchedules();
+            Console.WriteLine(Localizer["core.config"].Value
+                .Replace("{challenges}", challenges.ToString())
+                .Replace("{schedules}", schedules.ToString()));
         }
 
         private void OnMapStart(string mapName)
@@ -203,7 +200,7 @@ namespace Challenges
             }
         }
 
-        private void LoadChallengeFiles()
+        private int LoadChallengeFiles()
         {
             string dir = Path.Combine(GetConfigDir(), "blueprints");
             Directory.CreateDirectory(dir);
@@ -253,7 +250,7 @@ namespace Challenges
             }
 
             _globalStates[GlobalStates.Challenges] = map;
-            Console.WriteLine(Localizer["core.config"].Value.Replace("{config}", $"blueprints ({map.Count})"));
+            return map.Count;
         }
 
         private static void NormalizeDefinition(ChallengeDefinition def)
@@ -287,7 +284,7 @@ namespace Challenges
             def.BuildTaskIndex();
         }
 
-        private void LoadSchedules()
+        private int LoadSchedules()
         {
             string path = Path.Combine(GetConfigDir(), "schedules.yaml");
             var schedules = new Dictionary<string, ChallengeSchedule>(StringComparer.OrdinalIgnoreCase);
@@ -314,6 +311,7 @@ namespace Challenges
             }
 
             _globalStates[GlobalStates.Schedules] = schedules;
+            return schedules.Count;
         }
     }
 }
