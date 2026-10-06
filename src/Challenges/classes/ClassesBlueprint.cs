@@ -54,5 +54,9 @@ namespace Challenges.Classes
             }
             Console.WriteLine(Localizer["core.debugprint"].Value.Replace("{message}", message));
         }
+
+        protected string ChatMessage(CCSPlayerController player, string key) =>
+            LocalizerExtensions.ForPlayer(Localizer, player, key)
+                .Replace("{prefix}", LocalizerExtensions.ForPlayer(Localizer, player, "chat.prefix"));
     }
 }

@@ -37,7 +37,7 @@ namespace Challenges.Classes
             }
 
             PlaySound(player, GlobalConfig.Notifications.ChallengeProgressSound);
-            string message = LocalizerExtensions.ForPlayer(Localizer, player, "challenges.progress")
+            string message = ChatMessage(player, "challenges.progress")
                 .Replace("{challenge}", TaskTitle(player, challenge, task, amount))
                 .Replace("{total}", task.Amount.ToString())
                 .Replace("{count}", amount.ToString());
@@ -66,7 +66,7 @@ namespace Challenges.Classes
                 }
 
                 string key = self ? "challenges.completed.user" : "challenges.completed.other";
-                entry.PrintToChat(LocalizerExtensions.ForPlayer(Localizer, entry, key)
+                entry.PrintToChat(ChatMessage(entry, key)
                     .Replace("{challenge}", TaskTitle(entry, challenge, task, task.Amount))
                     .Replace("{player}", player.PlayerName)
                     .Replace("{total}", task.Amount.ToString())
@@ -83,8 +83,8 @@ namespace Challenges.Classes
 
             PlaySound(player, GlobalConfig.Notifications.ChallengeRuleBrokenSound);
             string title = TaskTitle(player, challenge, task, 0);
-            player.PrintToChat(LocalizerExtensions.ForPlayer(Localizer, player, "challenges.rule.broken"));
-            player.PrintToChat(title);
+            player.PrintToChat(ChatMessage(player, "challenges.rule.broken"));
+            player.PrintToChat($"{ChatColors.Green}{title}");
             Tracker.ShowRuleBroken(player, challenge.Id, task.Id);
         }
 
@@ -95,7 +95,7 @@ namespace Challenges.Classes
                 return;
             }
 
-            player.PrintToChat(LocalizerExtensions.ForPlayer(Localizer, player, "challenges.deleted")
+            player.PrintToChat(ChatMessage(player, "challenges.deleted")
                 .Replace("{challenge}", TaskTitle(player, challenge, task, 0)));
         }
 

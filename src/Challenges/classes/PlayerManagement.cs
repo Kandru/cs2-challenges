@@ -41,7 +41,6 @@ namespace Challenges.Classes
         {
             ["css_c"] = "Toggle challenges menu",
             ["css_challenges"] = "Toggle challenges menu",
-            ["css_topc"] = "Show top players by challenges solved",
         };
 
         private string PlayersDir => Path.Combine(
@@ -134,49 +133,6 @@ namespace Challenges.Classes
         public void CommandCss_challenges(CCSPlayerController? player, CounterStrikeSharp.API.Modules.Commands.CommandInfo info) =>
             ToggleMenu(player);
 
-        public void CommandCss_topc(CCSPlayerController? player, CounterStrikeSharp.API.Modules.Commands.CommandInfo info)
-        {
-            if (!Players.IsHumanViewer(player))
-            {
-                return;
-            }
-
-            RunningSchedule? schedule = GetClass<Schedules>().Current;
-            List<(string Name, int Current, int Total)> ranking = [];
-            foreach ((CCSPlayerController human, PlayerState s) in PlayerStates)
-            {
-                if (!human.IsValid)
-                {
-                    continue;
-                }
-
-                int current = schedule != null
-                    ? ChallengeProgress.CountSolvedInSchedule(s, schedule)
-                    : 0;
-                ranking.Add((human.PlayerName, current, s.Statistics.AmountChallengesSolved));
-            }
-
-            ranking.Sort(static (a, b) =>
-            {
-                int byTotal = b.Total.CompareTo(a.Total);
-                return byTotal != 0 ? byTotal : b.Current.CompareTo(a.Current);
-            });
-
-            if (ranking.Count == 0)
-            {
-                player!.PrintToChat(Localizer["command.topc.nodata"]);
-                return;
-            }
-
-            player!.PrintToChat(Localizer["command.topc"]);
-            int limit = Math.Min(5, ranking.Count);
-            for (int i = 0; i < limit; i++)
-            {
-                (string name, int current, int total) = ranking[i];
-                player.PrintToChat($"{i + 1}. {name}: {current} / {total}");
-            }
-        }
-
         private void ToggleMenu(CCSPlayerController? player)
         {
             if (!Players.IsHumanViewer(player) || !GlobalConfig.Enabled)
@@ -188,12 +144,10 @@ namespace Challenges.Classes
             {
                 HudMenu.Close(player);
                 GetPlayerState(player).ActiveMenu = ActiveMenu.None;
-                player.PrintToChat(Localizer["command.hidegui"]);
                 return;
             }
 
             Menu.Open(player);
-            player.PrintToChat(Localizer["command.showgui"]);
         }
 
         public override void Destroy()

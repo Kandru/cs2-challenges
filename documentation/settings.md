@@ -55,7 +55,6 @@ Created on first start. Example:
 | Command | Who | Effect |
 |---------|-----|--------|
 | `!c` / `!challenges` | Players | Toggle the fullscreen challenges menu. |
-| `!topc` | Players | Top players by challenges solved. |
 | `!lang <language>` | Players | Set language (e.g. `!lang en`, `!lang de`). Stored and restored on reconnect. |
 
 ## Server console
