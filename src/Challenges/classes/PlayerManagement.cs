@@ -56,7 +56,15 @@ namespace Challenges.Classes
                 return HookResult.Continue;
             }
 
-            LoadPlayerData(player);
+            Server.NextFrame(() =>
+            {
+                if (!player.IsValid || string.IsNullOrEmpty(player.NetworkIDString))
+                {
+                    return;
+                }
+
+                LoadPlayerData(player);
+            });
             return HookResult.Continue;
         }
 
@@ -202,8 +210,13 @@ namespace Challenges.Classes
 
         private void LoadPlayerData(CCSPlayerController player)
         {
-            PlayerState state = GetPlayerState(player);
             string steamId = player.NetworkIDString;
+            if (string.IsNullOrEmpty(steamId))
+            {
+                return;
+            }
+
+            PlayerState state = GetPlayerState(player);
             string path = PlayerFilePath(steamId);
 
             if (File.Exists(path))
@@ -245,6 +258,11 @@ namespace Challenges.Classes
         private void WritePlayerFile(CCSPlayerController player, PlayerState state)
         {
             string steamId = player.NetworkIDString;
+            if (string.IsNullOrEmpty(steamId))
+            {
+                return;
+            }
+
             state.Username = player.PlayerName;
             state.SteamId = steamId;
             state.ClanTag = player.Clan;
