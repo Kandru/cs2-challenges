@@ -304,17 +304,34 @@ Label.ph-stat-when
 	padding: 8px 12px 6px 14px;
 }
 
-.TrackerTimer
+.TrackerTimerRow
 {
 	width: 100%;
-	margin-left: 14px;
-	margin-right: 12px;
+	height: fit-children;
+	flow-children: right;
 	margin-bottom: 8px;
 }
 
-.TrackerTimer.is-off
+.TrackerTimerRow.is-off
 {
 	visibility: collapse;
+}
+
+.TrackerTimerPadL
+{
+	width: 14px;
+	height: 1px;
+}
+
+.TrackerTimerPadR
+{
+	width: 12px;
+	height: 1px;
+}
+
+.TrackerTimer
+{
+	width: fill-parent-flow( 1.0 );
 }
 
 .TrackerRow
@@ -448,17 +465,12 @@ Label.TrackerCount
 	width: fill-parent-flow( 1.0 );
 	height: 100%;
 	flow-children: down;
-	visibility: collapse;
 }
 
-.MenuRoot.detail-open .MenuScore
+.MenuScore.is-off,
+.MenuDetail.is-off
 {
 	visibility: collapse;
-}
-
-.MenuRoot.detail-open .MenuDetail
-{
-	visibility: visible;
 }
 
 .DetailTitleBar

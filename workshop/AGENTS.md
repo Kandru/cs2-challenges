@@ -60,13 +60,13 @@ Top-right card (`margin-top` = `margin-right` = 10px, width 420px), never clicka
 
 - Filters (`ch-filter-all|solved|progress|ending|starting`, exclusive `active`): All, Solved, Progress (default), Ending soon, Starting soon. Empty filters get `is-disabled`. Prev/next under list and scoreboard get `is-disabled` when they cannot move.
 - Challenge cards `ch-mrow-0…4` are clickable `Button`s (`gui.menu_page_size` default 5). Compact body 50/50 tasks|completers. Viewer in completers = green `is-you` + `hud.menu.you`. Selected card gets `is-selected`.
-- **Detail column:** clicking a card toggles `detail-open` on the menu root (hides scoreboard, shows `MenuDetail`). Lists all visible tasks in completion order (`requires`-aware) with a compact rules line (`TaskRuleSummary`: skip `global.*`, short `hud.rule.*` phrases, `hud.menu.resets` for breaker titles). No completer list. Paginated `ch-drow-0…4` + `ch-detail-prev|next`; `ch-detail-back` or re-click closes detail.
+- **Detail column:** clicking a card toggles `is-off` on `ch-score` / `ch-detail` (hides scoreboard, shows `MenuDetail`). Lists all visible tasks in completion order (`requires`-aware) with a compact rules line (`TaskRuleSummary`: skip `global.*`, short `hud.rule.*` phrases, `hud.menu.resets` for breaker titles). No completer list. Paginated `ch-drow-0…4` + `ch-detail-prev|next`; `ch-detail-back` or re-click closes detail.
 - **Ending soon:** schedule end in `(now, now+7d]`. Sort: % desc, end time, title A–Z. **Starting soon:** % desc, start time, A–Z. **All:** % desc, active before inactive, time, A–Z. **Progress** / **Solved:** % desc, A–Z.
 - Scoreboard: audience filters All / Online (`ch-score-f-*`). Online = connected humans; All = online + saved `players/*.json`. Sort filters Solved / Lifetime (`ch-score-s-*`, default Solved). Column + self-card label is **Lifetime** (not Total). Lifetime counts use grouped `FormatNumber`.
 
 ## Shared classes (`hud.vcss`)
 
-`.ph-fs` · `.ph-card` / `.ph-fading` / `.ph-off` · `.ph-bg` / `.ph-bar` · `.ph-titlebar` / `Label.ph-title` / `Label.ph-money` · `Label.ph-btn-label` · `.ph-icon-btn` / `.ph-close-x` · `.ph-stat` · `.MenuFilterBtn` / `.is-disabled` / `.MenuFooterBtn` / `.MenuRow` / `.is-selected` / `.detail-open` / `.MenuDetail` / `.DetailRow` / `.MenuTask` / `.is-done` / `.is-broken` / `.MenuBy` / `.is-you` · `.ScoreRow` / `.ScoreFilterBar` · `.Tracker*` · `.theme-*`.
+`.ph-fs` · `.ph-card` / `.ph-fading` / `.ph-off` · `.ph-bg` / `.ph-bar` · `.ph-titlebar` / `Label.ph-title` / `Label.ph-money` · `Label.ph-btn-label` · `.ph-icon-btn` / `.ph-close-x` · `.ph-stat` · `.MenuFilterBtn` / `.is-disabled` / `.MenuFooterBtn` / `.MenuRow` / `.is-selected` / `.MenuScore` / `.MenuDetail` / `.DetailRow` / `.MenuTask` / `.is-done` / `.is-broken` / `.MenuBy` / `.is-you` · `.ScoreRow` / `.ScoreFilterBar` · `.Tracker*` · `.theme-*`.
 
 ## Check before inventing CSS
 

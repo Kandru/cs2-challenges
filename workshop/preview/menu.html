@@ -143,7 +143,7 @@
               <button class="MenuFooterBtn">&lt;</button><span class="MenuPage">1 / 2</span><button class="MenuFooterBtn">&gt;</button>
             </div>
           </div>
-          <div class="MenuScore">
+          <div id="ch-score" class="MenuScore">
             <div class="ScoreTitleBar"><span class="ScoreTitle">Scoreboard</span></div>
             <div class="ScoreFilterBar">
               <div class="ScoreFilterGroup">
@@ -187,7 +187,7 @@
               <button class="MenuFooterBtn is-disabled">&lt;</button><span class="MenuPage">1 / 1</span><button class="MenuFooterBtn is-disabled">&gt;</button>
             </div>
           </div>
-          <div class="MenuDetail">
+          <div id="ch-detail" class="MenuDetail is-off">
             <div class="DetailTitleBar">
               <button type="button" class="MenuFooterBtn" id="detail-back">Back</button>
               <span class="DetailTitle" id="detail-title">Weapon: AK-47 With A Very Long Subtitle</span>
@@ -243,7 +243,8 @@ const details = {
     ],
   },
 };
-const root = document.getElementById('Menu');
+const scoreCol = document.getElementById('ch-score');
+const detailCol = document.getElementById('ch-detail');
 const detailRows = document.getElementById('detail-rows');
 const detailTitle = document.getElementById('detail-title');
 function paintDetail(key) {
@@ -255,20 +256,22 @@ function paintDetail(key) {
   ).join('');
 }
 function openDetail(key) {
-  root.classList.add('detail-open');
+  scoreCol.classList.add('is-off');
+  detailCol.classList.remove('is-off');
   document.querySelectorAll('.MenuRow[data-detail]').forEach(r => {
     r.classList.toggle('is-selected', r.dataset.detail === key);
   });
   paintDetail(key);
 }
 function closeDetail() {
-  root.classList.remove('detail-open');
+  scoreCol.classList.remove('is-off');
+  detailCol.classList.add('is-off');
   document.querySelectorAll('.MenuRow[data-detail]').forEach(r => r.classList.remove('is-selected'));
 }
 document.querySelectorAll('.MenuRow[data-detail]').forEach(row => {
   row.addEventListener('click', () => {
     const key = row.dataset.detail;
-    if (row.classList.contains('is-selected') && root.classList.contains('detail-open')) {
+    if (row.classList.contains('is-selected') && !detailCol.classList.contains('is-off')) {
       closeDetail();
       return;
     }

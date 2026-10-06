@@ -24,6 +24,8 @@ namespace Challenges.Huds
         public const string FilterStarting = "starting";
         private const string ScoreHeadCurId = "ch-score-h-cur";
         private const string ScoreHeadTotId = "ch-score-h-tot";
+        private const string ScoreColumnId = "ch-score";
+        private const string DetailColumnId = "ch-detail";
         private static readonly TimeSpan EndingSoonWindow = TimeSpan.FromDays(7);
 
         private static readonly string[] Filters =
@@ -551,7 +553,8 @@ namespace Challenges.Huds
                 return;
             }
 
-            CustomHud.SetHasClass(player, Panel, "detail-open", true);
+            CustomHud.SetHasClass(player, ScoreColumnId, "is-off", true);
+            CustomHud.SetHasClass(player, DetailColumnId, "is-off", false);
             CustomHud.SetText(player, Panel, "detail_title", Titles.For(player, challenge.Title));
 
             List<ChallengeTask> tasks = TaskRuleSummary.VisibleInOrder(challenge);
@@ -610,7 +613,8 @@ namespace Challenges.Huds
 
         private static void ClearDetailView(CCSPlayerController player)
         {
-            CustomHud.SetHasClass(player, Panel, "detail-open", false);
+            CustomHud.SetHasClass(player, ScoreColumnId, "is-off", false);
+            CustomHud.SetHasClass(player, DetailColumnId, "is-off", true);
             CustomHud.SetText(player, Panel, "detail_title", string.Empty);
             CustomHud.SetText(player, Panel, "detail_page", string.Empty);
             CustomHud.SetHasClass(player, HudMenu.BtnDetailPrev, "is-disabled", true);

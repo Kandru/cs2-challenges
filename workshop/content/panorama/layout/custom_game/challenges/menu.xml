@@ -351,7 +351,7 @@
 								</Button>
 							</Panel>
 						</Panel>
-						<Panel class="MenuScore" hittest="true">
+						<Panel id="ch-score" class="MenuScore" hittest="true">
 							<Panel class="ScoreTitleBar" hittest="false">
 								<Label class="ScoreTitle stratum-bold-tf" hittest="false" text="{s:score_title}" />
 							</Panel>
@@ -480,7 +480,7 @@
 								</Button>
 							</Panel>
 						</Panel>
-						<Panel class="MenuDetail" hittest="true">
+						<Panel id="ch-detail" class="MenuDetail is-off" hittest="true">
 							<Panel class="DetailTitleBar" hittest="true">
 								<Button id="ch-detail-back" class="MenuFooterBtn">
 									<Label class="ph-nav-label stratum-bold-tf" hittest="false" text="{s:detail_back}" />

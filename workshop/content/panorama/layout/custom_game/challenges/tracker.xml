@@ -166,8 +166,12 @@
 							</Panel>
 						</Panel>
 				</Panel>
-				<Panel id="ch-ttimer" class="TrackerTimer ph-stat-track is-off" hittest="false">
-					<Panel id="ch-ttimer-fill" class="ph-stat-fill p100" hittest="false" />
+				<Panel id="ch-ttimer" class="TrackerTimerRow is-off" hittest="false">
+					<Panel class="TrackerTimerPadL" hittest="false" />
+					<Panel class="TrackerTimer ph-stat-track" hittest="false">
+						<Panel id="ch-ttimer-fill" class="ph-stat-fill p100" hittest="false" />
+					</Panel>
+					<Panel class="TrackerTimerPadR" hittest="false" />
 				</Panel>
 			</Panel>
 		</Panel>

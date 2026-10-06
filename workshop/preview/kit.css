@@ -84,11 +84,14 @@ body {
 .Tracker { width: 420px; right: 10px; top: 10px; z-index: 100; }
 .TrackerContent { position: relative; flex: 1; display: flex; flex-direction: column; z-index: 2; }
 .TrackerBody { padding: 8px 12px 6px 14px; }
-.TrackerTimer {
-  margin: 0 12px 8px 14px; flex-shrink: 0;
+.TrackerTimerRow {
+  display: flex; align-items: stretch; margin-bottom: 8px; flex-shrink: 0;
 }
-.TrackerTimer.is-off { display: none; }
-.TrackerTimer.running .ph-stat-fill {
+.TrackerTimerRow.is-off { display: none; }
+.TrackerTimerPadL { width: 14px; flex-shrink: 0; }
+.TrackerTimerPadR { width: 12px; flex-shrink: 0; }
+.TrackerTimer { flex: 1; min-width: 0; }
+.TrackerTimerRow.running .ph-stat-fill {
   animation: tracker-timer-drain var(--tracker-hold, 5s) linear forwards;
 }
 @keyframes tracker-timer-drain {
@@ -119,9 +122,9 @@ body {
 .MenuColumns { flex: 1; display: flex; min-height: 0; }
 .MenuList { flex: 2; margin-right: 18px; display: flex; flex-direction: column; min-height: 0; }
 .MenuScore { flex: 1; display: flex; flex-direction: column; min-height: 0; }
-.MenuDetail { flex: 1; display: none; flex-direction: column; min-height: 0; }
-.MenuRoot.detail-open .MenuScore { display: none; }
-.MenuRoot.detail-open .MenuDetail { display: flex; }
+.MenuDetail { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+.MenuScore.is-off,
+.MenuDetail.is-off { display: none; }
 .DetailTitleBar { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-shrink: 0; }
 .DetailTitle {
   flex: 1; min-width: 0; font-size: 18px; font-weight: 700; letter-spacing: 1.2px;
