@@ -508,8 +508,8 @@ Label.DetailTitle
 
 .DetailRow.is-done
 {
-	border: 1px solid #f0a53166;
-	background-color: #f0a53114;
+	background-color: #9ccf4f18;
+	border: 1px solid #9ccf4f44;
 }
 
 Label.DetailTaskTitle
@@ -520,6 +520,11 @@ Label.DetailTaskTitle
 	color: #e8eef4;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+}
+
+.DetailRow.is-done Label.DetailTaskTitle
+{
+	color: #9ccf4f;
 }
 
 Label.DetailTaskRules
@@ -1232,13 +1237,13 @@ Label.ScoreTot
 .theme-ct .MenuFilterBtn.active { background-color: #96c8fa22; border: 1px solid #96c8fa; }
 .theme-ct .MenuFilterBtn.active:hover { background-color: #96c8fa44; border: 1px solid #96c8fa; }
 .theme-ct .MenuFilterBtn:hover { border: 1px solid #96c8fa66; }
+.theme-ct .MenuFilterBtn:active { border: 1px solid #96c8fa; }
 .theme-ct .MenuFooterBtn:hover { border: 1px solid #96c8fa66; }
 .theme-ct .MenuFooterBtn:active { border: 1px solid #96c8fa; }
 .theme-ct .MenuRow:hover { border: 1px solid #96c8fa66; }
 .theme-ct .MenuRow:active { border: 1px solid #96c8fa; }
 .theme-ct .MenuRow.is-selected { background-color: #96c8fa22; border: 1px solid #96c8fa; }
 .theme-ct .MenuRow.is-selected:hover { background-color: #96c8fa44; border: 1px solid #96c8fa; }
-.theme-ct .DetailRow.is-done { border: 1px solid #96c8fa66; background-color: #96c8fa14; }
 .theme-ct .ScoreSelfCard { background-color: #96c8fa18; border: 1px solid #96c8fa; }
 .theme-ct .ScoreRow.is-self { background-color: #96c8fa22; border-bottom: 1px solid #96c8fa44; }
 .theme-ct .ScoreHeader { border-top: 1px solid #96c8fa66; border-bottom: 1px solid #96c8fa66; }
@@ -1259,13 +1264,13 @@ Label.ScoreTot
 .theme-t .MenuFilterBtn.active { background-color: #eabe5422; border: 1px solid #eabe54; }
 .theme-t .MenuFilterBtn.active:hover { background-color: #eabe5444; border: 1px solid #eabe54; }
 .theme-t .MenuFilterBtn:hover { border: 1px solid #eabe5466; }
+.theme-t .MenuFilterBtn:active { border: 1px solid #eabe54; }
 .theme-t .MenuFooterBtn:hover { border: 1px solid #eabe5466; }
 .theme-t .MenuFooterBtn:active { border: 1px solid #eabe54; }
 .theme-t .MenuRow:hover { border: 1px solid #eabe5466; }
 .theme-t .MenuRow:active { border: 1px solid #eabe54; }
 .theme-t .MenuRow.is-selected { background-color: #eabe5422; border: 1px solid #eabe54; }
 .theme-t .MenuRow.is-selected:hover { background-color: #eabe5444; border: 1px solid #eabe54; }
-.theme-t .DetailRow.is-done { border: 1px solid #eabe5466; background-color: #eabe5414; }
 .theme-t .ScoreSelfCard { background-color: #eabe5418; border: 1px solid #eabe54; }
 .theme-t .ScoreRow.is-self { background-color: #eabe5422; border-bottom: 1px solid #eabe5444; }
 .theme-t .ScoreHeader { border-top: 1px solid #eabe5466; border-bottom: 1px solid #eabe5466; }
@@ -1286,13 +1291,13 @@ Label.ScoreTot
 .theme-green .MenuFilterBtn.active { background-color: #6fdc7822; border: 1px solid #6fdc78; }
 .theme-green .MenuFilterBtn.active:hover { background-color: #6fdc7844; border: 1px solid #6fdc78; }
 .theme-green .MenuFilterBtn:hover { border: 1px solid #6fdc7866; }
+.theme-green .MenuFilterBtn:active { border: 1px solid #6fdc78; }
 .theme-green .MenuFooterBtn:hover { border: 1px solid #6fdc7866; }
 .theme-green .MenuFooterBtn:active { border: 1px solid #6fdc78; }
 .theme-green .MenuRow:hover { border: 1px solid #6fdc7866; }
 .theme-green .MenuRow:active { border: 1px solid #6fdc78; }
 .theme-green .MenuRow.is-selected { background-color: #6fdc7822; border: 1px solid #6fdc78; }
 .theme-green .MenuRow.is-selected:hover { background-color: #6fdc7844; border: 1px solid #6fdc78; }
-.theme-green .DetailRow.is-done { border: 1px solid #6fdc7866; background-color: #6fdc7814; }
 .theme-green .ScoreSelfCard { background-color: #6fdc7818; border: 1px solid #6fdc78; }
 .theme-green .ScoreRow.is-self { background-color: #6fdc7822; border-bottom: 1px solid #6fdc7844; }
 .theme-green .ScoreHeader { border-top: 1px solid #6fdc7866; border-bottom: 1px solid #6fdc7866; }
@@ -1313,13 +1318,13 @@ Label.ScoreTot
 .theme-red .MenuFilterBtn.active { background-color: #e05a5a22; border: 1px solid #e05a5a; }
 .theme-red .MenuFilterBtn.active:hover { background-color: #e05a5a44; border: 1px solid #e05a5a; }
 .theme-red .MenuFilterBtn:hover { border: 1px solid #e05a5a66; }
+.theme-red .MenuFilterBtn:active { border: 1px solid #e05a5a; }
 .theme-red .MenuFooterBtn:hover { border: 1px solid #e05a5a66; }
 .theme-red .MenuFooterBtn:active { border: 1px solid #e05a5a; }
 .theme-red .MenuRow:hover { border: 1px solid #e05a5a66; }
 .theme-red .MenuRow:active { border: 1px solid #e05a5a; }
 .theme-red .MenuRow.is-selected { background-color: #e05a5a22; border: 1px solid #e05a5a; }
 .theme-red .MenuRow.is-selected:hover { background-color: #e05a5a44; border: 1px solid #e05a5a; }
-.theme-red .DetailRow.is-done { border: 1px solid #e05a5a66; background-color: #e05a5a14; }
 .theme-red .ScoreSelfCard { background-color: #e05a5a18; border: 1px solid #e05a5a; }
 .theme-red .ScoreRow.is-self { background-color: #e05a5a22; border-bottom: 1px solid #e05a5a44; }
 .theme-red .ScoreHeader { border-top: 1px solid #e05a5a66; border-bottom: 1px solid #e05a5a66; }
@@ -1340,13 +1345,13 @@ Label.ScoreTot
 .theme-purple .MenuFilterBtn.active { background-color: #b07cff22; border: 1px solid #b07cff; }
 .theme-purple .MenuFilterBtn.active:hover { background-color: #b07cff44; border: 1px solid #b07cff; }
 .theme-purple .MenuFilterBtn:hover { border: 1px solid #b07cff66; }
+.theme-purple .MenuFilterBtn:active { border: 1px solid #b07cff; }
 .theme-purple .MenuFooterBtn:hover { border: 1px solid #b07cff66; }
 .theme-purple .MenuFooterBtn:active { border: 1px solid #b07cff; }
 .theme-purple .MenuRow:hover { border: 1px solid #b07cff66; }
 .theme-purple .MenuRow:active { border: 1px solid #b07cff; }
 .theme-purple .MenuRow.is-selected { background-color: #b07cff22; border: 1px solid #b07cff; }
 .theme-purple .MenuRow.is-selected:hover { background-color: #b07cff44; border: 1px solid #b07cff; }
-.theme-purple .DetailRow.is-done { border: 1px solid #b07cff66; background-color: #b07cff14; }
 .theme-purple .ScoreSelfCard { background-color: #b07cff18; border: 1px solid #b07cff; }
 .theme-purple .ScoreRow.is-self { background-color: #b07cff22; border-bottom: 1px solid #b07cff44; }
 .theme-purple .ScoreHeader { border-top: 1px solid #b07cff66; border-bottom: 1px solid #b07cff66; }

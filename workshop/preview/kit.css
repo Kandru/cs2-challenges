@@ -132,11 +132,12 @@ body {
   padding: 8px 10px; margin-bottom: 6px; background: #ffffff0d;
   border: 1px solid #ffffff14; border-radius: 3px;
 }
-.DetailRow.is-done { border-color: #f0a53166; background: #f0a53114; }
+.DetailRow.is-done { background: #9ccf4f18; border-color: #9ccf4f44; }
 .DetailTaskTitle {
   display: block; font-size: 14px; font-weight: 700; letter-spacing: 1px; color: #e8eef4;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
+.DetailRow.is-done .DetailTaskTitle { color: #9ccf4f; }
 .DetailTaskRules {
   display: block; margin-top: 2px; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; color: #9aa2ac;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
@@ -283,40 +284,95 @@ body {
 .theme-ct .ph-stat-val, .theme-ct .ScoreSelfRank, .theme-ct .ScoreSelfStatVal,
 .theme-ct .ScoreRank, .theme-ct .ScoreCur, .theme-ct .MenuPage, .theme-ct .ScoreHead.sort-active { color: #96c8fa; }
 .theme-ct .MenuFilterBtn.active { background: #96c8fa22; border-color: #96c8fa; }
+.theme-ct .MenuFilterBtn.active:hover { background: #96c8fa44; border-color: #96c8fa; }
+.theme-ct .MenuFilterBtn:hover { border-color: #96c8fa66; }
+.theme-ct .MenuFilterBtn:active { border-color: #96c8fa; }
+.theme-ct .MenuFooterBtn:hover { border-color: #96c8fa66; }
+.theme-ct .MenuFooterBtn:active { border-color: #96c8fa; }
+.theme-ct .MenuRow:hover { border-color: #96c8fa66; }
+.theme-ct .MenuRow:active { border-color: #96c8fa; }
+.theme-ct .MenuRow.is-selected { background: #96c8fa22; border-color: #96c8fa; }
+.theme-ct .MenuRow.is-selected:hover { background: #96c8fa44; border-color: #96c8fa; }
 .theme-ct .ScoreSelfCard { background: #96c8fa18; border-color: #96c8fa; }
-.theme-ct .ScoreRow.is-self { background: #96c8fa22; }
+.theme-ct .ScoreRow.is-self { background: #96c8fa22; border-bottom-color: #96c8fa44; }
+.theme-ct .ScoreHeader { border-top-color: #96c8fa66; border-bottom-color: #96c8fa66; }
+.theme-ct .ScoreHeader .ScoreCur.sort-active, .theme-ct .ScoreHeader .ScoreTot.sort-active { color: #96c8fa; }
 
 .theme-t .ph-bar { background: #eabe54; }
 .theme-t .ph-stat-fill { background: linear-gradient(to right, #c9a03a, #eabe54); }
 .theme-t .ph-stat-val, .theme-t .ScoreSelfRank, .theme-t .ScoreSelfStatVal,
 .theme-t .ScoreRank, .theme-t .ScoreCur, .theme-t .MenuPage, .theme-t .ScoreHead.sort-active { color: #eabe54; }
 .theme-t .MenuFilterBtn.active { background: #eabe5422; border-color: #eabe54; }
+.theme-t .MenuFilterBtn.active:hover { background: #eabe5444; border-color: #eabe54; }
+.theme-t .MenuFilterBtn:hover { border-color: #eabe5466; }
+.theme-t .MenuFilterBtn:active { border-color: #eabe54; }
+.theme-t .MenuFooterBtn:hover { border-color: #eabe5466; }
+.theme-t .MenuFooterBtn:active { border-color: #eabe54; }
+.theme-t .MenuRow:hover { border-color: #eabe5466; }
+.theme-t .MenuRow:active { border-color: #eabe54; }
+.theme-t .MenuRow.is-selected { background: #eabe5422; border-color: #eabe54; }
+.theme-t .MenuRow.is-selected:hover { background: #eabe5444; border-color: #eabe54; }
 .theme-t .ScoreSelfCard { background: #eabe5418; border-color: #eabe54; }
-.theme-t .ScoreRow.is-self { background: #eabe5422; }
+.theme-t .ScoreRow.is-self { background: #eabe5422; border-bottom-color: #eabe5444; }
+.theme-t .ScoreHeader { border-top-color: #eabe5466; border-bottom-color: #eabe5466; }
+.theme-t .ScoreHeader .ScoreCur.sort-active, .theme-t .ScoreHeader .ScoreTot.sort-active { color: #eabe54; }
 
 .theme-green .ph-bar { background: #6fdc78; }
 .theme-green .ph-stat-fill { background: linear-gradient(to right, #3d8f45, #6fdc78); }
 .theme-green .ph-stat-val, .theme-green .ScoreSelfRank, .theme-green .ScoreSelfStatVal,
 .theme-green .ScoreRank, .theme-green .ScoreCur, .theme-green .MenuPage, .theme-green .ScoreHead.sort-active { color: #6fdc78; }
 .theme-green .MenuFilterBtn.active { background: #6fdc7822; border-color: #6fdc78; }
+.theme-green .MenuFilterBtn.active:hover { background: #6fdc7844; border-color: #6fdc78; }
+.theme-green .MenuFilterBtn:hover { border-color: #6fdc7866; }
+.theme-green .MenuFilterBtn:active { border-color: #6fdc78; }
+.theme-green .MenuFooterBtn:hover { border-color: #6fdc7866; }
+.theme-green .MenuFooterBtn:active { border-color: #6fdc78; }
+.theme-green .MenuRow:hover { border-color: #6fdc7866; }
+.theme-green .MenuRow:active { border-color: #6fdc78; }
+.theme-green .MenuRow.is-selected { background: #6fdc7822; border-color: #6fdc78; }
+.theme-green .MenuRow.is-selected:hover { background: #6fdc7844; border-color: #6fdc78; }
 .theme-green .ScoreSelfCard { background: #6fdc7818; border-color: #6fdc78; }
-.theme-green .ScoreRow.is-self { background: #6fdc7822; }
+.theme-green .ScoreRow.is-self { background: #6fdc7822; border-bottom-color: #6fdc7844; }
+.theme-green .ScoreHeader { border-top-color: #6fdc7866; border-bottom-color: #6fdc7866; }
+.theme-green .ScoreHeader .ScoreCur.sort-active, .theme-green .ScoreHeader .ScoreTot.sort-active { color: #6fdc78; }
 
 .theme-red .ph-bar { background: #e05a5a; }
 .theme-red .ph-stat-fill { background: linear-gradient(to right, #a83a3a, #e05a5a); }
 .theme-red .ph-stat-val, .theme-red .ScoreSelfRank, .theme-red .ScoreSelfStatVal,
 .theme-red .ScoreRank, .theme-red .ScoreCur, .theme-red .MenuPage, .theme-red .ScoreHead.sort-active { color: #e05a5a; }
 .theme-red .MenuFilterBtn.active { background: #e05a5a22; border-color: #e05a5a; }
+.theme-red .MenuFilterBtn.active:hover { background: #e05a5a44; border-color: #e05a5a; }
+.theme-red .MenuFilterBtn:hover { border-color: #e05a5a66; }
+.theme-red .MenuFilterBtn:active { border-color: #e05a5a; }
+.theme-red .MenuFooterBtn:hover { border-color: #e05a5a66; }
+.theme-red .MenuFooterBtn:active { border-color: #e05a5a; }
+.theme-red .MenuRow:hover { border-color: #e05a5a66; }
+.theme-red .MenuRow:active { border-color: #e05a5a; }
+.theme-red .MenuRow.is-selected { background: #e05a5a22; border-color: #e05a5a; }
+.theme-red .MenuRow.is-selected:hover { background: #e05a5a44; border-color: #e05a5a; }
 .theme-red .ScoreSelfCard { background: #e05a5a18; border-color: #e05a5a; }
-.theme-red .ScoreRow.is-self { background: #e05a5a22; }
+.theme-red .ScoreRow.is-self { background: #e05a5a22; border-bottom-color: #e05a5a44; }
+.theme-red .ScoreHeader { border-top-color: #e05a5a66; border-bottom-color: #e05a5a66; }
+.theme-red .ScoreHeader .ScoreCur.sort-active, .theme-red .ScoreHeader .ScoreTot.sort-active { color: #e05a5a; }
 
 .theme-purple .ph-bar { background: #b07cff; }
 .theme-purple .ph-stat-fill { background: linear-gradient(to right, #7a4fc4, #b07cff); }
 .theme-purple .ph-stat-val, .theme-purple .ScoreSelfRank, .theme-purple .ScoreSelfStatVal,
 .theme-purple .ScoreRank, .theme-purple .ScoreCur, .theme-purple .MenuPage, .theme-purple .ScoreHead.sort-active { color: #b07cff; }
 .theme-purple .MenuFilterBtn.active { background: #b07cff22; border-color: #b07cff; }
+.theme-purple .MenuFilterBtn.active:hover { background: #b07cff44; border-color: #b07cff; }
+.theme-purple .MenuFilterBtn:hover { border-color: #b07cff66; }
+.theme-purple .MenuFilterBtn:active { border-color: #b07cff; }
+.theme-purple .MenuFooterBtn:hover { border-color: #b07cff66; }
+.theme-purple .MenuFooterBtn:active { border-color: #b07cff; }
+.theme-purple .MenuRow:hover { border-color: #b07cff66; }
+.theme-purple .MenuRow:active { border-color: #b07cff; }
+.theme-purple .MenuRow.is-selected { background: #b07cff22; border-color: #b07cff; }
+.theme-purple .MenuRow.is-selected:hover { background: #b07cff44; border-color: #b07cff; }
 .theme-purple .ScoreSelfCard { background: #b07cff18; border-color: #b07cff; }
-.theme-purple .ScoreRow.is-self { background: #b07cff22; }
+.theme-purple .ScoreRow.is-self { background: #b07cff22; border-bottom-color: #b07cff44; }
+.theme-purple .ScoreHeader { border-top-color: #b07cff66; border-bottom-color: #b07cff66; }
+.theme-purple .ScoreHeader .ScoreCur.sort-active, .theme-purple .ScoreHeader .ScoreTot.sort-active { color: #b07cff; }
 
 /* Preview chrome: theme picker (mirrors gui.theme) */
 .preview-controls {
