@@ -131,3 +131,14 @@ jobs:
             --target "$GITHUB_SHA" \
             --title "$VERSION" \
             --notes-file release-artifacts/release_notes.md
+
+      - name: Keep Only The Four Latest Releases
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release list --repo "$GITHUB_REPOSITORY" --exclude-drafts --limit 100 \
+            --json tagName --jq '.[4:][].tagName' \
+            | while read -r tag; do
+                [ -n "$tag" ] || continue
+                gh release delete "$tag" --repo "$GITHUB_REPOSITORY" --yes --cleanup-tag
+              done
