@@ -1,3 +1,4 @@
+using System.Reflection;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Modules.Commands;
@@ -16,8 +17,24 @@ namespace Challenges
             switch (subCommand.ToLowerInvariant())
             {
                 case "reload":
-                    ReloadAll();
-                    command.ReplyToCommand(Localizer["admin.reload"]);
+                    try
+                    {
+                        ReloadAll();
+                        command.ReplyToCommand(Localizer["admin.reload"]);
+                    }
+                    catch (Exception ex)
+                    {
+                        if (ClassInstances.Count == 0)
+                        {
+                            InitializeClasses(isHotReloaded: true);
+                        }
+
+                        string message = Localizer["core.faultyconfig"].Value
+                            .Replace("{config}", Config.GetConfigPath())
+                            .Replace("{error}", FormatReloadError(ex));
+                        Console.WriteLine(message);
+                        command.ReplyToCommand(message);
+                    }
                     break;
                 case "disable":
                     Config.Enabled = false;
@@ -52,14 +69,24 @@ namespace Challenges
 
         private void ReloadAll()
         {
-            DestroyClasses();
-            // Config.Reload updates the config instance in place; it does not call OnConfigParsed.
+            // Config.Reload updates in place (no OnConfigParsed). Reload before teardown
+            // so a bad Challenges.json does not leave the plugin without classes.
             Config.Reload();
+            DestroyClasses();
             _globalStates[GlobalStates.GlobalConfig] = Config;
             LogCatalogMismatches();
             LoadChallengeFiles();
             LoadSchedules();
             InitializeClasses(isHotReloaded: true);
+        }
+
+        private static string FormatReloadError(Exception ex)
+        {
+            Exception root = ex.GetBaseException();
+            return root is TargetException
+                ? "Challenges.json is empty or a nested section is null; "
+                    + "gui, notifications, discord, and temp_data must be objects."
+                : root.Message;
         }
     }
 }
