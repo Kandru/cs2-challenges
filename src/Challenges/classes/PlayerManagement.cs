@@ -1,7 +1,6 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Commands;
-using CounterStrikeSharp.API.Modules.Extensions;
 using CounterStrikeSharp.API.Core.Translations;
 using CounterStrikeSharp.API.Modules.Entities;
 using CounterStrikeSharp.API.Modules.Events;
@@ -11,27 +10,18 @@ using Challenges.Huds;
 using Challenges.Utils;
 using Microsoft.Extensions.Localization;
 using System.Globalization;
-using System.Text.Json;
 
 namespace Challenges.Classes
 {
     public class PlayerManagement : ClassesBlueprint
     {
-        private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
         private const string MenuCommandDescription = "Toggle challenges menu";
 
         public PlayerManagement(Dictionary<GlobalStates, object> globalState, IStringLocalizer localizer, bool isHotReloaded)
             : base(globalState, localizer, isHotReloaded)
         {
             Commands = BuildMenuCommands(GlobalConfig.MenuCommands);
-
-            if (isHotReloaded)
-            {
-                foreach (CCSPlayerController player in Players.GetHumans())
-                {
-                    LoadPlayerData(player);
-                }
-            }
+            Server.NextFrame(LoadOnlinePlayers);
         }
 
         public override List<string> Events =>
@@ -39,6 +29,7 @@ namespace Challenges.Classes
             "EventPlayerConnectFull",
             "EventPlayerDisconnect",
             "EventPlayerChat",
+            "EventRoundStart",
         ];
 
         public override Dictionary<string, CommandBinding> Commands { get; }
@@ -71,27 +62,15 @@ namespace Challenges.Classes
                 : "css_" + name;
         }
 
-        private string PlayersDir => Path.Combine(
-            Path.GetDirectoryName(GlobalConfig.GetConfigPath()) ?? ".",
-            "players");
-
         public HookResult EventPlayerConnectFull(EventPlayerConnectFull @event, GameEventInfo info)
         {
-            CCSPlayerController? player = @event.Userid;
-            if (!Players.IsHumanViewer(player))
-            {
-                return HookResult.Continue;
-            }
+            ScheduleLoad(@event.Userid);
+            return HookResult.Continue;
+        }
 
-            Server.NextFrame(() =>
-            {
-                if (!player.IsValid || string.IsNullOrEmpty(player.NetworkIDString))
-                {
-                    return;
-                }
-
-                LoadPlayerData(player);
-            });
+        public HookResult EventRoundStart(EventRoundStart @event, GameEventInfo info)
+        {
+            LoadOnlinePlayers();
             return HookResult.Continue;
         }
 
@@ -103,7 +82,7 @@ namespace Challenges.Classes
                 return HookResult.Continue;
             }
 
-            WritePlayerFile(player, state);
+            Save(player, state);
             CustomHud.ReleasePlayer(player);
             PlayerStates.Remove(player);
             GetClass<ChallengeEngine>().ForgetPlayer(state);
@@ -138,7 +117,7 @@ namespace Challenges.Classes
 
             PlayerState state = GetPlayerState(player);
             state.Language = language;
-            PlayerLanguageManager.SetLanguage(new SteamID(player.NetworkIDString), new CultureInfo(language));
+            TrySetLanguage(player.NetworkIDString, language);
             Server.NextFrame(() =>
             {
                 if (!player.IsValid || !PlayerStates.ContainsKey(player))
@@ -176,16 +155,41 @@ namespace Challenges.Classes
         {
             foreach ((CCSPlayerController player, PlayerState state) in PlayerStates)
             {
-                if (player.IsValid)
-                {
-                    WritePlayerFile(player, state);
-                }
+                Save(player, state);
             }
-            PlayerStates.Clear();
         }
 
-        private void LoadPlayerData(CCSPlayerController player)
+        private void ScheduleLoad(CCSPlayerController? player)
         {
+            if (!Players.IsHumanViewer(player))
+            {
+                return;
+            }
+
+            Server.NextFrame(() =>
+            {
+                if (player.IsValid)
+                {
+                    Load(player);
+                }
+            });
+        }
+
+        private void LoadOnlinePlayers()
+        {
+            foreach (CCSPlayerController player in Players.GetHumans())
+            {
+                Load(player);
+            }
+        }
+
+        private void Load(CCSPlayerController player)
+        {
+            if (!Players.IsHumanViewer(player))
+            {
+                return;
+            }
+
             string steamId = player.NetworkIDString;
             if (string.IsNullOrEmpty(steamId))
             {
@@ -193,63 +197,61 @@ namespace Challenges.Classes
             }
 
             PlayerState state = GetPlayerState(player);
-            string path = PlayerFilePath(steamId);
-
-            if (File.Exists(path))
+            if (state.Loaded)
             {
-                try
-                {
-                    PlayerState? loaded = JsonSerializer.Deserialize<PlayerState>(File.ReadAllText(path), JsonOptions);
-                    if (loaded != null)
-                    {
-                        state.Username = loaded.Username;
-                        state.SteamId = loaded.SteamId;
-                        state.ClanTag = loaded.ClanTag;
-                        state.Language = loaded.Language;
-                        state.Challenges = loaded.Challenges;
-                        state.Statistics = loaded.Statistics;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    DebugPrint(ex.Message);
-                }
+                return;
             }
 
-            state.Username = player.PlayerName;
-            state.SteamId = steamId;
-            state.ClanTag = player.Clan;
-            if (!string.IsNullOrEmpty(state.Language))
+            string path = PlayerFiles.FilePath(GlobalConfig, steamId);
+            PlayerState? saved = PlayerFiles.TryRead(path, ex => DebugPrint(ex.Message));
+            if (saved != null)
             {
-                try
-                {
-                    PlayerLanguageManager.SetLanguage(new SteamID(steamId), new CultureInfo(state.Language));
-                }
-                catch
-                {
-                }
+                state.CopyProgressFrom(saved);
             }
+
+            ApplyIdentity(player, state, steamId);
+            state.Loaded = true;
+            TrySetLanguage(steamId, state.Language);
         }
 
-        private void WritePlayerFile(CCSPlayerController player, PlayerState state)
+        private void Save(CCSPlayerController player, PlayerState state)
         {
-            string steamId = player.NetworkIDString;
+            string steamId = state.SteamId;
+            if (player.IsValid && !string.IsNullOrEmpty(player.NetworkIDString))
+            {
+                steamId = player.NetworkIDString;
+                ApplyIdentity(player, state, steamId);
+            }
+
             if (string.IsNullOrEmpty(steamId))
             {
                 return;
             }
 
-            state.Username = player.PlayerName;
-            state.SteamId = steamId;
-            state.ClanTag = player.Clan;
-            File.WriteAllText(PlayerFilePath(steamId), JsonSerializer.Serialize(state, JsonOptions));
+            PlayerFiles.Write(PlayerFiles.FilePath(GlobalConfig, steamId), state);
         }
 
-        private string PlayerFilePath(string steamId)
+        private static void ApplyIdentity(CCSPlayerController player, PlayerState state, string steamId)
         {
-            string safe = string.Concat(steamId.Split(Path.GetInvalidFileNameChars()));
-            Directory.CreateDirectory(PlayersDir);
-            return Path.Combine(PlayersDir, $"{safe}.json");
+            state.Username = player.PlayerName;
+            state.SteamId = steamId;
+            state.ClanTag = player.Clan ?? string.Empty;
+        }
+
+        private void TrySetLanguage(string steamId, string language)
+        {
+            if (string.IsNullOrEmpty(steamId) || string.IsNullOrEmpty(language))
+            {
+                return;
+            }
+
+            try
+            {
+                PlayerLanguageManager.SetLanguage(new SteamID(steamId), new CultureInfo(language));
+            }
+            catch
+            {
+            }
         }
     }
 }

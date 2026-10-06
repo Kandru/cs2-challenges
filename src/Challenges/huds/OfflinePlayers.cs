@@ -1,21 +1,16 @@
-using System.Text.Json;
-using CounterStrikeSharp.API.Modules.Extensions;
 using Challenges.Configs;
+using Challenges.Utils;
 
 namespace Challenges.Huds
 {
     /// <summary>Disk-backed player rows for the scoreboard All filter.</summary>
     internal static class OfflinePlayers
     {
-        private static readonly JsonSerializerOptions JsonOptions = new();
-
         public sealed record SavedPlayer(string SteamId, string Name, PlayerState State);
 
         public static IEnumerable<SavedPlayer> LoadAll()
         {
-            string dir = Path.Combine(
-                Path.GetDirectoryName(Context.Config.GetConfigPath()) ?? ".",
-                "players");
+            string dir = PlayerFiles.DirectoryPath(Context.Config);
             if (!Directory.Exists(dir))
             {
                 yield break;
@@ -32,24 +27,17 @@ namespace Challenges.Huds
 
         private static SavedPlayer? TryLoad(string path)
         {
-            try
-            {
-                PlayerState? loaded = JsonSerializer.Deserialize<PlayerState>(File.ReadAllText(path), JsonOptions);
-                if (loaded == null)
-                {
-                    return null;
-                }
-
-                string steamId = string.IsNullOrEmpty(loaded.SteamId)
-                    ? Path.GetFileNameWithoutExtension(path)
-                    : loaded.SteamId;
-                string name = string.IsNullOrEmpty(loaded.Username) ? steamId : loaded.Username;
-                return new SavedPlayer(steamId, name, loaded);
-            }
-            catch
+            PlayerState? loaded = PlayerFiles.TryRead(path);
+            if (loaded == null)
             {
                 return null;
             }
+
+            string steamId = string.IsNullOrEmpty(loaded.SteamId)
+                ? Path.GetFileNameWithoutExtension(path)
+                : loaded.SteamId;
+            string name = string.IsNullOrEmpty(loaded.Username) ? steamId : loaded.Username;
+            return new SavedPlayer(steamId, name, loaded);
         }
     }
 }

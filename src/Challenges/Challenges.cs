@@ -94,7 +94,6 @@ namespace Challenges
             DestroyClasses();
             _globalStates[GlobalStates.DuringRound] = false;
             _globalStates[GlobalStates.FreezeActive] = false;
-            ((Dictionary<CCSPlayerController, PlayerState>)_globalStates[GlobalStates.PlayerStates]).Clear();
         }
 
         private void InitializeClasses(bool isHotReloaded = false)
@@ -121,6 +120,7 @@ namespace Challenges
             }
             ClassInstances.Clear();
             CustomHud.Shutdown();
+            ((Dictionary<CCSPlayerController, PlayerState>)_globalStates[GlobalStates.PlayerStates]).Clear();
         }
 
         private void BindModuleHandlers(bool register)

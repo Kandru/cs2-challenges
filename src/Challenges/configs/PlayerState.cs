@@ -7,13 +7,14 @@ namespace Challenges.Configs
     {
         [JsonPropertyName("username")] public string Username { get; set; } = string.Empty;
         [JsonPropertyName("steamid")] public string SteamId { get; set; } = string.Empty;
-        [JsonPropertyName("clantag")] public string ClanTag { get; set; } = string.Empty;
+        [JsonPropertyName("clantag")] public string? ClanTag { get; set; } = string.Empty;
         [JsonPropertyName("language")] public string Language { get; set; } = string.Empty;
         /// <summary>scheduleKey → challengeId → taskId → progress</summary>
         [JsonPropertyName("challenges")]
         public Dictionary<string, Dictionary<string, Dictionary<string, TaskProgress>>> Challenges { get; set; } = new();
         [JsonPropertyName("statistics")] public PlayerStatistics Statistics { get; set; } = new();
 
+        [JsonIgnore] public bool Loaded;
         [JsonIgnore] public ActiveMenu ActiveMenu = ActiveMenu.None;
         [JsonIgnore] public int MenuPage;
         [JsonIgnore] public int ScoreboardPage;
@@ -34,6 +35,13 @@ namespace Challenges.Configs
         [JsonIgnore] public List<TrackerProgressItem> TrackerProgressItems = [];
         [JsonIgnore] public List<TrackerProgressItem> TrackerRuleBrokenQueue = [];
         [JsonIgnore] public string? TrackerFingerprint;
+
+        public void CopyProgressFrom(PlayerState other)
+        {
+            Language = other.Language;
+            Challenges = other.Challenges;
+            Statistics = other.Statistics;
+        }
     }
 
     public sealed class TrackerProgressItem
