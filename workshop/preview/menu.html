@@ -7,7 +7,7 @@
 </head>
 <body>
 <div class="stage" data-theme="gold">
-  <div class="preview-controls">
+  <div class="preview-controls preview-bar">
     <div class="preview-note">Fullscreen menu mock. Use theme swatches to preview <code>gui.theme</code>.</div>
     <div id="preview-themes" class="preview-themes"></div>
   </div>
@@ -30,8 +30,8 @@
               <button class="MenuFilterBtn is-disabled"><span class="MenuFilterLabel">Starting soon</span></button>
             </div>
             <div class="MenuRows">
-              <!-- Sorted by % desc, then active, then soonest start -->
-              <div class="MenuRow">
+              <!-- Sorted by % desc, then active, then soonest start. Click a card to open detail. -->
+              <div class="MenuRow is-selected" data-detail="ak">
                 <div class="MenuRowHead">
                   <div class="ph-stat-lab"><span class="ph-stat-name">Weapon: AK-47 With A Very Long Subtitle</span><span class="ph-stat-when">two days left</span><span class="ph-stat-val">70%</span></div>
                   <div class="ph-stat-track"><div class="ph-stat-fill p70"></div></div>
@@ -55,7 +55,7 @@
                   </div>
                 </div>
               </div>
-              <div class="MenuRow">
+              <div class="MenuRow" data-detail="knife">
                 <div class="MenuRowHead">
                   <div class="ph-stat-lab"><span class="ph-stat-name">Sharp and Deadly</span><span class="ph-stat-when">this week</span><span class="ph-stat-val">40%</span></div>
                   <div class="ph-stat-track"><div class="ph-stat-fill p40"></div></div>
@@ -88,7 +88,7 @@
                   </div>
                 </div>
               </div>
-              <div class="MenuRow">
+              <div class="MenuRow" data-detail="hs">
                 <div class="MenuRowHead">
                   <div class="ph-stat-lab"><span class="ph-stat-name">Headshots in a row</span><span class="ph-stat-when">one hour left</span><span class="ph-stat-val">30%</span></div>
                   <div class="ph-stat-track"><div class="ph-stat-fill p30"></div></div>
@@ -113,7 +113,7 @@
                   </div>
                 </div>
               </div>
-              <div class="MenuRow">
+              <div class="MenuRow" data-detail="awp">
                 <div class="MenuRowHead">
                   <div class="ph-stat-lab"><span class="ph-stat-name">AWP Master</span><span class="ph-stat-when">in a week</span><span class="ph-stat-val">0%</span></div>
                   <div class="ph-stat-track"><div class="ph-stat-fill p0"></div></div>
@@ -187,6 +187,19 @@
               <button class="MenuFooterBtn is-disabled">&lt;</button><span class="MenuPage">1 / 1</span><button class="MenuFooterBtn is-disabled">&gt;</button>
             </div>
           </div>
+          <div class="MenuDetail">
+            <div class="DetailTitleBar">
+              <button type="button" class="MenuFooterBtn" id="detail-back">Back</button>
+              <span class="DetailTitle" id="detail-title">Weapon: AK-47 With A Very Long Subtitle</span>
+            </div>
+            <div class="DetailRows" id="detail-rows"></div>
+            <div class="MenuListSpacer"></div>
+            <div class="MenuFooter">
+              <button type="button" class="MenuFooterBtn is-disabled">&lt;</button>
+              <span class="MenuPage">1 / 1</span>
+              <button type="button" class="MenuFooterBtn is-disabled">&gt;</button>
+            </div>
+          </div>
         </div>
         <div class="MenuCredit">Free plugin by kandru.net. Donations are welcome if you enjoy it. More plugins: github.com/kandru</div>
       </div>
@@ -194,6 +207,76 @@
   </div>
 </div>
 <script src="theme.js"></script>
-<script>PreviewTheme.mount('#Menu');</script>
+<script>
+PreviewTheme.mount('#Menu');
+const details = {
+  ak: {
+    title: 'Weapon: AK-47 With A Very Long Subtitle',
+    rows: [
+      { title: '5/5 AK-47 kills in a single round', rules: 'Weapon: AK47 · Enemy kill · Against a player', done: true },
+      { title: '10/10 AK-47 kills', rules: 'Weapon: AK47 · Enemy kill · Against a player', done: true },
+      { title: '5/25 AK-47 kills', rules: 'Weapon: AK47 · Enemy kill · Against a player', done: false },
+    ],
+  },
+  knife: {
+    title: 'Sharp and Deadly',
+    rows: [
+      { title: '5/5 knife kills', rules: 'Weapon: KNIFE · Enemy kill', done: true },
+      { title: '2/10 knife kills without taking damage', rules: 'Weapon: KNIFE · Resets if: Rule broken: took damage', done: false },
+      { title: '0/25 knife kills', rules: 'Weapon: KNIFE · Enemy kill', done: false },
+    ],
+  },
+  hs: {
+    title: 'Headshots in a row',
+    rows: [
+      { title: '3/3 headshots', rules: 'Headshot · Against a player · Resets if: Rule broken: without headshot', done: true },
+      { title: '3/10 headshots', rules: 'Headshot · Against a player · Resets if: Rule broken: without headshot', done: false },
+      { title: '0/25 headshots', rules: 'Headshot · Against a player · Resets if: Rule broken: without headshot', done: false },
+    ],
+  },
+  awp: {
+    title: 'AWP Master',
+    rows: [
+      { title: '0/3 AWP kills', rules: 'Weapon: AWP · Enemy kill · Against a player', done: false },
+      { title: '0/10 AWP kills', rules: 'Weapon: AWP · Enemy kill · Against a player', done: false },
+      { title: '0/25 AWP kills', rules: 'Weapon: AWP · Enemy kill · Against a player', done: false },
+    ],
+  },
+};
+const root = document.getElementById('Menu');
+const detailRows = document.getElementById('detail-rows');
+const detailTitle = document.getElementById('detail-title');
+function paintDetail(key) {
+  const data = details[key];
+  if (!data) return;
+  detailTitle.textContent = data.title;
+  detailRows.innerHTML = data.rows.map(r =>
+    `<div class="DetailRow${r.done ? ' is-done' : ''}"><span class="DetailTaskTitle">${r.title}</span><span class="DetailTaskRules">${r.rules}</span></div>`
+  ).join('');
+}
+function openDetail(key) {
+  root.classList.add('detail-open');
+  document.querySelectorAll('.MenuRow[data-detail]').forEach(r => {
+    r.classList.toggle('is-selected', r.dataset.detail === key);
+  });
+  paintDetail(key);
+}
+function closeDetail() {
+  root.classList.remove('detail-open');
+  document.querySelectorAll('.MenuRow[data-detail]').forEach(r => r.classList.remove('is-selected'));
+}
+document.querySelectorAll('.MenuRow[data-detail]').forEach(row => {
+  row.addEventListener('click', () => {
+    const key = row.dataset.detail;
+    if (row.classList.contains('is-selected') && root.classList.contains('detail-open')) {
+      closeDetail();
+      return;
+    }
+    openDetail(key);
+  });
+});
+document.getElementById('detail-back').addEventListener('click', closeDetail);
+openDetail('ak');
+</script>
 </body>
 </html>

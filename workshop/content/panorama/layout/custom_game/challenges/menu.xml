@@ -38,7 +38,7 @@
 								</Button>
 							</Panel>
 							<Panel class="MenuRows" hittest="false">
-												<Panel id="ch-mrow-0" class="MenuRow empty" hittest="false">
+												<Button id="ch-mrow-0" class="MenuRow empty" hittest="true">
 													<Panel class="MenuRowHead" hittest="false">
 														<Panel class="ph-stat-lab" hittest="false">
 															<Label class="ph-stat-name stratum-bold-tf" hittest="false" text="{s:m0_title}" />
@@ -97,8 +97,8 @@
 															</Panel>
 														</Panel>
 													</Panel>
-												</Panel>
-												<Panel id="ch-mrow-1" class="MenuRow empty" hittest="false">
+												</Button>
+												<Button id="ch-mrow-1" class="MenuRow empty" hittest="true">
 													<Panel class="MenuRowHead" hittest="false">
 														<Panel class="ph-stat-lab" hittest="false">
 															<Label class="ph-stat-name stratum-bold-tf" hittest="false" text="{s:m1_title}" />
@@ -157,8 +157,8 @@
 															</Panel>
 														</Panel>
 													</Panel>
-												</Panel>
-												<Panel id="ch-mrow-2" class="MenuRow empty" hittest="false">
+												</Button>
+												<Button id="ch-mrow-2" class="MenuRow empty" hittest="true">
 													<Panel class="MenuRowHead" hittest="false">
 														<Panel class="ph-stat-lab" hittest="false">
 															<Label class="ph-stat-name stratum-bold-tf" hittest="false" text="{s:m2_title}" />
@@ -217,8 +217,8 @@
 															</Panel>
 														</Panel>
 													</Panel>
-												</Panel>
-												<Panel id="ch-mrow-3" class="MenuRow empty" hittest="false">
+												</Button>
+												<Button id="ch-mrow-3" class="MenuRow empty" hittest="true">
 													<Panel class="MenuRowHead" hittest="false">
 														<Panel class="ph-stat-lab" hittest="false">
 															<Label class="ph-stat-name stratum-bold-tf" hittest="false" text="{s:m3_title}" />
@@ -277,8 +277,8 @@
 															</Panel>
 														</Panel>
 													</Panel>
-												</Panel>
-												<Panel id="ch-mrow-4" class="MenuRow empty" hittest="false">
+												</Button>
+												<Button id="ch-mrow-4" class="MenuRow empty" hittest="true">
 													<Panel class="MenuRowHead" hittest="false">
 														<Panel class="ph-stat-lab" hittest="false">
 															<Label class="ph-stat-name stratum-bold-tf" hittest="false" text="{s:m4_title}" />
@@ -337,7 +337,7 @@
 															</Panel>
 														</Panel>
 													</Panel>
-												</Panel>
+												</Button>
 							</Panel>
 							<Label class="MenuEmpty stratum-bold-tf" hittest="false" text="{s:menu_empty}" />
 							<Panel class="MenuListSpacer" hittest="false" />
@@ -477,6 +477,46 @@
 								<Label class="MenuPage stratum-bold-tf" hittest="false" text="{s:score_page}" />
 								<Button id="ch-score-next" class="MenuFooterBtn">
 									<Label class="ph-nav-label stratum-bold-tf" hittest="false" text="{s:score_next}" />
+								</Button>
+							</Panel>
+						</Panel>
+						<Panel class="MenuDetail" hittest="true">
+							<Panel class="DetailTitleBar" hittest="true">
+								<Button id="ch-detail-back" class="MenuFooterBtn">
+									<Label class="ph-nav-label stratum-bold-tf" hittest="false" text="{s:detail_back}" />
+								</Button>
+								<Label class="DetailTitle stratum-bold-tf" hittest="false" text="{s:detail_title}" />
+							</Panel>
+							<Panel class="DetailRows" hittest="false">
+								<Panel id="ch-drow-0" class="DetailRow empty" hittest="false">
+									<Label class="DetailTaskTitle stratum-bold-tf" hittest="false" text="{s:d0_title}" />
+									<Label class="DetailTaskRules stratum-bold-tf" hittest="false" text="{s:d0_rules}" />
+								</Panel>
+								<Panel id="ch-drow-1" class="DetailRow empty" hittest="false">
+									<Label class="DetailTaskTitle stratum-bold-tf" hittest="false" text="{s:d1_title}" />
+									<Label class="DetailTaskRules stratum-bold-tf" hittest="false" text="{s:d1_rules}" />
+								</Panel>
+								<Panel id="ch-drow-2" class="DetailRow empty" hittest="false">
+									<Label class="DetailTaskTitle stratum-bold-tf" hittest="false" text="{s:d2_title}" />
+									<Label class="DetailTaskRules stratum-bold-tf" hittest="false" text="{s:d2_rules}" />
+								</Panel>
+								<Panel id="ch-drow-3" class="DetailRow empty" hittest="false">
+									<Label class="DetailTaskTitle stratum-bold-tf" hittest="false" text="{s:d3_title}" />
+									<Label class="DetailTaskRules stratum-bold-tf" hittest="false" text="{s:d3_rules}" />
+								</Panel>
+								<Panel id="ch-drow-4" class="DetailRow empty" hittest="false">
+									<Label class="DetailTaskTitle stratum-bold-tf" hittest="false" text="{s:d4_title}" />
+									<Label class="DetailTaskRules stratum-bold-tf" hittest="false" text="{s:d4_rules}" />
+								</Panel>
+							</Panel>
+							<Panel class="MenuListSpacer" hittest="false" />
+							<Panel class="MenuFooter" hittest="true">
+								<Button id="ch-detail-prev" class="MenuFooterBtn">
+									<Label class="ph-nav-label stratum-bold-tf" hittest="false" text="{s:detail_prev}" />
+								</Button>
+								<Label class="MenuPage stratum-bold-tf" hittest="false" text="{s:detail_page}" />
+								<Button id="ch-detail-next" class="MenuFooterBtn">
+									<Label class="ph-nav-label stratum-bold-tf" hittest="false" text="{s:detail_next}" />
 								</Button>
 							</Panel>
 						</Panel>

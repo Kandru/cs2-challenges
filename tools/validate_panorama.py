@@ -51,6 +51,7 @@ MENU_LIST_SLOTS = 5
 MENU_SCORE_SLOTS = 12
 MENU_TASK_SLOTS = 3
 MENU_BY_SLOTS = 6
+MENU_DETAIL_SLOTS = 5
 
 TRACKER_IDS = (
     {"Tracker", "ch-ttimer", "ch-ttimer-fill"}
@@ -84,12 +85,16 @@ MENU_IDS = (
         "ch-filter-ending",
         "ch-filter-starting",
         "ch-spin",
+        "ch-detail-back",
+        "ch-detail-prev",
+        "ch-detail-next",
     }
     | {f"ch-mrow-{i}" for i in range(MENU_LIST_SLOTS)}
     | {f"ch-mfill-{i}" for i in range(MENU_LIST_SLOTS)}
     | {f"ch-mtask-{i}-{t}" for i in range(MENU_LIST_SLOTS) for t in range(MENU_TASK_SLOTS)}
     | {f"ch-mby-{i}-{b}" for i in range(MENU_LIST_SLOTS) for b in range(MENU_BY_SLOTS)}
     | {f"ch-srow-{i}" for i in range(MENU_SCORE_SLOTS)}
+    | {f"ch-drow-{i}" for i in range(MENU_DETAIL_SLOTS)}
 )
 MENU_VARS = (
     {
@@ -123,6 +128,11 @@ MENU_VARS = (
         "spin_rank",
         "spin_l_cur",
         "spin_l_tot",
+        "detail_title",
+        "detail_page",
+        "detail_prev",
+        "detail_next",
+        "detail_back",
     }
     | {f"m{i}_title" for i in range(MENU_LIST_SLOTS)}
     | {f"m{i}_when" for i in range(MENU_LIST_SLOTS)}
@@ -133,6 +143,8 @@ MENU_VARS = (
     | {f"s{i}_name" for i in range(MENU_SCORE_SLOTS)}
     | {f"s{i}_cur" for i in range(MENU_SCORE_SLOTS)}
     | {f"s{i}_tot" for i in range(MENU_SCORE_SLOTS)}
+    | {f"d{i}_title" for i in range(MENU_DETAIL_SLOTS)}
+    | {f"d{i}_rules" for i in range(MENU_DETAIL_SLOTS)}
 )
 REQUIRED_CLASSES = {
     "ph-off",
@@ -142,6 +154,8 @@ REQUIRED_CLASSES = {
     "is-empty",
     "is-disabled",
     "is-you",
+    "is-selected",
+    "detail-open",
     "active",
     "sort-active",
     "empty",

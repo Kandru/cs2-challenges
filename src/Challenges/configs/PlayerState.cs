@@ -20,6 +20,10 @@ namespace Challenges.Configs
         [JsonIgnore] public string MenuFilter = "progress";
         [JsonIgnore] public ScoreboardSort ScoreboardSort = ScoreboardSort.Solved;
         [JsonIgnore] public ScoreboardFilter ScoreboardFilter = ScoreboardFilter.Online;
+        [JsonIgnore] public string? MenuDetailChallengeId;
+        [JsonIgnore] public int MenuDetailPage;
+        /// <summary>Challenge ids for the currently painted list slots (click target lookup).</summary>
+        [JsonIgnore] public readonly string?[] MenuRowChallengeIds = new string?[5];
         [JsonIgnore] public bool TrackerFreezeVisible;
         [JsonIgnore] public DateTime? TrackerFreezeUntil;
         [JsonIgnore] public float TrackerFreezeDuration;
@@ -28,6 +32,7 @@ namespace Challenges.Configs
         [JsonIgnore] public bool TrackerUpNextPending;
         [JsonIgnore] public bool TrackerShowingUpNext;
         [JsonIgnore] public List<TrackerProgressItem> TrackerProgressItems = [];
+        [JsonIgnore] public List<TrackerProgressItem> TrackerRuleBrokenQueue = [];
         [JsonIgnore] public string? TrackerFingerprint;
     }
 

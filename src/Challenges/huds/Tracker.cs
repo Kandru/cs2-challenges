@@ -63,12 +63,12 @@ namespace Challenges.Huds
                 return;
             }
 
+            ClearProgressState(state);
+            state.TrackerRuleBrokenQueue.Clear();
             state.TrackerFreezeVisible = true;
             state.TrackerFreezeDuration = freezeSec;
             state.TrackerFreezeUntil = DateTime.UtcNow.AddSeconds(freezeSec);
-            state.TrackerShowingUpNext = false;
-            state.TrackerUpNextPending = false;
-            state.TrackerFadeUntil = null;
+            state.TrackerFingerprint = null;
             Paint(player, state);
             PaintTimer(player, state);
         }
@@ -80,6 +80,10 @@ namespace Challenges.Huds
                 state.TrackerFreezeVisible = false;
                 state.TrackerFreezeUntil = null;
                 state.TrackerFreezeDuration = 0;
+                if (TryShowNextRuleBroken(player, state))
+                {
+                    return;
+                }
             }
 
             Refresh(player);
@@ -90,6 +94,7 @@ namespace Challenges.Huds
             if (Context.GetState(player) is { } state)
             {
                 ClearProgressState(state);
+                state.TrackerRuleBrokenQueue.Clear();
                 state.TrackerFreezeVisible = false;
                 state.TrackerFreezeUntil = null;
                 state.TrackerFreezeDuration = 0;
@@ -106,6 +111,50 @@ namespace Challenges.Huds
                 return;
             }
 
+            BeginProgress(player, state, items);
+        }
+
+        public static void ShowRuleBroken(CCSPlayerController player, string challengeId, string taskId)
+        {
+            if (!Players.IsHumanViewer(player) || Context.GetState(player) is not { } state)
+            {
+                return;
+            }
+
+            state.TrackerRuleBrokenQueue.Add(new TrackerProgressItem
+            {
+                ChallengeId = challengeId,
+                TaskId = taskId,
+                Kind = TrackerProgressKind.RuleBroken,
+            });
+
+            if (!state.TrackerFreezeVisible && !IsShowingRuleBroken(state))
+            {
+                TryShowNextRuleBroken(player, state);
+            }
+        }
+
+        private static bool IsShowingRuleBroken(PlayerState state) =>
+            state.TrackerProgressUntil != null && HasKind(state, TrackerProgressKind.RuleBroken);
+
+        private static bool TryShowNextRuleBroken(CCSPlayerController player, PlayerState state)
+        {
+            if (state.TrackerRuleBrokenQueue.Count == 0)
+            {
+                return false;
+            }
+
+            TrackerProgressItem next = state.TrackerRuleBrokenQueue[0];
+            state.TrackerRuleBrokenQueue.RemoveAt(0);
+            BeginProgress(player, state, [next]);
+            return true;
+        }
+
+        private static void BeginProgress(
+            CCSPlayerController player,
+            PlayerState state,
+            IReadOnlyList<TrackerProgressItem> items)
+        {
             state.TrackerProgressItems.Clear();
             state.TrackerProgressItems.AddRange(items);
             state.TrackerShowingUpNext = false;
@@ -116,17 +165,6 @@ namespace Challenges.Huds
             Paint(player, state);
             PaintTimer(player, state);
         }
-
-        public static void ShowRuleBroken(CCSPlayerController player, string challengeId, string taskId) =>
-            ShowProgress(player,
-            [
-                new TrackerProgressItem
-                {
-                    ChallengeId = challengeId,
-                    TaskId = taskId,
-                    Kind = TrackerProgressKind.RuleBroken,
-                },
-            ]);
 
         /// <summary>Cheap enough for the staggered OnTick: only paints while a mode is active.</summary>
         public static void Refresh(CCSPlayerController player)
@@ -175,7 +213,10 @@ namespace Challenges.Huds
 
             if (state.TrackerProgressUntil is { } until && now >= until)
             {
+                bool drainRules = HasKind(state, TrackerProgressKind.RuleBroken)
+                    || state.TrackerRuleBrokenQueue.Count > 0;
                 state.TrackerProgressUntil = null;
+
                 if (state.TrackerShowingUpNext)
                 {
                     state.TrackerShowingUpNext = false;
@@ -183,7 +224,8 @@ namespace Challenges.Huds
                     return;
                 }
 
-                if (HasChallengeSolved(state)
+                if (!drainRules
+                    && HasKind(state, TrackerProgressKind.ChallengeSolved)
                     && TryNextUnsolved(state, Context.Schedule) != null)
                 {
                     BeginFadeOut(player, state, upNext: true);
@@ -191,6 +233,11 @@ namespace Challenges.Huds
                 }
 
                 ClearProgressState(state);
+                if (TryShowNextRuleBroken(player, state))
+                {
+                    return;
+                }
+
                 if (!state.TrackerFreezeVisible)
                 {
                     BeginFadeOut(player, state, upNext: false);
@@ -288,24 +335,12 @@ namespace Challenges.Huds
             state.TrackerFadeUntil = null;
         }
 
-        private static bool HasChallengeSolved(PlayerState state)
+        private static bool HasKind(PlayerState state, TrackerProgressKind kind)
         {
-            foreach (TrackerProgressItem item in state.TrackerProgressItems)
+            List<TrackerProgressItem> items = state.TrackerProgressItems;
+            for (int i = 0; i < items.Count; i++)
             {
-                if (item.Kind == TrackerProgressKind.ChallengeSolved)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        private static bool HasRuleBroken(PlayerState state)
-        {
-            foreach (TrackerProgressItem item in state.TrackerProgressItems)
-            {
-                if (item.Kind == TrackerProgressKind.RuleBroken)
+                if (items[i].Kind == kind)
                 {
                     return true;
                 }
@@ -367,15 +402,30 @@ namespace Challenges.Huds
                 ? BuildProgressRows(player, state, schedule, upNext)
                 : BuildFreezeRows(player, state, schedule);
 
-            string heading = upNext
-                ? Context.Text(player, "hud.tracker.up_next")
-                : HasRuleBroken(state)
-                    ? Context.Text(player, "hud.tracker.rule_broken")
-                    : Context.Text(player, "hud.tracker.title");
-            string count = Context.FormatCount(
-                player,
-                ChallengeProgress.CountSolvedInSchedule(state, schedule),
-                schedule.Challenges.Count);
+            string heading;
+            string count;
+            if (upNext)
+            {
+                heading = Context.Text(player, "hud.tracker.up_next");
+                count = Context.FormatCount(
+                    player,
+                    ChallengeProgress.CountSolvedInSchedule(state, schedule),
+                    schedule.Challenges.Count);
+            }
+            else if (progressMode && TryRuleBrokenTitle(player, state, schedule, out string ruleTitle))
+            {
+                heading = ruleTitle;
+                count = string.Empty;
+            }
+            else
+            {
+                heading = Context.Text(player, "hud.tracker.title");
+                count = Context.FormatCount(
+                    player,
+                    ChallengeProgress.CountSolvedInSchedule(state, schedule),
+                    schedule.Challenges.Count);
+            }
+
             string tasksHead = Context.Text(player, "hud.menu.tasks");
             StringBuilder fingerprint = new StringBuilder(heading.Length + count.Length + rows.Count * 96)
                 .Append(heading).Append('|').Append(count).Append('|').Append(upNext ? '1' : '0');
@@ -585,9 +635,15 @@ namespace Challenges.Huds
                     break;
 
                 case TrackerProgressKind.RuleBroken:
-                    if (focus != null)
+                    foreach (ChallengeTask reset in CollectResetTargets(challenge, focus))
                     {
-                        tasks.Add(MakeTaskEntry(state, scheduleKey, challenge.Id, focus, done: false, broken: true));
+                        tasks.Add(MakeTaskEntry(
+                            state,
+                            scheduleKey,
+                            challenge.Id,
+                            reset,
+                            done: false,
+                            broken: true));
                     }
 
                     break;
@@ -635,14 +691,73 @@ namespace Challenges.Huds
             return tasks;
         }
 
-        private static ChallengeTask? FindTask(ChallengeDefinition challenge, string taskId)
+        private static ChallengeTask? FindTask(ChallengeDefinition challenge, string taskId) =>
+            challenge.TaskById.TryGetValue(taskId, out ChallengeTask? task) ? task : null;
+
+        private static bool TryRuleBrokenTitle(
+            CCSPlayerController player,
+            PlayerState state,
+            RunningSchedule schedule,
+            out string title)
         {
-            if (challenge.TaskById.TryGetValue(taskId, out ChallengeTask? task))
+            title = string.Empty;
+            List<TrackerProgressItem> items = state.TrackerProgressItems;
+            for (int i = 0; i < items.Count; i++)
             {
-                return task;
+                TrackerProgressItem item = items[i];
+                if (item.Kind != TrackerProgressKind.RuleBroken
+                    || !TryResolveChallenge(schedule, item.ChallengeId, out ChallengeDefinition challenge)
+                    || FindTask(challenge, item.TaskId) is not { } breaker)
+                {
+                    continue;
+                }
+
+                title = Titles.For(player, breaker.Title);
+                return title.Length > 0;
             }
 
-            return null;
+            return false;
+        }
+
+        private static List<ChallengeTask> CollectResetTargets(
+            ChallengeDefinition challenge,
+            ChallengeTask? breaker)
+        {
+            if (breaker == null)
+            {
+                return [];
+            }
+
+            List<ChallengeTask> resets = [];
+            List<ChallengeTask> notifies = [];
+            HashSet<string> seenReset = new(StringComparer.Ordinal);
+            HashSet<string> seenNotify = new(StringComparer.Ordinal);
+
+            foreach (ChallengeAction action in breaker.Actions)
+            {
+                bool isReset = action.Type is "task.reset_progress" or "task.reset_completed";
+                bool isNotify = action.Type is "notify.player.progress.rule_broken"
+                    or "notify.player.completed.rule_broken";
+                if (!isReset && !isNotify)
+                {
+                    continue;
+                }
+
+                List<ChallengeTask> bucket = isReset ? resets : notifies;
+                HashSet<string> seen = isReset ? seenReset : seenNotify;
+                foreach (string id in action.Values)
+                {
+                    if (!seen.Add(id)
+                        || FindTask(challenge, id) is not { Visible: true } target)
+                    {
+                        continue;
+                    }
+
+                    bucket.Add(target);
+                }
+            }
+
+            return resets.Count > 0 ? resets : notifies;
         }
 
         private static (ChallengeTask Task, bool Done, bool Broken, int Count, int Amount) MakeTaskEntry(

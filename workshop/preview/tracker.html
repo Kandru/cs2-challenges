@@ -13,7 +13,7 @@
     <button type="button" data-mode="progress">Single task progress</button>
     <button type="button" data-mode="taskSolved">Task solved + next</button>
     <button type="button" data-mode="challengeSolved">Challenge solved → Up next</button>
-    <button type="button" data-mode="ruleBroken">Rule broken</button>
+    <button type="button" data-mode="ruleBroken">Rule broken queue</button>
     <button type="button" data-mode="multi">Two challenges</button>
     <button type="button" data-mode="hide">Hide (fade out)</button>
     <div id="preview-themes" class="preview-themes"></div>
@@ -107,8 +107,12 @@ const scenes = {
     },
   },
   ruleBroken: {
-    title: 'Rule broken', count: '2 / 12', timed: true, holdMs: PROGRESS_HOLD_MS,
-    rows: [rowHtml('Sharp and Deadly', '40%', 'p40', [{ label: '0/10 knife kills while flashing', broken: true }])],
+    title: 'Rule broken: took damage', count: '', timed: true, holdMs: PROGRESS_HOLD_MS,
+    rows: [rowHtml('Sharp and Deadly', '40%', 'p40', [{ label: '0/10 knife kills without taking damage', broken: true }])],
+    upNext: {
+      title: 'Rule broken: without headshot', count: '', timed: true, holdMs: PROGRESS_HOLD_MS,
+      rows: [rowHtml('Headshots in a row', '30%', 'p30', [{ label: '0/10 headshots in a row', broken: true }])],
+    },
   },
   multi: {
     title: 'Challenges', count: '2 / 12', timed: true, holdMs: PROGRESS_HOLD_MS,
@@ -121,7 +125,7 @@ const scenes = {
 
 function paint(scene) {
   titleEl.textContent = scene.title;
-  countEl.textContent = scene.count;
+  countEl.textContent = scene.count ?? '';
   body.innerHTML = scene.rows.join('');
 }
 
