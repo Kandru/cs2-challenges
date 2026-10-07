@@ -11,7 +11,10 @@
 			<Panel class="ph-bar ph-bar-left" hittest="false" />
 			<Panel class="TrackerContent" hittest="false">
 				<Panel class="ph-titlebar" hittest="false">
-					<Label class="ph-title additive stratum-bold-tf" hittest="false" text="{s:tr_title}" />
+					<Panel class="TrackerTitleStack" hittest="false">
+						<Label class="ph-title additive stratum-bold-tf" hittest="false" text="{s:tr_title}" />
+						<Label id="ch-tr-hint" class="TrackerHint stratum-bold-tf is-off" hittest="false" text="{s:tr_hint}" />
+					</Panel>
 					<Label class="ph-money TrackerCount stratum-bold-tf" hittest="false" text="{s:tr_count}" />
 				</Panel>
 				<Panel class="TrackerBody" hittest="false">

@@ -631,6 +631,7 @@ namespace Challenges.Utils
         private static int LayoutIndexForPanel(string panelId)
         {
             if (panelId == Tracker.Panel
+                || panelId == Tracker.HintId
                 || panelId.StartsWith("ch-trow-", StringComparison.Ordinal)
                 || panelId.StartsWith("ch-tfill-", StringComparison.Ordinal)
                 || panelId.StartsWith("ch-ttask-", StringComparison.Ordinal)

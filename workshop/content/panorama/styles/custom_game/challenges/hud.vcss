@@ -356,6 +356,42 @@ Label.TrackerCount
 	margin-left: 10px;
 }
 
+.Tracker .ph-titlebar
+{
+	height: fit-children;
+	min-height: 44px;
+	padding-top: 8px;
+	padding-bottom: 8px;
+}
+
+.TrackerTitleStack
+{
+	width: fill-parent-flow( 1.0 );
+	height: fit-children;
+	flow-children: down;
+	vertical-align: middle;
+}
+
+.Tracker .ph-title
+{
+	width: 100%;
+}
+
+Label.TrackerHint
+{
+	width: 100%;
+	font-size: 14;
+	letter-spacing: 0px;
+	text-transform: none;
+	color: #9aa2ac;
+	margin-top: 2px;
+}
+
+Label.TrackerHint.is-off
+{
+	visibility: collapse;
+}
+
 .TrackerRow .ph-stat-lab
 {
 	height: 16px;

@@ -26,6 +26,7 @@
     "discord.webhook.schedule.new": "*New server-wide Challenges*\n**{schedule}**\n**Starting:** *{startDate}*\n**Ending:** *{endDate}*",
     "hud.tracker.title": "Challenges",
     "hud.tracker.up_next": "Up next",
+    "hud.tracker.open": "Type {command} to open overview",
     "hud.menu.title": "Challenges",
     "hud.menu.detail.back": "Back",
     "hud.menu.resets": "Resets if: {reason}",

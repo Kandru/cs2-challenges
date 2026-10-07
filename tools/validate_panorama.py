@@ -54,13 +54,13 @@ MENU_BY_SLOTS = 6
 MENU_DETAIL_SLOTS = 5
 
 TRACKER_IDS = (
-    {"Tracker", "ch-ttimer", "ch-ttimer-fill"}
+    {"Tracker", "ch-ttimer", "ch-ttimer-fill", "ch-tr-hint"}
     | {f"ch-trow-{i}" for i in range(TRACKER_ROWS)}
     | {f"ch-tfill-{i}" for i in range(TRACKER_ROWS)}
     | {f"ch-ttask-{i}-{t}" for i in range(TRACKER_ROWS) for t in range(MENU_TASK_SLOTS)}
 )
 TRACKER_VARS = (
-    {"tr_title", "tr_count", "tr_tasks_h"}
+    {"tr_title", "tr_count", "tr_tasks_h", "tr_hint"}
     | {f"tr_t{i}" for i in range(TRACKER_ROWS)}
     | {f"tr_v{i}" for i in range(TRACKER_ROWS)}
     | {f"tr_{i}_t{t}" for i in range(TRACKER_ROWS) for t in range(MENU_TASK_SLOTS)}

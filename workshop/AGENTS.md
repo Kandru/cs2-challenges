@@ -41,14 +41,14 @@ No panel creation, no width/colour/image from C#. Bars = `clip` class ladder (`p
 
 | Layout | Root card id | Routed ids (see `CustomHud.LayoutIndexForPanel`) |
 | --- | --- | --- |
-| `tracker.xml` | `Tracker` | `Tracker`, `ch-trow-*`, `ch-tfill-*`, `ch-ttask-*` |
+| `tracker.xml` | `Tracker` | `Tracker`, `ch-tr-hint`, `ch-trow-*`, `ch-tfill-*`, `ch-ttask-*`, `ch-ttimer*` |
 | `menu.xml` | `Menu` | every other `ch-*` / `ph-*` id |
 
 `tools/validate_panorama.py` (`make panorama`) checks that the ids and `{s:…}` variables in both XML files are exactly the set the C# writes.
 
 ### Tracker ([`Tracker`](../src/Challenges/huds/Tracker.cs))
 
-Top-right card (`margin-top` = `margin-right` = 10px, width 420px), never clickable. No “solved by” column. Title `{s:tr_title}`, `{s:tr_count}` = `hud.format.count` of the active schedule. Up to `MaxRows = 5` rows `ch-trow-N` (`is-off` hides a row): challenge title `{s:tr_tN}`, value `{s:tr_vN}`, bar `ch-tfill-N`, tasks header `{s:tr_tasks_h}`, up to 3 tasks `ch-ttask-N-T` / `{s:tr_N_tT}`. Default `gui.tracker_rows` = 3 (clamped 3–5).
+Top-right card (`margin-top` = `margin-right` = 10px, width 420px), never clickable. No “solved by” column. Title `{s:tr_title}`, `{s:tr_count}` = `hud.format.count` of the active schedule. Under the title, `{s:tr_hint}` / `ch-tr-hint` shows `hud.tracker.open` with the shortest `menu_commands` name plus `command_prefix` (default `!c`); collapsed (`is-off`) when there is no command. Up to `MaxRows = 5` rows `ch-trow-N` (`is-off` hides a row): challenge title `{s:tr_tN}`, value `{s:tr_vN}`, bar `ch-tfill-N`, tasks header `{s:tr_tasks_h}`, up to 3 tasks `ch-ttask-N-T` / `{s:tr_N_tT}`. Default `gui.tracker_rows` = 3 (clamped 3–5).
 
 - **Freeze mode:** only when `mp_freezetime > 0` (skip when `<= 0`). Unsolved challenges only, highest percent first; each card lists **unsolved** visible tasks only. Bottom drain bar (`ch-ttimer`) tracks remaining freezetime.
 - **Progress mode:** `ChallengeEngine` calls `Tracker.ShowProgress` with per-task kinds (`Progress` / `TaskSolved` / `ChallengeSolved`). Compact rows for touched challenges, percent descending. Progress = that task; task solved = that task done + next unsolved tasks; challenge solved = that challenge, then after `gui.progress_duration` fade out/in with `hud.tracker.up_next` and the next unsolved challenge’s remaining tasks. Same drain bar tracks remaining hold time.

@@ -12,6 +12,7 @@ Created on first start. Example:
   "debug": false,
   "allow_bots": false,
   "menu_commands": ["c", "challenges"],
+  "command_prefix": "!",
   "gui": {
     "show_on_round_start": true,
     "show_on_progress": true,
@@ -41,11 +42,12 @@ Created on first start. Example:
 | `enabled` | Turns the whole plugin on or off. |
 | `debug` | Extra log messages (YAML / matching hints). |
 | `allow_bots` | Let bots earn challenges (default `false`). |
-| `menu_commands` | Chat names that open the challenges menu (default `["c", "challenges"]`). Leading `!` or `/` is optional. Empty list disables chat menu commands. |
+| `menu_commands` | Chat names that open the challenges menu (default `["c", "challenges"]`). Leading `!` / `/` / `.` optional. Empty list disables chat commands and hides the tracker hint. |
+| `command_prefix` | Chat trigger shown on the tracker before the shortest menu command (default `"!"`). |
 | `gui.show_on_round_start` | Show the tracker during freeze time. |
 | `gui.show_on_progress` | Show the tracker when a visible task advances. |
 | `gui.progress_duration` | Seconds the progress tracker stays up. |
-| `gui.tracker_rows` | Rows on the tracker (clamped 3–5). |
+| `gui.tracker_rows` | Rows on the tracker GUI (clamped 3–5). |
 | `gui.menu_page_size` | Challenges per menu page (clamped 1–4). |
 | `notifications.*` | Chat and sound on progress / complete / rule broken. Empty sound string = no sound. Sound paths play at full volume; soundevent names respect player volume. |
 | `discord.language` | Language for Discord messages. |
@@ -56,7 +58,7 @@ Created on first start. Example:
 
 | Command | Who | Effect |
 |---------|-----|--------|
-| Names in `menu_commands` (default `!c` / `!challenges`) | Players | Toggle the fullscreen challenges menu. |
+| Names in `menu_commands` with `command_prefix` (default `!c` / `!challenges`) | Players | Toggle the fullscreen challenges menu. |
 | `!lang <language>` | Players | Set language (e.g. `!lang en`, `!lang de`). Stored and restored on reconnect. |
 
 ## Server console

@@ -3,6 +3,35 @@ using CounterStrikeSharp.API.Core;
 
 namespace Challenges.Configs
 {
+    public static class MenuCommandNames
+    {
+        public static string? ShortestChatCommand(IEnumerable<string> entries, string prefix)
+        {
+            string? shortest = null;
+            foreach (string entry in entries)
+            {
+                string? name = DisplayName(entry);
+                if (name != null && (shortest == null || name.Length < shortest.Length))
+                {
+                    shortest = name;
+                }
+            }
+
+            return shortest == null ? null : prefix + shortest;
+        }
+
+        public static string? DisplayName(string entry)
+        {
+            string name = entry.Trim().TrimStart('!', '/', '.').Trim();
+            if (name.StartsWith("css_", StringComparison.OrdinalIgnoreCase))
+            {
+                name = name[4..];
+            }
+
+            return name.Length == 0 ? null : name;
+        }
+    }
+
     public class PluginConfigGui
     {
         [JsonPropertyName("show_on_round_start")] public bool ShowOnRoundStart { get; set; } = true;
@@ -41,6 +70,7 @@ namespace Challenges.Configs
         [JsonPropertyName("enabled")] public bool Enabled { get; set; } = true;
         [JsonPropertyName("debug")] public bool Debug { get; set; } = false;
         [JsonPropertyName("menu_commands")] public List<string> MenuCommands { get; set; } = ["c", "challenges"];
+        [JsonPropertyName("command_prefix")] public string CommandPrefix { get; set; } = "!";
         [JsonPropertyName("gui")] public PluginConfigGui Gui { get; set; } = new();
         [JsonPropertyName("notifications")] public PluginConfigNotifications Notifications { get; set; } = new();
         [JsonPropertyName("discord")] public PluginConfigDiscord Discord { get; set; } = new();

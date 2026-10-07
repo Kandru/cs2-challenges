@@ -34,6 +34,12 @@ body {
 }
 .ph-title { flex: 1; font-size: 15px; letter-spacing: 1.6px; text-transform: uppercase; font-weight: 700; color: #fff; }
 .ph-money { font-size: 14px; letter-spacing: 1px; font-weight: 700; color: #9ccf4f; }
+.Tracker .ph-titlebar { height: auto; min-height: 44px; padding-top: 8px; padding-bottom: 8px; }
+.TrackerTitleStack { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+.Tracker .ph-title { flex: none; width: 100%; }
+.TrackerHint {
+  font-size: 14px; letter-spacing: 0; text-transform: none; font-weight: 700; color: #9aa2ac; margin-top: 2px;
+}
 
 .ph-icon-btn {
   position: relative; width: 28px; height: 28px; border: 0; border-radius: 3px;
@@ -103,7 +109,7 @@ body {
   background: #ffffff0d; border: 1px solid #ffffff14; border-radius: 3px;
 }
 .TrackerRow.is-off { display: none; }
-.TrackerCount { margin-left: 10px; }
+.TrackerCount { margin-left: 10px; align-self: center; }
 .TrackerRow .ph-stat-lab { height: 16px; margin-bottom: 4px; }
 .TrackerRow .ph-stat-name {
   flex: 1; min-width: 0; font-size: 14px; font-weight: 700; letter-spacing: 1.2px; color: #e8eef4;

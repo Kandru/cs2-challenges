@@ -39,27 +39,14 @@ namespace Challenges.Classes
             Dictionary<string, CommandBinding> commands = new(StringComparer.OrdinalIgnoreCase);
             foreach (string entry in entries)
             {
-                string? name = NormalizeMenuCommand(entry);
+                string? name = MenuCommandNames.DisplayName(entry);
                 if (name != null)
                 {
-                    commands.TryAdd(name, new CommandBinding(MenuCommandDescription, nameof(CommandMenu)));
+                    commands.TryAdd("css_" + name, new CommandBinding(MenuCommandDescription, nameof(CommandMenu)));
                 }
             }
 
             return commands;
-        }
-
-        private static string? NormalizeMenuCommand(string entry)
-        {
-            string name = entry.Trim().TrimStart('!', '/').Trim();
-            if (name.Length == 0)
-            {
-                return null;
-            }
-
-            return name.StartsWith("css_", StringComparison.OrdinalIgnoreCase)
-                ? name
-                : "css_" + name;
         }
 
         public HookResult EventPlayerConnectFull(EventPlayerConnectFull @event, GameEventInfo info)

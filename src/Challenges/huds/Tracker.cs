@@ -14,10 +14,12 @@ namespace Challenges.Huds
         public const int MaxRows = 5;
         public const string TimerId = "ch-ttimer";
         public const string TimerFillId = "ch-ttimer-fill";
+        public const string HintId = "ch-tr-hint";
 
         private const string VarTitle = "tr_title";
         private const string VarCount = "tr_count";
         private const string VarTasksHead = "tr_tasks_h";
+        private const string VarHint = "tr_hint";
 
         private static readonly ChallengeCardPaint.Slots[] RowSlots = CreateRowSlots();
 
@@ -268,6 +270,7 @@ namespace Challenges.Huds
             CustomHud.SetText(player, Panel, VarTitle, string.Empty);
             CustomHud.SetText(player, Panel, VarCount, string.Empty);
             CustomHud.SetText(player, Panel, VarTasksHead, string.Empty);
+            PaintHint(player, string.Empty);
             HudTheme.Apply(player, Panel);
             HideTimer(player);
             CustomHud.SetStepPercent(player, TimerFillId, 100);
@@ -427,8 +430,9 @@ namespace Challenges.Huds
             }
 
             string tasksHead = Context.Text(player, "hud.menu.tasks");
-            StringBuilder fingerprint = new StringBuilder(heading.Length + count.Length + rows.Count * 96)
-                .Append(heading).Append('|').Append(count).Append('|').Append(upNext ? '1' : '0');
+            string hint = OpenHint(player);
+            StringBuilder fingerprint = new StringBuilder(heading.Length + count.Length + hint.Length + rows.Count * 96)
+                .Append(heading).Append('|').Append(count).Append('|').Append(hint).Append('|').Append(upNext ? '1' : '0');
 
             foreach (RowPaint row in rows)
             {
@@ -455,6 +459,7 @@ namespace Challenges.Huds
             CustomHud.SetText(player, Panel, VarTitle, heading);
             CustomHud.SetText(player, Panel, VarCount, count);
             CustomHud.SetText(player, Panel, VarTasksHead, tasksHead);
+            PaintHint(player, hint);
 
             for (int i = 0; i < MaxRows; i++)
             {
@@ -472,6 +477,22 @@ namespace Challenges.Huds
                     ClearRow(player, i);
                 }
             }
+        }
+
+        private static string OpenHint(CCSPlayerController player)
+        {
+            string? command = MenuCommandNames.ShortestChatCommand(
+                Context.Config.MenuCommands,
+                Context.Config.CommandPrefix);
+            return command == null
+                ? string.Empty
+                : Context.Text(player, "hud.tracker.open", ("{command}", command));
+        }
+
+        private static void PaintHint(CCSPlayerController player, string hint)
+        {
+            CustomHud.SetText(player, Panel, VarHint, hint);
+            CustomHud.SetHasClass(player, HintId, "is-off", hint.Length == 0);
         }
 
         private static List<RowPaint> BuildFreezeRows(
