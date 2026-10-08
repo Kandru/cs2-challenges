@@ -16,6 +16,7 @@ namespace Challenges.Huds
         public const int ListSlots = 5;
         public const int ScoreSlots = 12;
         public const int DetailSlots = 5;
+        public const int DetailRuleSlots = 8;
         public const int MaxPageSize = 5;
         public const string FilterAll = "all";
         public const string FilterSolved = "solved";
@@ -90,6 +91,7 @@ namespace Challenges.Huds
         public static string ListCompleterId(int row, int slot) => $"ch-mby-{row}-{slot}";
         public static string ScoreRowId(int index) => $"ch-srow-{index}";
         public static string DetailRowId(int index) => $"ch-drow-{index}";
+        public static string DetailRuleId(int row, int slot) => $"ch-drule-{row}-{slot}";
         public const string PinnedRowId = "ch-spin";
 
         public static bool IsMenuLayout(CCSCustomHudLayout layout) => CustomHud.IsLayout(layout, Panel);
@@ -628,7 +630,7 @@ namespace Challenges.Huds
             CustomHud.SetHasClass(player, DetailColumnId, "is-off", false);
             CustomHud.SetText(player, Panel, "detail_title", Titles.For(player, challenge.Title));
 
-            List<ChallengeTask> tasks = TaskRuleSummary.VisibleInOrder(challenge);
+            List<ChallengeTask> tasks = TaskRuleSummary.DetailInOrder(challenge);
             int pages = Math.Max(1, (tasks.Count + DetailSlots - 1) / DetailSlots);
             session.MenuDetailPage = Math.Clamp(session.MenuDetailPage, 0, pages - 1);
             SetTitlePage(
@@ -654,24 +656,83 @@ namespace Challenges.Huds
                 }
 
                 ChallengeTask task = tasks[index];
-                int amount = Math.Max(1, task.Amount);
-                int count = ChallengeProgress.GetTaskCount(progress, scheduleKey, challenge.Id, task);
-                bool done = scheduleKey != null
-                    && ChallengeProgress.IsTaskComplete(progress, scheduleKey, challenge.Id, task);
-                CustomHud.SetText(
-                    player,
-                    Panel,
-                    $"d{i}_title",
-                    Titles.For(player, task.Title, count, amount));
-                CustomHud.SetText(
-                    player,
-                    Panel,
-                    $"d{i}_rules",
-                    TaskRuleSummary.Format(player, challenge, task));
+                bool broken = !task.Visible;
+                string title;
+                bool done = false;
+                if (broken)
+                {
+                    title = Titles.For(player, task.Title);
+                }
+                else
+                {
+                    int amount = Math.Max(1, task.Amount);
+                    int count = ChallengeProgress.GetTaskCount(progress, scheduleKey, challenge.Id, task);
+                    done = scheduleKey != null
+                        && ChallengeProgress.IsTaskComplete(progress, scheduleKey, challenge.Id, task);
+                    title = Titles.For(player, task.Title, count, amount);
+                }
+
+                CustomHud.SetText(player, Panel, $"d{i}_title", title);
+                PaintDetailRules(player, i, TaskRuleSummary.Parts(player, task));
                 CustomHud.SetHasClass(player, DetailRowId(i), "empty", false);
                 CustomHud.SetHasClass(player, DetailRowId(i), "is-off", false);
                 CustomHud.SetHasClass(player, DetailRowId(i), "is-done", done);
+                CustomHud.SetHasClass(player, DetailRowId(i), "is-broken", broken);
             }
+        }
+
+        private static void PaintDetailRules(CCSPlayerController player, int row, List<string> parts)
+        {
+            int overflow = parts.Count > DetailRuleSlots ? parts.Count - (DetailRuleSlots - 1) : 0;
+            int shown = overflow > 0 ? DetailRuleSlots - 1 : parts.Count;
+
+            for (int slot = 0; slot < DetailRuleSlots; slot++)
+            {
+                if (slot == DetailRuleSlots - 1 && overflow > 0)
+                {
+                    SetDetailRule(
+                        player,
+                        row,
+                        slot,
+                        string.Join(" · ", parts.GetRange(shown, parts.Count - shown)),
+                        empty: false);
+                    continue;
+                }
+
+                if (slot < shown)
+                {
+                    SetDetailRule(player, row, slot, parts[slot], empty: false);
+                    continue;
+                }
+
+                // Transparent partner so an odd last chip stays half-width.
+                if (shown > 0 && shown % 2 == 1 && slot == shown)
+                {
+                    SetDetailRule(player, row, slot, string.Empty, empty: true);
+                    continue;
+                }
+
+                ClearDetailRule(player, row, slot);
+            }
+        }
+
+        private static void SetDetailRule(
+            CCSPlayerController player,
+            int row,
+            int slot,
+            string text,
+            bool empty)
+        {
+            CustomHud.SetText(player, Panel, $"d{row}_r{slot}", text);
+            CustomHud.SetHasClass(player, DetailRuleId(row, slot), "is-off", false);
+            CustomHud.SetHasClass(player, DetailRuleId(row, slot), "is-empty", empty);
+        }
+
+        private static void ClearDetailRule(CCSPlayerController player, int row, int slot)
+        {
+            CustomHud.SetText(player, Panel, $"d{row}_r{slot}", string.Empty);
+            CustomHud.SetHasClass(player, DetailRuleId(row, slot), "is-off", true);
+            CustomHud.SetHasClass(player, DetailRuleId(row, slot), "is-empty", false);
         }
 
         private static void ClearDetailView(CCSPlayerController player)
@@ -690,10 +751,15 @@ namespace Challenges.Huds
         private static void ClearDetailSlot(CCSPlayerController player, int row)
         {
             CustomHud.SetText(player, Panel, $"d{row}_title", string.Empty);
-            CustomHud.SetText(player, Panel, $"d{row}_rules", string.Empty);
+            for (int slot = 0; slot < DetailRuleSlots; slot++)
+            {
+                ClearDetailRule(player, row, slot);
+            }
+
             CustomHud.SetHasClass(player, DetailRowId(row), "empty", true);
             CustomHud.SetHasClass(player, DetailRowId(row), "is-off", false);
             CustomHud.SetHasClass(player, DetailRowId(row), "is-done", false);
+            CustomHud.SetHasClass(player, DetailRowId(row), "is-broken", false);
         }
 
         private static bool InSchedule(RunningSchedule schedule, string challengeId)

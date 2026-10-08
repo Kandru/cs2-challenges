@@ -144,13 +144,23 @@ body {
   border: 1px solid #ffffff14; border-radius: 3px;
 }
 .DetailRow.is-done { background: #9ccf4f18; border-color: #9ccf4f44; }
+.DetailRow.is-broken { background: #e05a5a22; border-color: #e05a5a66; }
 .DetailTaskTitle {
   display: block; font-size: 14px; font-weight: 700; letter-spacing: 1px; color: #e8eef4;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .DetailRow.is-done .DetailTaskTitle { color: #9ccf4f; }
-.DetailTaskRules {
-  display: block; margin-top: 2px; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; color: #9aa2ac;
+.DetailRow.is-broken .DetailTaskTitle { color: #e05a5a; }
+.DetailRuleList { display: flex; flex-direction: column; gap: 2px; margin-top: 4px; }
+.DetailRuleRow { display: flex; gap: 3px; }
+.DetailRule {
+  flex: 1; min-width: 0; height: 20px; padding: 0 6px; display: flex; align-items: center;
+  background: #ffffff0a; border: 1px solid #ffffff10; border-radius: 2px;
+}
+.DetailRule.is-off { display: none; }
+.DetailRule.is-empty { background: transparent; border-color: transparent; }
+.DetailRuleLabel {
+  flex: 1; min-width: 0; font-size: 14px; font-weight: 700; letter-spacing: 0.4px; color: #9aa2ac;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .MenuFilterBar { display: flex; margin-bottom: 10px; flex-shrink: 0; }

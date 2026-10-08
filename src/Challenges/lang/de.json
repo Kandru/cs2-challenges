@@ -31,7 +31,6 @@
     "hud.menu.list": "Meine Herausforderungen",
     "hud.menu.viewing": "Herausforderungen von {name}",
     "hud.menu.detail.back": "Zurück zur Bestenliste",
-    "hud.menu.resets": "Reset bei: {reason}",
     "hud.rule.not": "Kein {rule}",
     "hud.rule.equals": "{rule}: {value}",
     "hud.rule.not_equals": "Nicht {rule}: {value}",

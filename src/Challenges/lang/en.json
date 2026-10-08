@@ -31,7 +31,6 @@
     "hud.menu.list": "My challenges",
     "hud.menu.viewing": "Challenges of {name}",
     "hud.menu.detail.back": "Back to scoreboard",
-    "hud.menu.resets": "Resets if: {reason}",
     "hud.rule.not": "No {rule}",
     "hud.rule.equals": "{rule}: {value}",
     "hud.rule.not_equals": "Not {rule}: {value}",

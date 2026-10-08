@@ -1,18 +1,56 @@
 using System.Globalization;
-using System.Text;
 using CounterStrikeSharp.API.Core;
 using Challenges.Configs;
 using Challenges.Utils;
 
 namespace Challenges.Huds
 {
-    /// <summary>Compact, player-facing rule lines for the challenge detail panel.</summary>
+    /// <summary>Compact, player-facing rule phrases and detail-row ordering for the challenge menu.</summary>
     internal static class TaskRuleSummary
     {
-        private const string Sep = " · ";
+        /// <summary>
+        /// Visible tasks in completion order, each followed by its hidden rule-broken tasks.
+        /// </summary>
+        public static List<ChallengeTask> DetailInOrder(ChallengeDefinition challenge)
+        {
+            List<ChallengeTask> detail = [];
+            foreach (ChallengeTask task in VisibleInOrder(challenge))
+            {
+                detail.Add(task);
+                foreach (ChallengeTask breaker in challenge.Tasks)
+                {
+                    if (!breaker.Visible && BreaksTask(breaker, task.Id))
+                    {
+                        detail.Add(breaker);
+                    }
+                }
+            }
 
-        /// <summary>Visible tasks in completion order (YAML order with <c>requires</c> respected).</summary>
-        public static List<ChallengeTask> VisibleInOrder(ChallengeDefinition challenge)
+            return detail;
+        }
+
+        /// <summary>Player-facing rule phrases for one task (skips <c>global.*</c>).</summary>
+        public static List<string> Parts(CCSPlayerController player, ChallengeTask task)
+        {
+            List<string> parts = [];
+            foreach (ChallengeRule rule in task.Rules)
+            {
+                if (rule.Key.StartsWith("global.", StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                string? phrase = FormatRule(player, rule);
+                if (!string.IsNullOrEmpty(phrase))
+                {
+                    parts.Add(phrase);
+                }
+            }
+
+            return parts;
+        }
+
+        private static List<ChallengeTask> VisibleInOrder(ChallengeDefinition challenge)
         {
             List<ChallengeTask> visible = [];
             bool needsSort = false;
@@ -69,56 +107,6 @@ namespace Challenges.Huds
             }
 
             return ordered;
-        }
-
-        public static string Format(CCSPlayerController player, ChallengeDefinition challenge, ChallengeTask task)
-        {
-            StringBuilder? sb = null;
-            foreach (ChallengeRule rule in task.Rules)
-            {
-                if (rule.Key.StartsWith("global.", StringComparison.OrdinalIgnoreCase))
-                {
-                    continue;
-                }
-
-                string? phrase = FormatRule(player, rule);
-                if (string.IsNullOrEmpty(phrase))
-                {
-                    continue;
-                }
-
-                AppendPart(ref sb, phrase);
-            }
-
-            foreach (ChallengeTask breaker in challenge.Tasks)
-            {
-                if (breaker.Visible || !BreaksTask(breaker, task.Id))
-                {
-                    continue;
-                }
-
-                string reason = Titles.For(player, breaker.Title);
-                if (string.IsNullOrEmpty(reason))
-                {
-                    continue;
-                }
-
-                AppendPart(ref sb, Context.Text(player, "hud.menu.resets", ("{reason}", reason)));
-            }
-
-            return sb?.ToString() ?? string.Empty;
-        }
-
-        private static void AppendPart(ref StringBuilder? sb, string part)
-        {
-            if (sb == null)
-            {
-                sb = new StringBuilder(part.Length + 32);
-                sb.Append(part);
-                return;
-            }
-
-            sb.Append(Sep).Append(part);
         }
 
         private static bool RequirementsReady(

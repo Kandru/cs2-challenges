@@ -52,6 +52,7 @@ MENU_SCORE_SLOTS = 12
 MENU_TASK_SLOTS = 3
 MENU_BY_SLOTS = 6
 MENU_DETAIL_SLOTS = 5
+MENU_DETAIL_RULE_SLOTS = 8
 
 TRACKER_IDS = (
     {"Tracker", "ch-ttimer", "ch-ttimer-fill", "ch-tr-hint"}
@@ -98,6 +99,7 @@ MENU_IDS = (
     | {f"ch-mby-{i}-{b}" for i in range(MENU_LIST_SLOTS) for b in range(MENU_BY_SLOTS)}
     | {f"ch-srow-{i}" for i in range(MENU_SCORE_SLOTS)}
     | {f"ch-drow-{i}" for i in range(MENU_DETAIL_SLOTS)}
+    | {f"ch-drule-{i}-{r}" for i in range(MENU_DETAIL_SLOTS) for r in range(MENU_DETAIL_RULE_SLOTS)}
 )
 MENU_VARS = (
     {
@@ -148,7 +150,7 @@ MENU_VARS = (
     | {f"s{i}_cur" for i in range(MENU_SCORE_SLOTS)}
     | {f"s{i}_tot" for i in range(MENU_SCORE_SLOTS)}
     | {f"d{i}_title" for i in range(MENU_DETAIL_SLOTS)}
-    | {f"d{i}_rules" for i in range(MENU_DETAIL_SLOTS)}
+    | {f"d{i}_r{r}" for i in range(MENU_DETAIL_SLOTS) for r in range(MENU_DETAIL_RULE_SLOTS)}
 )
 REQUIRED_CLASSES = {
     "ph-off",

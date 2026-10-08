@@ -240,17 +240,22 @@ const details = {
   knife: {
     title: 'Sharp and Deadly',
     rows: [
-      { title: '5/5 knife kills', rules: 'Weapon: KNIFE · Enemy kill', done: true },
-      { title: '2/10 knife kills without taking damage', rules: 'Weapon: KNIFE · Resets if: Rule broken: took damage', done: false },
-      { title: '0/25 knife kills', rules: 'Weapon: KNIFE · Enemy kill', done: false },
+      { title: '5/5 knife kills', rules: 'Weapon: KNIFE · Enemy kill · Against a player', done: true },
+      { title: '2/10 knife kills without taking damage', rules: 'Weapon: KNIFE · Enemy kill · Against a player · Not a bot', done: false },
+      { title: 'Rule broken: you died because of a knife', rules: 'Weapon: KNIFE · Against a player', broken: true },
+      { title: '0/25 knife kills', rules: 'Weapon: KNIFE · Enemy kill · Against a player', done: false },
+      { title: 'Rule broken: you died because of a knife', rules: 'Weapon: KNIFE · Against a player', broken: true },
     ],
   },
   hs: {
     title: 'Headshots in a row',
     rows: [
-      { title: '3/3 headshots', rules: 'Headshot · Against a player · Resets if: Rule broken: without headshot', done: true },
-      { title: '3/10 headshots', rules: 'Headshot · Against a player · Resets if: Rule broken: without headshot', done: false },
-      { title: '0/25 headshots', rules: 'Headshot · Against a player · Resets if: Rule broken: without headshot', done: false },
+      { title: '3/3 headshots', rules: 'Headshot · Against a player', done: true },
+      { title: 'Rule broken: without headshot', rules: 'Not a headshot', broken: true },
+      { title: '3/10 headshots', rules: 'Headshot · Against a player', done: false },
+      { title: 'Rule broken: without headshot', rules: 'Not a headshot', broken: true },
+      { title: '0/25 headshots', rules: 'Headshot · Against a player', done: false },
+      { title: 'Rule broken: without headshot', rules: 'Not a headshot', broken: true },
     ],
   },
   awp: {
@@ -266,13 +271,42 @@ const scoreCol = document.getElementById('ch-score');
 const detailCol = document.getElementById('ch-detail');
 const detailRows = document.getElementById('detail-rows');
 const detailTitle = document.getElementById('detail-title');
+function ruleChips(rules) {
+  const parts = rules ? rules.split(' · ').filter(Boolean) : [];
+  if (!parts.length) return '';
+  const slots = 8;
+  const overflow = parts.length > slots ? parts.length - (slots - 1) : 0;
+  const shown = overflow > 0 ? slots - 1 : parts.length;
+  const chips = [];
+  for (let i = 0; i < slots; i++) {
+    if (i === slots - 1 && overflow > 0) {
+      chips.push(`<div class="DetailRule"><span class="DetailRuleLabel">${parts.slice(shown).join(' · ')}</span></div>`);
+      continue;
+    }
+    if (i < shown) {
+      chips.push(`<div class="DetailRule"><span class="DetailRuleLabel">${parts[i]}</span></div>`);
+      continue;
+    }
+    if (shown > 0 && shown % 2 === 1 && i === shown) {
+      chips.push('<div class="DetailRule is-empty"><span class="DetailRuleLabel"></span></div>');
+      continue;
+    }
+    chips.push('<div class="DetailRule is-off"><span class="DetailRuleLabel"></span></div>');
+  }
+  let html = '';
+  for (let i = 0; i < chips.length; i += 2) {
+    html += `<div class="DetailRuleRow">${chips[i]}${chips[i + 1] || ''}</div>`;
+  }
+  return `<div class="DetailRuleList">${html}</div>`;
+}
 function paintDetail(key) {
   const data = details[key];
   if (!data) return;
   detailTitle.textContent = data.title;
-  detailRows.innerHTML = data.rows.map(r =>
-    `<div class="DetailRow${r.done ? ' is-done' : ''}"><span class="DetailTaskTitle">${r.title}</span><span class="DetailTaskRules">${r.rules}</span></div>`
-  ).join('');
+  detailRows.innerHTML = data.rows.map(r => {
+    const state = r.broken ? ' is-broken' : r.done ? ' is-done' : '';
+    return `<div class="DetailRow${state}"><span class="DetailTaskTitle">${r.title}</span>${ruleChips(r.rules)}</div>`;
+  }).join('');
 }
 function openDetail(key) {
   scoreCol.classList.add('is-off');

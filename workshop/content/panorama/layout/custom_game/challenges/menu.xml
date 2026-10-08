@@ -513,23 +513,188 @@
 							<Panel class="DetailRows" hittest="false">
 								<Panel id="ch-drow-0" class="DetailRow empty" hittest="false">
 									<Label class="DetailTaskTitle stratum-bold-tf" hittest="false" text="{s:d0_title}" />
-									<Label class="DetailTaskRules stratum-bold-tf" hittest="false" text="{s:d0_rules}" />
+									<Panel class="DetailRuleList" hittest="false">
+										<Panel class="DetailRuleRow" hittest="false">
+											<Panel id="ch-drule-0-0" class="DetailRule is-off" hittest="false">
+												<Label class="DetailRuleLabel stratum-bold-tf" hittest="false" text="{s:d0_r0}" />
+											</Panel>
+											<Panel id="ch-drule-0-1" class="DetailRule is-off" hittest="false">
+												<Label class="DetailRuleLabel stratum-bold-tf" hittest="false" text="{s:d0_r1}" />
+											</Panel>
+										</Panel>
+										<Panel class="DetailRuleRow" hittest="false">
+											<Panel id="ch-drule-0-2" class="DetailRule is-off" hittest="false">
+												<Label class="DetailRuleLabel stratum-bold-tf" hittest="false" text="{s:d0_r2}" />
+											</Panel>
+											<Panel id="ch-drule-0-3" class="DetailRule is-off" hittest="false">
+												<Label class="DetailRuleLabel stratum-bold-tf" hittest="false" text="{s:d0_r3}" />
+											</Panel>
+										</Panel>
+										<Panel class="DetailRuleRow" hittest="false">
+											<Panel id="ch-drule-0-4" class="DetailRule is-off" hittest="false">
+												<Label class="DetailRuleLabel stratum-bold-tf" hittest="false" text="{s:d0_r4}" />
+											</Panel>
+											<Panel id="ch-drule-0-5" class="DetailRule is-off" hittest="false">
+												<Label class="DetailRuleLabel stratum-bold-tf" hittest="false" text="{s:d0_r5}" />
+											</Panel>
+										</Panel>
+										<Panel class="DetailRuleRow" hittest="false">
+											<Panel id="ch-drule-0-6" class="DetailRule is-off" hittest="false">
+												<Label class="DetailRuleLabel stratum-bold-tf" hittest="false" text="{s:d0_r6}" />
+											</Panel>
+											<Panel id="ch-drule-0-7" class="DetailRule is-off" hittest="false">
+												<Label class="DetailRuleLabel stratum-bold-tf" hittest="false" text="{s:d0_r7}" />
+											</Panel>
+										</Panel>
+									</Panel>
 								</Panel>
 								<Panel id="ch-drow-1" class="DetailRow empty" hittest="false">
 									<Label class="DetailTaskTitle stratum-bold-tf" hittest="false" text="{s:d1_title}" />
-									<Label class="DetailTaskRules stratum-bold-tf" hittest="false" text="{s:d1_rules}" />
+									<Panel class="DetailRuleList" hittest="false">
+										<Panel class="DetailRuleRow" hittest="false">
+											<Panel id="ch-drule-1-0" class="DetailRule is-off" hittest="false">
+												<Label class="DetailRuleLabel stratum-bold-tf" hittest="false" text="{s:d1_r0}" />
+											</Panel>
+											<Panel id="ch-drule-1-1" class="DetailRule is-off" hittest="false">
+												<Label class="DetailRuleLabel stratum-bold-tf" hittest="false" text="{s:d1_r1}" />
+											</Panel>
+										</Panel>
+										<Panel class="DetailRuleRow" hittest="false">
+											<Panel id="ch-drule-1-2" class="DetailRule is-off" hittest="false">
+												<Label class="DetailRuleLabel stratum-bold-tf" hittest="false" text="{s:d1_r2}" />
+											</Panel>
+											<Panel id="ch-drule-1-3" class="DetailRule is-off" hittest="false">
+												<Label class="DetailRuleLabel stratum-bold-tf" hittest="false" text="{s:d1_r3}" />
+											</Panel>
+										</Panel>
+										<Panel class="DetailRuleRow" hittest="false">
+											<Panel id="ch-drule-1-4" class="DetailRule is-off" hittest="false">
+												<Label class="DetailRuleLabel stratum-bold-tf" hittest="false" text="{s:d1_r4}" />
+											</Panel>
+											<Panel id="ch-drule-1-5" class="DetailRule is-off" hittest="false">
+												<Label class="DetailRuleLabel stratum-bold-tf" hittest="false" text="{s:d1_r5}" />
+											</Panel>
+										</Panel>
+										<Panel class="DetailRuleRow" hittest="false">
+											<Panel id="ch-drule-1-6" class="DetailRule is-off" hittest="false">
+												<Label class="DetailRuleLabel stratum-bold-tf" hittest="false" text="{s:d1_r6}" />
+											</Panel>
+											<Panel id="ch-drule-1-7" class="DetailRule is-off" hittest="false">
+												<Label class="DetailRuleLabel stratum-bold-tf" hittest="false" text="{s:d1_r7}" />
+											</Panel>
+										</Panel>
+									</Panel>
 								</Panel>
 								<Panel id="ch-drow-2" class="DetailRow empty" hittest="false">
 									<Label class="DetailTaskTitle stratum-bold-tf" hittest="false" text="{s:d2_title}" />
-									<Label class="DetailTaskRules stratum-bold-tf" hittest="false" text="{s:d2_rules}" />
+									<Panel class="DetailRuleList" hittest="false">
+										<Panel class="DetailRuleRow" hittest="false">
+											<Panel id="ch-drule-2-0" class="DetailRule is-off" hittest="false">
+												<Label class="DetailRuleLabel stratum-bold-tf" hittest="false" text="{s:d2_r0}" />
+											</Panel>
+											<Panel id="ch-drule-2-1" class="DetailRule is-off" hittest="false">
+												<Label class="DetailRuleLabel stratum-bold-tf" hittest="false" text="{s:d2_r1}" />
+											</Panel>
+										</Panel>
+										<Panel class="DetailRuleRow" hittest="false">
+											<Panel id="ch-drule-2-2" class="DetailRule is-off" hittest="false">
+												<Label class="DetailRuleLabel stratum-bold-tf" hittest="false" text="{s:d2_r2}" />
+											</Panel>
+											<Panel id="ch-drule-2-3" class="DetailRule is-off" hittest="false">
+												<Label class="DetailRuleLabel stratum-bold-tf" hittest="false" text="{s:d2_r3}" />
+											</Panel>
+										</Panel>
+										<Panel class="DetailRuleRow" hittest="false">
+											<Panel id="ch-drule-2-4" class="DetailRule is-off" hittest="false">
+												<Label class="DetailRuleLabel stratum-bold-tf" hittest="false" text="{s:d2_r4}" />
+											</Panel>
+											<Panel id="ch-drule-2-5" class="DetailRule is-off" hittest="false">
+												<Label class="DetailRuleLabel stratum-bold-tf" hittest="false" text="{s:d2_r5}" />
+											</Panel>
+										</Panel>
+										<Panel class="DetailRuleRow" hittest="false">
+											<Panel id="ch-drule-2-6" class="DetailRule is-off" hittest="false">
+												<Label class="DetailRuleLabel stratum-bold-tf" hittest="false" text="{s:d2_r6}" />
+											</Panel>
+											<Panel id="ch-drule-2-7" class="DetailRule is-off" hittest="false">
+												<Label class="DetailRuleLabel stratum-bold-tf" hittest="false" text="{s:d2_r7}" />
+											</Panel>
+										</Panel>
+									</Panel>
 								</Panel>
 								<Panel id="ch-drow-3" class="DetailRow empty" hittest="false">
 									<Label class="DetailTaskTitle stratum-bold-tf" hittest="false" text="{s:d3_title}" />
-									<Label class="DetailTaskRules stratum-bold-tf" hittest="false" text="{s:d3_rules}" />
+									<Panel class="DetailRuleList" hittest="false">
+										<Panel class="DetailRuleRow" hittest="false">
+											<Panel id="ch-drule-3-0" class="DetailRule is-off" hittest="false">
+												<Label class="DetailRuleLabel stratum-bold-tf" hittest="false" text="{s:d3_r0}" />
+											</Panel>
+											<Panel id="ch-drule-3-1" class="DetailRule is-off" hittest="false">
+												<Label class="DetailRuleLabel stratum-bold-tf" hittest="false" text="{s:d3_r1}" />
+											</Panel>
+										</Panel>
+										<Panel class="DetailRuleRow" hittest="false">
+											<Panel id="ch-drule-3-2" class="DetailRule is-off" hittest="false">
+												<Label class="DetailRuleLabel stratum-bold-tf" hittest="false" text="{s:d3_r2}" />
+											</Panel>
+											<Panel id="ch-drule-3-3" class="DetailRule is-off" hittest="false">
+												<Label class="DetailRuleLabel stratum-bold-tf" hittest="false" text="{s:d3_r3}" />
+											</Panel>
+										</Panel>
+										<Panel class="DetailRuleRow" hittest="false">
+											<Panel id="ch-drule-3-4" class="DetailRule is-off" hittest="false">
+												<Label class="DetailRuleLabel stratum-bold-tf" hittest="false" text="{s:d3_r4}" />
+											</Panel>
+											<Panel id="ch-drule-3-5" class="DetailRule is-off" hittest="false">
+												<Label class="DetailRuleLabel stratum-bold-tf" hittest="false" text="{s:d3_r5}" />
+											</Panel>
+										</Panel>
+										<Panel class="DetailRuleRow" hittest="false">
+											<Panel id="ch-drule-3-6" class="DetailRule is-off" hittest="false">
+												<Label class="DetailRuleLabel stratum-bold-tf" hittest="false" text="{s:d3_r6}" />
+											</Panel>
+											<Panel id="ch-drule-3-7" class="DetailRule is-off" hittest="false">
+												<Label class="DetailRuleLabel stratum-bold-tf" hittest="false" text="{s:d3_r7}" />
+											</Panel>
+										</Panel>
+									</Panel>
 								</Panel>
 								<Panel id="ch-drow-4" class="DetailRow empty" hittest="false">
 									<Label class="DetailTaskTitle stratum-bold-tf" hittest="false" text="{s:d4_title}" />
-									<Label class="DetailTaskRules stratum-bold-tf" hittest="false" text="{s:d4_rules}" />
+									<Panel class="DetailRuleList" hittest="false">
+										<Panel class="DetailRuleRow" hittest="false">
+											<Panel id="ch-drule-4-0" class="DetailRule is-off" hittest="false">
+												<Label class="DetailRuleLabel stratum-bold-tf" hittest="false" text="{s:d4_r0}" />
+											</Panel>
+											<Panel id="ch-drule-4-1" class="DetailRule is-off" hittest="false">
+												<Label class="DetailRuleLabel stratum-bold-tf" hittest="false" text="{s:d4_r1}" />
+											</Panel>
+										</Panel>
+										<Panel class="DetailRuleRow" hittest="false">
+											<Panel id="ch-drule-4-2" class="DetailRule is-off" hittest="false">
+												<Label class="DetailRuleLabel stratum-bold-tf" hittest="false" text="{s:d4_r2}" />
+											</Panel>
+											<Panel id="ch-drule-4-3" class="DetailRule is-off" hittest="false">
+												<Label class="DetailRuleLabel stratum-bold-tf" hittest="false" text="{s:d4_r3}" />
+											</Panel>
+										</Panel>
+										<Panel class="DetailRuleRow" hittest="false">
+											<Panel id="ch-drule-4-4" class="DetailRule is-off" hittest="false">
+												<Label class="DetailRuleLabel stratum-bold-tf" hittest="false" text="{s:d4_r4}" />
+											</Panel>
+											<Panel id="ch-drule-4-5" class="DetailRule is-off" hittest="false">
+												<Label class="DetailRuleLabel stratum-bold-tf" hittest="false" text="{s:d4_r5}" />
+											</Panel>
+										</Panel>
+										<Panel class="DetailRuleRow" hittest="false">
+											<Panel id="ch-drule-4-6" class="DetailRule is-off" hittest="false">
+												<Label class="DetailRuleLabel stratum-bold-tf" hittest="false" text="{s:d4_r6}" />
+											</Panel>
+											<Panel id="ch-drule-4-7" class="DetailRule is-off" hittest="false">
+												<Label class="DetailRuleLabel stratum-bold-tf" hittest="false" text="{s:d4_r7}" />
+											</Panel>
+										</Panel>
+									</Panel>
 								</Panel>
 							</Panel>
 						</Panel>
