@@ -211,9 +211,9 @@ def check_css(failures: list[str]) -> None:
     classes = set(re.findall(r"\.([A-Za-z_][\w-]*)", code))
     for cls in sorted(REQUIRED_CLASSES - classes):
         failures.append(f"hud.vcss: missing class .{cls}")
-    for pct in range(0, 101, 10):
+    for pct in range(0, 101):
         if f".ph-stat-fill.p{pct}" not in code:
-            failures.append(f"hud.vcss: missing .ph-stat-fill.p{pct} (SetStepPercent ladder)")
+            failures.append(f"hud.vcss: missing .ph-stat-fill.p{pct} (SetPercent / SetStepPercent ladder)")
 
 
 def check_layout(name: str, expected_ids: set[str], expected_vars: set[str], failures: list[str]) -> None:

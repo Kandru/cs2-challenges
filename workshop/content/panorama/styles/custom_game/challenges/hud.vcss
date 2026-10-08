@@ -267,15 +267,105 @@ Label.ph-stat-when
 }
 
 .ph-stat-fill.p100 { clip: rect( 0%, 100%, 100%, 0% ); }
+.ph-stat-fill.p99 { clip: rect( 0%, 99%, 100%, 0% ); }
+.ph-stat-fill.p98 { clip: rect( 0%, 98%, 100%, 0% ); }
+.ph-stat-fill.p97 { clip: rect( 0%, 97%, 100%, 0% ); }
+.ph-stat-fill.p96 { clip: rect( 0%, 96%, 100%, 0% ); }
+.ph-stat-fill.p95 { clip: rect( 0%, 95%, 100%, 0% ); }
+.ph-stat-fill.p94 { clip: rect( 0%, 94%, 100%, 0% ); }
+.ph-stat-fill.p93 { clip: rect( 0%, 93%, 100%, 0% ); }
+.ph-stat-fill.p92 { clip: rect( 0%, 92%, 100%, 0% ); }
+.ph-stat-fill.p91 { clip: rect( 0%, 91%, 100%, 0% ); }
 .ph-stat-fill.p90 { clip: rect( 0%, 90%, 100%, 0% ); }
+.ph-stat-fill.p89 { clip: rect( 0%, 89%, 100%, 0% ); }
+.ph-stat-fill.p88 { clip: rect( 0%, 88%, 100%, 0% ); }
+.ph-stat-fill.p87 { clip: rect( 0%, 87%, 100%, 0% ); }
+.ph-stat-fill.p86 { clip: rect( 0%, 86%, 100%, 0% ); }
+.ph-stat-fill.p85 { clip: rect( 0%, 85%, 100%, 0% ); }
+.ph-stat-fill.p84 { clip: rect( 0%, 84%, 100%, 0% ); }
+.ph-stat-fill.p83 { clip: rect( 0%, 83%, 100%, 0% ); }
+.ph-stat-fill.p82 { clip: rect( 0%, 82%, 100%, 0% ); }
+.ph-stat-fill.p81 { clip: rect( 0%, 81%, 100%, 0% ); }
 .ph-stat-fill.p80 { clip: rect( 0%, 80%, 100%, 0% ); }
+.ph-stat-fill.p79 { clip: rect( 0%, 79%, 100%, 0% ); }
+.ph-stat-fill.p78 { clip: rect( 0%, 78%, 100%, 0% ); }
+.ph-stat-fill.p77 { clip: rect( 0%, 77%, 100%, 0% ); }
+.ph-stat-fill.p76 { clip: rect( 0%, 76%, 100%, 0% ); }
+.ph-stat-fill.p75 { clip: rect( 0%, 75%, 100%, 0% ); }
+.ph-stat-fill.p74 { clip: rect( 0%, 74%, 100%, 0% ); }
+.ph-stat-fill.p73 { clip: rect( 0%, 73%, 100%, 0% ); }
+.ph-stat-fill.p72 { clip: rect( 0%, 72%, 100%, 0% ); }
+.ph-stat-fill.p71 { clip: rect( 0%, 71%, 100%, 0% ); }
 .ph-stat-fill.p70 { clip: rect( 0%, 70%, 100%, 0% ); }
+.ph-stat-fill.p69 { clip: rect( 0%, 69%, 100%, 0% ); }
+.ph-stat-fill.p68 { clip: rect( 0%, 68%, 100%, 0% ); }
+.ph-stat-fill.p67 { clip: rect( 0%, 67%, 100%, 0% ); }
+.ph-stat-fill.p66 { clip: rect( 0%, 66%, 100%, 0% ); }
+.ph-stat-fill.p65 { clip: rect( 0%, 65%, 100%, 0% ); }
+.ph-stat-fill.p64 { clip: rect( 0%, 64%, 100%, 0% ); }
+.ph-stat-fill.p63 { clip: rect( 0%, 63%, 100%, 0% ); }
+.ph-stat-fill.p62 { clip: rect( 0%, 62%, 100%, 0% ); }
+.ph-stat-fill.p61 { clip: rect( 0%, 61%, 100%, 0% ); }
 .ph-stat-fill.p60 { clip: rect( 0%, 60%, 100%, 0% ); }
+.ph-stat-fill.p59 { clip: rect( 0%, 59%, 100%, 0% ); }
+.ph-stat-fill.p58 { clip: rect( 0%, 58%, 100%, 0% ); }
+.ph-stat-fill.p57 { clip: rect( 0%, 57%, 100%, 0% ); }
+.ph-stat-fill.p56 { clip: rect( 0%, 56%, 100%, 0% ); }
+.ph-stat-fill.p55 { clip: rect( 0%, 55%, 100%, 0% ); }
+.ph-stat-fill.p54 { clip: rect( 0%, 54%, 100%, 0% ); }
+.ph-stat-fill.p53 { clip: rect( 0%, 53%, 100%, 0% ); }
+.ph-stat-fill.p52 { clip: rect( 0%, 52%, 100%, 0% ); }
+.ph-stat-fill.p51 { clip: rect( 0%, 51%, 100%, 0% ); }
 .ph-stat-fill.p50 { clip: rect( 0%, 50%, 100%, 0% ); }
+.ph-stat-fill.p49 { clip: rect( 0%, 49%, 100%, 0% ); }
+.ph-stat-fill.p48 { clip: rect( 0%, 48%, 100%, 0% ); }
+.ph-stat-fill.p47 { clip: rect( 0%, 47%, 100%, 0% ); }
+.ph-stat-fill.p46 { clip: rect( 0%, 46%, 100%, 0% ); }
+.ph-stat-fill.p45 { clip: rect( 0%, 45%, 100%, 0% ); }
+.ph-stat-fill.p44 { clip: rect( 0%, 44%, 100%, 0% ); }
+.ph-stat-fill.p43 { clip: rect( 0%, 43%, 100%, 0% ); }
+.ph-stat-fill.p42 { clip: rect( 0%, 42%, 100%, 0% ); }
+.ph-stat-fill.p41 { clip: rect( 0%, 41%, 100%, 0% ); }
 .ph-stat-fill.p40 { clip: rect( 0%, 40%, 100%, 0% ); }
+.ph-stat-fill.p39 { clip: rect( 0%, 39%, 100%, 0% ); }
+.ph-stat-fill.p38 { clip: rect( 0%, 38%, 100%, 0% ); }
+.ph-stat-fill.p37 { clip: rect( 0%, 37%, 100%, 0% ); }
+.ph-stat-fill.p36 { clip: rect( 0%, 36%, 100%, 0% ); }
+.ph-stat-fill.p35 { clip: rect( 0%, 35%, 100%, 0% ); }
+.ph-stat-fill.p34 { clip: rect( 0%, 34%, 100%, 0% ); }
+.ph-stat-fill.p33 { clip: rect( 0%, 33%, 100%, 0% ); }
+.ph-stat-fill.p32 { clip: rect( 0%, 32%, 100%, 0% ); }
+.ph-stat-fill.p31 { clip: rect( 0%, 31%, 100%, 0% ); }
 .ph-stat-fill.p30 { clip: rect( 0%, 30%, 100%, 0% ); }
+.ph-stat-fill.p29 { clip: rect( 0%, 29%, 100%, 0% ); }
+.ph-stat-fill.p28 { clip: rect( 0%, 28%, 100%, 0% ); }
+.ph-stat-fill.p27 { clip: rect( 0%, 27%, 100%, 0% ); }
+.ph-stat-fill.p26 { clip: rect( 0%, 26%, 100%, 0% ); }
+.ph-stat-fill.p25 { clip: rect( 0%, 25%, 100%, 0% ); }
+.ph-stat-fill.p24 { clip: rect( 0%, 24%, 100%, 0% ); }
+.ph-stat-fill.p23 { clip: rect( 0%, 23%, 100%, 0% ); }
+.ph-stat-fill.p22 { clip: rect( 0%, 22%, 100%, 0% ); }
+.ph-stat-fill.p21 { clip: rect( 0%, 21%, 100%, 0% ); }
 .ph-stat-fill.p20 { clip: rect( 0%, 20%, 100%, 0% ); }
+.ph-stat-fill.p19 { clip: rect( 0%, 19%, 100%, 0% ); }
+.ph-stat-fill.p18 { clip: rect( 0%, 18%, 100%, 0% ); }
+.ph-stat-fill.p17 { clip: rect( 0%, 17%, 100%, 0% ); }
+.ph-stat-fill.p16 { clip: rect( 0%, 16%, 100%, 0% ); }
+.ph-stat-fill.p15 { clip: rect( 0%, 15%, 100%, 0% ); }
+.ph-stat-fill.p14 { clip: rect( 0%, 14%, 100%, 0% ); }
+.ph-stat-fill.p13 { clip: rect( 0%, 13%, 100%, 0% ); }
+.ph-stat-fill.p12 { clip: rect( 0%, 12%, 100%, 0% ); }
+.ph-stat-fill.p11 { clip: rect( 0%, 11%, 100%, 0% ); }
 .ph-stat-fill.p10 { clip: rect( 0%, 10%, 100%, 0% ); }
+.ph-stat-fill.p9 { clip: rect( 0%, 9%, 100%, 0% ); }
+.ph-stat-fill.p8 { clip: rect( 0%, 8%, 100%, 0% ); }
+.ph-stat-fill.p7 { clip: rect( 0%, 7%, 100%, 0% ); }
+.ph-stat-fill.p6 { clip: rect( 0%, 6%, 100%, 0% ); }
+.ph-stat-fill.p5 { clip: rect( 0%, 5%, 100%, 0% ); }
+.ph-stat-fill.p4 { clip: rect( 0%, 4%, 100%, 0% ); }
+.ph-stat-fill.p3 { clip: rect( 0%, 3%, 100%, 0% ); }
+.ph-stat-fill.p2 { clip: rect( 0%, 2%, 100%, 0% ); }
+.ph-stat-fill.p1 { clip: rect( 0%, 1%, 100%, 0% ); }
 .ph-stat-fill.p0 { clip: rect( 0%, 0%, 100%, 0% ); }
 
 /* ============================================================================
@@ -337,6 +427,11 @@ Label.ph-stat-when
 .TrackerTimer
 {
 	width: fill-parent-flow( 1.0 );
+}
+
+.TrackerTimer .ph-stat-fill
+{
+	transition-duration: 0s;
 }
 
 .TrackerRow

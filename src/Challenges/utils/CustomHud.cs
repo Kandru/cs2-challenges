@@ -32,8 +32,8 @@ namespace Challenges.Utils
             LayoutDir + "menu_" + PanoramaVersion + ".vxml_c",
         ];
 
-        private static readonly string[] StepClass =
-            [.. Enumerable.Range(0, 11).Select(i => $"p{i * 10}")];
+        private static readonly string[] PercentClass =
+            [.. Enumerable.Range(0, 101).Select(i => $"p{i}")];
 
         private static readonly string[] CaptureRoots = [Menu.Panel];
         public const double FadeSeconds = 1.0;
@@ -284,14 +284,21 @@ namespace Challenges.Utils
             return true;
         }
 
-        public static void SetStepPercent(CCSPlayerController player, string panelId, int percent)
+        /// <summary>Challenge fills: nearest 10% on the <c>p0</c>…<c>p100</c> clip ladder.</summary>
+        public static void SetStepPercent(CCSPlayerController player, string panelId, int percent) =>
+            WritePercent(player, panelId, (int)Math.Clamp(Math.Round(percent / 10.0) * 10, 0, 100), step: 10);
+
+        /// <summary>Timer drain: exact percent on the <c>p0</c>…<c>p100</c> clip ladder.</summary>
+        public static void SetPercent(CCSPlayerController player, string panelId, int percent) =>
+            WritePercent(player, panelId, Math.Clamp(percent, 0, 100), step: 1);
+
+        private static void WritePercent(CCSPlayerController player, string panelId, int pct, int step)
         {
             if (player is not { IsValid: true })
             {
                 return;
             }
 
-            int pct = (int)Math.Clamp(Math.Round(percent / 10.0) * 10, 0, 100);
             if (!_stepBySlot.TryGetValue(player.Slot, out Dictionary<string, int>? byPanel))
             {
                 _stepBySlot[player.Slot] = byPanel = new Dictionary<string, int>(StringComparer.Ordinal);
@@ -305,15 +312,16 @@ namespace Challenges.Utils
                     return;
                 }
 
-                SetHasClass(player, panelId, StepClass[previous / 10], false);
-                written = SetHasClass(player, panelId, StepClass[pct / 10], true);
+                previous = Math.Clamp(previous, 0, 100);
+                SetHasClass(player, panelId, PercentClass[previous], false);
+                written = SetHasClass(player, panelId, PercentClass[pct], true);
             }
             else
             {
                 written = true;
-                for (int p = 0; p <= 100; p += 10)
+                for (int p = 0; p <= 100; p += step)
                 {
-                    written &= SetHasClass(player, panelId, StepClass[p / 10], p == pct);
+                    written &= SetHasClass(player, panelId, PercentClass[p], p == pct);
                 }
             }
 

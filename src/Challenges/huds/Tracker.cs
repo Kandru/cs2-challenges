@@ -273,7 +273,7 @@ namespace Challenges.Huds
             PaintHint(player, string.Empty);
             HudTheme.Apply(player, Panel);
             HideTimer(player);
-            CustomHud.SetStepPercent(player, TimerFillId, 100);
+            CustomHud.SetPercent(player, TimerFillId, 100);
             for (int i = 0; i < MaxRows; i++)
             {
                 ClearRow(player, i);
@@ -307,7 +307,7 @@ namespace Challenges.Huds
 
             int percent = (int)Math.Clamp(Math.Round(remaining / total * 100.0), 0, 100);
             CustomHud.SetHasClass(player, TimerId, "is-off", false);
-            CustomHud.SetStepPercent(player, TimerFillId, percent);
+            CustomHud.SetPercent(player, TimerFillId, percent);
         }
 
         private static void HideTimer(CCSPlayerController player)

@@ -18,7 +18,7 @@ Baseline chrome: dark gradient card (`#12171e` → `#0b0f14`), hairline borders 
 
 **Type scale (unitless Panorama `font-size`):** floor is **14** (tracker challenge title / `Label.ph-stat-name`). Small labels (filter chips, task lines, completer names, score cells, nav glyphs, column heads) are **14** and usually `stratum-bold-tf`. Titles / self-card values stay **15–18**. Do not grow panel padding just to fit larger type.
 
-**Bars:** clip ladder `p0`…`p100` in 10% steps. `p0` clips to **0%** (no sliver). Prefer bold text over enlarging containers.
+**Bars:** clip ladder `p0`…`p100`. Challenge fills use 10% steps (`CustomHud.SetStepPercent`). Tracker drain (`ch-ttimer-fill`) uses 1% steps (`CustomHud.SetPercent`) and snaps with `transition-duration: 0s`. `p0` clips to **0%** (no sliver). Prefer bold text over enlarging containers.
 
 ## Text and translation
 
@@ -37,7 +37,7 @@ Plugin modules (`PlayerManagement`, `ChallengeEngine`, …) inherit `ClassesBlue
 1. Dialog variable on the layout's root card id → Label `text="{s:name}"` (text only, never a path or colour).
 2. `SetHasClass` on a panel **id**.
 
-No panel creation, no width/colour/image from C#. Bars = `clip` class ladder (`p0`…`p100` via `CustomHud.SetStepPercent`, 10% steps). Accent / state = class. Layout edits need a VPK republish; C# does not.
+No panel creation, no width/colour/image from C#. Bars = `clip` class ladder (`p0`…`p100`: `SetStepPercent` for challenge fills in 10% steps, `SetPercent` for the tracker timer in 1% steps). Accent / state = class. Layout edits need a VPK republish; C# does not.
 
 **Round restart:** `custom_hud_layout` entities stay alive across rounds. The client rebuilds panels from XML defaults while the server would keep last round's classes/dialog vars, and repainting identical values is a zero netvar diff. `HudDriver.EventRoundStart` calls `CustomHud.ResetRound()`, which writes the XML defaults through `Tracker.WriteDefaults` / `Menu.WriteDefaults` and drops the per-slot ledger. **Whatever an XML file ships as default must match `WriteDefaults`.** Never Kill/respawn a live layout; `CustomHud.Shutdown` only runs on map end / unload.
 
