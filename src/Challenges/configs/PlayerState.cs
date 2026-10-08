@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Challenges.Enums;
+using Challenges.Huds;
 
 namespace Challenges.Configs
 {
@@ -28,10 +29,8 @@ namespace Challenges.Configs
         [JsonIgnore] public string? MenuDetailChallengeId;
         /// <summary>Steam id of the player whose progress the list shows; null/empty = viewer.</summary>
         [JsonIgnore] public string? MenuSubjectSteamId;
-        /// <summary>Challenge ids for painted list slots (keep length in sync with Menu.ListSlots).</summary>
-        [JsonIgnore] public readonly string?[] MenuRowChallengeIds = new string?[100];
-        /// <summary>Steam ids for painted scoreboard slots (keep length in sync with Menu.ScoreSlots).</summary>
-        [JsonIgnore] public readonly string?[] MenuScoreRowSteamIds = new string?[12];
+        [JsonIgnore] public readonly string?[] MenuRowChallengeIds = new string?[Menu.ListSlots];
+        [JsonIgnore] public readonly string?[] MenuScoreRowSteamIds = new string?[Menu.ScoreSlots];
         /// <summary>How many list / detail slots the last paint filled (unused clears stop here).</summary>
         [JsonIgnore] public int MenuListPainted;
         [JsonIgnore] public int MenuDetailPainted;

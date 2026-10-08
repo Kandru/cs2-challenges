@@ -13,7 +13,7 @@ namespace Challenges.Huds
     public static class Menu
     {
         public const string Panel = "Menu";
-        public const int ListSlots = 100;
+        public const int ListSlots = 80;
         public const int ScoreSlots = 12;
         public const int DetailSlots = 20;
         public const int DetailRuleSlots = 8;

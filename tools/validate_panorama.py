@@ -53,13 +53,34 @@ REJECTED_PSEUDO = re.compile(r":(?:selected|disabled|focus)\b")
 # Mirrors CustomHud.LayoutIndexForPanel: tracker ids route to layout 0, everything else to layout 1.
 TRACKER_FILE = "tracker.xml"
 MENU_FILE = "menu.xml"
-TRACKER_ROWS = 5
-MENU_LIST_SLOTS = 100
-MENU_SCORE_SLOTS = 12
-MENU_TASK_SLOTS = 3
-MENU_BY_SLOTS = 6
-MENU_DETAIL_SLOTS = 20
-MENU_DETAIL_RULE_SLOTS = 8
+MENU_CS = ROOT / "src" / "Challenges" / "huds" / "Menu.cs"
+CARD_CS = ROOT / "src" / "Challenges" / "huds" / "ChallengeCardPaint.cs"
+TRACKER_CS = ROOT / "src" / "Challenges" / "huds" / "Tracker.cs"
+# Engine hard limit on CCSCustomHudLayout.m_vecDialogVariableNames.
+MENU_DIALOG_VAR_ENGINE_CAP = 1244
+
+
+def csharp_consts(path: Path, *names: str) -> dict[str, int]:
+    text = path.read_text(encoding="utf-8")
+    values: dict[str, int] = {}
+    for name in names:
+        match = re.search(rf"public const int {name} = (\d+);", text)
+        if not match:
+            raise SystemExit(f"missing public const int {name} in {path.relative_to(ROOT)}")
+        values[name] = int(match.group(1))
+    return values
+
+
+_TRACKER = csharp_consts(TRACKER_CS, "MaxRows")
+_MENU = csharp_consts(MENU_CS, "ListSlots", "ScoreSlots", "DetailSlots", "DetailRuleSlots")
+_CARD = csharp_consts(CARD_CS, "TaskSlots", "CompleterSlots")
+TRACKER_ROWS = _TRACKER["MaxRows"]
+MENU_LIST_SLOTS = _MENU["ListSlots"]
+MENU_SCORE_SLOTS = _MENU["ScoreSlots"]
+MENU_TASK_SLOTS = _CARD["TaskSlots"]
+MENU_BY_SLOTS = _CARD["CompleterSlots"]
+MENU_DETAIL_SLOTS = _MENU["DetailSlots"]
+MENU_DETAIL_RULE_SLOTS = _MENU["DetailRuleSlots"]
 
 TRACKER_IDS = (
     {"Tracker", "ch-ttimer", "ch-ttimer-fill", "ch-tr-hint"}
@@ -315,6 +336,12 @@ def sync_generated() -> list[str]:
 def main() -> int:
     failures: list[str] = []
     written = sync_generated()
+    if len(MENU_VARS) > MENU_DIALOG_VAR_ENGINE_CAP:
+        failures.append(
+            f"menu dialog variables: {len(MENU_VARS)} exceeds "
+            f"m_vecDialogVariableNames cap {MENU_DIALOG_VAR_ENGINE_CAP} "
+            f"(lower MENU_LIST_SLOTS)"
+        )
     check_css(failures)
     check_layout(TRACKER_FILE, TRACKER_IDS, TRACKER_VARS, failures)
     check_layout(MENU_FILE, MENU_IDS, MENU_VARS, failures)
