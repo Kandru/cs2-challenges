@@ -8,6 +8,7 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+TOOLS = Path(__file__).resolve().parent
 WORKSHOP = ROOT / "workshop"
 CONTENT = WORKSHOP / "content" / "panorama"
 LAYOUTS = CONTENT / "layout" / "custom_game" / "challenges"
@@ -16,6 +17,12 @@ HUD_VCSS = STYLES / "hud.vcss"
 HUD_CSS = STYLES / "hud.css"
 EXAMPLE_VCSS = WORKSHOP / "example" / "hud.vcss"
 PREVIEW = WORKSHOP / "preview"
+HUD_THEME_CS = ROOT / "src" / "Challenges" / "huds" / "HudTheme.cs"
+THEME_DATA_JS = PREVIEW / "theme-data.js"
+
+if str(TOOLS) not in sys.path:
+    sys.path.insert(0, str(TOOLS))
+import hud_themes  # noqa: E402
 
 INCLUDE_RE = re.compile(r"s2r://panorama/styles/custom_game/challenges/([A-Za-z0-9_]+\.vcss)")
 VAR_RE = re.compile(r"\{s:([A-Za-z0-9_]+)\}")
@@ -166,12 +173,7 @@ REQUIRED_CLASSES = {
     "empty",
     "is-self",
     "alt",
-    "theme-gold",
-    "theme-ct",
-    "theme-t",
-    "theme-green",
-    "theme-red",
-    "theme-purple",
+    *hud_themes.class_names(),
     *(f"p{p}" for p in range(0, 101, 10)),
 }
 
@@ -284,17 +286,50 @@ def check_layout(name: str, expected_ids: set[str], expected_vars: set[str], fai
 
 
 def check_preview(failures: list[str]) -> None:
-    for name in ("kit.css", "tracker.html", "menu.html"):
+    for name in ("kit.css", "theme.js", "theme-data.js", "tracker.html", "menu.html"):
         if not (PREVIEW / name).is_file():
             failures.append(f"missing workshop/preview/{name}")
+    for html_name in ("tracker.html", "menu.html"):
+        html = (PREVIEW / html_name).read_text(encoding="utf-8")
+        if "theme-data.js" not in html:
+            failures.append(f"workshop/preview/{html_name}: must load theme-data.js before theme.js")
+
+
+def check_hud_theme_cs(failures: list[str]) -> None:
+    if not HUD_THEME_CS.is_file():
+        failures.append(f"missing {HUD_THEME_CS.relative_to(ROOT)}")
+        return
+    text = HUD_THEME_CS.read_text(encoding="utf-8")
+    match = re.search(r"string\[\]\s+Names\s*=\s*\[(.*?)\]", text, re.S)
+    if not match:
+        failures.append("HudTheme.cs: missing Names array")
+        return
+    found = re.findall(r'"([a-z]+)"', match.group(1))
+    expected = hud_themes.names()
+    if found != expected:
+        failures.append(
+            f"HudTheme.cs Names must match tools/hud_themes.py ({', '.join(expected)})"
+        )
+
+
+def sync_generated() -> list[str]:
+    """Refresh generated theme artifacts. Returns relative paths that were written."""
+    written: list[str] = []
+    if hud_themes.sync_vcss_section(HUD_VCSS):
+        written.append(str(HUD_VCSS.relative_to(ROOT)))
+    if hud_themes.sync_file(THEME_DATA_JS, hud_themes.render_theme_data_js()):
+        written.append(str(THEME_DATA_JS.relative_to(ROOT)))
+    return written
 
 
 def main() -> int:
     failures: list[str] = []
+    written = sync_generated()
     check_css(failures)
     check_layout(TRACKER_FILE, TRACKER_IDS, TRACKER_VARS, failures)
     check_layout(MENU_FILE, MENU_IDS, MENU_VARS, failures)
     check_preview(failures)
+    check_hud_theme_cs(failures)
 
     if failures:
         print("Panorama validation failed:")
@@ -302,7 +337,8 @@ def main() -> int:
             print(f"  - {failure}")
         return 1
 
-    print("Panorama validation OK (tracker.xml, menu.xml, hud.vcss)")
+    note = f"; synced {', '.join(written)}" if written else ""
+    print(f"Panorama validation OK (tracker.xml, menu.xml, hud.vcss){note}")
     return 0
 
 

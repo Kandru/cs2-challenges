@@ -6,7 +6,7 @@ Shared driver: [`src/Challenges/utils/CustomHud.cs`](../src/Challenges/utils/Cus
 
 ## Theme / UX design
 
-Baseline chrome: dark gradient card (`#12171e` → `#0b0f14`), hairline borders `#ffffff14`, gold accent `#f0a531` (default `gui.theme` = `gold`). Accent themes swap that gold via root classes `theme-gold|ct|t|green|red|purple` (`HudTheme.Apply`). CT / T use stock CS2 colours `#96c8fa` / `#eabe54`.
+Baseline chrome: dark gradient card (`#12171e` → `#0b0f14`), hairline borders `#ffffff14`, gold accent `#f0a531` (default `gui.theme` = `gold`). Accent themes swap that gold via root classes `theme-*` (`HudTheme.Apply`). Palette source: [`tools/hud_themes.py`](../tools/hud_themes.py) (emits `hud.vcss` theme block + preview `theme-data.js` during `make panorama`). CT / T use stock CS2 colours `#96c8fa` / `#eabe54`.
 
 **Type scale (unitless Panorama `font-size`):** floor is **14** (tracker challenge title / `Label.ph-stat-name`). Small labels (filter chips, task lines, completer names, score cells, nav glyphs, column heads) are **14** and usually `stratum-bold-tf`. Titles / self-card values stay **15–18**. Do not grow panel padding just to fit larger type; tighten padding only when five menu cards no longer fit.
 
@@ -72,6 +72,6 @@ Top-right card (`margin-top` = `margin-right` = 10px, width 420px), never clicka
 
 ## Check before inventing CSS
 
-[panorama-css.md](panorama-css.md) for the layout model. `make panorama` for the reject list. Previews: [`preview/tracker.html`](preview/tracker.html) (JS mode cycle; freeze drains over mocked `mp_freezetime`, progress over `gui.progress_duration`), [`preview/menu.html`](preview/menu.html), [`preview/kit.css`](preview/kit.css), [`preview/theme.js`](preview/theme.js) (theme swatches: gold/ct/t/green/red/purple).
+[panorama-css.md](panorama-css.md) for the layout model. `make panorama` for the reject list. Previews: [`preview/tracker.html`](preview/tracker.html) (JS mode cycle; freeze drains over mocked `mp_freezetime`, progress over `gui.progress_duration`), [`preview/menu.html`](preview/menu.html), [`preview/kit.css`](preview/kit.css) (accent via CSS vars), [`preview/theme.js`](preview/theme.js) + [`preview/theme-data.js`](preview/theme-data.js) (swatches from `hud_themes.py`).
 
 Update this file when HUD behaviour changes.

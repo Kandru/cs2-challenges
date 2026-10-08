@@ -3,18 +3,21 @@ using Challenges.Utils;
 
 namespace Challenges.Huds
 {
-    /// <summary>Applies <c>gui.theme</c> root classes (<c>theme-gold</c>, …) to a HUD card.</summary>
+    /// <summary>Applies <c>gui.theme</c> root classes (<c>theme-*</c>) to a HUD card.</summary>
     public static class HudTheme
     {
-        private static readonly string[] Names = ["gold", "ct", "t", "green", "red", "purple"];
-        private static readonly string[] Classes =
-            ["theme-gold", "theme-ct", "theme-t", "theme-green", "theme-red", "theme-purple"];
+        // Keep in sync with tools/hud_themes.py (validated by make panorama). Rainbow order.
+        private static readonly string[] Names =
+        [
+            "red", "coral", "orange", "copper", "gold", "t", "lime", "green",
+            "teal", "cyan", "blue", "ct", "purple", "magenta", "pink", "silver",
+        ];
 
         public static string Normalize(string? theme)
         {
             if (string.IsNullOrWhiteSpace(theme))
             {
-                return Names[0];
+                return "gold";
             }
 
             ReadOnlySpan<char> value = theme.AsSpan().Trim();
@@ -26,7 +29,7 @@ namespace Challenges.Huds
                 }
             }
 
-            return Names[0];
+            return "gold";
         }
 
         public static void Apply(CCSPlayerController player, string panelId)
@@ -34,7 +37,7 @@ namespace Challenges.Huds
             string active = Normalize(Context.Config.Gui.Theme);
             for (int i = 0; i < Names.Length; i++)
             {
-                CustomHud.SetHasClass(player, panelId, Classes[i], Names[i] == active);
+                CustomHud.SetHasClass(player, panelId, "theme-" + Names[i], Names[i] == active);
             }
         }
     }
