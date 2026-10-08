@@ -5,6 +5,7 @@ namespace Challenges.Enums
         ClassInstances,
         GlobalConfig,
         PlayerStates,
+        PlayerArchive,
         PlayerLanguageManager,
         Challenges,
         Schedules,

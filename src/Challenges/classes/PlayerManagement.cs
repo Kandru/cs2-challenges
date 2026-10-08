@@ -16,12 +16,14 @@ namespace Challenges.Classes
     public class PlayerManagement : ClassesBlueprint
     {
         private const string MenuCommandDescription = "Toggle challenges menu";
+        private static readonly Action<string> Warn = static message => Console.WriteLine($"[Challenges] {message}");
 
         public PlayerManagement(Dictionary<GlobalStates, object> globalState, IStringLocalizer localizer, bool isHotReloaded)
             : base(globalState, localizer, isHotReloaded)
         {
             Commands = BuildMenuCommands(GlobalConfig.MenuCommands);
-            Server.NextFrame(LoadOnlinePlayers);
+            Archive.EnsureLoaded(GlobalConfig, warn: Warn, debug: DebugPrint);
+            Server.NextFrame(BindOnlinePlayers);
         }
 
         public override List<string> Events =>
@@ -51,13 +53,13 @@ namespace Challenges.Classes
 
         public HookResult EventPlayerConnectFull(EventPlayerConnectFull @event, GameEventInfo info)
         {
-            ScheduleLoad(@event.Userid);
+            ScheduleBind(@event.Userid);
             return HookResult.Continue;
         }
 
         public HookResult EventRoundStart(EventRoundStart @event, GameEventInfo info)
         {
-            LoadOnlinePlayers();
+            BindOnlinePlayers();
             return HookResult.Continue;
         }
 
@@ -69,22 +71,15 @@ namespace Challenges.Classes
                 return HookResult.Continue;
             }
 
-            Save(player, state);
-            CustomHud.ReleasePlayer(player);
-            PlayerStates.Remove(player);
-            GetClass<ChallengeEngine>().ForgetPlayer(state);
+            Detach(player, state);
             return HookResult.Continue;
         }
 
         public HookResult EventPlayerChat(EventPlayerChat @event, GameEventInfo info)
         {
             CCSPlayerController? player = Utilities.GetPlayerFromUserid(@event.Userid);
-            if (!Players.IsHumanViewer(player))
-            {
-                return HookResult.Continue;
-            }
-
-            if (!@event.Text.StartsWith("!lang", StringComparison.OrdinalIgnoreCase))
+            if (!Players.IsHumanViewer(player)
+                || !@event.Text.StartsWith("!lang", StringComparison.OrdinalIgnoreCase))
             {
                 return HookResult.Continue;
             }
@@ -103,7 +98,14 @@ namespace Challenges.Classes
             }
 
             PlayerState state = GetPlayerState(player);
-            state.Language = language;
+            if (!string.Equals(state.Language, language, StringComparison.Ordinal))
+            {
+                string previous = state.Language;
+                state.Language = language;
+                state.Dirty = true;
+                DebugPrint($"{player.PlayerName} language {previous} -> {language}");
+            }
+
             TrySetLanguage(player.NetworkIDString, language);
             Server.NextFrame(() =>
             {
@@ -140,39 +142,117 @@ namespace Challenges.Classes
 
         public override void Destroy()
         {
+            int sessionDirty = 0;
             foreach ((CCSPlayerController player, PlayerState state) in PlayerStates)
             {
-                Save(player, state);
+                if (player.IsValid)
+                {
+                    ApplyIdentity(player, state);
+                }
+
+                if (state.Dirty)
+                {
+                    sessionDirty++;
+                    Archive.TryWrite(GlobalConfig, state, warn: Warn, debug: DebugPrint);
+                }
+
+                state.ResetSession();
             }
+
+            DebugPrint($"player teardown: session={PlayerStates.Count} dirty={sessionDirty}");
+            Archive.FlushDirty(GlobalConfig, warn: Warn, debug: DebugPrint);
         }
 
-        private void ScheduleLoad(CCSPlayerController? player)
+        private void ScheduleBind(CCSPlayerController? player)
         {
             if (!Players.IsHumanViewer(player))
             {
                 return;
             }
 
+            Bind(player);
             Server.NextFrame(() =>
             {
                 if (player.IsValid)
                 {
-                    Load(player);
+                    Bind(player);
                 }
             });
         }
 
-        private void LoadOnlinePlayers()
+        private void BindOnlinePlayers()
         {
             foreach (CCSPlayerController player in Players.GetHumans())
             {
-                Load(player);
+                Bind(player);
             }
         }
 
-        private void Load(CCSPlayerController player)
+        private void Bind(CCSPlayerController player)
         {
             if (!Players.IsHumanViewer(player))
+            {
+                return;
+            }
+
+            string steamId = player.NetworkIDString;
+            if (string.IsNullOrEmpty(steamId))
+            {
+                DebugPrint($"bind skipped for {player.PlayerName}: empty steam id");
+                return;
+            }
+
+            // Already bound: leave identity alone (updated on disconnect / destroy).
+            if (PlayerStates.TryGetValue(player, out PlayerState? existing)
+                && existing.SteamId.Length > 0
+                && existing.SteamId.Equals(steamId, StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
+
+            bool created = Archive.TryGet(steamId) == null;
+            PlayerState state = BindPlayer(player, steamId);
+            ApplyIdentity(player, state);
+            TrySetLanguage(steamId, state.Language);
+            if (created)
+            {
+                DebugPrint($"connect {state.Username} ({steamId}): new player created in archive");
+            }
+            else
+            {
+                DebugPrint(
+                    $"connect {state.Username} ({steamId}): loaded from archive "
+                    + $"(solved={state.Statistics.AmountChallengesSolved}, schedules={state.Challenges.Count})");
+            }
+        }
+
+        private void Detach(CCSPlayerController player, PlayerState state)
+        {
+            ApplyIdentity(player, state);
+            string label = $"{state.Username} ({state.SteamId})";
+            if (state.Dirty)
+            {
+                DebugPrint($"disconnect {label}: saving dirty state to disk");
+                if (!Archive.TryWrite(GlobalConfig, state, warn: Warn, debug: DebugPrint))
+                {
+                    DebugPrint($"disconnect {label}: save failed or blocked");
+                }
+            }
+            else
+            {
+                DebugPrint($"disconnect {label}: no save (unchanged)");
+            }
+
+            CustomHud.ReleasePlayer(player);
+            PlayerStates.Remove(player);
+            GetClass<ChallengeEngine>().ForgetPlayer(state);
+            state.ResetSession();
+            Archive.PatchOfflineScore(state, Context.Schedule, DebugPrint);
+        }
+
+        private static void ApplyIdentity(CCSPlayerController player, PlayerState state)
+        {
+            if (!player.IsValid)
             {
                 return;
             }
@@ -183,46 +263,19 @@ namespace Challenges.Classes
                 return;
             }
 
-            PlayerState state = GetPlayerState(player);
-            if (state.Loaded)
+            string name = player.PlayerName ?? string.Empty;
+            string clan = player.Clan ?? string.Empty;
+            if (state.SteamId.Equals(steamId, StringComparison.OrdinalIgnoreCase)
+                && state.Username == name
+                && state.ClanTag == clan)
             {
                 return;
             }
 
-            string path = PlayerFiles.FilePath(GlobalConfig, steamId);
-            PlayerState? saved = PlayerFiles.TryRead(path, ex => DebugPrint(ex.Message));
-            if (saved != null)
-            {
-                state.CopyProgressFrom(saved);
-            }
-
-            ApplyIdentity(player, state, steamId);
-            state.Loaded = true;
-            TrySetLanguage(steamId, state.Language);
-        }
-
-        private void Save(CCSPlayerController player, PlayerState state)
-        {
-            string steamId = state.SteamId;
-            if (player.IsValid && !string.IsNullOrEmpty(player.NetworkIDString))
-            {
-                steamId = player.NetworkIDString;
-                ApplyIdentity(player, state, steamId);
-            }
-
-            if (string.IsNullOrEmpty(steamId))
-            {
-                return;
-            }
-
-            PlayerFiles.Write(PlayerFiles.FilePath(GlobalConfig, steamId), state);
-        }
-
-        private static void ApplyIdentity(CCSPlayerController player, PlayerState state, string steamId)
-        {
-            state.Username = player.PlayerName;
             state.SteamId = steamId;
-            state.ClanTag = player.Clan ?? string.Empty;
+            state.Username = name;
+            state.ClanTag = clan;
+            state.Dirty = true;
         }
 
         private void TrySetLanguage(string steamId, string language)

@@ -370,9 +370,9 @@ namespace Challenges.Huds
                 return new MenuSubject(live, human.PlayerName);
             }
 
-            if (OfflinePlayers.TryFind(subjectId) is { } saved)
+            if (Context.Archive?.TryGet(subjectId) is { } saved)
             {
-                return new MenuSubject(saved.State, saved.Name);
+                return new MenuSubject(saved, saved.Username.Length > 0 ? saved.Username : subjectId);
             }
 
             viewerState.MenuSubjectSteamId = null;
@@ -1026,12 +1026,17 @@ namespace Challenges.Huds
 
             foreach (CCSPlayerController human in Players.GetHumans())
             {
+                string? steam = human.NetworkIDString;
+                if (string.IsNullOrEmpty(steam))
+                {
+                    continue;
+                }
+
                 PlayerState? s = Context.GetState(human);
                 int current = s != null && schedule != null
                     ? ChallengeProgress.CountSolvedInSchedule(s, schedule)
                     : 0;
                 int total = s?.Statistics.AmountChallengesSolved ?? 0;
-                string steam = human.NetworkIDString ?? human.PlayerName;
                 bySteam[steam] = new ScoreEntry(human.PlayerName, steam, current, total, human);
             }
 
@@ -1040,21 +1045,20 @@ namespace Challenges.Huds
                 return bySteam.Values.ToList();
             }
 
-            foreach (OfflinePlayers.SavedPlayer saved in OfflinePlayers.LoadAll())
+            if (Context.Archive is not { } archive)
+            {
+                return bySteam.Values.ToList();
+            }
+
+            archive.EnsureOfflineScores(schedule?.Key, schedule);
+            foreach (PlayerArchive.OfflineScore saved in archive.OfflineScores)
             {
                 if (bySteam.ContainsKey(saved.SteamId))
                 {
                     continue;
                 }
 
-                bySteam[saved.SteamId] = new ScoreEntry(
-                    saved.Name,
-                    saved.SteamId,
-                    schedule != null
-                        ? ChallengeProgress.CountSolvedInSchedule(saved.State, schedule)
-                        : 0,
-                    saved.State.Statistics.AmountChallengesSolved,
-                    null);
+                bySteam[saved.SteamId] = new ScoreEntry(saved.Name, saved.SteamId, saved.Current, saved.Total, null);
             }
 
             return bySteam.Values.ToList();

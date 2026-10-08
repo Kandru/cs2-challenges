@@ -4,7 +4,7 @@ using CounterStrikeSharp.API.Modules.Extensions;
 
 namespace Challenges.Utils
 {
-    /// <summary>Single place for on-disk player JSON paths and (de)serialization.</summary>
+    /// <summary>On-disk player JSON paths and (de)serialization.</summary>
     internal static class PlayerFiles
     {
         public static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
@@ -12,53 +12,61 @@ namespace Challenges.Utils
         public static string DirectoryPath(PluginConfig config) =>
             Path.Combine(Path.GetDirectoryName(config.GetConfigPath()) ?? ".", "players");
 
-        public static string FilePath(PluginConfig config, string steamId)
-        {
-            string dir = DirectoryPath(config);
-            Directory.CreateDirectory(dir);
-            return Path.Combine(dir, $"{SafeFileName(steamId)}.json");
-        }
-
-        /// <summary>Existing player JSON path, or null if the file is missing (does not create the directory).</summary>
-        public static string? ExistingFilePath(PluginConfig config, string steamId)
-        {
-            if (string.IsNullOrEmpty(steamId))
-            {
-                return null;
-            }
-
-            string dir = DirectoryPath(config);
-            if (!Directory.Exists(dir))
-            {
-                return null;
-            }
-
-            string path = Path.Combine(dir, $"{SafeFileName(steamId)}.json");
-            return File.Exists(path) ? path : null;
-        }
+        /// <summary>Target path. Does not create directories.</summary>
+        public static string FilePath(PluginConfig config, string steamId) =>
+            Path.Combine(DirectoryPath(config), $"{SafeFileName(steamId)}.json");
 
         private static string SafeFileName(string steamId) =>
             string.Concat(steamId.Split(Path.GetInvalidFileNameChars()));
 
-        public static PlayerState? TryRead(string path, Action<Exception>? onError = null)
+        public static PlayerState? DeserializeBytes(ReadOnlySpan<byte> bytes)
         {
-            if (!File.Exists(path))
+            PlayerState? state = JsonSerializer.Deserialize<PlayerState>(bytes, JsonOptions);
+            if (state == null)
             {
                 return null;
             }
 
-            try
-            {
-                return JsonSerializer.Deserialize<PlayerState>(File.ReadAllText(path), JsonOptions);
-            }
-            catch (Exception ex)
-            {
-                onError?.Invoke(ex);
-                return null;
-            }
+            state.Challenges ??= new Dictionary<string, Dictionary<string, Dictionary<string, TaskProgress>>>();
+            state.Statistics ??= new PlayerStatistics();
+            state.Username ??= string.Empty;
+            state.SteamId ??= string.Empty;
+            state.Language ??= string.Empty;
+            return state;
         }
 
-        public static void Write(string path, PlayerState state) =>
-            File.WriteAllText(path, JsonSerializer.Serialize(state, JsonOptions));
+        /// <summary>Atomic write via temp file + replace.</summary>
+        public static void Write(string path, PlayerState state)
+        {
+            string? dir = Path.GetDirectoryName(path);
+            if (!string.IsNullOrEmpty(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
+
+            string temp = path + ".tmp";
+            File.WriteAllBytes(temp, JsonSerializer.SerializeToUtf8Bytes(state, JsonOptions));
+            File.Move(temp, path, overwrite: true);
+        }
+
+        public static bool TryQuarantine(string path, out string? quarantinePath)
+        {
+            quarantinePath = path + ".bad";
+            try
+            {
+                if (File.Exists(quarantinePath))
+                {
+                    quarantinePath = $"{path}.bad.{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}";
+                }
+
+                File.Move(path, quarantinePath, overwrite: false);
+                return true;
+            }
+            catch
+            {
+                quarantinePath = null;
+                return false;
+            }
+        }
     }
 }

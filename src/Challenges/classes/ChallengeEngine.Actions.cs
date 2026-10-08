@@ -97,6 +97,7 @@ namespace Challenges.Classes
             }
 
             state.Challenges[schedule.Key][challenge.Id].Remove(taskId);
+            state.Dirty = true;
             if (GlobalConfig.Debug)
             {
                 string action = mode == ResetMode.Progress ? "task.reset_progress" : "task.reset_completed";
@@ -127,6 +128,7 @@ namespace Challenges.Classes
             TaskProgress progress = GetOrCreateProgress(state, schedule.Key, challenge.Id, taskId);
             progress.Amount = Math.Max(progress.Amount, Math.Max(1, target.Amount));
             progress.LastUpdate = now;
+            state.Dirty = true;
             if (GlobalConfig.Debug)
             {
                 DebugPrint($"{player.PlayerName} task.mark_completed {challenge.Id}/{owner.Id} mark {taskId}");

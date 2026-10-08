@@ -407,6 +407,11 @@ namespace Challenges.Classes
                 }
             }
 
+            if (_pruneScratch.Count == 0)
+            {
+                return;
+            }
+
             foreach (string key in _pruneScratch)
             {
                 if (GlobalConfig.Debug)
@@ -416,6 +421,8 @@ namespace Challenges.Classes
 
                 state.Challenges.Remove(key);
             }
+
+            state.Dirty = true;
         }
 
         /// <summary>
@@ -608,6 +615,7 @@ namespace Challenges.Classes
             TaskProgress progress = GetOrCreateProgress(state, schedule.Key, challenge.Id, task.Id);
             progress.Amount++;
             progress.LastUpdate = now;
+            state.Dirty = true;
 
             int goal = Math.Max(1, task.Amount);
             int amount = progress.Amount;

@@ -14,6 +14,7 @@ namespace Challenges.Classes
         public PluginConfig GlobalConfig => (PluginConfig)_globalStates[GlobalStates.GlobalConfig];
         public readonly Dictionary<CCSPlayerController, PlayerState> PlayerStates =
             (Dictionary<CCSPlayerController, PlayerState>)GlobalState[GlobalStates.PlayerStates];
+        public PlayerArchive Archive => (PlayerArchive)_globalStates[GlobalStates.PlayerArchive];
         public PlayerLanguageManager PlayerLanguageManager =>
             (PlayerLanguageManager)_globalStates[GlobalStates.PlayerLanguageManager];
         public readonly Dictionary<GlobalStates, object> _globalStates = GlobalState;
@@ -31,14 +32,92 @@ namespace Challenges.Classes
         {
         }
 
+        /// <summary>
+        /// Hot path: already-bound controllers return on the first dictionary probe.
+        /// Archive is only touched when the session entry is missing or unbound.
+        /// </summary>
         public PlayerState GetPlayerState(CCSPlayerController player)
         {
-            if (!PlayerStates.TryGetValue(player, out PlayerState? state))
+            if (PlayerStates.TryGetValue(player, out PlayerState? state) && state.SteamId.Length > 0)
             {
+                return state;
+            }
+
+            string steamId = player.IsValid ? player.NetworkIDString ?? string.Empty : string.Empty;
+            if (steamId.Length == 0)
+            {
+                if (state != null)
+                {
+                    return state;
+                }
+
                 state = new PlayerState();
                 PlayerStates[player] = state;
+                return state;
             }
-            return state;
+
+            return AdoptArchive(player, steamId, state);
+        }
+
+        /// <summary>Binds a controller to an archive entry once a Steam id is known.</summary>
+        public PlayerState BindPlayer(CCSPlayerController player, string steamId) =>
+            AdoptArchive(
+                player,
+                steamId,
+                PlayerStates.TryGetValue(player, out PlayerState? existing) ? existing : null);
+
+        private PlayerState AdoptArchive(CCSPlayerController player, string steamId, PlayerState? placeholder)
+        {
+            PlayerState archived = Archive.GetOrCreate(steamId);
+            if (placeholder != null
+                && !ReferenceEquals(placeholder, archived)
+                && placeholder.Dirty
+                && placeholder.HasProgress
+                && !archived.HasProgress)
+            {
+                archived.Language = placeholder.Language;
+                archived.Challenges = placeholder.Challenges;
+                archived.Statistics = placeholder.Statistics;
+                archived.Dirty = true;
+            }
+
+            DropStaleControllers(player, archived);
+            PlayerStates[player] = archived;
+            if (archived.SteamId.Length == 0)
+            {
+                archived.SteamId = steamId;
+            }
+
+            return archived;
+        }
+
+        private void DropStaleControllers(CCSPlayerController player, PlayerState archived)
+        {
+            CCSPlayerController? stale = null;
+            foreach ((CCSPlayerController other, PlayerState otherState) in PlayerStates)
+            {
+                if (other == player || !ReferenceEquals(otherState, archived) || other.IsValid)
+                {
+                    continue;
+                }
+
+                // At most one stale controller shares an archive entry in practice.
+                stale = other;
+                break;
+            }
+
+            if (stale == null)
+            {
+                return;
+            }
+
+            PlayerStates.Remove(stale);
+            if (_globalStates[GlobalStates.ClassInstances] is Dictionary<string, ClassesBlueprint> classes
+                && classes.TryGetValue(nameof(ChallengeEngine), out ClassesBlueprint? engine)
+                && engine is ChallengeEngine challengeEngine)
+            {
+                challengeEngine.ForgetPlayer(archived);
+            }
         }
 
         protected T GetClass<T>() where T : ClassesBlueprint

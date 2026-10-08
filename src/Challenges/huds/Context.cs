@@ -35,6 +35,9 @@ namespace Challenges.Huds
         public static Dictionary<CCSPlayerController, PlayerState>? States =>
             _globals?[GlobalStates.PlayerStates] as Dictionary<CCSPlayerController, PlayerState>;
 
+        public static PlayerArchive? Archive =>
+            _globals?[GlobalStates.PlayerArchive] as PlayerArchive;
+
         public static RunningSchedule? Schedule
         {
             get

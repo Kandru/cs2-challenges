@@ -22,8 +22,8 @@ namespace Challenges.Utils
 
         private static readonly string[] LayoutResources =
         [
-            "panorama/layout/custom_game/challenges/tracker.vxml_c",
-            "panorama/layout/custom_game/challenges/menu.vxml_c",
+            "panorama/layout/custom_game/challenges/tracker_2.vxml_c",
+            "panorama/layout/custom_game/challenges/menu_v2.vxml_c",
         ];
 
         private static readonly string[] StepClass =

@@ -26,6 +26,7 @@ namespace Challenges
             { GlobalStates.ClassInstances, new Dictionary<string, ClassesBlueprint>() },
             { GlobalStates.GlobalConfig, new PluginConfig() },
             { GlobalStates.PlayerStates, new Dictionary<CCSPlayerController, PlayerState>() },
+            { GlobalStates.PlayerArchive, new PlayerArchive() },
             { GlobalStates.Challenges, new Dictionary<string, ChallengeDefinition>(StringComparer.OrdinalIgnoreCase) },
             { GlobalStates.Schedules, new Dictionary<string, ChallengeSchedule>(StringComparer.OrdinalIgnoreCase) },
             { GlobalStates.DuringRound, false },
