@@ -21,19 +21,20 @@ namespace Challenges.Configs
             Statistics.AmountChallengesSolved > 0 || Challenges.Count > 0;
 
         [JsonIgnore] public ActiveMenu ActiveMenu = ActiveMenu.None;
-        [JsonIgnore] public int MenuPage;
         [JsonIgnore] public int ScoreboardPage;
         [JsonIgnore] public string MenuFilter = "progress";
         [JsonIgnore] public ScoreboardSort ScoreboardSort = ScoreboardSort.Solved;
         [JsonIgnore] public ScoreboardFilter ScoreboardFilter = ScoreboardFilter.Online;
         [JsonIgnore] public string? MenuDetailChallengeId;
-        [JsonIgnore] public int MenuDetailPage;
         /// <summary>Steam id of the player whose progress the list shows; null/empty = viewer.</summary>
         [JsonIgnore] public string? MenuSubjectSteamId;
-        /// <summary>Challenge ids for the currently painted list slots (click target lookup).</summary>
-        [JsonIgnore] public readonly string?[] MenuRowChallengeIds = new string?[5];
-        /// <summary>Steam ids for the currently painted scoreboard slots (click target lookup).</summary>
+        /// <summary>Challenge ids for painted list slots (keep length in sync with Menu.ListSlots).</summary>
+        [JsonIgnore] public readonly string?[] MenuRowChallengeIds = new string?[100];
+        /// <summary>Steam ids for painted scoreboard slots (keep length in sync with Menu.ScoreSlots).</summary>
         [JsonIgnore] public readonly string?[] MenuScoreRowSteamIds = new string?[12];
+        /// <summary>How many list / detail slots the last paint filled (unused clears stop here).</summary>
+        [JsonIgnore] public int MenuListPainted;
+        [JsonIgnore] public int MenuDetailPainted;
         [JsonIgnore] public bool TrackerFreezeVisible;
         [JsonIgnore] public DateTime? TrackerFreezeUntil;
         [JsonIgnore] public float TrackerFreezeDuration;
@@ -49,14 +50,14 @@ namespace Challenges.Configs
         public void ResetSession()
         {
             ActiveMenu = ActiveMenu.None;
-            MenuPage = 0;
             ScoreboardPage = 0;
             MenuFilter = "progress";
             ScoreboardSort = ScoreboardSort.Solved;
             ScoreboardFilter = ScoreboardFilter.Online;
             MenuDetailChallengeId = null;
-            MenuDetailPage = 0;
             MenuSubjectSteamId = null;
+            MenuListPainted = 0;
+            MenuDetailPainted = 0;
             Array.Clear(MenuRowChallengeIds);
             Array.Clear(MenuScoreRowSteamIds);
             TrackerFreezeVisible = false;

@@ -22,18 +22,7 @@
       <div class="MenuBody">
         <div class="MenuColumns">
           <div class="MenuList">
-            <div class="ScoreTitleBar">
-              <button class="MenuTitleNav">&lt;</button>
-              <div class="ScoreTitleCenter">
-                <div class="ScoreTitleCluster">
-                  <div class="ScoreTitlePad"></div>
-                  <span class="ScoreTitle">Challenges of Alice</span>
-                  <span class="ScoreTitlePage">(1 / 2)</span>
-                  <div class="ScoreTitlePad"></div>
-                </div>
-              </div>
-              <button class="MenuTitleNav">&gt;</button>
-            </div>
+            <span class="MenuListTitle">Challenges of Alice</span>
             <div class="MenuFilterBar">
               <button class="MenuFilterBtn"><span class="MenuFilterLabel">All (20)</span></button>
               <button class="MenuFilterBtn"><span class="MenuFilterLabel">Solved (2)</span></button>
@@ -204,19 +193,10 @@
             </div>
           </div>
           <div id="ch-detail" class="MenuDetail is-off">
-            <div class="ScoreTitleBar">
-              <button type="button" class="MenuTitleNav is-disabled">&lt;</button>
-              <div class="ScoreTitleCenter">
-                <div class="ScoreTitleCluster">
-                  <div class="ScoreTitlePad"></div>
-                  <span class="ScoreTitle" id="detail-title">Weapon: AK-47 With A Very Long Subtitle That Should Ellipsis</span>
-                  <span class="ScoreTitlePage">(1 / 1)</span>
-                  <div class="ScoreTitlePad"></div>
-                </div>
-              </div>
-              <button type="button" class="MenuTitleNav is-disabled">&gt;</button>
+            <div class="DetailTitleBar">
+              <button type="button" class="MenuFilterBtn DetailBackInline" id="detail-back"><span class="MenuFilterLabel">Back</span></button>
+              <span class="DetailTitle" id="detail-title">Weapon: AK-47 With A Very Long Subtitle That Should Ellipsis</span>
             </div>
-            <button type="button" class="MenuFilterBtn DetailBackBtn" id="detail-back"><span class="MenuFilterLabel">Back to scoreboard</span></button>
             <div class="DetailRows" id="detail-rows"></div>
           </div>
         </div>

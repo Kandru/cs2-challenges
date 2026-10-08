@@ -38,7 +38,6 @@ namespace Challenges.Configs
         [JsonPropertyName("show_on_progress")] public bool ShowOnProgress { get; set; } = true;
         [JsonPropertyName("progress_duration")] public float ProgressDuration { get; set; } = 5f;
         [JsonPropertyName("tracker_rows")] public int TrackerRows { get; set; } = 3;
-        [JsonPropertyName("menu_page_size")] public int MenuPageSize { get; set; } = 5;
         /// <summary>Accent theme name (<c>gui.theme</c>); see <c>HudTheme</c> / <c>tools/hud_themes.py</c>.</summary>
         [JsonPropertyName("theme")] public string Theme { get; set; } = "gold";
     }

@@ -17,8 +17,7 @@ Created on first start. Example:
     "show_on_round_start": true,
     "show_on_progress": true,
     "progress_duration": 5,
-    "tracker_rows": 3,
-    "menu_page_size": 4
+    "tracker_rows": 3
   },
   "notifications": {
     "notify_player_on_challenge_progress": true,
@@ -48,7 +47,6 @@ Created on first start. Example:
 | `gui.show_on_progress` | Show the tracker when a visible task advances. |
 | `gui.progress_duration` | Seconds the progress tracker stays up. |
 | `gui.tracker_rows` | Rows on the tracker GUI (clamped 1–5). |
-| `gui.menu_page_size` | Challenges per menu page (clamped 1–4). |
 | `notifications.*` | Chat and sound on progress / complete / rule broken. Empty sound string = no sound. Sound paths play at full volume; soundevent names respect player volume. |
 | `discord.language` | Language for Discord messages. |
 | `discord.webhook_on_challenge_completed` | Webhook URL when a challenge is completed. |

@@ -18,8 +18,6 @@ namespace Challenges.Utils
     {
         public const string PanelId = Menu.Panel;
         public const string BtnClose = "ph-close";
-        public const string BtnPrev = "ph-prev";
-        public const string BtnNext = "ph-next";
         public const string BtnScorePrev = "ch-score-prev";
         public const string BtnScoreNext = "ch-score-next";
         public const string BtnFilterAll = "ch-filter-all";
@@ -32,8 +30,6 @@ namespace Challenges.Utils
         public const string BtnScoreSortSolved = "ch-score-s-solved";
         public const string BtnScoreSortLifetime = "ch-score-s-lifetime";
         public const string BtnDetailBack = "ch-detail-back";
-        public const string BtnDetailPrev = "ch-detail-prev";
-        public const string BtnDetailNext = "ch-detail-next";
 
         private const float CaptureDelaySeconds = 0.2f;
 

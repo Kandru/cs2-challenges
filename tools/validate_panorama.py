@@ -54,11 +54,11 @@ REJECTED_PSEUDO = re.compile(r":(?:selected|disabled|focus)\b")
 TRACKER_FILE = "tracker.xml"
 MENU_FILE = "menu.xml"
 TRACKER_ROWS = 5
-MENU_LIST_SLOTS = 5
+MENU_LIST_SLOTS = 100
 MENU_SCORE_SLOTS = 12
 MENU_TASK_SLOTS = 3
 MENU_BY_SLOTS = 6
-MENU_DETAIL_SLOTS = 5
+MENU_DETAIL_SLOTS = 20
 MENU_DETAIL_RULE_SLOTS = 8
 
 TRACKER_IDS = (
@@ -77,8 +77,6 @@ MENU_IDS = (
     {
         "Menu",
         "ph-close",
-        "ph-prev",
-        "ph-next",
         "ch-score-prev",
         "ch-score-next",
         "ch-score-h-cur",
@@ -97,8 +95,6 @@ MENU_IDS = (
         "ch-score",
         "ch-detail",
         "ch-detail-back",
-        "ch-detail-prev",
-        "ch-detail-next",
     }
     | {f"ch-mrow-{i}" for i in range(MENU_LIST_SLOTS)}
     | {f"ch-mfill-{i}" for i in range(MENU_LIST_SLOTS)}
@@ -112,9 +108,6 @@ MENU_VARS = (
     {
         "menu_title",
         "list_title",
-        "menu_page",
-        "menu_prev",
-        "menu_next",
         "menu_f_all",
         "menu_f_solved",
         "menu_f_progress",
@@ -142,9 +135,6 @@ MENU_VARS = (
         "spin_l_cur",
         "spin_l_tot",
         "detail_title",
-        "detail_page",
-        "detail_prev",
-        "detail_next",
         "detail_back",
     }
     | {f"m{i}_title" for i in range(MENU_LIST_SLOTS)}

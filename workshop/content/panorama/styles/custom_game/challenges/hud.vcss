@@ -441,7 +441,7 @@ Label.TrackerHint.is-off
 /* ============================================================================
    Menu - fullscreen frame (.ph-fs), list 2/3 + scoreboard 1/3.
    Challenge cards: compact header + 50/50 tasks|completers (2-col names).
-   5 cards/page; list does not scroll. Column pagination lives in ScoreTitleBar.
+   List + detail scroll; scoreboard keeps ScoreTitleBar pagination.
    ============================================================================ */
 
 .MenuRoot
@@ -512,19 +512,42 @@ Label.TrackerHint.is-off
 	visibility: collapse;
 }
 
-.DetailBackBtn
+.DetailTitleBar
 {
 	width: 100%;
-	margin-right: 0px;
+	height: fit-children;
+	flow-children: right;
 	margin-bottom: 8px;
 	overflow: clip;
 }
 
-.DetailBackBtn Label.MenuFilterLabel
+.DetailBackInline
 {
-	width: 100%;
+	width: fit-children;
+	height: 28px;
+	margin-right: 8px;
+	vertical-align: middle;
+	overflow: clip;
+}
+
+.DetailBackInline Label.MenuFilterLabel
+{
+	width: fit-children;
 	text-align: center;
 	text-overflow: ellipsis;
+}
+
+Label.DetailTitle
+{
+	width: fill-parent-flow( 1.0 );
+	font-size: 15;
+	letter-spacing: 1.6px;
+	text-transform: uppercase;
+	color: #e8eef4;
+	text-align: left;
+	vertical-align: middle;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .DetailRows
@@ -646,6 +669,19 @@ Label.DetailRuleLabel
 	white-space: nowrap;
 }
 
+Label.MenuListTitle
+{
+	width: 100%;
+	font-size: 15;
+	letter-spacing: 1.6px;
+	text-transform: uppercase;
+	color: #e8eef4;
+	text-align: center;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	margin-bottom: 6px;
+}
+
 .MenuFilterBar
 {
 	width: 100%;
@@ -748,9 +784,9 @@ Label.MenuFilterLabel
 .MenuRows
 {
 	width: 100%;
-	height: fit-children;
+	height: fill-parent-flow( 1.0 );
 	flow-children: down;
-	overflow: clip;
+	overflow: squish scroll;
 }
 
 .MenuRow
