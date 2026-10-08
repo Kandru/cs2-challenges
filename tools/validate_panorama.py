@@ -84,6 +84,7 @@ MENU_IDS = (
         "ch-filter-progress",
         "ch-filter-ending",
         "ch-filter-starting",
+        "ch-menu-empty",
         "ch-spin",
         "ch-score",
         "ch-detail",
@@ -101,6 +102,7 @@ MENU_IDS = (
 MENU_VARS = (
     {
         "menu_title",
+        "list_title",
         "menu_page",
         "menu_prev",
         "menu_next",

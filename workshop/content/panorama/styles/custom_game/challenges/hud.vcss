@@ -441,7 +441,7 @@ Label.TrackerHint.is-off
 /* ============================================================================
    Menu - fullscreen frame (.ph-fs), list 2/3 + scoreboard 1/3.
    Challenge cards: compact header + 50/50 tasks|completers (2-col names).
-   4 cards/page; list does not scroll. Footers pin via MenuListSpacer.
+   5 cards/page; list does not scroll. Column pagination lives in ScoreTitleBar.
    ============================================================================ */
 
 .MenuRoot
@@ -487,6 +487,7 @@ Label.TrackerHint.is-off
 	height: 100%;
 	flow-children: down;
 	margin-right: 18px;
+	overflow: clip;
 }
 
 .MenuScore
@@ -494,6 +495,7 @@ Label.TrackerHint.is-off
 	width: fill-parent-flow( 1.0 );
 	height: 100%;
 	flow-children: down;
+	overflow: clip;
 }
 
 .MenuDetail
@@ -501,6 +503,7 @@ Label.TrackerHint.is-off
 	width: fill-parent-flow( 1.0 );
 	height: 100%;
 	flow-children: down;
+	overflow: clip;
 }
 
 .MenuScore.is-off,
@@ -509,31 +512,27 @@ Label.TrackerHint.is-off
 	visibility: collapse;
 }
 
-.DetailTitleBar
+.DetailBackBtn
 {
 	width: 100%;
-	height: fit-children;
-	flow-children: right;
-	margin-bottom: 10px;
+	margin-right: 0px;
+	margin-bottom: 8px;
+	overflow: clip;
 }
 
-Label.DetailTitle
+.DetailBackBtn Label.MenuFilterLabel
 {
-	width: fill-parent-flow( 1.0 );
-	font-size: 18;
-	letter-spacing: 1.2px;
-	text-transform: uppercase;
-	color: #e8eef4;
-	vertical-align: middle;
-	margin-left: 8px;
+	width: 100%;
+	text-align: center;
+	text-overflow: ellipsis;
 }
 
 .DetailRows
 {
 	width: 100%;
-	height: fit-children;
+	height: fill-parent-flow( 1.0 );
 	flow-children: down;
-	overflow: clip;
+	overflow: squish scroll;
 }
 
 .DetailRow
@@ -636,15 +635,13 @@ Label.DetailTaskRules
 	border: 1px solid #f0a531;
 }
 
-.MenuFilterBtn.is-disabled,
-.MenuFooterBtn.is-disabled
+.MenuFilterBtn.is-disabled
 {
 	opacity: 0.35;
 	wash-color: #808080;
 }
 
-.MenuFilterBtn.is-disabled:hover,
-.MenuFooterBtn.is-disabled:hover
+.MenuFilterBtn.is-disabled:hover
 {
 	background-color: #ffffff0d;
 	border: 1px solid #00000000;
@@ -693,12 +690,6 @@ Label.MenuFilterLabel
 	height: fit-children;
 	flow-children: down;
 	overflow: clip;
-}
-
-.MenuListSpacer
-{
-	width: 100%;
-	height: fill-parent-flow( 1.0 );
 }
 
 .MenuRow
@@ -979,17 +970,12 @@ Label.MenuByLabel
 	margin-top: 12px;
 }
 
-.MenuFooter
+.MenuEmpty.is-off
 {
-	width: 100%;
-	height: fit-children;
-	flow-children: right;
-	margin-top: 6px;
-	padding-top: 8px;
-	border-top: 1px solid #d9d9d90a;
+	visibility: collapse;
 }
 
-/* Hardcoded credit in menu.xml — not a dialog variable. */
+/* Hardcoded English credit in menu.xml — not a dialog variable. */
 Label.MenuCredit
 {
 	width: 100%;
@@ -1003,20 +989,82 @@ Label.MenuCredit
 	text-overflow: shrink;
 }
 
-.MenuFooterBtn
+/* prev | [pad] title… (page) [pad] | next — equal pads center the pair; title ellipsizes; page never shrinks. */
+.ScoreTitleBar
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: right;
+	margin-bottom: 6px;
+	overflow: clip;
+}
+
+.ScoreTitleCenter
 {
 	width: fill-parent-flow( 1.0 );
+	height: fit-children;
+	flow-children: none;
+	margin-left: 6px;
+	margin-right: 6px;
+	vertical-align: middle;
+	overflow: clip;
+}
+
+.ScoreTitleCluster
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: right;
+	vertical-align: middle;
+	overflow: clip;
+}
+
+.ScoreTitlePad
+{
+	width: fill-parent-flow( 1.0 );
+	height: 1px;
+}
+
+Label.ScoreTitle
+{
+	width: fill-parent-flow( 1.0 );
+	font-size: 15;
+	letter-spacing: 1.6px;
+	text-transform: uppercase;
+	color: #e8eef4;
+	text-align: right;
+	vertical-align: middle;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	margin-right: 6px;
+}
+
+Label.ScoreTitlePage
+{
+	width: fit-children;
+	height: fit-children;
+	font-size: 15;
+	letter-spacing: 1.6px;
+	color: #f0a531;
+	text-align: center;
+	vertical-align: middle;
+	white-space: nowrap;
+}
+
+.MenuTitleNav
+{
+	width: 36px;
 	height: 28px;
 	flow-children: none;
-	margin: 0px 2px;
+	vertical-align: middle;
 	background-color: #ffffff0d;
 	border: 1px solid #00000000;
 	border-radius: 3px;
-	transition-property: background-color;
+	transition-property: background-color, border;
 	transition-duration: 0.15s;
 }
 
-.MenuFooterBtn:hover
+.MenuTitleNav:hover
 {
 	background-color: #ffffff1c;
 	border: 1px solid #f0a53166;
@@ -1024,41 +1072,21 @@ Label.MenuCredit
 	sound: "UIPanorama.generic_button_rollover";
 }
 
-.MenuFooterBtn:active
+.MenuTitleNav:active
 {
 	background-color: #ffffff2e;
 	border: 1px solid #f0a531;
 	sound: "UIPanorama.generic_button_press";
 }
 
-Label.MenuPage
+.MenuTitleNav.is-disabled,
+.MenuTitleNav.is-disabled:hover
 {
-	width: fill-parent-flow( 1.4 );
-	height: 28px;
-	font-size: 14;
-	color: #f0a531;
-	text-align: center;
-	vertical-align: middle;
-}
-
-.ScoreTitleBar
-{
-	width: 100%;
-	height: fit-children;
-	flow-children: none;
-	margin-bottom: 8px;
-	padding-top: 4px;
-	padding-bottom: 4px;
-}
-
-Label.ScoreTitle
-{
-	width: 100%;
-	font-size: 15;
-	letter-spacing: 1.6px;
-	text-transform: uppercase;
-	color: #e8eef4;
-	text-align: center;
+	opacity: 0.35;
+	border: 1px solid #00000000;
+	background-color: #ffffff0d;
+	cursor: default;
+	sound: "";
 }
 
 .ScoreSelfCard
@@ -1193,6 +1221,9 @@ Label.ScoreHead.sort-active
 	border: 1px solid #00000000;
 	border-bottom: 1px solid #ffffff0a;
 	border-radius: 0px;
+	wash-color: none;
+	transition-property: background-color, border;
+	transition-duration: 0.15s;
 }
 
 .ScoreRow.alt
@@ -1206,10 +1237,39 @@ Label.ScoreHead.sort-active
 	visibility: collapse;
 }
 
+.ScoreRow:hover
+{
+	background-color: #ffffff14;
+	border: 1px solid #f0a53166;
+	border-bottom: 1px solid #f0a53166;
+}
+
+.ScoreRow:active
+{
+	background-color: #ffffff1e;
+	border: 1px solid #f0a531;
+	border-bottom: 1px solid #f0a531;
+	sound: "UIPanorama.generic_button_press";
+}
+
 .ScoreRow.is-self
 {
 	background-color: #f0a53122;
 	border-bottom: 1px solid #f0a53144;
+}
+
+.ScoreRow.is-viewing
+{
+	background-color: #f0a53122;
+	border: 1px solid #f0a531;
+	border-bottom: 1px solid #f0a531;
+}
+
+.ScoreRow.is-viewing:hover
+{
+	background-color: #f0a53144;
+	border: 1px solid #f0a531;
+	border-bottom: 1px solid #f0a531;
 }
 
 Label.ScoreRank
@@ -1277,7 +1337,7 @@ Label.ScoreTot
 .theme-ct Label.ScoreSelfStatVal,
 .theme-ct Label.ScoreRank,
 .theme-ct Label.ScoreCur,
-.theme-ct Label.MenuPage,
+.theme-ct Label.ScoreTitlePage,
 .theme-ct Label.ScoreHead.sort-active,
 .theme-ct .ScoreHeader Label.ScoreCur.sort-active,
 .theme-ct .ScoreHeader Label.ScoreTot.sort-active
@@ -1286,14 +1346,18 @@ Label.ScoreTot
 .theme-ct .MenuFilterBtn.active:hover { background-color: #96c8fa44; border: 1px solid #96c8fa; }
 .theme-ct .MenuFilterBtn:hover { border: 1px solid #96c8fa66; }
 .theme-ct .MenuFilterBtn:active { border: 1px solid #96c8fa; }
-.theme-ct .MenuFooterBtn:hover { border: 1px solid #96c8fa66; }
-.theme-ct .MenuFooterBtn:active { border: 1px solid #96c8fa; }
+.theme-ct .MenuTitleNav:hover { border: 1px solid #96c8fa66; }
+.theme-ct .MenuTitleNav:active { border: 1px solid #96c8fa; }
 .theme-ct .MenuRow:hover { border: 1px solid #96c8fa66; }
 .theme-ct .MenuRow:active { border: 1px solid #96c8fa; }
 .theme-ct .MenuRow.is-selected { background-color: #96c8fa22; border: 1px solid #96c8fa; }
 .theme-ct .MenuRow.is-selected:hover { background-color: #96c8fa44; border: 1px solid #96c8fa; }
 .theme-ct .ScoreSelfCard { background-color: #96c8fa18; border: 1px solid #96c8fa; }
+.theme-ct .ScoreRow:hover { border: 1px solid #96c8fa66; border-bottom: 1px solid #96c8fa66; }
+.theme-ct .ScoreRow:active { border: 1px solid #96c8fa; border-bottom: 1px solid #96c8fa; }
 .theme-ct .ScoreRow.is-self { background-color: #96c8fa22; border-bottom: 1px solid #96c8fa44; }
+.theme-ct .ScoreRow.is-viewing { background-color: #96c8fa22; border: 1px solid #96c8fa; border-bottom: 1px solid #96c8fa; }
+.theme-ct .ScoreRow.is-viewing:hover { background-color: #96c8fa44; border: 1px solid #96c8fa; border-bottom: 1px solid #96c8fa; }
 .theme-ct .ScoreHeader { border-top: 1px solid #96c8fa66; border-bottom: 1px solid #96c8fa66; }
 .theme-ct .MenuTask.is-done .MenuTaskMark { background-color: #96c8fa; }
 
@@ -1304,7 +1368,7 @@ Label.ScoreTot
 .theme-t Label.ScoreSelfStatVal,
 .theme-t Label.ScoreRank,
 .theme-t Label.ScoreCur,
-.theme-t Label.MenuPage,
+.theme-t Label.ScoreTitlePage,
 .theme-t Label.ScoreHead.sort-active,
 .theme-t .ScoreHeader Label.ScoreCur.sort-active,
 .theme-t .ScoreHeader Label.ScoreTot.sort-active
@@ -1313,14 +1377,18 @@ Label.ScoreTot
 .theme-t .MenuFilterBtn.active:hover { background-color: #eabe5444; border: 1px solid #eabe54; }
 .theme-t .MenuFilterBtn:hover { border: 1px solid #eabe5466; }
 .theme-t .MenuFilterBtn:active { border: 1px solid #eabe54; }
-.theme-t .MenuFooterBtn:hover { border: 1px solid #eabe5466; }
-.theme-t .MenuFooterBtn:active { border: 1px solid #eabe54; }
+.theme-t .MenuTitleNav:hover { border: 1px solid #eabe5466; }
+.theme-t .MenuTitleNav:active { border: 1px solid #eabe54; }
 .theme-t .MenuRow:hover { border: 1px solid #eabe5466; }
 .theme-t .MenuRow:active { border: 1px solid #eabe54; }
 .theme-t .MenuRow.is-selected { background-color: #eabe5422; border: 1px solid #eabe54; }
 .theme-t .MenuRow.is-selected:hover { background-color: #eabe5444; border: 1px solid #eabe54; }
 .theme-t .ScoreSelfCard { background-color: #eabe5418; border: 1px solid #eabe54; }
+.theme-t .ScoreRow:hover { border: 1px solid #eabe5466; border-bottom: 1px solid #eabe5466; }
+.theme-t .ScoreRow:active { border: 1px solid #eabe54; border-bottom: 1px solid #eabe54; }
 .theme-t .ScoreRow.is-self { background-color: #eabe5422; border-bottom: 1px solid #eabe5444; }
+.theme-t .ScoreRow.is-viewing { background-color: #eabe5422; border: 1px solid #eabe54; border-bottom: 1px solid #eabe54; }
+.theme-t .ScoreRow.is-viewing:hover { background-color: #eabe5444; border: 1px solid #eabe54; border-bottom: 1px solid #eabe54; }
 .theme-t .ScoreHeader { border-top: 1px solid #eabe5466; border-bottom: 1px solid #eabe5466; }
 .theme-t .MenuTask.is-done .MenuTaskMark { background-color: #eabe54; }
 
@@ -1331,7 +1399,7 @@ Label.ScoreTot
 .theme-green Label.ScoreSelfStatVal,
 .theme-green Label.ScoreRank,
 .theme-green Label.ScoreCur,
-.theme-green Label.MenuPage,
+.theme-green Label.ScoreTitlePage,
 .theme-green Label.ScoreHead.sort-active,
 .theme-green .ScoreHeader Label.ScoreCur.sort-active,
 .theme-green .ScoreHeader Label.ScoreTot.sort-active
@@ -1340,14 +1408,18 @@ Label.ScoreTot
 .theme-green .MenuFilterBtn.active:hover { background-color: #6fdc7844; border: 1px solid #6fdc78; }
 .theme-green .MenuFilterBtn:hover { border: 1px solid #6fdc7866; }
 .theme-green .MenuFilterBtn:active { border: 1px solid #6fdc78; }
-.theme-green .MenuFooterBtn:hover { border: 1px solid #6fdc7866; }
-.theme-green .MenuFooterBtn:active { border: 1px solid #6fdc78; }
+.theme-green .MenuTitleNav:hover { border: 1px solid #6fdc7866; }
+.theme-green .MenuTitleNav:active { border: 1px solid #6fdc78; }
 .theme-green .MenuRow:hover { border: 1px solid #6fdc7866; }
 .theme-green .MenuRow:active { border: 1px solid #6fdc78; }
 .theme-green .MenuRow.is-selected { background-color: #6fdc7822; border: 1px solid #6fdc78; }
 .theme-green .MenuRow.is-selected:hover { background-color: #6fdc7844; border: 1px solid #6fdc78; }
 .theme-green .ScoreSelfCard { background-color: #6fdc7818; border: 1px solid #6fdc78; }
+.theme-green .ScoreRow:hover { border: 1px solid #6fdc7866; border-bottom: 1px solid #6fdc7866; }
+.theme-green .ScoreRow:active { border: 1px solid #6fdc78; border-bottom: 1px solid #6fdc78; }
 .theme-green .ScoreRow.is-self { background-color: #6fdc7822; border-bottom: 1px solid #6fdc7844; }
+.theme-green .ScoreRow.is-viewing { background-color: #6fdc7822; border: 1px solid #6fdc78; border-bottom: 1px solid #6fdc78; }
+.theme-green .ScoreRow.is-viewing:hover { background-color: #6fdc7844; border: 1px solid #6fdc78; border-bottom: 1px solid #6fdc78; }
 .theme-green .ScoreHeader { border-top: 1px solid #6fdc7866; border-bottom: 1px solid #6fdc7866; }
 .theme-green .MenuTask.is-done .MenuTaskMark { background-color: #6fdc78; }
 
@@ -1358,7 +1430,7 @@ Label.ScoreTot
 .theme-red Label.ScoreSelfStatVal,
 .theme-red Label.ScoreRank,
 .theme-red Label.ScoreCur,
-.theme-red Label.MenuPage,
+.theme-red Label.ScoreTitlePage,
 .theme-red Label.ScoreHead.sort-active,
 .theme-red .ScoreHeader Label.ScoreCur.sort-active,
 .theme-red .ScoreHeader Label.ScoreTot.sort-active
@@ -1367,14 +1439,18 @@ Label.ScoreTot
 .theme-red .MenuFilterBtn.active:hover { background-color: #e05a5a44; border: 1px solid #e05a5a; }
 .theme-red .MenuFilterBtn:hover { border: 1px solid #e05a5a66; }
 .theme-red .MenuFilterBtn:active { border: 1px solid #e05a5a; }
-.theme-red .MenuFooterBtn:hover { border: 1px solid #e05a5a66; }
-.theme-red .MenuFooterBtn:active { border: 1px solid #e05a5a; }
+.theme-red .MenuTitleNav:hover { border: 1px solid #e05a5a66; }
+.theme-red .MenuTitleNav:active { border: 1px solid #e05a5a; }
 .theme-red .MenuRow:hover { border: 1px solid #e05a5a66; }
 .theme-red .MenuRow:active { border: 1px solid #e05a5a; }
 .theme-red .MenuRow.is-selected { background-color: #e05a5a22; border: 1px solid #e05a5a; }
 .theme-red .MenuRow.is-selected:hover { background-color: #e05a5a44; border: 1px solid #e05a5a; }
 .theme-red .ScoreSelfCard { background-color: #e05a5a18; border: 1px solid #e05a5a; }
+.theme-red .ScoreRow:hover { border: 1px solid #e05a5a66; border-bottom: 1px solid #e05a5a66; }
+.theme-red .ScoreRow:active { border: 1px solid #e05a5a; border-bottom: 1px solid #e05a5a; }
 .theme-red .ScoreRow.is-self { background-color: #e05a5a22; border-bottom: 1px solid #e05a5a44; }
+.theme-red .ScoreRow.is-viewing { background-color: #e05a5a22; border: 1px solid #e05a5a; border-bottom: 1px solid #e05a5a; }
+.theme-red .ScoreRow.is-viewing:hover { background-color: #e05a5a44; border: 1px solid #e05a5a; border-bottom: 1px solid #e05a5a; }
 .theme-red .ScoreHeader { border-top: 1px solid #e05a5a66; border-bottom: 1px solid #e05a5a66; }
 .theme-red .MenuTask.is-done .MenuTaskMark { background-color: #e05a5a; }
 
@@ -1385,7 +1461,7 @@ Label.ScoreTot
 .theme-purple Label.ScoreSelfStatVal,
 .theme-purple Label.ScoreRank,
 .theme-purple Label.ScoreCur,
-.theme-purple Label.MenuPage,
+.theme-purple Label.ScoreTitlePage,
 .theme-purple Label.ScoreHead.sort-active,
 .theme-purple .ScoreHeader Label.ScoreCur.sort-active,
 .theme-purple .ScoreHeader Label.ScoreTot.sort-active
@@ -1394,13 +1470,17 @@ Label.ScoreTot
 .theme-purple .MenuFilterBtn.active:hover { background-color: #b07cff44; border: 1px solid #b07cff; }
 .theme-purple .MenuFilterBtn:hover { border: 1px solid #b07cff66; }
 .theme-purple .MenuFilterBtn:active { border: 1px solid #b07cff; }
-.theme-purple .MenuFooterBtn:hover { border: 1px solid #b07cff66; }
-.theme-purple .MenuFooterBtn:active { border: 1px solid #b07cff; }
+.theme-purple .MenuTitleNav:hover { border: 1px solid #b07cff66; }
+.theme-purple .MenuTitleNav:active { border: 1px solid #b07cff; }
 .theme-purple .MenuRow:hover { border: 1px solid #b07cff66; }
 .theme-purple .MenuRow:active { border: 1px solid #b07cff; }
 .theme-purple .MenuRow.is-selected { background-color: #b07cff22; border: 1px solid #b07cff; }
 .theme-purple .MenuRow.is-selected:hover { background-color: #b07cff44; border: 1px solid #b07cff; }
 .theme-purple .ScoreSelfCard { background-color: #b07cff18; border: 1px solid #b07cff; }
+.theme-purple .ScoreRow:hover { border: 1px solid #b07cff66; border-bottom: 1px solid #b07cff66; }
+.theme-purple .ScoreRow:active { border: 1px solid #b07cff; border-bottom: 1px solid #b07cff; }
 .theme-purple .ScoreRow.is-self { background-color: #b07cff22; border-bottom: 1px solid #b07cff44; }
+.theme-purple .ScoreRow.is-viewing { background-color: #b07cff22; border: 1px solid #b07cff; border-bottom: 1px solid #b07cff; }
+.theme-purple .ScoreRow.is-viewing:hover { background-color: #b07cff44; border: 1px solid #b07cff; border-bottom: 1px solid #b07cff; }
 .theme-purple .ScoreHeader { border-top: 1px solid #b07cff66; border-bottom: 1px solid #b07cff66; }
 .theme-purple .MenuTask.is-done .MenuTaskMark { background-color: #b07cff; }

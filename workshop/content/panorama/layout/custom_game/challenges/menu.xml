@@ -20,6 +20,22 @@
 				<Panel class="MenuBody" hittest="true">
 					<Panel class="MenuColumns" hittest="true">
 						<Panel class="MenuList" hittest="true">
+							<Panel class="ScoreTitleBar" hittest="true">
+								<Button id="ph-prev" class="MenuTitleNav">
+									<Label class="ph-nav-label stratum-bold-tf" hittest="false" text="{s:menu_prev}" />
+								</Button>
+								<Panel class="ScoreTitleCenter" hittest="false">
+									<Panel class="ScoreTitleCluster" hittest="false">
+										<Panel class="ScoreTitlePad" hittest="false" />
+										<Label class="ScoreTitle stratum-bold-tf" hittest="false" text="{s:list_title}" />
+										<Label class="ScoreTitlePage stratum-bold-tf" hittest="false" text="{s:menu_page}" />
+										<Panel class="ScoreTitlePad" hittest="false" />
+									</Panel>
+								</Panel>
+								<Button id="ph-next" class="MenuTitleNav">
+									<Label class="ph-nav-label stratum-bold-tf" hittest="false" text="{s:menu_next}" />
+								</Button>
+							</Panel>
 							<Panel class="MenuFilterBar" hittest="true">
 								<Button id="ch-filter-all" class="MenuFilterBtn">
 									<Label class="MenuFilterLabel stratum-bold-tf" hittest="false" text="{s:menu_f_all}" />
@@ -339,21 +355,24 @@
 									</Panel>
 								</Button>
 							</Panel>
-							<Label class="MenuEmpty stratum-bold-tf" hittest="false" text="{s:menu_empty}" />
-							<Panel class="MenuListSpacer" hittest="false" />
-							<Panel class="MenuFooter" hittest="true">
-								<Button id="ph-prev" class="MenuFooterBtn">
-									<Label class="ph-nav-label stratum-bold-tf" hittest="false" text="{s:menu_prev}" />
-								</Button>
-								<Label class="MenuPage stratum-bold-tf" hittest="false" text="{s:menu_page}" />
-								<Button id="ph-next" class="MenuFooterBtn">
-									<Label class="ph-nav-label stratum-bold-tf" hittest="false" text="{s:menu_next}" />
-								</Button>
-							</Panel>
+							<Label id="ch-menu-empty" class="MenuEmpty stratum-bold-tf is-off" hittest="false" text="{s:menu_empty}" />
 						</Panel>
 						<Panel id="ch-score" class="MenuScore" hittest="true">
-							<Panel class="ScoreTitleBar" hittest="false">
-								<Label class="ScoreTitle stratum-bold-tf" hittest="false" text="{s:score_title}" />
+							<Panel class="ScoreTitleBar" hittest="true">
+								<Button id="ch-score-prev" class="MenuTitleNav">
+									<Label class="ph-nav-label stratum-bold-tf" hittest="false" text="{s:score_prev}" />
+								</Button>
+								<Panel class="ScoreTitleCenter" hittest="false">
+									<Panel class="ScoreTitleCluster" hittest="false">
+										<Panel class="ScoreTitlePad" hittest="false" />
+										<Label class="ScoreTitle stratum-bold-tf" hittest="false" text="{s:score_title}" />
+										<Label class="ScoreTitlePage stratum-bold-tf" hittest="false" text="{s:score_page}" />
+										<Panel class="ScoreTitlePad" hittest="false" />
+									</Panel>
+								</Panel>
+								<Button id="ch-score-next" class="MenuTitleNav">
+									<Label class="ph-nav-label stratum-bold-tf" hittest="false" text="{s:score_next}" />
+								</Button>
 							</Panel>
 							<Panel class="ScoreFilterBar" hittest="true">
 								<Panel class="ScoreFilterGroup" hittest="true">
@@ -397,96 +416,100 @@
 								<Label id="ch-score-h-tot" class="ScoreTot ScoreHead stratum-bold-tf" hittest="false" text="{s:score_h_tot}" />
 							</Panel>
 							<Panel class="ScoreRows" hittest="false">
-								<Panel id="ch-srow-0" class="ScoreRow empty" hittest="false">
+								<Button id="ch-srow-0" class="ScoreRow empty">
 									<Label class="ScoreRank stratum-bold-tf" hittest="false" text="{s:s0_rank}" />
 									<Label class="ScoreName stratum-bold-tf" hittest="false" text="{s:s0_name}" />
 									<Label class="ScoreCur stratum-bold-tf" hittest="false" text="{s:s0_cur}" />
 									<Label class="ScoreTot stratum-bold-tf" hittest="false" text="{s:s0_tot}" />
-								</Panel>
-								<Panel id="ch-srow-1" class="ScoreRow empty" hittest="false">
+								</Button>
+								<Button id="ch-srow-1" class="ScoreRow empty">
 									<Label class="ScoreRank stratum-bold-tf" hittest="false" text="{s:s1_rank}" />
 									<Label class="ScoreName stratum-bold-tf" hittest="false" text="{s:s1_name}" />
 									<Label class="ScoreCur stratum-bold-tf" hittest="false" text="{s:s1_cur}" />
 									<Label class="ScoreTot stratum-bold-tf" hittest="false" text="{s:s1_tot}" />
-								</Panel>
-								<Panel id="ch-srow-2" class="ScoreRow empty" hittest="false">
+								</Button>
+								<Button id="ch-srow-2" class="ScoreRow empty">
 									<Label class="ScoreRank stratum-bold-tf" hittest="false" text="{s:s2_rank}" />
 									<Label class="ScoreName stratum-bold-tf" hittest="false" text="{s:s2_name}" />
 									<Label class="ScoreCur stratum-bold-tf" hittest="false" text="{s:s2_cur}" />
 									<Label class="ScoreTot stratum-bold-tf" hittest="false" text="{s:s2_tot}" />
-								</Panel>
-								<Panel id="ch-srow-3" class="ScoreRow empty" hittest="false">
+								</Button>
+								<Button id="ch-srow-3" class="ScoreRow empty">
 									<Label class="ScoreRank stratum-bold-tf" hittest="false" text="{s:s3_rank}" />
 									<Label class="ScoreName stratum-bold-tf" hittest="false" text="{s:s3_name}" />
 									<Label class="ScoreCur stratum-bold-tf" hittest="false" text="{s:s3_cur}" />
 									<Label class="ScoreTot stratum-bold-tf" hittest="false" text="{s:s3_tot}" />
-								</Panel>
-								<Panel id="ch-srow-4" class="ScoreRow empty" hittest="false">
+								</Button>
+								<Button id="ch-srow-4" class="ScoreRow empty">
 									<Label class="ScoreRank stratum-bold-tf" hittest="false" text="{s:s4_rank}" />
 									<Label class="ScoreName stratum-bold-tf" hittest="false" text="{s:s4_name}" />
 									<Label class="ScoreCur stratum-bold-tf" hittest="false" text="{s:s4_cur}" />
 									<Label class="ScoreTot stratum-bold-tf" hittest="false" text="{s:s4_tot}" />
-								</Panel>
-								<Panel id="ch-srow-5" class="ScoreRow empty" hittest="false">
+								</Button>
+								<Button id="ch-srow-5" class="ScoreRow empty">
 									<Label class="ScoreRank stratum-bold-tf" hittest="false" text="{s:s5_rank}" />
 									<Label class="ScoreName stratum-bold-tf" hittest="false" text="{s:s5_name}" />
 									<Label class="ScoreCur stratum-bold-tf" hittest="false" text="{s:s5_cur}" />
 									<Label class="ScoreTot stratum-bold-tf" hittest="false" text="{s:s5_tot}" />
-								</Panel>
-								<Panel id="ch-srow-6" class="ScoreRow empty" hittest="false">
+								</Button>
+								<Button id="ch-srow-6" class="ScoreRow empty">
 									<Label class="ScoreRank stratum-bold-tf" hittest="false" text="{s:s6_rank}" />
 									<Label class="ScoreName stratum-bold-tf" hittest="false" text="{s:s6_name}" />
 									<Label class="ScoreCur stratum-bold-tf" hittest="false" text="{s:s6_cur}" />
 									<Label class="ScoreTot stratum-bold-tf" hittest="false" text="{s:s6_tot}" />
-								</Panel>
-								<Panel id="ch-srow-7" class="ScoreRow empty" hittest="false">
+								</Button>
+								<Button id="ch-srow-7" class="ScoreRow empty">
 									<Label class="ScoreRank stratum-bold-tf" hittest="false" text="{s:s7_rank}" />
 									<Label class="ScoreName stratum-bold-tf" hittest="false" text="{s:s7_name}" />
 									<Label class="ScoreCur stratum-bold-tf" hittest="false" text="{s:s7_cur}" />
 									<Label class="ScoreTot stratum-bold-tf" hittest="false" text="{s:s7_tot}" />
-								</Panel>
-								<Panel id="ch-srow-8" class="ScoreRow empty" hittest="false">
+								</Button>
+								<Button id="ch-srow-8" class="ScoreRow empty">
 									<Label class="ScoreRank stratum-bold-tf" hittest="false" text="{s:s8_rank}" />
 									<Label class="ScoreName stratum-bold-tf" hittest="false" text="{s:s8_name}" />
 									<Label class="ScoreCur stratum-bold-tf" hittest="false" text="{s:s8_cur}" />
 									<Label class="ScoreTot stratum-bold-tf" hittest="false" text="{s:s8_tot}" />
-								</Panel>
-								<Panel id="ch-srow-9" class="ScoreRow empty" hittest="false">
+								</Button>
+								<Button id="ch-srow-9" class="ScoreRow empty">
 									<Label class="ScoreRank stratum-bold-tf" hittest="false" text="{s:s9_rank}" />
 									<Label class="ScoreName stratum-bold-tf" hittest="false" text="{s:s9_name}" />
 									<Label class="ScoreCur stratum-bold-tf" hittest="false" text="{s:s9_cur}" />
 									<Label class="ScoreTot stratum-bold-tf" hittest="false" text="{s:s9_tot}" />
-								</Panel>
-								<Panel id="ch-srow-10" class="ScoreRow empty" hittest="false">
+								</Button>
+								<Button id="ch-srow-10" class="ScoreRow empty">
 									<Label class="ScoreRank stratum-bold-tf" hittest="false" text="{s:s10_rank}" />
 									<Label class="ScoreName stratum-bold-tf" hittest="false" text="{s:s10_name}" />
 									<Label class="ScoreCur stratum-bold-tf" hittest="false" text="{s:s10_cur}" />
 									<Label class="ScoreTot stratum-bold-tf" hittest="false" text="{s:s10_tot}" />
-								</Panel>
-								<Panel id="ch-srow-11" class="ScoreRow empty" hittest="false">
+								</Button>
+								<Button id="ch-srow-11" class="ScoreRow empty">
 									<Label class="ScoreRank stratum-bold-tf" hittest="false" text="{s:s11_rank}" />
 									<Label class="ScoreName stratum-bold-tf" hittest="false" text="{s:s11_name}" />
 									<Label class="ScoreCur stratum-bold-tf" hittest="false" text="{s:s11_cur}" />
 									<Label class="ScoreTot stratum-bold-tf" hittest="false" text="{s:s11_tot}" />
-								</Panel>
-							</Panel>
-							<Panel class="MenuFooter" hittest="true">
-								<Button id="ch-score-prev" class="MenuFooterBtn">
-									<Label class="ph-nav-label stratum-bold-tf" hittest="false" text="{s:score_prev}" />
-								</Button>
-								<Label class="MenuPage stratum-bold-tf" hittest="false" text="{s:score_page}" />
-								<Button id="ch-score-next" class="MenuFooterBtn">
-									<Label class="ph-nav-label stratum-bold-tf" hittest="false" text="{s:score_next}" />
 								</Button>
 							</Panel>
 						</Panel>
 						<Panel id="ch-detail" class="MenuDetail is-off" hittest="true">
-							<Panel class="DetailTitleBar" hittest="true">
-								<Button id="ch-detail-back" class="MenuFooterBtn">
-									<Label class="ph-nav-label stratum-bold-tf" hittest="false" text="{s:detail_back}" />
+							<Panel class="ScoreTitleBar" hittest="true">
+								<Button id="ch-detail-prev" class="MenuTitleNav">
+									<Label class="ph-nav-label stratum-bold-tf" hittest="false" text="{s:detail_prev}" />
 								</Button>
-								<Label class="DetailTitle stratum-bold-tf" hittest="false" text="{s:detail_title}" />
+								<Panel class="ScoreTitleCenter" hittest="false">
+									<Panel class="ScoreTitleCluster" hittest="false">
+										<Panel class="ScoreTitlePad" hittest="false" />
+										<Label class="ScoreTitle stratum-bold-tf" hittest="false" text="{s:detail_title}" />
+										<Label class="ScoreTitlePage stratum-bold-tf" hittest="false" text="{s:detail_page}" />
+										<Panel class="ScoreTitlePad" hittest="false" />
+									</Panel>
+								</Panel>
+								<Button id="ch-detail-next" class="MenuTitleNav">
+									<Label class="ph-nav-label stratum-bold-tf" hittest="false" text="{s:detail_next}" />
+								</Button>
 							</Panel>
+							<Button id="ch-detail-back" class="MenuFilterBtn DetailBackBtn">
+								<Label class="MenuFilterLabel stratum-bold-tf" hittest="false" text="{s:detail_back}" />
+							</Button>
 							<Panel class="DetailRows" hittest="false">
 								<Panel id="ch-drow-0" class="DetailRow empty" hittest="false">
 									<Label class="DetailTaskTitle stratum-bold-tf" hittest="false" text="{s:d0_title}" />
@@ -508,16 +531,6 @@
 									<Label class="DetailTaskTitle stratum-bold-tf" hittest="false" text="{s:d4_title}" />
 									<Label class="DetailTaskRules stratum-bold-tf" hittest="false" text="{s:d4_rules}" />
 								</Panel>
-							</Panel>
-							<Panel class="MenuListSpacer" hittest="false" />
-							<Panel class="MenuFooter" hittest="true">
-								<Button id="ch-detail-prev" class="MenuFooterBtn">
-									<Label class="ph-nav-label stratum-bold-tf" hittest="false" text="{s:detail_prev}" />
-								</Button>
-								<Label class="MenuPage stratum-bold-tf" hittest="false" text="{s:detail_page}" />
-								<Button id="ch-detail-next" class="MenuFooterBtn">
-									<Label class="ph-nav-label stratum-bold-tf" hittest="false" text="{s:detail_next}" />
-								</Button>
 							</Panel>
 						</Panel>
 					</Panel>

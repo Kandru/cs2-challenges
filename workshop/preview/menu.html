@@ -22,6 +22,18 @@
       <div class="MenuBody">
         <div class="MenuColumns">
           <div class="MenuList">
+            <div class="ScoreTitleBar">
+              <button class="MenuTitleNav">&lt;</button>
+              <div class="ScoreTitleCenter">
+                <div class="ScoreTitleCluster">
+                  <div class="ScoreTitlePad"></div>
+                  <span class="ScoreTitle">Challenges of Alice</span>
+                  <span class="ScoreTitlePage">(1 / 2)</span>
+                  <div class="ScoreTitlePad"></div>
+                </div>
+              </div>
+              <button class="MenuTitleNav">&gt;</button>
+            </div>
             <div class="MenuFilterBar">
               <button class="MenuFilterBtn"><span class="MenuFilterLabel">All</span></button>
               <button class="MenuFilterBtn"><span class="MenuFilterLabel">Solved</span></button>
@@ -138,13 +150,20 @@
                 </div>
               </div>
             </div>
-            <div class="MenuListSpacer"></div>
-            <div class="MenuFooter">
-              <button class="MenuFooterBtn">&lt;</button><span class="MenuPage">1 / 2</span><button class="MenuFooterBtn">&gt;</button>
-            </div>
           </div>
           <div id="ch-score" class="MenuScore">
-            <div class="ScoreTitleBar"><span class="ScoreTitle">Scoreboard</span></div>
+            <div class="ScoreTitleBar">
+              <button class="MenuTitleNav is-disabled">&lt;</button>
+              <div class="ScoreTitleCenter">
+                <div class="ScoreTitleCluster">
+                  <div class="ScoreTitlePad"></div>
+                  <span class="ScoreTitle">Scoreboard</span>
+                  <span class="ScoreTitlePage">(1 / 1)</span>
+                  <div class="ScoreTitlePad"></div>
+                </div>
+              </div>
+              <button class="MenuTitleNav is-disabled">&gt;</button>
+            </div>
             <div class="ScoreFilterBar">
               <div class="ScoreFilterGroup">
                 <button class="MenuFilterBtn"><span class="MenuFilterLabel">All</span></button>
@@ -180,25 +199,25 @@
             </div>
             <div class="ScoreRows">
               <div class="ScoreRow is-self"><span class="ScoreRank">#1</span><span class="ScoreName">KalleWithAReallyLongSteamName</span><span class="ScoreCur">5 / 12</span><span class="ScoreTot">1,000</span></div>
-              <div class="ScoreRow alt"><span class="ScoreRank">#2</span><span class="ScoreName">Alice</span><span class="ScoreCur">3 / 12</span><span class="ScoreTot">9</span></div>
+              <div class="ScoreRow alt is-viewing"><span class="ScoreRank">#2</span><span class="ScoreName">Alice</span><span class="ScoreCur">3 / 12</span><span class="ScoreTot">9</span></div>
               <div class="ScoreRow"><span class="ScoreRank">#3</span><span class="ScoreName">Bob</span><span class="ScoreCur">2 / 12</span><span class="ScoreTot">15</span></div>
-            </div>
-            <div class="MenuFooter">
-              <button class="MenuFooterBtn is-disabled">&lt;</button><span class="MenuPage">1 / 1</span><button class="MenuFooterBtn is-disabled">&gt;</button>
             </div>
           </div>
           <div id="ch-detail" class="MenuDetail is-off">
-            <div class="DetailTitleBar">
-              <button type="button" class="MenuFooterBtn" id="detail-back">Back</button>
-              <span class="DetailTitle" id="detail-title">Weapon: AK-47 With A Very Long Subtitle</span>
+            <div class="ScoreTitleBar">
+              <button type="button" class="MenuTitleNav is-disabled">&lt;</button>
+              <div class="ScoreTitleCenter">
+                <div class="ScoreTitleCluster">
+                  <div class="ScoreTitlePad"></div>
+                  <span class="ScoreTitle" id="detail-title">Weapon: AK-47 With A Very Long Subtitle That Should Ellipsis</span>
+                  <span class="ScoreTitlePage">(1 / 1)</span>
+                  <div class="ScoreTitlePad"></div>
+                </div>
+              </div>
+              <button type="button" class="MenuTitleNav is-disabled">&gt;</button>
             </div>
+            <button type="button" class="MenuFilterBtn DetailBackBtn" id="detail-back"><span class="MenuFilterLabel">Back to scoreboard</span></button>
             <div class="DetailRows" id="detail-rows"></div>
-            <div class="MenuListSpacer"></div>
-            <div class="MenuFooter">
-              <button type="button" class="MenuFooterBtn is-disabled">&lt;</button>
-              <span class="MenuPage">1 / 1</span>
-              <button type="button" class="MenuFooterBtn is-disabled">&gt;</button>
-            </div>
           </div>
         </div>
         <div class="MenuCredit">Free plugin by kandru.net. Donations are welcome if you enjoy it. More plugins: github.com/kandru</div>

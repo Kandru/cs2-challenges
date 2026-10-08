@@ -121,22 +121,24 @@ body {
 .TrackerRow .MenuTasksCol, .TrackerRow .MenuByCol { width: 100%; padding: 6px 8px; }
 
 /* Menu */
-.MenuRoot { z-index: 300; }
-.MenuContent { position: relative; flex: 1; display: flex; flex-direction: column; z-index: 2; height: 100%; }
+.MenuRoot { z-index: 300; width: auto; max-width: 100%; }
+.MenuContent {
+  position: relative; flex: 1; display: flex; flex-direction: column; z-index: 2;
+  height: 100%; width: 100%; min-width: 0; overflow: hidden;
+}
 .MenuRoot .ph-titlebar { padding-right: 12px; }
-.MenuBody { flex: 1; display: flex; flex-direction: column; padding: 12px 18px; min-height: 0; }
-.MenuColumns { flex: 1; display: flex; min-height: 0; }
-.MenuList { flex: 2; margin-right: 18px; display: flex; flex-direction: column; min-height: 0; }
-.MenuScore { flex: 1; display: flex; flex-direction: column; min-height: 0; }
-.MenuDetail { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+.MenuBody { flex: 1; display: flex; flex-direction: column; padding: 12px 18px; min-width: 0; min-height: 0; overflow: hidden; }
+.MenuColumns { flex: 1; display: flex; min-width: 0; min-height: 0; }
+.MenuList { flex: 2; margin-right: 18px; display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow: hidden; }
+.MenuScore { flex: 1; display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow: hidden; }
+.MenuDetail { flex: 1; display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow: hidden; }
 .MenuScore.is-off,
 .MenuDetail.is-off { display: none; }
-.DetailTitleBar { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-shrink: 0; }
-.DetailTitle {
-  flex: 1; min-width: 0; font-size: 18px; font-weight: 700; letter-spacing: 1.2px;
-  text-transform: uppercase; color: #e8eef4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+.DetailBackBtn { width: 100%; max-width: 100%; margin: 0 0 8px 0; overflow: hidden; }
+.DetailBackBtn .MenuFilterLabel {
+  display: block; overflow: hidden; text-overflow: ellipsis; text-align: center;
 }
-.DetailRows { display: flex; flex-direction: column; flex-shrink: 0; }
+.DetailRows { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: auto; }
 .DetailRow {
   padding: 8px 10px; margin-bottom: 6px; background: #ffffff0d;
   border: 1px solid #ffffff14; border-radius: 3px;
@@ -160,7 +162,6 @@ body {
 .MenuFilterBtn.active { background: #f0a53122; border-color: #f0a531; }
 .MenuFilterLabel { font-size: 14px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; white-space: nowrap; }
 .MenuRows { flex: 0 0 auto; overflow: hidden; display: flex; flex-direction: column; }
-.MenuListSpacer { flex: 1; min-height: 0; }
 .MenuRow {
   flex: 0 0 auto; padding: 8px; margin-bottom: 6px;
   background: #ffffff0d; border: 1px solid #ffffff14; border-radius: 3px;
@@ -213,27 +214,36 @@ body {
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .MenuBy.is-empty .MenuByLabel { color: #8b8f94; }
-.MenuFooter {
-  display: flex; margin-top: 6px; padding-top: 8px; border-top: 1px solid #d9d9d90a; flex-shrink: 0;
-}
 .MenuCredit {
   flex-shrink: 0; margin-top: 8px; padding-top: 8px; border-top: 1px solid #d9d9d90a;
   font-size: 14px; font-weight: 700; color: #8b8f94; text-align: center;
 }
-.MenuFooterBtn {
-  flex: 1; height: 28px; margin: 0 2px; background: #ffffff0d; border: 1px solid transparent;
+.ScoreTitleBar {
+  display: flex; align-items: center; width: 100%; max-width: 100%; margin-bottom: 6px;
+  flex-shrink: 0; gap: 6px; min-width: 0; overflow: hidden; box-sizing: border-box;
+}
+.ScoreTitleCenter {
+  flex: 1 1 0%; min-width: 0; display: flex; align-items: center; overflow: hidden;
+}
+.ScoreTitleCluster {
+  display: flex; align-items: center; width: 100%; min-width: 0;
+}
+.ScoreTitlePad { flex: 1 1 0%; min-width: 0; }
+.ScoreTitle {
+  flex: 1 1 0%; min-width: 0; font-size: 15px; font-weight: 700; text-align: right;
+  letter-spacing: 1.6px; text-transform: uppercase; color: #e8eef4;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-right: 6px;
+}
+.ScoreTitlePage {
+  flex: 0 0 auto; font-size: 15px; font-weight: 700; letter-spacing: 1.6px; color: #f0a531;
+  text-align: center; white-space: nowrap;
+}
+.MenuTitleNav {
+  width: 36px; height: 28px; flex: 0 0 36px; background: #ffffff0d; border: 1px solid transparent;
   border-radius: 3px; color: #e8eef4; font-size: 14px; font-weight: 700; cursor: pointer;
 }
-.MenuFooterBtn:hover { background: #ffffff1c; border-color: #f0a53166; }
-.MenuPage { flex: 1.4; line-height: 28px; font-size: 14px; font-weight: 700; color: #f0a531; text-align: center; }
-.ScoreTitleBar {
-  display: block; width: 100%; padding: 4px 0; margin-bottom: 8px;
-  text-align: center; flex-shrink: 0;
-}
-.ScoreTitle {
-  display: block; font-size: 15px; font-weight: 700;
-  letter-spacing: 1.6px; text-transform: uppercase; color: #e8eef4;
-}
+.MenuTitleNav:hover { background: #ffffff1c; border-color: #f0a53166; }
+.MenuTitleNav.is-disabled { opacity: 0.35; pointer-events: none; }
 .ScoreSelfCard {
   padding: 12px; margin-bottom: 10px; flex-shrink: 0;
   background: #f0a53118; border: 1px solid #f0a531; border-radius: 3px;
@@ -265,11 +275,15 @@ body {
 }
 .ScoreRow {
   display: flex; align-items: center; height: 32px; flex: 0 0 32px; padding: 0 10px;
-  background: transparent; border: 0; border-bottom: 1px solid #ffffff0a; border-radius: 0;
+  background: transparent; border: 1px solid transparent; border-bottom: 1px solid #ffffff0a; border-radius: 0;
+  cursor: pointer; transition: background-color 0.15s, border 0.15s;
 }
 .ScoreRow.alt { background: #ffffff08; }
 .ScoreRow.empty, .ScoreRow.is-off { display: none; }
+.ScoreRow:hover { background: #ffffff14; border-color: #f0a53166; }
 .ScoreRow.is-self { background: #f0a53122; border-bottom-color: #f0a53144; }
+.ScoreRow.is-viewing { background: #f0a53122; border: 1px solid #f0a531; }
+.ScoreRow.is-viewing:hover { background: #f0a53144; border: 1px solid #f0a531; }
 .ScoreRank { width: 36px; font-size: 14px; font-weight: 700; color: #f0a531; }
 .ScoreName { flex: 1; font-size: 14px; font-weight: 700; color: #e8eef4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ScoreCur { width: 96px; margin-right: 10px; text-align: right; font-size: 14px; font-weight: 700; color: #f0a531; }
@@ -278,7 +292,7 @@ body {
 .ScoreHeader .ScoreCur.sort-active, .ScoreHeader .ScoreTot.sort-active { color: #f0a531; }
 
 
-.MenuFilterBtn.is-disabled, .MenuFooterBtn.is-disabled { opacity: 0.35; pointer-events: none; }
+.MenuFilterBtn.is-disabled, .MenuTitleNav.is-disabled { opacity: 0.35; pointer-events: none; }
 .ScoreFilterBar { display: flex; align-items: center; margin-bottom: 8px; flex-shrink: 0; }
 .ScoreFilterGroup { display: flex; align-items: center; }
 .ScoreFilterSpacer { flex: 1; min-width: 8px; }
@@ -291,95 +305,100 @@ body {
 .theme-ct .ph-bar { background: #96c8fa; }
 .theme-ct .ph-stat-fill { background: linear-gradient(to right, #5a9fd4, #96c8fa); }
 .theme-ct .ph-stat-val, .theme-ct .ScoreSelfRank, .theme-ct .ScoreSelfStatVal,
-.theme-ct .ScoreRank, .theme-ct .ScoreCur, .theme-ct .MenuPage, .theme-ct .ScoreHead.sort-active { color: #96c8fa; }
+.theme-ct .ScoreRank, .theme-ct .ScoreCur, .theme-ct .ScoreTitlePage, .theme-ct .ScoreHead.sort-active { color: #96c8fa; }
 .theme-ct .MenuFilterBtn.active { background: #96c8fa22; border-color: #96c8fa; }
 .theme-ct .MenuFilterBtn.active:hover { background: #96c8fa44; border-color: #96c8fa; }
 .theme-ct .MenuFilterBtn:hover { border-color: #96c8fa66; }
 .theme-ct .MenuFilterBtn:active { border-color: #96c8fa; }
-.theme-ct .MenuFooterBtn:hover { border-color: #96c8fa66; }
-.theme-ct .MenuFooterBtn:active { border-color: #96c8fa; }
 .theme-ct .MenuRow:hover { border-color: #96c8fa66; }
 .theme-ct .MenuRow:active { border-color: #96c8fa; }
 .theme-ct .MenuRow.is-selected { background: #96c8fa22; border-color: #96c8fa; }
 .theme-ct .MenuRow.is-selected:hover { background: #96c8fa44; border-color: #96c8fa; }
 .theme-ct .ScoreSelfCard { background: #96c8fa18; border-color: #96c8fa; }
+.theme-ct .ScoreRow:hover { border-color: #96c8fa66; }
 .theme-ct .ScoreRow.is-self { background: #96c8fa22; border-bottom-color: #96c8fa44; }
+.theme-ct .ScoreRow.is-viewing { background: #96c8fa22; border: 1px solid #96c8fa; }
+.theme-ct .ScoreRow.is-viewing:hover { background: #96c8fa44; border: 1px solid #96c8fa; }
 .theme-ct .ScoreHeader { border-top-color: #96c8fa66; border-bottom-color: #96c8fa66; }
 .theme-ct .ScoreHeader .ScoreCur.sort-active, .theme-ct .ScoreHeader .ScoreTot.sort-active { color: #96c8fa; }
 
 .theme-t .ph-bar { background: #eabe54; }
 .theme-t .ph-stat-fill { background: linear-gradient(to right, #c9a03a, #eabe54); }
 .theme-t .ph-stat-val, .theme-t .ScoreSelfRank, .theme-t .ScoreSelfStatVal,
-.theme-t .ScoreRank, .theme-t .ScoreCur, .theme-t .MenuPage, .theme-t .ScoreHead.sort-active { color: #eabe54; }
+.theme-t .ScoreRank, .theme-t .ScoreCur, .theme-t .ScoreTitlePage, .theme-t .ScoreHead.sort-active { color: #eabe54; }
 .theme-t .MenuFilterBtn.active { background: #eabe5422; border-color: #eabe54; }
 .theme-t .MenuFilterBtn.active:hover { background: #eabe5444; border-color: #eabe54; }
 .theme-t .MenuFilterBtn:hover { border-color: #eabe5466; }
 .theme-t .MenuFilterBtn:active { border-color: #eabe54; }
-.theme-t .MenuFooterBtn:hover { border-color: #eabe5466; }
-.theme-t .MenuFooterBtn:active { border-color: #eabe54; }
 .theme-t .MenuRow:hover { border-color: #eabe5466; }
 .theme-t .MenuRow:active { border-color: #eabe54; }
 .theme-t .MenuRow.is-selected { background: #eabe5422; border-color: #eabe54; }
 .theme-t .MenuRow.is-selected:hover { background: #eabe5444; border-color: #eabe54; }
 .theme-t .ScoreSelfCard { background: #eabe5418; border-color: #eabe54; }
+.theme-t .ScoreRow:hover { border-color: #eabe5466; }
 .theme-t .ScoreRow.is-self { background: #eabe5422; border-bottom-color: #eabe5444; }
+.theme-t .ScoreRow.is-viewing { background: #eabe5422; border: 1px solid #eabe54; }
+.theme-t .ScoreRow.is-viewing:hover { background: #eabe5444; border: 1px solid #eabe54; }
 .theme-t .ScoreHeader { border-top-color: #eabe5466; border-bottom-color: #eabe5466; }
 .theme-t .ScoreHeader .ScoreCur.sort-active, .theme-t .ScoreHeader .ScoreTot.sort-active { color: #eabe54; }
 
 .theme-green .ph-bar { background: #6fdc78; }
 .theme-green .ph-stat-fill { background: linear-gradient(to right, #3d8f45, #6fdc78); }
 .theme-green .ph-stat-val, .theme-green .ScoreSelfRank, .theme-green .ScoreSelfStatVal,
-.theme-green .ScoreRank, .theme-green .ScoreCur, .theme-green .MenuPage, .theme-green .ScoreHead.sort-active { color: #6fdc78; }
+.theme-green .ScoreRank, .theme-green .ScoreCur, .theme-green .ScoreTitlePage, .theme-green .ScoreHead.sort-active { color: #6fdc78; }
 .theme-green .MenuFilterBtn.active { background: #6fdc7822; border-color: #6fdc78; }
 .theme-green .MenuFilterBtn.active:hover { background: #6fdc7844; border-color: #6fdc78; }
 .theme-green .MenuFilterBtn:hover { border-color: #6fdc7866; }
 .theme-green .MenuFilterBtn:active { border-color: #6fdc78; }
-.theme-green .MenuFooterBtn:hover { border-color: #6fdc7866; }
-.theme-green .MenuFooterBtn:active { border-color: #6fdc78; }
 .theme-green .MenuRow:hover { border-color: #6fdc7866; }
 .theme-green .MenuRow:active { border-color: #6fdc78; }
 .theme-green .MenuRow.is-selected { background: #6fdc7822; border-color: #6fdc78; }
 .theme-green .MenuRow.is-selected:hover { background: #6fdc7844; border-color: #6fdc78; }
 .theme-green .ScoreSelfCard { background: #6fdc7818; border-color: #6fdc78; }
+.theme-green .ScoreRow:hover { border-color: #6fdc7866; }
 .theme-green .ScoreRow.is-self { background: #6fdc7822; border-bottom-color: #6fdc7844; }
+.theme-green .ScoreRow.is-viewing { background: #6fdc7822; border: 1px solid #6fdc78; }
+.theme-green .ScoreRow.is-viewing:hover { background: #6fdc7844; border: 1px solid #6fdc78; }
 .theme-green .ScoreHeader { border-top-color: #6fdc7866; border-bottom-color: #6fdc7866; }
 .theme-green .ScoreHeader .ScoreCur.sort-active, .theme-green .ScoreHeader .ScoreTot.sort-active { color: #6fdc78; }
 
 .theme-red .ph-bar { background: #e05a5a; }
 .theme-red .ph-stat-fill { background: linear-gradient(to right, #a83a3a, #e05a5a); }
 .theme-red .ph-stat-val, .theme-red .ScoreSelfRank, .theme-red .ScoreSelfStatVal,
-.theme-red .ScoreRank, .theme-red .ScoreCur, .theme-red .MenuPage, .theme-red .ScoreHead.sort-active { color: #e05a5a; }
+.theme-red .ScoreRank, .theme-red .ScoreCur, .theme-red .ScoreTitlePage, .theme-red .ScoreHead.sort-active { color: #e05a5a; }
 .theme-red .MenuFilterBtn.active { background: #e05a5a22; border-color: #e05a5a; }
 .theme-red .MenuFilterBtn.active:hover { background: #e05a5a44; border-color: #e05a5a; }
 .theme-red .MenuFilterBtn:hover { border-color: #e05a5a66; }
 .theme-red .MenuFilterBtn:active { border-color: #e05a5a; }
-.theme-red .MenuFooterBtn:hover { border-color: #e05a5a66; }
-.theme-red .MenuFooterBtn:active { border-color: #e05a5a; }
 .theme-red .MenuRow:hover { border-color: #e05a5a66; }
 .theme-red .MenuRow:active { border-color: #e05a5a; }
 .theme-red .MenuRow.is-selected { background: #e05a5a22; border-color: #e05a5a; }
 .theme-red .MenuRow.is-selected:hover { background: #e05a5a44; border-color: #e05a5a; }
 .theme-red .ScoreSelfCard { background: #e05a5a18; border-color: #e05a5a; }
+.theme-red .ScoreRow:hover { border-color: #e05a5a66; }
 .theme-red .ScoreRow.is-self { background: #e05a5a22; border-bottom-color: #e05a5a44; }
+.theme-red .ScoreRow.is-viewing { background: #e05a5a22; border: 1px solid #e05a5a; }
+.theme-red .ScoreRow.is-viewing:hover { background: #e05a5a44; border: 1px solid #e05a5a; }
 .theme-red .ScoreHeader { border-top-color: #e05a5a66; border-bottom-color: #e05a5a66; }
 .theme-red .ScoreHeader .ScoreCur.sort-active, .theme-red .ScoreHeader .ScoreTot.sort-active { color: #e05a5a; }
 
 .theme-purple .ph-bar { background: #b07cff; }
 .theme-purple .ph-stat-fill { background: linear-gradient(to right, #7a4fc4, #b07cff); }
 .theme-purple .ph-stat-val, .theme-purple .ScoreSelfRank, .theme-purple .ScoreSelfStatVal,
-.theme-purple .ScoreRank, .theme-purple .ScoreCur, .theme-purple .MenuPage, .theme-purple .ScoreHead.sort-active { color: #b07cff; }
+.theme-purple .ScoreRank, .theme-purple .ScoreCur, .theme-purple .ScoreTitlePage, .theme-purple .ScoreHead.sort-active { color: #b07cff; }
 .theme-purple .MenuFilterBtn.active { background: #b07cff22; border-color: #b07cff; }
 .theme-purple .MenuFilterBtn.active:hover { background: #b07cff44; border-color: #b07cff; }
 .theme-purple .MenuFilterBtn:hover { border-color: #b07cff66; }
 .theme-purple .MenuFilterBtn:active { border-color: #b07cff; }
-.theme-purple .MenuFooterBtn:hover { border-color: #b07cff66; }
-.theme-purple .MenuFooterBtn:active { border-color: #b07cff; }
 .theme-purple .MenuRow:hover { border-color: #b07cff66; }
 .theme-purple .MenuRow:active { border-color: #b07cff; }
 .theme-purple .MenuRow.is-selected { background: #b07cff22; border-color: #b07cff; }
 .theme-purple .MenuRow.is-selected:hover { background: #b07cff44; border-color: #b07cff; }
 .theme-purple .ScoreSelfCard { background: #b07cff18; border-color: #b07cff; }
+.theme-purple .ScoreRow:hover { border-color: #b07cff66; }
 .theme-purple .ScoreRow.is-self { background: #b07cff22; border-bottom-color: #b07cff44; }
+.theme-purple .ScoreRow.is-viewing { background: #b07cff22; border: 1px solid #b07cff; }
+.theme-purple .ScoreRow.is-viewing:hover { background: #b07cff44; border: 1px solid #b07cff; }
 .theme-purple .ScoreHeader { border-top-color: #b07cff66; border-bottom-color: #b07cff66; }
 .theme-purple .ScoreHeader .ScoreCur.sort-active, .theme-purple .ScoreHeader .ScoreTot.sort-active { color: #b07cff; }
 

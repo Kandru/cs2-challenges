@@ -23,8 +23,12 @@ namespace Challenges.Configs
         [JsonIgnore] public ScoreboardFilter ScoreboardFilter = ScoreboardFilter.Online;
         [JsonIgnore] public string? MenuDetailChallengeId;
         [JsonIgnore] public int MenuDetailPage;
+        /// <summary>Steam id of the player whose progress the list shows; null/empty = viewer.</summary>
+        [JsonIgnore] public string? MenuSubjectSteamId;
         /// <summary>Challenge ids for the currently painted list slots (click target lookup).</summary>
         [JsonIgnore] public readonly string?[] MenuRowChallengeIds = new string?[5];
+        /// <summary>Steam ids for the currently painted scoreboard slots (click target lookup).</summary>
+        [JsonIgnore] public readonly string?[] MenuScoreRowSteamIds = new string?[12];
         [JsonIgnore] public bool TrackerFreezeVisible;
         [JsonIgnore] public DateTime? TrackerFreezeUntil;
         [JsonIgnore] public float TrackerFreezeDuration;

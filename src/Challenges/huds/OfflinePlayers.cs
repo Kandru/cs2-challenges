@@ -25,6 +25,11 @@ namespace Challenges.Huds
             }
         }
 
+        public static SavedPlayer? TryFind(string steamId) =>
+            PlayerFiles.ExistingFilePath(Context.Config, steamId) is { } path
+                ? TryLoad(path)
+                : null;
+
         private static SavedPlayer? TryLoad(string path)
         {
             PlayerState? loaded = PlayerFiles.TryRead(path);
