@@ -77,7 +77,7 @@
     "hud.menu.tasks": "Aufgaben",
     "hud.menu.solved_by": "Gelöst von",
     "hud.menu.solved_by.empty": "Noch niemand",
-    "hud.menu.you": "DU",
+    "hud.menu.you": "DIR",
     "hud.menu.task.overflow": "+{count} weitere",
     "hud.menu.empty": "Nichts anzuzeigen",
     "hud.menu.prev": "<",
