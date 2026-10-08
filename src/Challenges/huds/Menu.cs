@@ -29,8 +29,15 @@ namespace Challenges.Huds
         private const string EmptyLabelId = "ch-menu-empty";
         private static readonly TimeSpan EndingSoonWindow = TimeSpan.FromDays(7);
 
-        private static readonly string[] Filters =
-            [FilterAll, FilterSolved, FilterProgress, FilterEnding, FilterStarting];
+        private static readonly FilterDef[] FilterDefs =
+        [
+            new(FilterAll, HudMenu.BtnFilterAll, "menu_f_all", "hud.menu.filter.all"),
+            new(FilterSolved, HudMenu.BtnFilterSolved, "menu_f_solved", "hud.menu.filter.solved"),
+            new(FilterProgress, HudMenu.BtnFilterProgress, "menu_f_progress", "hud.menu.filter.progress"),
+            new(FilterEnding, HudMenu.BtnFilterEnding, "menu_f_ending", "hud.menu.filter.ending"),
+            new(FilterStarting, HudMenu.BtnFilterStarting, "menu_f_starting", "hud.menu.filter.starting"),
+        ];
+
         private static readonly string[] ChromeVars =
         [
             "menu_title", "list_title", "menu_page", "menu_prev", "menu_next",
@@ -46,11 +53,6 @@ namespace Challenges.Huds
         private static readonly (string Var, string Key)[] ChromeLabels =
         [
             ("menu_title", "hud.menu.title"),
-            ("menu_f_all", "hud.menu.filter.all"),
-            ("menu_f_solved", "hud.menu.filter.solved"),
-            ("menu_f_progress", "hud.menu.filter.progress"),
-            ("menu_f_ending", "hud.menu.filter.ending"),
-            ("menu_f_starting", "hud.menu.filter.starting"),
             ("menu_tasks_h", "hud.menu.tasks"),
             ("menu_by_h", "hud.menu.solved_by"),
             ("score_title", "hud.menu.scoreboard"),
@@ -66,6 +68,7 @@ namespace Challenges.Huds
             ("spin_l_tot", "hud.menu.scoreboard.you.lifetime"),
         ];
 
+        private sealed record FilterDef(string Id, string ButtonId, string Var, string Key);
         private sealed record MenuSubject(PlayerState Progress, string? Name);
 
         private sealed record Entry(
@@ -293,10 +296,10 @@ namespace Challenges.Huds
             }
 
             HudTheme.Apply(player, Panel);
-            foreach (string filter in Filters)
+            foreach (FilterDef filter in FilterDefs)
             {
-                CustomHud.SetHasClass(player, FilterButtonId(filter), "active", false);
-                CustomHud.SetHasClass(player, FilterButtonId(filter), "is-disabled", false);
+                CustomHud.SetHasClass(player, filter.ButtonId, "active", false);
+                CustomHud.SetHasClass(player, filter.ButtonId, "is-disabled", false);
             }
 
             CustomHud.SetHasClass(player, HudMenu.BtnScoreFilterAll, "active", false);
@@ -380,15 +383,6 @@ namespace Challenges.Huds
             state.MenuPage = 0;
         }
 
-        private static string FilterButtonId(string filter) => filter switch
-        {
-            FilterAll => HudMenu.BtnFilterAll,
-            FilterSolved => HudMenu.BtnFilterSolved,
-            FilterEnding => HudMenu.BtnFilterEnding,
-            FilterStarting => HudMenu.BtnFilterStarting,
-            _ => HudMenu.BtnFilterProgress,
-        };
-
         private static void EnsureFilterAvailable(
             CCSPlayerController player,
             PlayerState session,
@@ -397,16 +391,17 @@ namespace Challenges.Huds
         {
             string? fallback = null;
             bool activeEmpty = false;
-            foreach (string filter in Filters)
+            foreach (FilterDef filter in FilterDefs)
             {
-                int count = CountFilterEntries(progress, schedule, filter);
-                CustomHud.SetHasClass(player, FilterButtonId(filter), "is-disabled", count == 0);
+                int count = CountFilterEntries(progress, schedule, filter.Id);
+                CustomHud.SetText(player, Panel, filter.Var, $"{Context.Text(player, filter.Key)} ({count})");
+                CustomHud.SetHasClass(player, filter.ButtonId, "is-disabled", count == 0);
                 if (count > 0)
                 {
-                    fallback ??= filter;
+                    fallback ??= filter.Id;
                 }
 
-                if (filter == session.MenuFilter)
+                if (filter.Id == session.MenuFilter)
                 {
                     activeEmpty = count == 0;
                 }
@@ -518,9 +513,9 @@ namespace Challenges.Huds
             bool sortLifetime = state.ScoreboardSort == ScoreboardSort.Lifetime;
             CustomHud.SetHasClass(player, ScoreHeadCurId, "sort-active", !sortLifetime);
             CustomHud.SetHasClass(player, ScoreHeadTotId, "sort-active", sortLifetime);
-            foreach (string filter in Filters)
+            foreach (FilterDef filter in FilterDefs)
             {
-                CustomHud.SetHasClass(player, FilterButtonId(filter), "active", filter == state.MenuFilter);
+                CustomHud.SetHasClass(player, filter.ButtonId, "active", filter.Id == state.MenuFilter);
             }
 
             CustomHud.SetHasClass(
