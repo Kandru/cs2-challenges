@@ -149,7 +149,7 @@ Before finishing:
 - [ ] Stages ordered; streak breakers are `visible: false`
 - [ ] Schedule dates include “now” if the user expects it live
 
-Tell the user: copy into `/addons/counterstrikesharp/configs/plugins/Challenges/` (if writing under `examples/`), then change map or run `challenges reload`. Debug with `"debug": true` in `Challenges.json` if nothing matches — see [documentation/howto.md](../../../documentation/howto.md) and [documentation/settings.md](../../../documentation/settings.md).
+Tell the user: copy into `/addons/counterstrikesharp/configs/plugins/Challenges/` (if writing under `examples/`), then change map or run `challenges reload`. Debug with `"debug": { "enable": true }` in `Challenges.json` if nothing matches — see [documentation/howto.md](../../../documentation/howto.md) and [documentation/settings.md](../../../documentation/settings.md).
 
 ## Minimal skeleton
 

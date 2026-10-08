@@ -63,7 +63,7 @@ namespace Challenges.Classes
                             .Replace("{index}", player.Index.ToString()));
                         break;
                     default:
-                        if (GlobalConfig.Debug)
+                        if (GlobalConfig.Debug.Enable)
                         {
                             DebugPrint(
                                 $"{player.PlayerName} {action.Type} {challenge.Id}/{owner.Id} skip unknown");
@@ -98,7 +98,7 @@ namespace Challenges.Classes
 
             state.Challenges[schedule.Key][challenge.Id].Remove(taskId);
             state.Dirty = true;
-            if (GlobalConfig.Debug)
+            if (GlobalConfig.Debug.Enable)
             {
                 string action = mode == ResetMode.Progress ? "task.reset_progress" : "task.reset_completed";
                 DebugPrint($"{player.PlayerName} {action} {challenge.Id}/{owner.Id} reset {taskId}");
@@ -129,7 +129,7 @@ namespace Challenges.Classes
             progress.Amount = Math.Max(progress.Amount, Math.Max(1, target.Amount));
             progress.LastUpdate = now;
             state.Dirty = true;
-            if (GlobalConfig.Debug)
+            if (GlobalConfig.Debug.Enable)
             {
                 DebugPrint($"{player.PlayerName} task.mark_completed {challenge.Id}/{owner.Id} mark {taskId}");
             }

@@ -45,7 +45,7 @@ Each `?` in the builder opens the matching wiki page.
 1. Confirm the schedule dates include now (UTC).
 2. Confirm every id under `challenges:` matches a blueprint filename without `.yaml`.
 3. Check the CounterStrikeSharp log for YAML errors.
-4. Set `"debug": true` in `Challenges.json` and change map again.
+4. Set `"debug": { "enable": true }` in `Challenges.json` and change map again.
 
 ## What this plugin does not do
 

@@ -129,7 +129,7 @@ namespace Challenges.Classes
 
         public void DebugPrint(string message)
         {
-            if (!GlobalConfig.Debug)
+            if (!GlobalConfig.Debug.Enable)
             {
                 return;
             }

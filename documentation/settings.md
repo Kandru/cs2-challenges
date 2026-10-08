@@ -9,8 +9,10 @@ Created on first start. Example:
 ```json
 {
   "enabled": true,
-  "debug": false,
-  "allow_bots": false,
+  "debug": {
+    "enable": false,
+    "allow_bots": false
+  },
   "menu_commands": ["c", "challenges"],
   "command_prefix": "!",
   "gui": {
@@ -39,8 +41,8 @@ Created on first start. Example:
 | Setting | Meaning |
 |---------|---------|
 | `enabled` | Turns the whole plugin on or off. |
-| `debug` | Extra log messages (YAML / matching hints). |
-| `allow_bots` | Let bots earn challenges (default `false`). |
+| `debug.enable` | Extra log messages (YAML / matching hints). |
+| `debug.allow_bots` | Ignore `*.isbot` == false rules so bot victims/attackers still count. Default `false`. |
 | `menu_commands` | Chat names that open the challenges menu (default `["c", "challenges"]`). Leading `!` / `/` / `.` optional. Empty list disables chat commands and hides the tracker hint. |
 | `command_prefix` | Chat trigger shown on the tracker before the shortest menu command (default `"!"`). |
 | `gui.show_on_round_start` | Show the tracker during freeze time. |

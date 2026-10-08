@@ -156,7 +156,7 @@ namespace Challenges.Classes
                 List<(CCSPlayerController Player, string Type)>? valid = FilterTargets(targets);
                 if (valid == null)
                 {
-                    if (GlobalConfig.Debug)
+                    if (GlobalConfig.Debug.Enable)
                     {
                         DebugPrint($"{listenerName} no targets");
                     }
@@ -192,7 +192,7 @@ namespace Challenges.Classes
                     List<(CCSPlayerController Player, string Type)>? targets = FilterTargets(extractor.Targets(gameEvent));
                     if (targets == null)
                     {
-                        if (GlobalConfig.Debug)
+                        if (GlobalConfig.Debug.Enable)
                         {
                             DebugPrint($"{eventName} no targets");
                         }
@@ -318,7 +318,7 @@ namespace Challenges.Classes
 
             PruneOutdated(state, schedule.Key);
             long now = UnixNow();
-            bool debug = GlobalConfig.Debug;
+            bool debug = GlobalConfig.Debug.Enable;
             string scheduleKey = schedule.Key;
 
             // Snapshot first: finishing a task on this event must not unlock and credit the next one.
@@ -414,7 +414,7 @@ namespace Challenges.Classes
 
             foreach (string key in _pruneScratch)
             {
-                if (GlobalConfig.Debug)
+                if (GlobalConfig.Debug.Enable)
                 {
                     DebugPrint($"deleting outdated progress for schedule {key}");
                 }
@@ -429,7 +429,7 @@ namespace Challenges.Classes
         /// Returns true when the task must not receive progress.
         /// <paramref name="reason"/> is only populated when <paramref name="explain"/> is true.
         /// </summary>
-        private static bool IsSkipped(
+        private bool IsSkipped(
             PlayerState state,
             string scheduleKey,
             ChallengeDefinition challenge,
@@ -477,15 +477,24 @@ namespace Challenges.Classes
         }
 
         /// <summary>False when a rule fails; <paramref name="reason"/> set only when <paramref name="explain"/>.</summary>
-        private static bool RulesPass(
+        private bool RulesPass(
             ChallengeTask task,
             Dictionary<string, string> data,
             bool explain,
             out string? reason)
         {
             reason = null;
+            bool allowBots = GlobalConfig.Debug.AllowBots;
             foreach (ChallengeRule rule in task.Rules)
             {
+                if (allowBots
+                    && rule.Operator == "bool=="
+                    && rule.Key.EndsWith(".isbot", StringComparison.Ordinal)
+                    && rule.Value.Equals("false", StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
                 if (!data.TryGetValue(rule.Key, out string? current))
                 {
                     if (explain)

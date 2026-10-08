@@ -64,10 +64,16 @@ namespace Challenges.Configs
         [JsonPropertyName("current_schedule_key")] public string CurrentScheduleKey { get; set; } = "";
     }
 
+    public class PluginConfigDevelopment
+    {
+        [JsonPropertyName("enable")] public bool Enable { get; set; } = false;
+        [JsonPropertyName("allow_bots")] public bool AllowBots { get; set; } = false;
+    }
+
     public class PluginConfig : BasePluginConfig
     {
         [JsonPropertyName("enabled")] public bool Enabled { get; set; } = true;
-        [JsonPropertyName("debug")] public bool Debug { get; set; } = false;
+        [JsonPropertyName("development")] public PluginConfigDevelopment Debug { get; set; } = new();
         [JsonPropertyName("menu_commands")] public List<string> MenuCommands { get; set; } = ["c", "challenges"];
         [JsonPropertyName("command_prefix")] public string CommandPrefix { get; set; } = "!";
         [JsonPropertyName("gui")] public PluginConfigGui Gui { get; set; } = new();
