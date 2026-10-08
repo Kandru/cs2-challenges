@@ -744,12 +744,14 @@ Label.DetailTaskTitle
 
 .DetailRuleRow .DetailRule
 {
-	margin-right: 3px;
+	margin-left: 3px;
+	margin-right: 0px;
 }
 
-.DetailRuleRow .DetailRule:last-child
+.DetailRuleRow .DetailRule:first-child,
+.DetailRuleRow .DetailRule.is-off
 {
-	margin-right: 0px;
+	margin-left: 0px;
 }
 
 .DetailRule.is-empty
@@ -1119,12 +1121,14 @@ Label.MenuTaskLabel
 
 .MenuByRow .MenuBy
 {
-	margin-right: 3px;
+	margin-left: 3px;
+	margin-right: 0px;
 }
 
-.MenuByRow .MenuBy:last-child
+.MenuByRow .MenuBy:first-child,
+.MenuByRow .MenuBy.is-off
 {
-	margin-right: 0px;
+	margin-left: 0px;
 }
 
 .MenuBy.is-empty
