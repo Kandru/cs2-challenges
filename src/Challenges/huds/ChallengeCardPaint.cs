@@ -160,28 +160,30 @@ namespace Challenges.Huds
             ChallengeDefinition challenge)
         {
             List<(string Text, bool IsYou)> names = [];
-            if (schedule == null)
+            // Online controllers share PlayerState with the archive — one pass covers both.
+            if (schedule == null || Context.Archive is not { } archive)
             {
                 return names;
             }
 
-            string? youLabel = null;
-            foreach (CCSPlayerController human in Players.GetHumans())
+            string? viewerSteam = viewer.NetworkIDString;
+            foreach (PlayerState state in archive.States)
             {
-                if (Context.GetState(human) is not { } state
+                if (state.SteamId.Length == 0
                     || !ChallengeProgress.IsChallengeSolved(state, schedule.Key, challenge))
                 {
                     continue;
                 }
 
-                if (human == viewer)
+                bool isYou = viewerSteam is { Length: > 0 }
+                    && string.Equals(state.SteamId, viewerSteam, StringComparison.OrdinalIgnoreCase);
+                if (isYou)
                 {
-                    youLabel ??= Context.Text(viewer, "hud.menu.you");
-                    names.Insert(0, (youLabel, true));
+                    names.Insert(0, (Context.Text(viewer, "hud.menu.you"), true));
                 }
                 else
                 {
-                    names.Add((human.PlayerName, false));
+                    names.Add((state.Username.Length > 0 ? state.Username : state.SteamId, false));
                 }
             }
 

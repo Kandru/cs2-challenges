@@ -34,11 +34,9 @@ LABEL_SELECTORS = """\
 .{cls} Label.ScoreSelfRank,
 .{cls} Label.ScoreSelfStatVal,
 .{cls} Label.ScoreRank,
-.{cls} Label.ScoreCur,
+.{cls} .ScoreRow Label.ScoreCur,
 .{cls} Label.ScoreTitlePage,
-.{cls} Label.ScoreHead.sort-active,
-.{cls} .ScoreHeader Label.ScoreCur.sort-active,
-.{cls} .ScoreHeader Label.ScoreTot.sort-active
+.{cls} Label.ScoreHead.sort-active
 {{ color: {accent}; }}
 """
 

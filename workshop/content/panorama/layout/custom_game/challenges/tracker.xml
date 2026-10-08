@@ -5,7 +5,7 @@
 	</styles>
 
 	<!-- Top-right challenge tracker. Tasks only (no completers). -->
-	<Panel class="HudScreen" hittest="false">
+	<Panel class="HudScreen TrackerScreen" hittest="false">
 		<Panel id="Tracker" class="Tracker ph-card ph-off theme-gold" hittest="false">
 			<Panel class="ph-bg" hittest="false" />
 			<Panel class="ph-bar ph-bar-left" hittest="false" />

@@ -14,6 +14,11 @@
 	z-index: 99999;
 }
 
+.HudScreen.TrackerScreen
+{
+	z-index: 99998;
+}
+
 .ph-card
 {
 	opacity: 1;
@@ -556,6 +561,7 @@ Label.DetailTitle
 	height: fill-parent-flow( 1.0 );
 	flow-children: down;
 	overflow: squish scroll;
+	padding-right: 12px;
 }
 
 .DetailRow
@@ -787,6 +793,7 @@ Label.MenuFilterLabel
 	height: fill-parent-flow( 1.0 );
 	flow-children: down;
 	overflow: squish scroll;
+	padding-right: 12px;
 }
 
 .MenuRow
@@ -1429,11 +1436,9 @@ Label.ScoreTot
 .theme-red Label.ScoreSelfRank,
 .theme-red Label.ScoreSelfStatVal,
 .theme-red Label.ScoreRank,
-.theme-red Label.ScoreCur,
+.theme-red .ScoreRow Label.ScoreCur,
 .theme-red Label.ScoreTitlePage,
-.theme-red Label.ScoreHead.sort-active,
-.theme-red .ScoreHeader Label.ScoreCur.sort-active,
-.theme-red .ScoreHeader Label.ScoreTot.sort-active
+.theme-red Label.ScoreHead.sort-active
 { color: #e05a5a; }
 .theme-red .MenuFilterBtn.active { background-color: #e05a5a22; border: 1px solid #e05a5a; }
 .theme-red .MenuFilterBtn.active:hover { background-color: #e05a5a44; border: 1px solid #e05a5a; }
@@ -1460,11 +1465,9 @@ Label.ScoreTot
 .theme-coral Label.ScoreSelfRank,
 .theme-coral Label.ScoreSelfStatVal,
 .theme-coral Label.ScoreRank,
-.theme-coral Label.ScoreCur,
+.theme-coral .ScoreRow Label.ScoreCur,
 .theme-coral Label.ScoreTitlePage,
-.theme-coral Label.ScoreHead.sort-active,
-.theme-coral .ScoreHeader Label.ScoreCur.sort-active,
-.theme-coral .ScoreHeader Label.ScoreTot.sort-active
+.theme-coral Label.ScoreHead.sort-active
 { color: #ff7a59; }
 .theme-coral .MenuFilterBtn.active { background-color: #ff7a5922; border: 1px solid #ff7a59; }
 .theme-coral .MenuFilterBtn.active:hover { background-color: #ff7a5944; border: 1px solid #ff7a59; }
@@ -1491,11 +1494,9 @@ Label.ScoreTot
 .theme-orange Label.ScoreSelfRank,
 .theme-orange Label.ScoreSelfStatVal,
 .theme-orange Label.ScoreRank,
-.theme-orange Label.ScoreCur,
+.theme-orange .ScoreRow Label.ScoreCur,
 .theme-orange Label.ScoreTitlePage,
-.theme-orange Label.ScoreHead.sort-active,
-.theme-orange .ScoreHeader Label.ScoreCur.sort-active,
-.theme-orange .ScoreHeader Label.ScoreTot.sort-active
+.theme-orange Label.ScoreHead.sort-active
 { color: #ff8a3d; }
 .theme-orange .MenuFilterBtn.active { background-color: #ff8a3d22; border: 1px solid #ff8a3d; }
 .theme-orange .MenuFilterBtn.active:hover { background-color: #ff8a3d44; border: 1px solid #ff8a3d; }
@@ -1522,11 +1523,9 @@ Label.ScoreTot
 .theme-copper Label.ScoreSelfRank,
 .theme-copper Label.ScoreSelfStatVal,
 .theme-copper Label.ScoreRank,
-.theme-copper Label.ScoreCur,
+.theme-copper .ScoreRow Label.ScoreCur,
 .theme-copper Label.ScoreTitlePage,
-.theme-copper Label.ScoreHead.sort-active,
-.theme-copper .ScoreHeader Label.ScoreCur.sort-active,
-.theme-copper .ScoreHeader Label.ScoreTot.sort-active
+.theme-copper Label.ScoreHead.sort-active
 { color: #e08a5a; }
 .theme-copper .MenuFilterBtn.active { background-color: #e08a5a22; border: 1px solid #e08a5a; }
 .theme-copper .MenuFilterBtn.active:hover { background-color: #e08a5a44; border: 1px solid #e08a5a; }
@@ -1556,11 +1555,9 @@ Label.ScoreTot
 .theme-t Label.ScoreSelfRank,
 .theme-t Label.ScoreSelfStatVal,
 .theme-t Label.ScoreRank,
-.theme-t Label.ScoreCur,
+.theme-t .ScoreRow Label.ScoreCur,
 .theme-t Label.ScoreTitlePage,
-.theme-t Label.ScoreHead.sort-active,
-.theme-t .ScoreHeader Label.ScoreCur.sort-active,
-.theme-t .ScoreHeader Label.ScoreTot.sort-active
+.theme-t Label.ScoreHead.sort-active
 { color: #eabe54; }
 .theme-t .MenuFilterBtn.active { background-color: #eabe5422; border: 1px solid #eabe54; }
 .theme-t .MenuFilterBtn.active:hover { background-color: #eabe5444; border: 1px solid #eabe54; }
@@ -1587,11 +1584,9 @@ Label.ScoreTot
 .theme-lime Label.ScoreSelfRank,
 .theme-lime Label.ScoreSelfStatVal,
 .theme-lime Label.ScoreRank,
-.theme-lime Label.ScoreCur,
+.theme-lime .ScoreRow Label.ScoreCur,
 .theme-lime Label.ScoreTitlePage,
-.theme-lime Label.ScoreHead.sort-active,
-.theme-lime .ScoreHeader Label.ScoreCur.sort-active,
-.theme-lime .ScoreHeader Label.ScoreTot.sort-active
+.theme-lime Label.ScoreHead.sort-active
 { color: #c6f04a; }
 .theme-lime .MenuFilterBtn.active { background-color: #c6f04a22; border: 1px solid #c6f04a; }
 .theme-lime .MenuFilterBtn.active:hover { background-color: #c6f04a44; border: 1px solid #c6f04a; }
@@ -1618,11 +1613,9 @@ Label.ScoreTot
 .theme-green Label.ScoreSelfRank,
 .theme-green Label.ScoreSelfStatVal,
 .theme-green Label.ScoreRank,
-.theme-green Label.ScoreCur,
+.theme-green .ScoreRow Label.ScoreCur,
 .theme-green Label.ScoreTitlePage,
-.theme-green Label.ScoreHead.sort-active,
-.theme-green .ScoreHeader Label.ScoreCur.sort-active,
-.theme-green .ScoreHeader Label.ScoreTot.sort-active
+.theme-green Label.ScoreHead.sort-active
 { color: #6fdc78; }
 .theme-green .MenuFilterBtn.active { background-color: #6fdc7822; border: 1px solid #6fdc78; }
 .theme-green .MenuFilterBtn.active:hover { background-color: #6fdc7844; border: 1px solid #6fdc78; }
@@ -1649,11 +1642,9 @@ Label.ScoreTot
 .theme-teal Label.ScoreSelfRank,
 .theme-teal Label.ScoreSelfStatVal,
 .theme-teal Label.ScoreRank,
-.theme-teal Label.ScoreCur,
+.theme-teal .ScoreRow Label.ScoreCur,
 .theme-teal Label.ScoreTitlePage,
-.theme-teal Label.ScoreHead.sort-active,
-.theme-teal .ScoreHeader Label.ScoreCur.sort-active,
-.theme-teal .ScoreHeader Label.ScoreTot.sort-active
+.theme-teal Label.ScoreHead.sort-active
 { color: #2ec9a6; }
 .theme-teal .MenuFilterBtn.active { background-color: #2ec9a622; border: 1px solid #2ec9a6; }
 .theme-teal .MenuFilterBtn.active:hover { background-color: #2ec9a644; border: 1px solid #2ec9a6; }
@@ -1680,11 +1671,9 @@ Label.ScoreTot
 .theme-cyan Label.ScoreSelfRank,
 .theme-cyan Label.ScoreSelfStatVal,
 .theme-cyan Label.ScoreRank,
-.theme-cyan Label.ScoreCur,
+.theme-cyan .ScoreRow Label.ScoreCur,
 .theme-cyan Label.ScoreTitlePage,
-.theme-cyan Label.ScoreHead.sort-active,
-.theme-cyan .ScoreHeader Label.ScoreCur.sort-active,
-.theme-cyan .ScoreHeader Label.ScoreTot.sort-active
+.theme-cyan Label.ScoreHead.sort-active
 { color: #3ee0f0; }
 .theme-cyan .MenuFilterBtn.active { background-color: #3ee0f022; border: 1px solid #3ee0f0; }
 .theme-cyan .MenuFilterBtn.active:hover { background-color: #3ee0f044; border: 1px solid #3ee0f0; }
@@ -1711,11 +1700,9 @@ Label.ScoreTot
 .theme-blue Label.ScoreSelfRank,
 .theme-blue Label.ScoreSelfStatVal,
 .theme-blue Label.ScoreRank,
-.theme-blue Label.ScoreCur,
+.theme-blue .ScoreRow Label.ScoreCur,
 .theme-blue Label.ScoreTitlePage,
-.theme-blue Label.ScoreHead.sort-active,
-.theme-blue .ScoreHeader Label.ScoreCur.sort-active,
-.theme-blue .ScoreHeader Label.ScoreTot.sort-active
+.theme-blue Label.ScoreHead.sort-active
 { color: #5b8cff; }
 .theme-blue .MenuFilterBtn.active { background-color: #5b8cff22; border: 1px solid #5b8cff; }
 .theme-blue .MenuFilterBtn.active:hover { background-color: #5b8cff44; border: 1px solid #5b8cff; }
@@ -1742,11 +1729,9 @@ Label.ScoreTot
 .theme-ct Label.ScoreSelfRank,
 .theme-ct Label.ScoreSelfStatVal,
 .theme-ct Label.ScoreRank,
-.theme-ct Label.ScoreCur,
+.theme-ct .ScoreRow Label.ScoreCur,
 .theme-ct Label.ScoreTitlePage,
-.theme-ct Label.ScoreHead.sort-active,
-.theme-ct .ScoreHeader Label.ScoreCur.sort-active,
-.theme-ct .ScoreHeader Label.ScoreTot.sort-active
+.theme-ct Label.ScoreHead.sort-active
 { color: #96c8fa; }
 .theme-ct .MenuFilterBtn.active { background-color: #96c8fa22; border: 1px solid #96c8fa; }
 .theme-ct .MenuFilterBtn.active:hover { background-color: #96c8fa44; border: 1px solid #96c8fa; }
@@ -1773,11 +1758,9 @@ Label.ScoreTot
 .theme-purple Label.ScoreSelfRank,
 .theme-purple Label.ScoreSelfStatVal,
 .theme-purple Label.ScoreRank,
-.theme-purple Label.ScoreCur,
+.theme-purple .ScoreRow Label.ScoreCur,
 .theme-purple Label.ScoreTitlePage,
-.theme-purple Label.ScoreHead.sort-active,
-.theme-purple .ScoreHeader Label.ScoreCur.sort-active,
-.theme-purple .ScoreHeader Label.ScoreTot.sort-active
+.theme-purple Label.ScoreHead.sort-active
 { color: #b07cff; }
 .theme-purple .MenuFilterBtn.active { background-color: #b07cff22; border: 1px solid #b07cff; }
 .theme-purple .MenuFilterBtn.active:hover { background-color: #b07cff44; border: 1px solid #b07cff; }
@@ -1804,11 +1787,9 @@ Label.ScoreTot
 .theme-magenta Label.ScoreSelfRank,
 .theme-magenta Label.ScoreSelfStatVal,
 .theme-magenta Label.ScoreRank,
-.theme-magenta Label.ScoreCur,
+.theme-magenta .ScoreRow Label.ScoreCur,
 .theme-magenta Label.ScoreTitlePage,
-.theme-magenta Label.ScoreHead.sort-active,
-.theme-magenta .ScoreHeader Label.ScoreCur.sort-active,
-.theme-magenta .ScoreHeader Label.ScoreTot.sort-active
+.theme-magenta Label.ScoreHead.sort-active
 { color: #e85dff; }
 .theme-magenta .MenuFilterBtn.active { background-color: #e85dff22; border: 1px solid #e85dff; }
 .theme-magenta .MenuFilterBtn.active:hover { background-color: #e85dff44; border: 1px solid #e85dff; }
@@ -1835,11 +1816,9 @@ Label.ScoreTot
 .theme-pink Label.ScoreSelfRank,
 .theme-pink Label.ScoreSelfStatVal,
 .theme-pink Label.ScoreRank,
-.theme-pink Label.ScoreCur,
+.theme-pink .ScoreRow Label.ScoreCur,
 .theme-pink Label.ScoreTitlePage,
-.theme-pink Label.ScoreHead.sort-active,
-.theme-pink .ScoreHeader Label.ScoreCur.sort-active,
-.theme-pink .ScoreHeader Label.ScoreTot.sort-active
+.theme-pink Label.ScoreHead.sort-active
 { color: #ff6b9a; }
 .theme-pink .MenuFilterBtn.active { background-color: #ff6b9a22; border: 1px solid #ff6b9a; }
 .theme-pink .MenuFilterBtn.active:hover { background-color: #ff6b9a44; border: 1px solid #ff6b9a; }
@@ -1866,11 +1845,9 @@ Label.ScoreTot
 .theme-silver Label.ScoreSelfRank,
 .theme-silver Label.ScoreSelfStatVal,
 .theme-silver Label.ScoreRank,
-.theme-silver Label.ScoreCur,
+.theme-silver .ScoreRow Label.ScoreCur,
 .theme-silver Label.ScoreTitlePage,
-.theme-silver Label.ScoreHead.sort-active,
-.theme-silver .ScoreHeader Label.ScoreCur.sort-active,
-.theme-silver .ScoreHeader Label.ScoreTot.sort-active
+.theme-silver Label.ScoreHead.sort-active
 { color: #c9d2dc; }
 .theme-silver .MenuFilterBtn.active { background-color: #c9d2dc22; border: 1px solid #c9d2dc; }
 .theme-silver .MenuFilterBtn.active:hover { background-color: #c9d2dc44; border: 1px solid #c9d2dc; }

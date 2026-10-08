@@ -19,6 +19,8 @@ namespace Challenges.Utils
 
         public Dictionary<string, OfflineScore>.ValueCollection OfflineScores => _offlineScores.Values;
 
+        public Dictionary<string, PlayerState>.ValueCollection States => _bySteam.Values;
+
         /// <summary>
         /// Loads player files once. <paramref name="warn"/> is for corrupt/blocked files;
         /// <paramref name="debug"/> is for routine load details (caller gates on debug mode).
