@@ -29,7 +29,7 @@ namespace Challenges.Huds
         private static string VarRowTitle(int index) => $"tr_t{index}";
         private static string VarRowValue(int index) => $"tr_v{index}";
 
-        public static int ConfiguredRows => Math.Clamp(Context.Config.Gui.TrackerRows, 3, MaxRows);
+        public static int ConfiguredRows => Math.Clamp(Context.Config.Gui.TrackerRows, 1, MaxRows);
 
         /// <summary><c>mp_freezetime</c>; freeze overview is skipped when this is &lt;= 0.</summary>
         public static int FreezeTimeSeconds =>

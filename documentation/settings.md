@@ -47,7 +47,7 @@ Created on first start. Example:
 | `gui.show_on_round_start` | Show the tracker during freeze time. |
 | `gui.show_on_progress` | Show the tracker when a visible task advances. |
 | `gui.progress_duration` | Seconds the progress tracker stays up. |
-| `gui.tracker_rows` | Rows on the tracker GUI (clamped 3–5). |
+| `gui.tracker_rows` | Rows on the tracker GUI (clamped 1–5). |
 | `gui.menu_page_size` | Challenges per menu page (clamped 1–4). |
 | `notifications.*` | Chat and sound on progress / complete / rule broken. Empty sound string = no sound. Sound paths play at full volume; soundevent names respect player volume. |
 | `discord.language` | Language for Discord messages. |
