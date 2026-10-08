@@ -4,6 +4,14 @@ Shared driver: [`src/Challenges/utils/CustomHud.cs`](../src/Challenges/utils/Cus
 
 `workshop/content` is the addon root: copy that folder into `csgo_addons/<addon>/` and publish. `AGENTS.md`, `panorama-css.md`, `example/` and `preview/` stay beside it and are not part of the paste. Layouts are loaded as `panorama/layout/custom_game/challenges/<name>.vxml_c`.
 
+## Panorama versions
+
+Source names in this repo stay `tracker.xml`, `menu.xml`, and `hud.vcss`. Do **not** add `v2` / `v3` to those filenames or to the stylesheet include here.
+
+`PanoramaVersion` in [`src/Challenges/Version.cs`](../src/Challenges/Version.cs) is the generation this build spawns (`tracker_vN.vxml_c` / `menu_vN.vxml_c` via `CustomHud`). On copy into the workshop addon, rename the layouts to `tracker_vN.vxml` and `menu_vN.vxml` and update the stylesheet include by hand.
+
+Bump `PanoramaVersion` (`v2` → `v3`, …) only when a layout or stylesheet change would break plugins still bound to the previous generation (panel ids, dialog variables, class names, structure). C#-only changes do not bump it. Leave every older generation in the published addon so servers that have not updated the DLL keep working.
+
 ## Theme / UX design
 
 Baseline chrome: dark gradient card (`#12171e` → `#0b0f14`), hairline borders `#ffffff14`, gold accent `#f0a531` (default `gui.theme` = `gold`). Accent themes swap that gold via root classes `theme-*` (`HudTheme.Apply`). Palette source: [`tools/hud_themes.py`](../tools/hud_themes.py) (emits `hud.vcss` theme block + preview `theme-data.js` during `make panorama`). CT / T use stock CS2 colours `#96c8fa` / `#eabe54`.

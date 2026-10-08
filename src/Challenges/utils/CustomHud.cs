@@ -23,10 +23,13 @@ namespace Challenges.Utils
             Menu.Panel,
         ];
 
+        private const string PanoramaVersion = global::Challenges.Challenges.PanoramaVersion;
+        private const string LayoutDir = "panorama/layout/custom_game/challenges/";
+
         private static readonly string[] LayoutResources =
         [
-            "panorama/layout/custom_game/challenges/tracker_2.vxml_c",
-            "panorama/layout/custom_game/challenges/menu_v2.vxml_c",
+            LayoutDir + "tracker_" + PanoramaVersion + ".vxml_c",
+            LayoutDir + "menu_" + PanoramaVersion + ".vxml_c",
         ];
 
         private static readonly string[] StepClass =

@@ -2,7 +2,7 @@
 
 Web CSS is dropped with no log. Run `make panorama` (`tools/validate_panorama.py`) before calling a layout done — it rejects unknown properties, forbidden values, and the layout traps below.
 
-**One stylesheet:** [`content/panorama/styles/custom_game/challenges/hud.vcss`](content/panorama/styles/custom_game/challenges/hud.vcss) (symlink `hud.css` for validators). It is a trimmed copy of the Prophunt kit ([`example/hud.vcss`](example/hud.vcss), reference only) with the `ph-*` chrome and the tracker / menu classes, using values this client accepts.
+**One stylesheet:** [`content/panorama/styles/custom_game/challenges/hud.vcss`](content/panorama/styles/custom_game/challenges/hud.vcss) (symlink `hud.css` for validators). It is a trimmed copy of the Prophunt kit ([`example/hud.vcss`](example/hud.vcss), reference only) with the `ph-*` chrome and the tracker / menu classes, using values this client accepts. Keep the filename and layout includes as `hud.vcss` in this repo; versioned stylesheet paths are applied by hand when copying into the workshop addon (see [AGENTS.md](AGENTS.md)#panorama-versions).
 
 ## Layout model
 
