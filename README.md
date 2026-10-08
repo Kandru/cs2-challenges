@@ -1,5 +1,5 @@
-> [!CAUTION]
-> THIS IS NOT YET READY TO USE. DO NOT TRY TO INSTALL (YET)
+> [!WARNING]  
+> You need to configure challenges! This plug-in comes with examples. READ THE WIKI before asking!
 
 # CounterstrikeSharp - Challenges
 
@@ -11,10 +11,10 @@
 
 ![Challenges menu](media/challenges_menu.png)
 
-Create time-limited challenges for players. Each challenge is a YAML file with tasks that listen for game events (for example three headshots in a row). This plugin tracks progress and tells other plugins when a task or challenge is done. It does not grant rewards on its own.
+Create time-limited challenges for players. Each challenge is a YAML file with tasks that listen for game events (for example three headshots in a row). This plugin tracks progress and tells other plugins when a task or challenge is done. It does not grant rewards on its own. Each challenge consists of at least one task player has to do. You can also define rules which reset a task (for example when somebody did not do a headshot for his three headshots in a row).
 
 > [!TIP]
-> Please consider a [Donation](https://www.paypal.com/donate/?hosted_button_id=C2AVYKGVP9TRG) when you're using this plugin.
+> Please consider a [donation](https://www.paypal.com/donate/?hosted_button_id=C2AVYKGVP9TRG) when you're using this plugin - it took a long time to build and improve - it only costs you a few dollars and would help me very much!
 
 ## Documentation
 
@@ -36,14 +36,15 @@ Read in this order:
 
 - One YAML file per challenge, with ordered tasks and `requires` dependencies inside the file.
 - Track progress and notify other plugins via `ChallengesShared`.
-- Panorama HUD: round-start tracker and fullscreen `!c` / `!challenges` menu (Workshop addon under `workshop/content`).
-- Player language from `!lang` is stored and restored on reconnect.
+- Panorama HUD: round-start tracker and fullscreen `!c` / `!challenges` menu ([Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3814533794)).
+- Player language from `!lang` is stored and restored on reconnect to properly translate the whole plug-in.
 - Build with Docker (`make debug` / `make release`) — no local .NET install required.
 - Challenge builder for GitHub Pages under [`builder/`](./builder/) ([live site](https://kandru.github.io/cs2-challenges/)).
 
 ## Compatible plugins
 
-- none yet - feel free to add yours to this list :)
+- if your plug-in (e.g. cs2 stores) does provide server commands (e.g. givemoney) you can use placeholders to send commands to the server upon task completion
+- if you have a plug-in which is compatible please tell me!
 
 ## Test servers
 
