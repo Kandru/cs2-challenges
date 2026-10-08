@@ -11,8 +11,11 @@ namespace Challenges.Utils
     /// </summary>
     public static class CustomHud
     {
-        private const int MaxSlots = 64;
-        private const int SlotsPerTick = 2;
+        /// <summary>Never refresh a player more often than this many ticks.</summary>
+        private const int MinRefreshGapTicks = 5;
+
+        /// <summary>Full-server refresh budget: 128 players/sec ⇒ 2 per tick at 64 tick.</summary>
+        private const int FullServerRefreshPerSecond = 128;
 
         private static readonly string[] RootPanels =
         [
@@ -39,7 +42,11 @@ namespace Challenges.Utils
         private static readonly Dictionary<int, Dictionary<string, Dictionary<string, bool>>> _classBySlot = [];
         private static readonly Dictionary<int, Dictionary<string, Dictionary<string, string>>> _textBySlot = [];
         private static readonly Dictionary<int, Dictionary<string, int>> _stepBySlot = [];
-        private static int _refreshCursor;
+        private static readonly List<CCSPlayerController> _humanRoster = [];
+        private static int _ticksPerSecond = 64;
+        private static int _refreshPerTick = 2;
+        private static int _refreshGap = MinRefreshGapTicks;
+        private static uint _tick;
 
         public static bool IsPanelVisible(CCSPlayerController player, string panelId) =>
             player is { IsValid: true }
@@ -317,21 +324,56 @@ namespace Challenges.Utils
             }
         }
 
+        public static void CacheTickRate()
+        {
+            float interval = Server.TickInterval;
+            _ticksPerSecond = interval > 0f
+                ? Math.Max(1, (int)Math.Round(1.0 / interval))
+                : 64;
+            _refreshPerTick = Math.Max(1, FullServerRefreshPerSecond / _ticksPerSecond);
+            _tick = 0;
+            _humanRoster.Clear();
+            _refreshGap = MinRefreshGapTicks;
+        }
+
         public static void OnTick()
         {
-            for (int n = 0; n < SlotsPerTick; n++)
+            uint tick = _tick++;
+
+            if (tick % (uint)_ticksPerSecond == 0)
             {
-                int slot = _refreshCursor;
-                _refreshCursor = (_refreshCursor + 1) % MaxSlots;
-
-                CCSPlayerController? player = Utilities.GetPlayerFromSlot(slot);
-                if (!Players.IsHumanViewer(player))
-                {
-                    continue;
-                }
-
-                Tracker.Refresh(player);
+                RebuildHumanRoster();
             }
+
+            int count = _humanRoster.Count;
+            if (count == 0)
+            {
+                return;
+            }
+
+            int gap = _refreshGap;
+            for (int i = (int)(tick % (uint)gap); i < count; i += gap)
+            {
+                CCSPlayerController player = _humanRoster[i];
+                if (Players.IsHumanViewer(player))
+                {
+                    Tracker.Refresh(player);
+                }
+            }
+        }
+
+        private static void RebuildHumanRoster()
+        {
+            _humanRoster.Clear();
+            foreach (CCSPlayerController player in Players.GetHumans())
+            {
+                _humanRoster.Add(player);
+            }
+
+            int count = _humanRoster.Count;
+            _refreshGap = count == 0
+                ? MinRefreshGapTicks
+                : Math.Max(MinRefreshGapTicks, (count + _refreshPerTick - 1) / _refreshPerTick);
         }
 
         public static void OnCheckTransmit(CCheckTransmitInfoList infoList)
@@ -503,6 +545,9 @@ namespace Challenges.Utils
             _classBySlot.Clear();
             _textBySlot.Clear();
             _stepBySlot.Clear();
+            _humanRoster.Clear();
+            _refreshGap = MinRefreshGapTicks;
+            _tick = 0;
         }
 
         private static void ExpireClosingRoots()

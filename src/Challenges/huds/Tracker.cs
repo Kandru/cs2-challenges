@@ -168,7 +168,7 @@ namespace Challenges.Huds
             PaintTimer(player, state);
         }
 
-        /// <summary>Cheap enough for the staggered OnTick: only paints while a mode is active.</summary>
+        /// <summary>Cheap enough for the roster OnTick cadence: only paints while a mode is active.</summary>
         public static void Refresh(CCSPlayerController player)
         {
             if (!Context.IsBound || Context.GetState(player) is not { } state)

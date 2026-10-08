@@ -44,6 +44,7 @@ namespace Challenges
             RegisterListener<Listeners.OnMapStart>(OnMapStart);
             RegisterListener<Listeners.OnMapEnd>(OnMapEnd);
             RegisterListener<Listeners.CheckTransmit>(CustomHud.OnCheckTransmit);
+            CustomHud.CacheTickRate();
             RegisterListener<Listeners.OnTick>(CustomHud.OnTick);
 
             var sender = new CustomEventsSender();
