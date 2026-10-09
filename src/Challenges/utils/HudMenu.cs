@@ -20,6 +20,8 @@ namespace Challenges.Utils
         public const string BtnClose = "ph-close";
         public const string BtnScorePrev = "ch-score-prev";
         public const string BtnScoreNext = "ch-score-next";
+        public const string BtnListPrev = "ch-list-prev";
+        public const string BtnListNext = "ch-list-next";
         public const string BtnFilterAll = "ch-filter-all";
         public const string BtnFilterSolved = "ch-filter-solved";
         public const string BtnFilterProgress = "ch-filter-progress";

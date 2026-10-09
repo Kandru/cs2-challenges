@@ -13,7 +13,7 @@ namespace Challenges.Huds
     public static class Menu
     {
         public const string Panel = "Menu";
-        public const int ListSlots = 80;
+        public const int ListSlots = 20;
         public const int ScoreSlots = 12;
         public const int DetailSlots = 20;
         public const int DetailRuleSlots = 8;
@@ -40,7 +40,7 @@ namespace Challenges.Huds
 
         private static readonly string[] ChromeVars =
         [
-            "menu_title", "list_title",
+            "menu_title", "list_title", "list_page",
             "menu_f_all", "menu_f_solved", "menu_f_progress", "menu_f_ending", "menu_f_starting",
             "menu_empty", "menu_tasks_h", "menu_by_h",
             "score_title", "score_page", "score_prev", "score_next",
@@ -69,6 +69,19 @@ namespace Challenges.Huds
         ];
 
         private sealed record FilterDef(string Id, string ButtonId, string Var, string Key);
+
+        private static string FilterFor(string buttonId)
+        {
+            foreach (FilterDef filter in FilterDefs)
+            {
+                if (filter.ButtonId == buttonId)
+                {
+                    return filter.Id;
+                }
+            }
+
+            return FilterProgress;
+        }
         private sealed record MenuSubject(PlayerState Progress, string? Name);
 
         private sealed record Entry(
@@ -176,6 +189,7 @@ namespace Challenges.Huds
             }
 
             state.ScoreboardPage = 0;
+            state.MenuListPage = 0;
             state.MenuFilter = FilterProgress;
             state.ScoreboardSort = ScoreboardSort.Solved;
             state.ScoreboardFilter = ScoreboardFilter.Online;
@@ -234,6 +248,12 @@ namespace Challenges.Huds
                 case HudMenu.BtnScoreNext:
                     state.ScoreboardPage++;
                     break;
+                case HudMenu.BtnListPrev:
+                    state.MenuListPage = Math.Max(0, state.MenuListPage - 1);
+                    break;
+                case HudMenu.BtnListNext:
+                    state.MenuListPage++;
+                    break;
                 case HudMenu.BtnScoreFilterAll:
                     state.ScoreboardFilter = ScoreboardFilter.All;
                     state.ScoreboardPage = 0;
@@ -251,19 +271,12 @@ namespace Challenges.Huds
                     state.ScoreboardPage = 0;
                     break;
                 case HudMenu.BtnFilterAll:
-                    state.MenuFilter = FilterAll;
-                    break;
                 case HudMenu.BtnFilterSolved:
-                    state.MenuFilter = FilterSolved;
-                    break;
                 case HudMenu.BtnFilterProgress:
-                    state.MenuFilter = FilterProgress;
-                    break;
                 case HudMenu.BtnFilterEnding:
-                    state.MenuFilter = FilterEnding;
-                    break;
                 case HudMenu.BtnFilterStarting:
-                    state.MenuFilter = FilterStarting;
+                    state.MenuFilter = FilterFor(buttonId);
+                    state.MenuListPage = 0;
                     break;
                 case HudMenu.BtnDetailBack:
                     state.MenuDetailChallengeId = null;
@@ -315,6 +328,7 @@ namespace Challenges.Huds
                 || SameSteam(steamId, player.NetworkIDString);
             state.MenuSubjectSteamId = clear ? null : steamId;
             state.MenuDetailChallengeId = null;
+            state.MenuListPage = 0;
             return true;
         }
 
@@ -325,6 +339,7 @@ namespace Challenges.Huds
 
         private static bool IsDisabled(CCSPlayerController player, string buttonId) =>
             buttonId is (HudMenu.BtnScorePrev or HudMenu.BtnScoreNext
+                or HudMenu.BtnListPrev or HudMenu.BtnListNext
                 or HudMenu.BtnFilterSolved or HudMenu.BtnFilterProgress
                 or HudMenu.BtnFilterEnding or HudMenu.BtnFilterStarting)
             && CustomHud.HasClass(player, buttonId, "is-disabled");
@@ -349,6 +364,8 @@ namespace Challenges.Huds
             CustomHud.SetHasClass(player, HudMenu.BtnScoreSortLifetime, "active", false);
             CustomHud.SetHasClass(player, HudMenu.BtnScorePrev, "is-disabled", false);
             CustomHud.SetHasClass(player, HudMenu.BtnScoreNext, "is-disabled", false);
+            CustomHud.SetHasClass(player, HudMenu.BtnListPrev, "is-disabled", false);
+            CustomHud.SetHasClass(player, HudMenu.BtnListNext, "is-disabled", false);
             CustomHud.SetHasClass(player, EmptyLabelId, "is-off", true);
 
             for (int i = 0; i < ListSlots; i++)
@@ -443,6 +460,7 @@ namespace Challenges.Huds
             if (activeEmpty && fallback != null)
             {
                 session.MenuFilter = fallback;
+                session.MenuListPage = 0;
             }
         }
 
@@ -579,6 +597,15 @@ namespace Challenges.Huds
                 "menu_empty",
                 listEmpty ? Context.Text(player, "hud.menu.empty") : string.Empty);
             CustomHud.SetHasClass(player, EmptyLabelId, "is-off", !listEmpty);
+            int pages = Math.Max(1, (entries.Count + ListSlots - 1) / ListSlots);
+            session.MenuListPage = Math.Clamp(session.MenuListPage, 0, pages - 1);
+            SetTitlePage(
+                player,
+                "list_page",
+                HudMenu.BtnListPrev,
+                HudMenu.BtnListNext,
+                session.MenuListPage,
+                pages);
             if (listEmpty)
             {
                 ClearUnusedListSlots(player, session, painted: 0);
@@ -589,11 +616,12 @@ namespace Challenges.Huds
             // Progress/Solved only contain the active schedule; other filters may include extras.
             bool scheduleOnly = session.MenuFilter is FilterProgress or FilterSolved;
             string? detailId = session.MenuDetailChallengeId;
-            int painted = Math.Min(entries.Count, ListSlots);
+            int pageStart = session.MenuListPage * ListSlots;
+            int painted = Math.Min(ListSlots, entries.Count - pageStart);
 
             for (int i = 0; i < painted; i++)
             {
-                Entry entry = entries[i];
+                Entry entry = entries[pageStart + i];
                 ChallengeDefinition challenge = entry.Challenge;
                 session.MenuRowChallengeIds[i] = challenge.Id;
                 bool inSchedule = scheduleOnly

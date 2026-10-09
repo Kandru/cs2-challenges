@@ -23,6 +23,7 @@ namespace Challenges.Configs
 
         [JsonIgnore] public ActiveMenu ActiveMenu = ActiveMenu.None;
         [JsonIgnore] public int ScoreboardPage;
+        [JsonIgnore] public int MenuListPage;
         [JsonIgnore] public string MenuFilter = "progress";
         [JsonIgnore] public ScoreboardSort ScoreboardSort = ScoreboardSort.Solved;
         [JsonIgnore] public ScoreboardFilter ScoreboardFilter = ScoreboardFilter.Online;
@@ -50,6 +51,7 @@ namespace Challenges.Configs
         {
             ActiveMenu = ActiveMenu.None;
             ScoreboardPage = 0;
+            MenuListPage = 0;
             MenuFilter = "progress";
             ScoreboardSort = ScoreboardSort.Solved;
             ScoreboardFilter = ScoreboardFilter.Online;

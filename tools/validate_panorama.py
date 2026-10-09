@@ -100,6 +100,8 @@ MENU_IDS = (
         "ph-close",
         "ch-score-prev",
         "ch-score-next",
+        "ch-list-prev",
+        "ch-list-next",
         "ch-score-h-cur",
         "ch-score-h-tot",
         "ch-score-f-all",
@@ -129,6 +131,7 @@ MENU_VARS = (
     {
         "menu_title",
         "list_title",
+        "list_page",
         "menu_f_all",
         "menu_f_solved",
         "menu_f_progress",
@@ -189,6 +192,16 @@ REQUIRED_CLASSES = {
 }
 
 
+def addon_file(directory: Path, name: str) -> Path:
+    """Canonical name, or the `_v2` copy when that is what the workshop folder has."""
+    path = directory / name
+    if path.is_file() or path.is_symlink():
+        return path
+    stem, ext = name.rsplit(".", 1)
+    versioned = directory / f"{stem}_v2.{ext}"
+    return versioned if versioned.is_file() or versioned.is_symlink() else path
+
+
 def strip_comments(css: str) -> str:
     return re.sub(r"/\*.*?\*/", "", css, flags=re.S)
 
@@ -201,14 +214,16 @@ def css_properties(css: str) -> set[str]:
 
 
 def check_css(failures: list[str]) -> None:
-    if not HUD_VCSS.is_file():
-        failures.append(f"missing {HUD_VCSS.relative_to(ROOT)}")
+    sheet = addon_file(STYLES, "hud.vcss")
+    css_link = addon_file(STYLES, "hud.css")
+    if not sheet.is_file():
+        failures.append(f"missing {sheet.relative_to(ROOT)}")
         return
 
-    if not (HUD_CSS.is_symlink() and HUD_CSS.resolve() == HUD_VCSS.resolve()):
-        failures.append("hud.css must be a symlink to hud.vcss")
+    if not (css_link.is_symlink() and css_link.resolve() == sheet.resolve()):
+        failures.append(f"{css_link.name} must be a symlink to {sheet.name}")
 
-    text = HUD_VCSS.read_text(encoding="utf-8")
+    text = sheet.read_text(encoding="utf-8")
     code = strip_comments(text)
 
     for match in BAD_CSS.finditer(code):
@@ -238,7 +253,7 @@ def check_css(failures: list[str]) -> None:
 
 
 def check_layout(name: str, expected_ids: set[str], expected_vars: set[str], failures: list[str]) -> None:
-    path = LAYOUTS / name
+    path = addon_file(LAYOUTS, name)
     rel = path.relative_to(ROOT)
     if not path.is_file():
         failures.append(f"missing {rel}")
@@ -282,7 +297,7 @@ def check_layout(name: str, expected_ids: set[str], expected_vars: set[str], fai
     if "hud.vcss" not in includes:
         failures.append(f"{rel}: must include challenges/hud.vcss")
     for include in includes:
-        if not (STYLES / include).is_file():
+        if not addon_file(STYLES, include).is_file():
             failures.append(f"{rel}: include {include} does not exist")
 
     panel_ids_with_flag = [el for el in root.iter("Panel") if el.attrib.get("id") == name.split(".")[0].capitalize()]
@@ -326,8 +341,9 @@ def check_hud_theme_cs(failures: list[str]) -> None:
 def sync_generated() -> list[str]:
     """Refresh generated theme artifacts. Returns relative paths that were written."""
     written: list[str] = []
-    if hud_themes.sync_vcss_section(HUD_VCSS):
-        written.append(str(HUD_VCSS.relative_to(ROOT)))
+    sheet = addon_file(STYLES, "hud.vcss")
+    if hud_themes.sync_vcss_section(sheet):
+        written.append(str(sheet.relative_to(ROOT)))
     if hud_themes.sync_file(THEME_DATA_JS, hud_themes.render_theme_data_js()):
         written.append(str(THEME_DATA_JS.relative_to(ROOT)))
     return written
