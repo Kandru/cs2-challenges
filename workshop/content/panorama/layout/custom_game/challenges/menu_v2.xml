@@ -20,7 +20,22 @@
 				<Panel class="MenuBody" hittest="true">
 					<Panel class="MenuColumns" hittest="true">
 						<Panel class="MenuList" hittest="true">
-							<Label class="MenuListTitle stratum-bold-tf" hittest="false" text="{s:list_title}" />
+							<Panel class="ScoreTitleBar" hittest="true">
+								<Button id="ch-list-prev" class="MenuTitleNav">
+									<Label class="ph-nav-label stratum-bold-tf" hittest="false" text="{s:score_prev}" />
+								</Button>
+								<Panel class="ScoreTitleCenter" hittest="false">
+									<Panel class="ScoreTitleCluster" hittest="false">
+										<Panel class="ScoreTitlePad" hittest="false" />
+										<Label class="ScoreTitle stratum-bold-tf" hittest="false" text="{s:list_title}" />
+										<Label class="ScoreTitlePage stratum-bold-tf" hittest="false" text="{s:list_page}" />
+										<Panel class="ScoreTitlePad" hittest="false" />
+									</Panel>
+								</Panel>
+								<Button id="ch-list-next" class="MenuTitleNav">
+									<Label class="ph-nav-label stratum-bold-tf" hittest="false" text="{s:score_next}" />
+								</Button>
+							</Panel>
 							<Panel class="MenuFilterBar" hittest="true">
 								<Button id="ch-filter-all" class="MenuFilterBtn">
 									<Label class="MenuFilterLabel stratum-bold-tf" hittest="false" text="{s:menu_f_all}" />
@@ -36,21 +51,6 @@
 								</Button>
 								<Button id="ch-filter-starting" class="MenuFilterBtn">
 									<Label class="MenuFilterLabel stratum-bold-tf" hittest="false" text="{s:menu_f_starting}" />
-								</Button>
-							</Panel>
-							<Panel class="ScoreTitleBar" hittest="true">
-								<Button id="ch-list-prev" class="MenuTitleNav">
-									<Label class="ph-nav-label stratum-bold-tf" hittest="false" text="{s:score_prev}" />
-								</Button>
-								<Panel class="ScoreTitleCenter" hittest="false">
-									<Panel class="ScoreTitleCluster" hittest="false">
-										<Panel class="ScoreTitlePad" hittest="false" />
-										<Label class="ScoreTitlePage stratum-bold-tf" hittest="false" text="{s:list_page}" />
-										<Panel class="ScoreTitlePad" hittest="false" />
-									</Panel>
-								</Panel>
-								<Button id="ch-list-next" class="MenuTitleNav">
-									<Label class="ph-nav-label stratum-bold-tf" hittest="false" text="{s:score_next}" />
 								</Button>
 							</Panel>
 							<Panel class="MenuRows" hittest="true">

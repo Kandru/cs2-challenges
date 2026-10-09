@@ -772,19 +772,6 @@ Label.DetailRuleLabel
 	white-space: nowrap;
 }
 
-Label.MenuListTitle
-{
-	width: 100%;
-	font-size: 15;
-	letter-spacing: 1.6px;
-	text-transform: uppercase;
-	color: #e8eef4;
-	text-align: center;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	margin-bottom: 6px;
-}
-
 .MenuFilterBar
 {
 	width: 100%;
