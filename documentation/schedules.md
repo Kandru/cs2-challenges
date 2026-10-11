@@ -6,6 +6,8 @@ File: `/addons/counterstrikesharp/configs/plugins/Challenges/schedules.yaml`
 
 An empty file is created on first start. Changes apply on the next map start, or after `challenges reload`.
 
+Only blueprints listed on a schedule that has not ended (`date_end` ≥ now) are loaded. Ended schedules are ignored for loading. Progress still uses only the first in-window schedule.
+
 ```yaml
 test_challenge:
   title:

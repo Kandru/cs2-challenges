@@ -81,7 +81,7 @@ Tracker, menu, and language behavior: [In game](ingame.md).
 
 | Command | Effect |
 |---------|--------|
-| `challenges reload` | Reload config, blueprints, and schedules. |
+| `challenges reload` | Reload config, schedules, and current/upcoming blueprints; rebuild the running schedule. |
 | `challenges disable` | Disable the plugin and remember that. |
 | `challenges enable` | Enable the plugin and remember that. |
 | `challenges test-discord` | Post sample Discord embeds (schedule, challenge, task full/short) to `discord.webhook_url` using the loaded schedule/challenges. Fails if the URL or data is missing. |

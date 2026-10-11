@@ -6,6 +6,8 @@ Put files in:
 
 `/addons/counterstrikesharp/configs/plugins/Challenges/blueprints/`
 
+Only files named by a current or upcoming schedule are loaded. See [Schedules](schedules.md).
+
 ## Minimal example
 
 ```yaml

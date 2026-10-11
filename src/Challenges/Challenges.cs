@@ -59,8 +59,7 @@ namespace Challenges
             Config.Update();
             _state.Config = config;
             LogCatalogMismatches();
-            int challenges = LoadChallengeFiles();
-            int schedules = LoadSchedules();
+            (int challenges, int schedules) = LoadSchedulesAndChallenges();
             Console.WriteLine(Localizer["core.config"].Value
                 .Replace("{challenges}", challenges.ToString())
                 .Replace("{schedules}", schedules.ToString()));
@@ -69,8 +68,7 @@ namespace Challenges
         private void OnMapStart(string mapName)
         {
             Reset();
-            LoadChallengeFiles();
-            LoadSchedules();
+            LoadSchedulesAndChallenges();
             InitializeModules();
         }
 
@@ -181,38 +179,80 @@ namespace Challenges
             }
         }
 
-        private int LoadChallengeFiles()
+        /// <summary>Re-reads schedules.yaml, then blueprints for current or upcoming schedules only.</summary>
+        private (int Challenges, int Schedules) LoadSchedulesAndChallenges()
+        {
+            Dictionary<string, ChallengeSchedule> schedules = ReadSchedules();
+            _state.Schedules = schedules;
+            _state.Challenges = ReadBlueprints(ChallengeIdsForLoad(schedules));
+            return (_state.Challenges.Count, schedules.Count);
+        }
+
+        /// <summary>Ids from schedules that have not ended yet (current or upcoming).</summary>
+        private static HashSet<string> ChallengeIdsForLoad(
+            IReadOnlyDictionary<string, ChallengeSchedule> schedules)
+        {
+            HashSet<string> ids = new(StringComparer.OrdinalIgnoreCase);
+            DateTime now = DateTime.UtcNow;
+            foreach (ChallengeSchedule schedule in schedules.Values)
+            {
+                if (!Schedules.TryParseDate(schedule.StartDate, out _)
+                    || !Schedules.TryParseDate(schedule.EndDate, out DateTime end)
+                    || end < now)
+                {
+                    continue;
+                }
+
+                foreach (string rawId in schedule.Challenges)
+                {
+                    string id = Schedules.ChallengeId(rawId);
+                    if (id.Length > 0)
+                    {
+                        ids.Add(id);
+                    }
+                }
+            }
+
+            return ids;
+        }
+
+        private Dictionary<string, ChallengeDefinition> ReadBlueprints(HashSet<string> neededIds)
         {
             string dir = Path.Combine(GetConfigDir(), "blueprints");
             Directory.CreateDirectory(dir);
             var map = new Dictionary<string, ChallengeDefinition>(StringComparer.OrdinalIgnoreCase);
-
-            foreach (string file in Directory.GetFiles(dir, "*.yaml"))
+            if (neededIds.Count == 0)
             {
-                if (Path.GetFileName(file).Equals("schedules.yaml", StringComparison.OrdinalIgnoreCase))
+                return map;
+            }
+
+            Dictionary<string, string> filesById = new(StringComparer.OrdinalIgnoreCase);
+            foreach (string path in Directory.EnumerateFiles(dir, "*.yaml"))
+            {
+                filesById.TryAdd(Path.GetFileNameWithoutExtension(path), path);
+            }
+
+            foreach (string id in neededIds)
+            {
+                if (!filesById.TryGetValue(id, out string? file))
                 {
                     continue;
                 }
 
                 try
                 {
-                    string id = Path.GetFileNameWithoutExtension(file);
                     ChallengeDefinition def = Yaml.Deserialize<ChallengeDefinition>(File.ReadAllText(file))
                         ?? new ChallengeDefinition();
                     def.Id = id;
                     if (def.Title.Count == 0)
                     {
-                        Console.WriteLine(Localizer["core.faultyconfig"].Value
-                            .Replace("{config}", file)
-                            .Replace("{error}", "title is missing"));
+                        LogBadConfig(file, "title is missing");
                         continue;
                     }
 
                     if (def.Tasks.Count == 0)
                     {
-                        Console.WriteLine(Localizer["core.faultyconfig"].Value
-                            .Replace("{config}", file)
-                            .Replace("{error}", "tasks list is empty"));
+                        LogBadConfig(file, "tasks list is empty");
                         continue;
                     }
 
@@ -221,14 +261,11 @@ namespace Challenges
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(Localizer["core.faultyconfig"].Value
-                        .Replace("{config}", file)
-                        .Replace("{error}", ex.Message));
+                    LogBadConfig(file, ex.Message);
                 }
             }
 
-            _state.Challenges = map;
-            return map.Count;
+            return map;
         }
 
         private static void NormalizeDefinition(ChallengeDefinition def)
@@ -262,31 +299,30 @@ namespace Challenges
             def.BuildTaskIndex();
         }
 
-        private int LoadSchedules()
+        private Dictionary<string, ChallengeSchedule> ReadSchedules()
         {
             string path = Path.Combine(GetConfigDir(), "schedules.yaml");
-            var schedules = new Dictionary<string, ChallengeSchedule>(StringComparer.OrdinalIgnoreCase);
-            if (File.Exists(path))
-            {
-                try
-                {
-                    schedules = Yaml.Deserialize<Dictionary<string, ChallengeSchedule>>(File.ReadAllText(path))
-                        ?? new(StringComparer.OrdinalIgnoreCase);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(Localizer["core.faultyconfig"].Value
-                        .Replace("{config}", path)
-                        .Replace("{error}", ex.Message));
-                }
-            }
-            else
+            if (!File.Exists(path))
             {
                 File.WriteAllText(path, "{}\n");
+                return new(StringComparer.OrdinalIgnoreCase);
             }
 
-            _state.Schedules = schedules;
-            return schedules.Count;
+            try
+            {
+                return Yaml.Deserialize<Dictionary<string, ChallengeSchedule>>(File.ReadAllText(path))
+                    ?? new(StringComparer.OrdinalIgnoreCase);
+            }
+            catch (Exception ex)
+            {
+                LogBadConfig(path, ex.Message);
+                return new(StringComparer.OrdinalIgnoreCase);
+            }
         }
+
+        private void LogBadConfig(string config, string error) =>
+            Console.WriteLine(Localizer["core.faultyconfig"].Value
+                .Replace("{config}", config)
+                .Replace("{error}", error));
     }
 }

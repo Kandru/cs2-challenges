@@ -22,7 +22,7 @@ Filters:
 
 | Filter | Contents |
 |--------|----------|
-| All | Every loaded blueprint |
+| All | Loaded challenges (current or upcoming schedules) |
 | Progress | Unsolved challenges in the **active** schedule |
 | Solved | Solved challenges in the **active** schedule |
 | Ending soon | Challenges whose schedule ends within 7 days |

@@ -81,8 +81,7 @@ namespace Challenges
             DestroyModules();
             _state.Config = Config;
             LogCatalogMismatches();
-            LoadChallengeFiles();
-            LoadSchedules();
+            LoadSchedulesAndChallenges();
             InitializeModules(isHotReloaded: true);
         }
 
