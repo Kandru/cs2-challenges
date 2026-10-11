@@ -15,40 +15,68 @@ namespace Challenges.Configs
         public static List<string> Mismatches(Catalog catalog, IStringLocalizer localizer)
         {
             List<string> messages = [];
-            HashSet<string> catalogClasses = catalog.Events
-                .Select(e => e.EventClass)
-                .Where(s => !string.IsNullOrWhiteSpace(s))
-                .ToHashSet(StringComparer.Ordinal);
-            HashSet<string> extractorClasses = Registry.All
-                .Select(e => e.EventClassName)
-                .ToHashSet(StringComparer.Ordinal);
-
-            foreach (string missing in extractorClasses.Except(catalogClasses))
+            HashSet<string> catalogClasses = new(StringComparer.Ordinal);
+            HashSet<string> catalogTypes = new(StringComparer.Ordinal);
+            foreach (CatalogEvent entry in catalog.Events)
             {
-                messages.Add(Format(localizer, $"extractor {missing} has no catalog entry"));
+                // Synthetic types (e.g. player_trade) have no CSS extractor.
+                if (string.Equals(entry.Kind, "synthetic", StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                if (!string.IsNullOrWhiteSpace(entry.EventClass))
+                {
+                    catalogClasses.Add(entry.EventClass);
+                }
+
+                if (!string.IsNullOrWhiteSpace(entry.Type))
+                {
+                    catalogTypes.Add(entry.Type);
+                }
             }
 
-            foreach (string missing in catalogClasses.Except(extractorClasses))
+            HashSet<string> extractorClasses = new(StringComparer.Ordinal);
+            HashSet<string> extractorTypes = new(StringComparer.Ordinal);
+            foreach (IExtractor extractor in Registry.All)
             {
-                messages.Add(Format(localizer, $"catalog event {missing} has no extractor"));
+                extractorClasses.Add(extractor.EventClassName);
+                foreach (string type in extractor.ChallengeTypes)
+                {
+                    extractorTypes.Add(type);
+                }
             }
 
-            HashSet<string> catalogTypes = catalog.Events
-                .Select(e => e.Type)
-                .Where(s => !string.IsNullOrWhiteSpace(s))
-                .ToHashSet(StringComparer.Ordinal);
-            HashSet<string> extractorTypes = Registry.All
-                .SelectMany(e => e.ChallengeTypes)
-                .ToHashSet(StringComparer.Ordinal);
-
-            foreach (string missing in extractorTypes.Except(catalogTypes))
+            foreach (string missing in extractorClasses)
             {
-                messages.Add(Format(localizer, $"extractor type {missing} has no catalog entry"));
+                if (!catalogClasses.Contains(missing))
+                {
+                    messages.Add(Format(localizer, $"extractor {missing} has no catalog entry"));
+                }
             }
 
-            foreach (string missing in catalogTypes.Except(extractorTypes))
+            foreach (string missing in catalogClasses)
             {
-                messages.Add(Format(localizer, $"catalog type {missing} has no extractor"));
+                if (!extractorClasses.Contains(missing))
+                {
+                    messages.Add(Format(localizer, $"catalog event {missing} has no extractor"));
+                }
+            }
+
+            foreach (string missing in extractorTypes)
+            {
+                if (!catalogTypes.Contains(missing))
+                {
+                    messages.Add(Format(localizer, $"extractor type {missing} has no catalog entry"));
+                }
+            }
+
+            foreach (string missing in catalogTypes)
+            {
+                if (!extractorTypes.Contains(missing))
+                {
+                    messages.Add(Format(localizer, $"catalog type {missing} has no extractor"));
+                }
             }
 
             return messages;

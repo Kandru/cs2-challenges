@@ -1,0 +1,78 @@
+title:
+  en: Grenade and die
+  de: Granate und tot
+tasks:
+  - id: easy
+    title:
+      en: "{count}/{total} deaths while a grenade is in the air"
+      de: "{count}/{total} Tode mit Granate in der Luft"
+    type: player_death
+    amount: 3
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: "false"
+      - key: global.isduringround
+        operator: bool==
+        value: "true"
+      - key: victim.grenade.thrown
+        operator: "!="
+        value: ""
+      - key: attacker.isbot
+        operator: bool==
+        value: "false"
+    requires: []
+  - id: medium
+    title:
+      en: "{count}/{total} kills on a pin-pulled grenade"
+      de: "{count}/{total} Kills gegen gezogenen Pin"
+    type: player_kill
+    amount: 5
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: "false"
+      - key: global.isduringround
+        operator: bool==
+        value: "true"
+      - key: victim.grenade.holding
+        operator: "!="
+        value: ""
+      - key: isteamkill
+        operator: bool==
+        value: "false"
+      - key: isselfkill
+        operator: bool==
+        value: "false"
+      - key: victim.isbot
+        operator: bool==
+        value: "false"
+    requires:
+      - easy
+  - id: hard
+    title:
+      en: "{count}/{total} kills while your HE is still flying"
+      de: "{count}/{total} Kills während deine HE noch fliegt"
+    type: player_kill
+    amount: 3
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: "false"
+      - key: global.isduringround
+        operator: bool==
+        value: "true"
+      - key: attacker.grenade.thrown
+        operator: contains
+        value: "hegrenade"
+      - key: isteamkill
+        operator: bool==
+        value: "false"
+      - key: isselfkill
+        operator: bool==
+        value: "false"
+      - key: victim.isbot
+        operator: bool==
+        value: "false"
+    requires:
+      - medium

@@ -1,4 +1,4 @@
-# EventBombDefused (bomb_defused)
+# EventBombDefused (bomb_defused / player_bomb_defused)
 
 CSS game event `bomb_defused` (`EventBombDefused`).
 
@@ -9,6 +9,7 @@ Who gets credit: **all connected players**.
 Put one of these in your task `type:` field:
 
 - `bomb_defused`
+- `player_bomb_defused`
 
 ## Rule keys
 
@@ -21,3 +22,8 @@ Put one of these in your task `type:` field:
 | [player data](../rules/GlobalPlayerData.md) | prefixes `userid`, `defuser` |
 | `site` | int |
 | `bomb_site` | int |
+| `insmoke` | bool |
+| `smoke.distance` | float |
+| `smoke.age` | float |
+| `userid.insmoke` | bool |
+| `defuser.insmoke` | bool |

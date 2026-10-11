@@ -154,16 +154,28 @@ def emit_targets(event: dict, alias: dict, types: list[str], audience: str) -> l
     players = player_props(event)
     extra = alias.get("types", {})
     lines: list[str] = ["        {"]
-    needs_event = audience != "all" and bool(players)
+    player_specific = {
+        field: ts
+        for field, ts in extra.items()
+        if field != "_all" and ts
+    }
+    needs_event = bool(players) and (audience != "all" or bool(player_specific))
     if needs_event:
         lines.append(f"            var e = ({event['class_name']})gameEvent;")
 
     if audience == "all":
-        lines.append("            foreach (var entry in Utilities.GetPlayers())")
-        lines.append("            {")
-        for t in types:
-            lines.append(f'                yield return (entry, "{t}");')
-        lines.append("            }")
+        broadcast = list(extra.get("_all", [])) if extra else list(types)
+        if not broadcast and not player_specific:
+            broadcast = list(types)
+        if broadcast:
+            lines.append("            foreach (var entry in Utilities.GetPlayers())")
+            lines.append("            {")
+            for t in broadcast:
+                lines.append(f'                yield return (entry, "{t}");')
+            lines.append("            }")
+        for prop in players:
+            for t in player_specific.get(prop["field"], []):
+                lines.append(f'            yield return (e.{prop["csharp"]}, "{t}");')
     elif extra:
         for prop in players:
             for t in extra.get(prop["field"], []):
@@ -386,9 +398,21 @@ def generate_listener_method(listener: dict, alias: dict, snapshot: dict) -> str
         target_block.append("            }")
         target_block.append(f'            HandleListener("{name}", d, targets);')
 
+    preamble: list[str] = []
+    if name == "OnPlayerButtonsChanged":
+        preamble = [
+            "            Situations.OnButtonsChanged(player, pressed, released);",
+            '            if (!_tasksByType.ContainsKey("on_player_buttons_changed"))',
+            "            {",
+            "                return;",
+            "            }",
+            "",
+        ]
+
     lines = [
         f"        public {ret} {name}({params})",
         "        {",
+        *preamble,
         *fill_lines,
         *target_block,
     ]
@@ -576,6 +600,21 @@ def catalog_keys_for_event(event: dict, alias: dict, suffixes: list[dict]) -> li
         add("old_team", "string")
         add("new_team", "string")
 
+    situation = alias.get("situation")
+    if situation == "grenade_on_death":
+        for prefix in ("attacker", "victim", "userid"):
+            add(f"{prefix}.grenade", "string")
+            add(f"{prefix}.grenade.holding", "string")
+            add(f"{prefix}.grenade.thrown", "string")
+    elif situation == "smoke_defuse":
+        add("insmoke", "bool")
+        add("smoke.distance", "float")
+        add("smoke.age", "float")
+        for prefix in player_prefixes_for(
+            players[0]["field"], players, alias
+        ) if players else ["player"]:
+            add(f"{prefix}.insmoke", "bool")
+
     return keys
 
 
@@ -617,9 +656,11 @@ def catalog_keys_for_listener(listener: dict, alias: dict, suffixes: list[dict],
 
 COMMON_CHALLENGE_TYPES = (
     "player_kill",
+    "player_trade",
     "player_hurt_attacker",
     "player_bomb_planted",
     "player_bomb_begindefuse",
+    "player_bomb_defused",
     "weapon_fire",
     "round_start",
     "on_player_chat",
@@ -645,14 +686,44 @@ COMMON_TYPE_BLURBS = {
     "player_hurt_attacker": "Player dealt damage",
     "player_bomb_planted": "Player planted the bomb",
     "player_bomb_begindefuse": "Player started defusing",
+    "player_bomb_defused": "Player finished a defuse",
+    "player_trade": "Mutual kill within a short window",
     "weapon_fire": "Player fired a weapon",
     "round_start": "Round started",
     "on_player_chat": "Player sent a chat message (listener)",
     "player_chat": "Player sent a chat message",
 }
 
+# Synthetic challenge types (no CSS event). Merged into docs + catalog after generation.
+SYNTHETIC_EVENTS = [
+    {
+        "doc_name": "PlayerTrade",
+        "title": "PlayerTrade (player_trade)",
+        "source": "Synthetic challenge type from situation memory (two `player_death` events).",
+        "audience": "players",
+        "types": ["player_trade"],
+        "prefixes": ["attacker", "victim", "userid"],
+        "keys": [
+            {"key": "seconds", "type": "float"},
+            {"key": "weapon", "type": "string"},
+            {"key": "other_weapon", "type": "string"},
+            {"key": "same_weapon", "type": "bool"},
+            {"key": "headshot", "type": "bool"},
+            {"key": "other_headshot", "type": "bool"},
+            {"key": "isteamkill", "type": "bool"},
+            {"key": "isselfkill", "type": "bool"},
+        ],
+        "catalog_event": {
+            "type": "player_trade",
+            "event_class": "PlayerTrade",
+            "extractor": "SituationMemory",
+            "kind": "synthetic",
+        },
+    },
+]
 
-def format_key_docs(keys: list[dict], prefixes: list[str]) -> list[str]:
+
+def format_key_docs(keys: list[dict], prefixes: list[str], suffixes: list[dict] | None = None) -> list[str]:
     lines: list[str] = [
         "| Key | Type |",
         "|-----|------|",
@@ -663,10 +734,18 @@ def format_key_docs(keys: list[dict], prefixes: list[str]) -> list[str]:
         lines.append(
             f"| [player data](../rules/GlobalPlayerData.md) | prefixes {joined} |"
         )
+    standard = {s["suffix"] for s in (suffixes or [])}
     for entry in keys:
-        if any(entry["key"].startswith(f"{p}.") for p in prefixes):
+        key = entry["key"]
+        skip = False
+        for p in prefixes:
+            prefix = f"{p}."
+            if key.startswith(prefix) and key[len(prefix) :] in standard:
+                skip = True
+                break
+        if skip:
             continue
-        lines.append(f"| `{entry['key']}` | {entry['type']} |")
+        lines.append(f"| `{key}` | {entry['type']} |")
     return lines
 
 
@@ -684,6 +763,7 @@ def write_event_page(
     types: list[str],
     keys: list[dict],
     prefixes: list[str],
+    suffixes: list[dict] | None = None,
 ) -> None:
     lines = [
         f"# {title}",
@@ -703,7 +783,7 @@ def write_event_page(
         "> [!WARNING]",
         "> If you use an unknown key, the task will not work because that condition can never be met.",
         "",
-        *format_key_docs(keys, prefixes),
+        *format_key_docs(keys, prefixes, suffixes),
         "",
     ]
     path.write_text("\n".join(lines), encoding="utf-8")
@@ -756,9 +836,34 @@ def write_docs(snapshot: dict, aliases: dict, suffixes: list[dict]) -> None:
             types,
             keys,
             prefixes,
+            suffixes,
         )
         href = f"events/{doc_name}.md"
         for t in types:
+            emitted_types.add(t)
+            index_rows.append((t, href, classify_event_group(t, is_listener=False)))
+
+    for synth in SYNTHETIC_EVENTS:
+        synth_keys = list(synth["keys"])
+        for prefix in synth["prefixes"]:
+            for suffix in suffixes:
+                synth_keys.append(
+                    {"key": f"{prefix}.{suffix['suffix']}", "type": suffix["type"]}
+                )
+        write_event_page(
+            DOCS_EVENTS / f"{synth['doc_name']}.md",
+            synth["title"],
+            synth["source"],
+            synth["audience"],
+            synth["types"],
+            synth_keys,
+            synth["prefixes"],
+            suffixes,
+        )
+        href = f"events/{synth['doc_name']}.md"
+        for t in synth["types"]:
+            if t in emitted_types:
+                continue
             emitted_types.add(t)
             index_rows.append((t, href, classify_event_group(t, is_listener=False)))
 
@@ -779,6 +884,7 @@ def write_docs(snapshot: dict, aliases: dict, suffixes: list[dict]) -> None:
             types,
             keys,
             prefixes,
+            suffixes,
         )
         href = f"events/{doc_name}.md"
         for t in types:
@@ -898,6 +1004,16 @@ def write_catalog(snapshot: dict, aliases: dict, suffixes: list[dict]) -> None:
                     "kind": "listener",
                 }
             )
+
+    for synth in SYNTHETIC_EVENTS:
+        synth_keys = list(synth["keys"])
+        for prefix in synth["prefixes"]:
+            for suffix in suffixes:
+                synth_keys.append(
+                    {"key": f"{prefix}.{suffix['suffix']}", "type": suffix["type"]}
+                )
+        key_sets[synth["doc_name"]] = synth_keys
+        events_out.append(dict(synth["catalog_event"]))
 
     events_out.sort(key=lambda e: (e["type"], e["event_class"]))
     catalog = {

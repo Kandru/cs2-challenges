@@ -21,6 +21,7 @@ namespace Challenges.Classes
         private readonly Dictionary<string, List<IExtractor>> _extractorsByEvent;
         private readonly HashSet<PlayerState> _pruned = [];
         private readonly List<string> _pruneScratch = [];
+        private readonly SituationMemory _situations = new();
         private Dictionary<string, List<(ChallengeDefinition Challenge, ChallengeTask Task)>> _tasksByType =
             new(StringComparer.Ordinal);
         private List<string> _boundEvents = [];
@@ -39,6 +40,9 @@ namespace Challenges.Classes
                 .ToDictionary(g => g.Key, g => g.ToList(), StringComparer.Ordinal);
             RebuildEvents();
         }
+
+        /// <summary>Used by the generated button listener when grenade situation rules are loaded.</summary>
+        internal SituationMemory Situations => _situations;
 
         public override List<string> Events => _boundEvents;
         public override List<string> Listeners => _boundListeners;
@@ -99,13 +103,15 @@ namespace Challenges.Classes
             _tasksByType = byType;
             _usesHostageKey = hostageKey;
             EventData.IncludeIsBot = isBotKey;
+            _situations.Configure(byType.Values.SelectMany(static list => list.Select(static t => t.Task)));
 
             HashSet<string> bound = new(StringComparer.Ordinal);
             List<string> events = [];
             List<string> listeners = [];
             foreach (IExtractor extractor in Registry.All)
             {
-                if (!UsesAnyType(extractor) || !bound.Add(extractor.EventClassName))
+                if ((!UsesAnyType(extractor) && !_situations.Watches(extractor.EventClassName))
+                    || !bound.Add(extractor.EventClassName))
                 {
                     continue;
                 }
@@ -124,10 +130,19 @@ namespace Challenges.Classes
             _boundListeners = listeners;
         }
 
-        /// <summary>Drops per-player engine state when the player leaves.</summary>
-        public void ForgetPlayer(PlayerState state) => _pruned.Remove(state);
+        /// <summary>Drops per-player engine and situation state when the player leaves.</summary>
+        public void ForgetPlayer(CCSPlayerController player, PlayerState state)
+        {
+            _pruned.Remove(state);
+            _situations.ForgetPlayer(player);
+        }
 
-        public void InvalidateRoundCache() => _hasHostages = null;
+        /// <summary>Clears round-scoped caches (hostages, situation memory).</summary>
+        public void InvalidateRoundCache()
+        {
+            _hasHostages = null;
+            _situations.Clear();
+        }
 
         public override void Destroy()
         {
@@ -137,6 +152,7 @@ namespace Challenges.Classes
             _boundListeners = [];
             _pruned.Clear();
             _gameRulesProxy = null;
+            _situations.Clear();
             EventData.IncludeIsBot = false;
         }
 
@@ -174,12 +190,36 @@ namespace Challenges.Classes
 
         private HookResult HandleEvent(string eventName, GameEvent gameEvent)
         {
-            if (!CanHandle()
+            if (_destroyed || !GlobalConfig.Enabled)
+            {
+                return HookResult.Continue;
+            }
+
+            bool hasTasks = _tasksByType.Count > 0;
+            if (!hasTasks && !_situations.AnyEnabled)
+            {
+                return HookResult.Continue;
+            }
+
+            if (_situations.Watches(eventName))
+            {
+                try
+                {
+                    _situations.Observe(eventName, gameEvent, EnqueueOne);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[Challenges] situation {eventName} failed: {ex.Message}");
+                }
+            }
+
+            if (!hasTasks
                 || !_extractorsByEvent.TryGetValue(eventName, out List<IExtractor>? extractors))
             {
                 return HookResult.Continue;
             }
 
+            bool enrich = _situations.AnyEnabled;
             foreach (IExtractor extractor in extractors)
             {
                 if (!UsesAnyType(extractor))
@@ -202,6 +242,11 @@ namespace Challenges.Classes
 
                     Dictionary<string, string> data = [];
                     extractor.Fill(gameEvent, data);
+                    if (enrich)
+                    {
+                        _situations.Enrich(eventName, gameEvent, data);
+                    }
+
                     Enqueue(eventName, data, targets);
                 }
                 catch (Exception ex)
@@ -241,6 +286,17 @@ namespace Challenges.Classes
         {
             MergeGlobalData(data);
             Server.NextFrame(() => ProcessTargets(source, targets, data));
+        }
+
+        /// <summary>Enqueue progress for a single player (e.g. synthetic <c>player_trade</c>).</summary>
+        private void EnqueueOne(CCSPlayerController player, string type, Dictionary<string, string> data)
+        {
+            if (!PlayerStates.ContainsKey(player) || !_tasksByType.ContainsKey(type))
+            {
+                return;
+            }
+
+            Enqueue(type, data, [(player, type)]);
         }
 
         private bool UsesAnyType(IExtractor extractor)

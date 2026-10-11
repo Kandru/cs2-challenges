@@ -116,7 +116,7 @@ namespace Challenges.Classes
                 && classes.TryGetValue(nameof(ChallengeEngine), out ClassesBlueprint? engine)
                 && engine is ChallengeEngine challengeEngine)
             {
-                challengeEngine.ForgetPlayer(archived);
+                challengeEngine.ForgetPlayer(stale, archived);
             }
         }
 

@@ -47,6 +47,22 @@ Available on almost every event:
 
 Team names: [CsTeam](enums/CsTeam.md).
 
+<a id="situation-keys"></a>
+
+## Situation keys (timed memory)
+
+Some keys are filled from short-lived round memory, not from a single CSS field. They only appear when a loaded task uses them. Memory is cleared on round start and never saved to player JSON.
+
+| Pattern | Challenge type / event | Meaning |
+|---------|------------------------|---------|
+| `player_trade` + `seconds`, `same_weapon`, … | [PlayerTrade](events/PlayerTrade.md) | Mutual kill within a window (either order, including same tick) |
+| `{attacker\|victim\|userid}.grenade` | [EventPlayerDeath](events/EventPlayerDeath.md) | `none` / `holding` / `thrown` / `both` |
+| `{prefix}.grenade.holding` / `.thrown` | same | Weapon short name(s); thrown is comma-separated |
+| `insmoke`, `smoke.distance`, `smoke.age` | [EventBombDefused](events/EventBombDefused.md) / begin-defuse | Bomb origin inside a 144-unit smoke sphere |
+| Prefer `player_bomb_defused` over `bomb_defused` | same | Credit only the defuser (the all-player type shares one data bag) |
+
+Examples: `examples/blueprints/traded_kills.yaml`, `grenade_and_die.yaml`, `ninja_defuse.yaml`.
+
 ## Example
 
 Require a headshot kill that is not a suicide, during a live round, against a human:

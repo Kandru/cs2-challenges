@@ -1,0 +1,42 @@
+title:
+  en: Ninja defuse
+  de: Ninja-Defuse
+tasks:
+  - id: easy
+    title:
+      en: "{count}/{total} defuses inside smoke"
+      de: "{count}/{total} Defuses im Rauch"
+    type: player_bomb_defused
+    amount: 2
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: "false"
+      - key: global.isduringround
+        operator: bool==
+        value: "true"
+      - key: insmoke
+        operator: bool==
+        value: "true"
+    requires: []
+  - id: medium
+    title:
+      en: "{count}/{total} close smoke defuses"
+      de: "{count}/{total} enge Smoke-Defuses"
+    type: player_bomb_defused
+    amount: 3
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: "false"
+      - key: global.isduringround
+        operator: bool==
+        value: "true"
+      - key: insmoke
+        operator: bool==
+        value: "true"
+      - key: smoke.distance
+        operator: <=
+        value: "80"
+    requires:
+      - easy

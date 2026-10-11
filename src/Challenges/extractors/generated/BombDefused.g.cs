@@ -11,7 +11,7 @@ namespace Challenges.Extractors
     {
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventBombDefused";
-        public IReadOnlyList<string> ChallengeTypes { get; } = ["bomb_defused"];
+        public IReadOnlyList<string> ChallengeTypes { get; } = ["bomb_defused", "player_bomb_defused"];
 
         public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
         {
@@ -24,10 +24,12 @@ namespace Challenges.Extractors
 
         public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
         {
+            var e = (EventBombDefused)gameEvent;
             foreach (var entry in Utilities.GetPlayers())
             {
                 yield return (entry, "bomb_defused");
             }
+            yield return (e.Userid, "player_bomb_defused");
         }
     }
 }

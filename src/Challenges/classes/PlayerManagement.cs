@@ -245,7 +245,7 @@ namespace Challenges.Classes
 
             CustomHud.ReleasePlayer(player);
             PlayerStates.Remove(player);
-            GetClass<ChallengeEngine>().ForgetPlayer(state);
+            GetClass<ChallengeEngine>().ForgetPlayer(player, state);
             state.ResetSession();
             Archive.PatchOfflineScore(state, Context.Schedule, DebugPrint);
         }

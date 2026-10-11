@@ -1,0 +1,54 @@
+title:
+  en: Traded kills
+  de: Getauschte Kills
+tasks:
+  - id: easy
+    title:
+      en: "{count}/{total} trade kills"
+      de: "{count}/{total} Trade-Kills"
+    type: player_trade
+    amount: 3
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: "false"
+      - key: global.isduringround
+        operator: bool==
+        value: "true"
+      - key: seconds
+        operator: <=
+        value: "3"
+      - key: isteamkill
+        operator: bool==
+        value: "false"
+      - key: victim.isbot
+        operator: bool==
+        value: "false"
+    requires: []
+  - id: medium
+    title:
+      en: "{count}/{total} same-weapon trades"
+      de: "{count}/{total} Trades mit gleicher Waffe"
+    type: player_trade
+    amount: 5
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: "false"
+      - key: global.isduringround
+        operator: bool==
+        value: "true"
+      - key: seconds
+        operator: <=
+        value: "3"
+      - key: same_weapon
+        operator: bool==
+        value: "true"
+      - key: isteamkill
+        operator: bool==
+        value: "false"
+      - key: victim.isbot
+        operator: bool==
+        value: "false"
+    requires:
+      - easy

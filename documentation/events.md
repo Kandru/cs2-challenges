@@ -9,9 +9,11 @@ Source: CounterStrikeSharp `main` (synced tip `653d651f1ac0`).
 | Challenge type | Typical use |
 |----------------|-------------|
 | `player_kill` | Player got a kill |
+| `player_trade` | Mutual kill within a short window |
 | `player_hurt_attacker` | Player dealt damage |
 | `player_bomb_planted` | Player planted the bomb |
 | `player_bomb_begindefuse` | Player started defusing |
+| `player_bomb_defused` | Player finished a defuse |
 | `weapon_fire` | Player fired a weapon |
 | `round_start` | Round started |
 | `on_player_chat` | Player sent a chat message (listener) |
@@ -19,7 +21,7 @@ Source: CounterStrikeSharp `main` (synced tip `653d651f1ac0`).
 
 ## All types
 
-<details><summary><b>Players</b> (45)</summary>
+<details><summary><b>Players</b> (46)</summary>
 
 | Challenge type | Page |
 |----------------|------|
@@ -65,6 +67,7 @@ Source: CounterStrikeSharp `main` (synced tip `653d651f1ac0`).
 | `player_spawned` | [EventPlayerSpawned](events/EventPlayerSpawned.md) |
 | `player_stats_updated` | [EventPlayerStatsUpdated](events/EventPlayerStatsUpdated.md) |
 | `player_team` | [EventPlayerTeam](events/EventPlayerTeam.md) |
+| `player_trade` | [PlayerTrade](events/PlayerTrade.md) |
 | `vip_escaped` | [EventVipEscaped](events/EventVipEscaped.md) |
 | `vip_killed_attacker` | [EventVipKilled](events/EventVipKilled.md) |
 | `vip_killed_userid` | [EventVipKilled](events/EventVipKilled.md) |
@@ -111,7 +114,7 @@ Source: CounterStrikeSharp `main` (synced tip `653d651f1ac0`).
 
 </details>
 
-<details><summary><b>Bomb</b> (14)</summary>
+<details><summary><b>Bomb</b> (15)</summary>
 
 | Challenge type | Page |
 |----------------|------|
@@ -125,6 +128,7 @@ Source: CounterStrikeSharp `main` (synced tip `653d651f1ac0`).
 | `player_bomb_abortplant` | [EventBombAbortplant](events/EventBombAbortplant.md) |
 | `player_bomb_begindefuse` | [EventBombBegindefuse](events/EventBombBegindefuse.md) |
 | `player_bomb_beginplant` | [EventBombBeginplant](events/EventBombBeginplant.md) |
+| `player_bomb_defused` | [EventBombDefused](events/EventBombDefused.md) |
 | `player_bomb_dropped` | [EventBombDropped](events/EventBombDropped.md) |
 | `player_bomb_pickup` | [EventBombPickup](events/EventBombPickup.md) |
 | `player_bomb_planted` | [EventBombPlanted](events/EventBombPlanted.md) |

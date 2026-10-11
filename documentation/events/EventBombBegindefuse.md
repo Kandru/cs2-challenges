@@ -20,3 +20,8 @@ Put one of these in your task `type:` field:
 | [global event data](../rules/GlobalEventData.md) | see page |
 | [player data](../rules/GlobalPlayerData.md) | prefixes `userid`, `player` |
 | `haskit` | bool |
+| `insmoke` | bool |
+| `smoke.distance` | float |
+| `smoke.age` | float |
+| `userid.insmoke` | bool |
+| `player.insmoke` | bool |

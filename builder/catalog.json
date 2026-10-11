@@ -1206,6 +1206,26 @@
       {
         "key": "player.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "smoke.distance",
+        "type": "float"
+      },
+      {
+        "key": "smoke.age",
+        "type": "float"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventBombBeginplant": [
@@ -1461,6 +1481,26 @@
       },
       {
         "key": "defuser.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "smoke.distance",
+        "type": "float"
+      },
+      {
+        "key": "smoke.age",
+        "type": "float"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "defuser.insmoke",
         "type": "bool"
       }
     ],
@@ -11178,6 +11218,42 @@
       {
         "key": "isselfkill",
         "type": "bool"
+      },
+      {
+        "key": "attacker.grenade",
+        "type": "string"
+      },
+      {
+        "key": "attacker.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "attacker.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "victim.grenade",
+        "type": "string"
+      },
+      {
+        "key": "victim.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "victim.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
       }
     ],
     "EventPlayerDecal": [
@@ -18849,6 +18925,220 @@
         "key": "buttonid",
         "type": "string"
       }
+    ],
+    "PlayerTrade": [
+      {
+        "key": "seconds",
+        "type": "float"
+      },
+      {
+        "key": "weapon",
+        "type": "string"
+      },
+      {
+        "key": "other_weapon",
+        "type": "string"
+      },
+      {
+        "key": "same_weapon",
+        "type": "bool"
+      },
+      {
+        "key": "headshot",
+        "type": "bool"
+      },
+      {
+        "key": "other_headshot",
+        "type": "bool"
+      },
+      {
+        "key": "isteamkill",
+        "type": "bool"
+      },
+      {
+        "key": "isselfkill",
+        "type": "bool"
+      },
+      {
+        "key": "attacker.name",
+        "type": "string"
+      },
+      {
+        "key": "attacker.isbot",
+        "type": "bool"
+      },
+      {
+        "key": "attacker.team",
+        "type": "string"
+      },
+      {
+        "key": "attacker.alive",
+        "type": "bool"
+      },
+      {
+        "key": "attacker.ping",
+        "type": "int"
+      },
+      {
+        "key": "attacker.money",
+        "type": "int"
+      },
+      {
+        "key": "attacker.score",
+        "type": "int"
+      },
+      {
+        "key": "attacker.stats.kills",
+        "type": "int"
+      },
+      {
+        "key": "attacker.stats.assists",
+        "type": "int"
+      },
+      {
+        "key": "attacker.stats.deaths",
+        "type": "int"
+      },
+      {
+        "key": "attacker.stats.damage",
+        "type": "int"
+      },
+      {
+        "key": "attacker.health",
+        "type": "int"
+      },
+      {
+        "key": "attacker.armor",
+        "type": "int"
+      },
+      {
+        "key": "attacker.hasdefusor",
+        "type": "bool"
+      },
+      {
+        "key": "attacker.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "victim.name",
+        "type": "string"
+      },
+      {
+        "key": "victim.isbot",
+        "type": "bool"
+      },
+      {
+        "key": "victim.team",
+        "type": "string"
+      },
+      {
+        "key": "victim.alive",
+        "type": "bool"
+      },
+      {
+        "key": "victim.ping",
+        "type": "int"
+      },
+      {
+        "key": "victim.money",
+        "type": "int"
+      },
+      {
+        "key": "victim.score",
+        "type": "int"
+      },
+      {
+        "key": "victim.stats.kills",
+        "type": "int"
+      },
+      {
+        "key": "victim.stats.assists",
+        "type": "int"
+      },
+      {
+        "key": "victim.stats.deaths",
+        "type": "int"
+      },
+      {
+        "key": "victim.stats.damage",
+        "type": "int"
+      },
+      {
+        "key": "victim.health",
+        "type": "int"
+      },
+      {
+        "key": "victim.armor",
+        "type": "int"
+      },
+      {
+        "key": "victim.hasdefusor",
+        "type": "bool"
+      },
+      {
+        "key": "victim.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.name",
+        "type": "string"
+      },
+      {
+        "key": "userid.isbot",
+        "type": "bool"
+      },
+      {
+        "key": "userid.team",
+        "type": "string"
+      },
+      {
+        "key": "userid.alive",
+        "type": "bool"
+      },
+      {
+        "key": "userid.ping",
+        "type": "int"
+      },
+      {
+        "key": "userid.money",
+        "type": "int"
+      },
+      {
+        "key": "userid.score",
+        "type": "int"
+      },
+      {
+        "key": "userid.stats.kills",
+        "type": "int"
+      },
+      {
+        "key": "userid.stats.assists",
+        "type": "int"
+      },
+      {
+        "key": "userid.stats.deaths",
+        "type": "int"
+      },
+      {
+        "key": "userid.stats.damage",
+        "type": "int"
+      },
+      {
+        "key": "userid.health",
+        "type": "int"
+      },
+      {
+        "key": "userid.armor",
+        "type": "int"
+      },
+      {
+        "key": "userid.hasdefusor",
+        "type": "bool"
+      },
+      {
+        "key": "userid.hashelmet",
+        "type": "bool"
+      }
     ]
   },
   "events": [
@@ -19885,6 +20175,12 @@
       "kind": "game_event"
     },
     {
+      "type": "player_bomb_defused",
+      "event_class": "EventBombDefused",
+      "extractor": "BombDefused",
+      "kind": "game_event"
+    },
+    {
       "type": "player_bomb_dropped",
       "event_class": "EventBombDropped",
       "extractor": "BombDropped",
@@ -20111,6 +20407,12 @@
       "event_class": "EventPlayerTeam",
       "extractor": "PlayerTeam",
       "kind": "game_event"
+    },
+    {
+      "type": "player_trade",
+      "event_class": "PlayerTrade",
+      "extractor": "SituationMemory",
+      "kind": "synthetic"
     },
     {
       "type": "ragdoll_dissolved",

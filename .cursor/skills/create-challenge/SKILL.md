@@ -56,6 +56,7 @@ Copy structure from the closest example in [examples/blueprints/](../../../examp
 | Weapon mastery (buy/pickup + kills) | `weapon_ak47.yaml` |
 | Knife / special weapon | `knife_challenge.yaml`, `taser_challenge.yaml`, `scout_challenge.yaml` |
 | Utility / objective | `blind_them_by_the_light.yaml`, `hostage_rescue.yaml`, `inflatable_castle.yaml` |
+| Trade kills / grenade state / smoke defuse | `traded_kills.yaml`, `grenade_and_die.yaml`, `ninja_defuse.yaml` (see [rules.md situation keys](../../../documentation/rules.md#situation-keys)) |
 
 Weapon short names: [tools/catalog_weapons.json](../../../tools/catalog_weapons.json). Prefer `contains` with the short form (`ak47`, `knife`, `awp`).
 

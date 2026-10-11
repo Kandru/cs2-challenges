@@ -367,6 +367,12 @@ namespace Challenges.Classes
 
         public void OnPlayerButtonsChanged(CCSPlayerController player, PlayerButtons pressed, PlayerButtons released)
         {
+            Situations.OnButtonsChanged(player, pressed, released);
+            if (!_tasksByType.ContainsKey("on_player_buttons_changed"))
+            {
+                return;
+            }
+
             Dictionary<string, string> d = [];
             EventData.FillPlayer(d, player, "player");
             d["pressed"] = EventData.Num((ulong)pressed);

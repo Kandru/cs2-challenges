@@ -11,12 +11,14 @@ test_challenge:
     - bhop_clips
     - blind_them_by_the_light
     - entry_flash
+    - grenade_and_die
     - headshots_in_a_row
     - hostage_rescue
     - inflatable_castle
     - jump_marathon
     - knife_challenge
     - long_range
+    - ninja_defuse
     - noscopes_in_a_row
     - one_ways
     - radio_comms
@@ -26,6 +28,7 @@ test_challenge:
     - site_take
     - taser_challenge
     - through_the_wall
+    - traded_kills
     - trust_fall
     - while_flashed
     - weapon_ak47
