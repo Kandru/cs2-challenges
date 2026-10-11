@@ -1,50 +1,40 @@
 # Actions
 
-Actions run when a **task** completes. Values that point at other work use **task ids in the same challenge file**.
+Actions run when a **task** reaches its `amount` (completion), not on each progress point. Values that point at other work use **task ids in the same challenge file**.
 
 ## Available actions
-
-<a id="task-reset-progress"></a>
 
 ### `task.reset_progress`
 
 Clears progress of an **unfinished** task. `values`: task id(s).
 
-<a id="task-reset-completed"></a>
-
 ### `task.reset_completed`
 
 Clears progress of a **finished** task. `values`: task id(s).
 
-<a id="task-mark-completed"></a>
+Resetting another **visible** task prints the “Challenge deleted” chat line for that task.
 
 ### `task.mark_completed`
 
-Marks a task complete regardless of current progress. `values`: task id(s).
+Sets a task’s progress to its goal. `values`: task id(s).
 
-<a id="notify-player-progress-rule-broken"></a>
+Does **not** run that task’s actions, completion chat, Discord, or shared events. Use it to mark control tasks done so later events cannot reset finished work.
 
 ### `notify.player.progress.rule_broken`
 
-Tells the player they broke a rule. Fires only if a listed task already has progress. `values`: related task id(s).
-
-<a id="notify-player-completed-rule-broken"></a>
+Tells the player they broke a rule (chat + sound + tracker). Fires only if a listed task already has progress. `values`: related task id(s).
 
 ### `notify.player.completed.rule_broken`
 
 Same as above, but only if a listed task is already complete. `values`: related task id(s).
 
-<a id="server-runcommand"></a>
-
 ### `server.runcommand`
 
-Runs a server console command. Placeholders: `{steamid}`, `{userid}`, `{index}`. `values`: one command string.
-
-<a id="streak-broken"></a>
+Runs a server console command when the task completes. Placeholders and a full example are in [Plugin integration](plugin-integration.md#server-commands). `values`: one command string.
 
 ## Streak broken (hidden task)
 
-Use a hidden task (`visible: false`) that matches the “bad” case (for example a kill without headshot). On completion, reset the main streak and notify the player.
+Use a hidden task (`visible: false`) that matches the “bad” case (for example a kill without headshot). On completion it resets the streak and notifies the player. When the streak task finishes, it marks the breaker complete so a later non-headshot cannot wipe a finished streak.
 
 ```yaml
 - id: easy

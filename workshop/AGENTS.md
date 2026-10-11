@@ -6,7 +6,7 @@ C# under [`src/Challenges/Hud/`](../src/Challenges/Hud/): [`CustomHud.cs`](../sr
 
 ## Panorama versions
 
-Repo sources stay `tracker.xml`, `menu.xml`, `hud.vcss` — never add `vN` to those names here. `PanoramaVersion` in [`Version.cs`](../src/Challenges/Version.cs) selects `tracker_vN` / `menu_vN` at runtime. On workshop copy, rename layouts and the stylesheet include by hand. Bump only when panel ids / dialog vars / classes / structure would break old DLLs; keep older generations in the published addon.
+Repo sources stay `tracker.xml`, `menu.xml`, `hud.vcss` - never add `vN` to those names here. `PanoramaVersion` in [`Version.cs`](../src/Challenges/Version.cs) selects `tracker_vN` / `menu_vN` at runtime. On workshop copy, rename layouts and the stylesheet include by hand. Bump only when panel ids / dialog vars / classes / structure would break old DLLs; keep older generations in the published addon.
 
 ## Theme / type / bars
 

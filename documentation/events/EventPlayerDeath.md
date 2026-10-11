@@ -14,8 +14,7 @@ Put one of these in your task `type:` field:
 
 ## Rule keys
 
-> [!WARNING]
-> If you use an unknown key, the task will not work because that condition can never be met.
+Unknown keys never match - see [Rules](../rules.md).
 
 | Key | Type |
 |-----|------|

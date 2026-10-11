@@ -158,7 +158,7 @@ namespace Challenges
             ChallengeDefinition challenge)
         {
             List<(string Text, bool IsYou)> names = [];
-            // Online controllers share PlayerState with the archive — one pass covers both.
+            // Online controllers share PlayerState with the archive - one pass covers both.
             if (schedule == null || Context.Archive is not { } archive)
             {
                 return names;

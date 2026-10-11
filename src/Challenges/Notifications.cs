@@ -416,7 +416,7 @@ namespace Challenges
             new()
             {
                 ["name"] = Truncate(name, EmbedFieldNameLimit),
-                ["value"] = Truncate(string.IsNullOrEmpty(value) ? "—" : value, EmbedFieldValueLimit),
+                ["value"] = Truncate(string.IsNullOrEmpty(value) ? "-" : value, EmbedFieldValueLimit),
                 ["inline"] = inline,
             };
 
@@ -499,7 +499,7 @@ namespace Challenges
         {
             if (lines.Count == 0)
             {
-                return "—";
+                return "-";
             }
 
             var sb = new StringBuilder();
@@ -589,7 +589,7 @@ namespace Challenges
             return $"{when} {FormatUtcOffset(zone.GetUtcOffset(local))}";
         }
 
-        /// <summary>UTC, UTC+1, UTC-5, or UTC+5:30 — never UTC+00:00.</summary>
+        /// <summary>UTC, UTC+1, UTC-5, or UTC+5:30 - never UTC+00:00.</summary>
         private static string FormatUtcOffset(TimeSpan offset)
         {
             if (offset == TimeSpan.Zero)
@@ -675,7 +675,7 @@ namespace Challenges
             player.EmitSound(sound, filter);
         }
 
-        /// <summary>Client-local <c>play</c> only — never audible to other players.</summary>
+        /// <summary>Client-local <c>play</c> only - never audible to other players.</summary>
         private static void PlayClientSound(CCSPlayerController player, string sound)
         {
             if (string.IsNullOrEmpty(sound) || !player.IsValid)

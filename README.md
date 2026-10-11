@@ -11,7 +11,7 @@
 
 ![Challenges menu](media/challenges_menu.png)
 
-Create time-limited challenges for players. Each challenge is a YAML file with tasks that listen for game events (for example three headshots in a row). This plugin tracks progress and tells other plugins when a task or challenge is done. It does not grant rewards on its own. Each challenge consists of at least one task player has to do. You can also define rules which reset a task (for example when somebody did not do a headshot for his three headshots in a row).
+Create time-limited challenges for players. Each challenge is a YAML file with tasks that listen for game events (for example three headshots in a row). This plugin tracks progress. It does not grant rewards on its own - wire another plugin via server commands or `ChallengesShared` ([Plugin integration](./documentation/plugin-integration.md)).
 
 > [!TIP]
 > Please consider a [donation](https://www.paypal.com/donate/?hosted_button_id=C2AVYKGVP9TRG) when you're using this plugin - it took a long time to build and improve - it only costs you a few dollars and would help me very much!
@@ -24,27 +24,23 @@ Create time-limited challenges for players. Each challenge is a YAML file with t
 Read in this order:
 
 1. [How to start](./documentation/howto.md)
-2. [Schedules](./documentation/schedules.md)
-3. [Blueprints](./documentation/blueprints.md)
-4. [Rules](./documentation/rules.md)
-5. [Actions](./documentation/actions.md)
-6. [Events](./documentation/events.md)
-7. [Settings](./documentation/settings.md)
-8. [Third-party plugin integration](./documentation/plugin-integration.md) (plugin authors)
+2. [In game](./documentation/ingame.md)
+3. [Schedules](./documentation/schedules.md)
+4. [Blueprints](./documentation/blueprints.md)
+5. [Rules](./documentation/rules.md)
+6. [Actions](./documentation/actions.md)
+7. [Events](./documentation/events.md)
+8. [Settings](./documentation/settings.md)
+9. [Plugin integration](./documentation/plugin-integration.md) - server commands and C# events
 
 ## Features
 
 - One YAML file per challenge, with ordered tasks and `requires` dependencies inside the file.
-- Track progress and notify other plugins via `ChallengesShared`.
+- Track progress; notify other plugins via `ChallengesShared`, or run server console commands on task completion.
 - Panorama HUD: round-start tracker and fullscreen `!c` / `!challenges` menu ([Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3814533794)).
-- Player language from `!lang` is stored and restored on reconnect to properly translate the whole plug-in.
-- Build with Docker (`make debug` / `make release`) — no local .NET install required.
+- Player language from `!lang` is stored and restored on reconnect.
+- Build with Docker (`make debug` / `make release`) - no local .NET install required.
 - Challenge builder for GitHub Pages under [`builder/`](./builder/) ([live site](https://kandru.github.io/cs2-challenges/)).
-
-## Compatible plugins
-
-- if your plug-in (e.g. cs2 stores) does provide server commands (e.g. givemoney) you can use placeholders to send commands to the server upon task completion
-- if you have a plug-in which is compatible please tell me!
 
 ## Test servers
 

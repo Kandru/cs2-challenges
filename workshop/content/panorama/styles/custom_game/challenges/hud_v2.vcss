@@ -36,7 +36,7 @@
 	opacity: 0;
 }
 
-/* Not "hidden" — that name exists on csgostyles and would collide. */
+/* Not "hidden" - that name exists on csgostyles and would collide. */
 .ph-card.ph-off
 {
 	visibility: collapse;
@@ -78,9 +78,9 @@
 	horizontal-align: right;
 }
 
-/* Fullscreen shell — 68px inset clears RoundStatus (4px + 60px + 4px gap).
+/* Fullscreen shell - 68px inset clears RoundStatus (4px + 60px + 4px gap).
    Content uses fill-parent-flow / fit-children; ph-bg uses ignore-parent-flow.
-   PropGrid cannot use this (asymmetric 68/36 inset + flow children) — see spacers. */
+   PropGrid cannot use this (asymmetric 68/36 inset + flow children) - see spacers. */
 .ph-fs
 {
 	width: 100%;
@@ -91,7 +91,7 @@
 	padding-left: 68px;
 }
 
-/* Shared title row — Prop/Sound/Weapon/Shop/Rules. */
+/* Shared title row - Prop/Sound/Weapon/Shop/Rules. */
 .ph-titlebar
 {
 	width: 100%;
@@ -121,7 +121,7 @@ Label.ph-money
 	color: #9ccf4f;
 }
 
-/* Button label: parent must be flow-children:none. No height:100% — that
+/* Button label: parent must be flow-children:none. No height:100% - that
    pins the glyph to the top and makes vertical-align a no-op. */
 Label.ph-btn-label
 {
@@ -1165,7 +1165,7 @@ Label.MenuByLabel
 	visibility: collapse;
 }
 
-/* Hardcoded English credit in menu.xml — not a dialog variable. */
+/* Hardcoded English credit in menu.xml - not a dialog variable. */
 Label.MenuCredit
 {
 	width: 100%;
@@ -1179,7 +1179,7 @@ Label.MenuCredit
 	text-overflow: shrink;
 }
 
-/* prev | [pad] title… (page) [pad] | next — equal pads center the pair; title ellipsizes; page never shrinks. */
+/* prev | [pad] title… (page) [pad] | next - equal pads center the pair; title ellipsizes; page never shrinks. */
 .ScoreTitleBar
 {
 	width: 100%;
@@ -1513,7 +1513,7 @@ Label.ScoreTot
 }
 
 /* >>> hud_themes:begin */
-/* Accent themes (gui.theme). Generated from tools/hud_themes.py — do not edit by hand. */
+/* Accent themes (gui.theme). Generated from tools/hud_themes.py - do not edit by hand. */
 /* Gold is the baked-in default; other themes override accents. CT/T = stock CS2 colours. */
 
 .theme-red .ph-bar { background-color: #e05a5a; }

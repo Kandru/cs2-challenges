@@ -8,13 +8,13 @@ description: >-
 
 # Create a CS2 challenge
 
-Turn a user’s goal into valid blueprint YAML and a schedule entry. Docs in this repo are the source of truth — read them before inventing keys.
+Turn a user’s goal into valid blueprint YAML and a schedule entry. Docs in this repo are the source of truth - read them before inventing keys.
 
 ## Steps
 
 1. Restate: event `type`, counts, stages (`requires`), filters, streak/reset, optional `data`.
 2. Read only what you need (in order): [blueprints.md](../../../documentation/blueprints.md), [schedules.md](../../../documentation/schedules.md), [rules.md](../../../documentation/rules.md), [actions.md](../../../documentation/actions.md), [events.md](../../../documentation/events.md) + the linked event page, [GlobalEventData.md](../../../documentation/rules/GlobalEventData.md) / [GlobalPlayerData.md](../../../documentation/rules/GlobalPlayerData.md), [CsTeam.md](../../../documentation/enums/CsTeam.md), [plugin-integration.md](../../../documentation/plugin-integration.md) only for `data`.
-3. Copy the closest example from [examples/blueprints/](../../../examples/blueprints/) (streaks, weapons, knife/taser/scout, utility, trade/grenade/smoke — see [situation keys](../../../documentation/rules.md#situation-keys)). Weapons: [catalog_weapons.json](../../../tools/catalog_weapons.json); prefer `contains` with short names (`ak47`, `knife`, `awp`).
+3. Copy the closest example from [examples/blueprints/](../../../examples/blueprints/) (streaks, weapons, knife/taser/scout, utility, trade/grenade/smoke - see [situation keys](../../../documentation/rules.md#situation-keys)). Weapons: [catalog_weapons.json](../../../tools/catalog_weapons.json); prefer `contains` with short names (`ak47`, `knife`, `awp`).
 4. Write YAML → wire schedule → self-check → tell user how to reload.
 
 Ask only if the goal is ambiguous (missing event, counts, or whether a streak resets).
@@ -72,13 +72,13 @@ Actions: `task.reset_progress`, `task.reset_completed`, `task.mark_completed`, `
 
 - Default: [examples/schedules.yaml](../../../examples/schedules.yaml). Append the challenge id under `challenges:`.
 - One active schedule: first UTC window containing now. Dates: `"YYYY-MM-DD HH:MM:SS"` UTC.
-- Changing title/dates starts a new progress bucket — warn the user. Unknown ids are skipped.
+- Changing title/dates starts a new progress bucket - warn the user. Unknown ids are skipped.
 
 ## Self-check
 
 Filename matches schedule entry; every `requires` / action id exists; every rule key is documented; bools use `bool==`/`bool!=` with `"true"`/`"false"`; streak breakers `visible: false`; schedule window includes now if expected live.
 
-Reload: copy into `/addons/counterstrikesharp/configs/plugins/Challenges/` if needed, then change map or `challenges reload`. Debug: `"debug": { "enable": true }` in `Challenges.json` — [howto.md](../../../documentation/howto.md), [settings.md](../../../documentation/settings.md).
+Reload: copy into `/addons/counterstrikesharp/configs/plugins/Challenges/` if needed, then change map or `challenges reload`. Debug: `"development": { "enable": true }` in `Challenges.json` - [howto.md](../../../documentation/howto.md), [settings.md](../../../documentation/settings.md).
 
 ## Skeleton
 

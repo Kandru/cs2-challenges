@@ -1,5 +1,5 @@
 /* ============================================================================
-   Prophunt HUD — one stylesheet for every custom_hud_layout.
+   Prophunt HUD - one stylesheet for every custom_hud_layout.
    CS2-like skin (gold accent, near-black panels) inspired by hudkit.vcss,
    written with values this client accepts. Hex only; no @define/var/rgba/display.
    Bars use clip ladders (p0…p100), not width. Hide with ph-off / is-off.
@@ -26,7 +26,7 @@
 	border-radius: 3px;
 }
 
-/* Not "hidden" — that name exists on csgostyles and would collide. */
+/* Not "hidden" - that name exists on csgostyles and would collide. */
 .ph-card.ph-off
 {
 	visibility: collapse;
@@ -67,9 +67,9 @@
 	horizontal-align: right;
 }
 
-/* Fullscreen shell — 68px inset clears RoundStatus (4px + 60px + 4px gap).
+/* Fullscreen shell - 68px inset clears RoundStatus (4px + 60px + 4px gap).
    Content uses fill-parent-flow / fit-children; ph-bg uses ignore-parent-flow.
-   PropGrid cannot use this (asymmetric 68/36 inset + flow children) — see spacers. */
+   PropGrid cannot use this (asymmetric 68/36 inset + flow children) - see spacers. */
 .ph-fs
 {
 	width: 100%;
@@ -80,7 +80,7 @@
 	padding-left: 68px;
 }
 
-/* Shared title row — Prop/Sound/Weapon/Shop/Rules. */
+/* Shared title row - Prop/Sound/Weapon/Shop/Rules. */
 .ph-titlebar
 {
 	width: 100%;
@@ -110,7 +110,7 @@ Label.ph-money
 	color: #9ccf4f;
 }
 
-/* Button label: parent must be flow-children:none. No height:100% — that
+/* Button label: parent must be flow-children:none. No height:100% - that
    pins the glyph to the top and makes vertical-align a no-op. */
 Label.ph-btn-label
 {
@@ -177,7 +177,7 @@ Label.ph-nav-label
 	color: #e8eef4;
 }
 
-/* Status bar — kit label + gold clip fill (sound cooldown / random-sound wait). */
+/* Status bar - kit label + gold clip fill (sound cooldown / random-sound wait). */
 .ph-stat
 {
 	width: 100%;
@@ -277,7 +277,7 @@ Label.ph-stat-val
 .ph-stat-fill.p10 { clip: rect( 0%, 10%, 100%, 0% ); }
 .ph-stat-fill.p0 { clip: rect( 0%, 2%, 100%, 0% ); }
 
-/* PlayerInfo — bottom-center strip over the stock logo (hider carousel / seeker class). Not clickable. */
+/* PlayerInfo - bottom-center strip over the stock logo (hider carousel / seeker class). Not clickable. */
 
 .PlayerInfo
 {
@@ -433,7 +433,7 @@ Label.ph-stat-val
 	margin-top: 2px;
 }
 
-/* HiderModes — transparent bottom-right pair (wall left, look right); own layout entity. */
+/* HiderModes - transparent bottom-right pair (wall left, look right); own layout entity. */
 .HiderModes
 {
 	width: fit-children;
@@ -479,7 +479,7 @@ Label.ph-stat-val
 
 .InfoModeIcon
 {
-	/* Explicit px — % under flow-children:none collapses with no paint box. */
+	/* Explicit px - % under flow-children:none collapses with no paint box. */
 	width: 100px;
 	height: 100px;
 	background-repeat: no-repeat;
@@ -498,7 +498,7 @@ Label.ph-stat-val
 	background-image: url("s2r://panorama/images/custom_game/prophunt/ui/wall_snap.vtex");
 }
 
-/* PropMenu — left list card + right-side tweak sliders; grid stays fullscreen. */
+/* PropMenu - left list card + right-side tweak sliders; grid stays fullscreen. */
 
 .PropMenuShell
 {
@@ -878,7 +878,7 @@ Label.PropMenuSizeLabel
 	text-align: center;
 }
 
-/* Fullscreen card grid. Spacers (not padding) keep flow children inside the frame —
+/* Fullscreen card grid. Spacers (not padding) keep flow children inside the frame -
    width/height 100% children measure the border box and ignore padding. */
 .PropGrid
 {
@@ -922,7 +922,7 @@ Label.PropMenuSizeLabel
 	height: 100%;
 }
 
-/* flow-children:none — ph-bg / ph-bar / content overlay; no ignore-parent-flow needed. */
+/* flow-children:none - ph-bg / ph-bar / content overlay; no ignore-parent-flow needed. */
 .PropGridFrame
 {
 	width: fill-parent-flow( 1.0 );
@@ -944,7 +944,7 @@ Label.PropMenuSizeLabel
 	height: fill-parent-flow( 1.0 );
 }
 
-/* Shop-style exclusive filters. Two rows — right-wrap is not accepted here. */
+/* Shop-style exclusive filters. Two rows - right-wrap is not accepted here. */
 .PropGridFilterBar
 {
 	width: 100%;
@@ -1075,7 +1075,7 @@ Label.PropGridFilterLabel
 	border-radius: 3px;
 	border: 1px solid #00000000;
 	margin-right: 12px;
-	/* Top padding for title/meta only — image is flush left / right / bottom. */
+	/* Top padding for title/meta only - image is flush left / right / bottom. */
 	padding-top: 8px;
 	padding-right: 0px;
 	padding-bottom: 0px;
@@ -1219,7 +1219,7 @@ Label.PropGridMeta
 	visibility: collapse;
 }
 
-/* Live scale / hue / intensity sliders — same ph-bg / ph-bar chrome as other overlays. */
+/* Live scale / hue / intensity sliders - same ph-bg / ph-bar chrome as other overlays. */
 .PropSliders
 {
 	width: fit-children;
@@ -1254,7 +1254,7 @@ Label.PropGridMeta
 	margin-right: 4px;
 }
 
-/* Hidden when the prop disables that axis — collapses so remaining columns shrink. */
+/* Hidden when the prop disables that axis - collapses so remaining columns shrink. */
 .PropSliderCol.is-off
 {
 	visibility: collapse;
@@ -1344,7 +1344,7 @@ Label.PropSliderLabel
 	sound: "UIPanorama.generic_button_press";
 }
 
-/* Gold stripe — size/tint at top of the hit (matches high-edge value); hue centered.
+/* Gold stripe - size/tint at top of the hit (matches high-edge value); hue centered.
    Opacity (not visibility) so is-on can re-show after the mark moves. */
 .PropSliderStripe
 {
@@ -1414,7 +1414,7 @@ Label.PropSliderLabel
 	color: #ffffff;
 }
 
-/* SoundMenu — middle-left clickable list. */
+/* SoundMenu - middle-left clickable list. */
 
 .SoundMenu
 {
@@ -1566,7 +1566,7 @@ Label.SoundStopLabel
 	visibility: collapse;
 }
 
-/* Stock flag SVGs need <Image> — background-image drops the US blue canton. */
+/* Stock flag SVGs need <Image> - background-image drops the US blue canton. */
 .SoundFlagImg
 {
 	width: 100%;
@@ -2054,7 +2054,7 @@ Label.SoundStopLabel
 	color: #f0a531;
 }
 
-/* Overlay play progress — fixed row height so idle/playing never resizes the button. */
+/* Overlay play progress - fixed row height so idle/playing never resizes the button. */
 .SoundPlayFill
 {
 	width: 100%;
@@ -2128,13 +2128,13 @@ Label.SoundStopLabel
 	border: 1px solid #f0a531;
 }
 
-/* RoundStatus — top-center phase card. z-index above fullscreen menus. */
+/* RoundStatus - top-center phase card. z-index above fullscreen menus. */
 .HudScreen
 {
 	z-index: 100000;
 }
 
-/* HiderModes — under every other custom HUD root (menus / player info / timer). */
+/* HiderModes - under every other custom HUD root (menus / player info / timer). */
 .HudScreen.HiderModesScreen
 {
 	z-index: 99998;
@@ -2162,7 +2162,7 @@ Label.SoundStopLabel
 	width: 100%;
 }
 
-/* Center by panel align — shrink left-paints and ignores text-align. */
+/* Center by panel align - shrink left-paints and ignores text-align. */
 .CdLabelRow,
 .CdTimeRow
 {
@@ -2240,7 +2240,7 @@ Label.CdTime
 	clip: rect( 0%, 100%, 100%, 0% );
 }
 
-/* Tutorial tip — kit-reveal card under RoundStatus (4 + 60 + 8). Bg on the
+/* Tutorial tip - kit-reveal card under RoundStatus (4 + 60 + 8). Bg on the
    sized panel; a child .ph-bg at 100% under fit-children collapses. */
 .TutorialTip
 {
@@ -2332,7 +2332,7 @@ Label.TutorialTipText
 	sound: "UIPanorama.generic_button_press";
 }
 
-/* Fit-children button — no ph-btn-label (width:100% needs a sized parent). */
+/* Fit-children button - no ph-btn-label (width:100% needs a sized parent). */
 Label.WeaponMenuShopLinkLabel
 {
 	vertical-align: middle;
@@ -2936,7 +2936,7 @@ Label.WeaponUtilBtnLabel
 	flow-children: down;
 }
 
-/* Close sits after money — tighter right padding than shared .ph-titlebar. */
+/* Close sits after money - tighter right padding than shared .ph-titlebar. */
 .ShopMenu .ph-titlebar
 {
 	padding-right: 12px;
@@ -3025,7 +3025,7 @@ Label.WeaponUtilBtnLabel
 
 Label.ShopFilterLabel
 {
-	/* Fit-children button — no ph-btn-label (width:100% needs a sized parent). */
+	/* Fit-children button - no ph-btn-label (width:100% needs a sized parent). */
 	font-size: 11.55;
 	letter-spacing: 1px;
 	text-transform: uppercase;

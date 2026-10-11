@@ -1,9 +1,10 @@
 # One schedule per entry. The first schedule whose UTC window contains "now" is active.
 # Challenge ids are the file names in blueprints/ (without .yaml).
+# Schedule title is used for Discord and the progress key - not the in-game HUD.
 test_challenge:
   title:
-    en: "== {playerName}'s Challenges ({count} / {total}) =="
-    de: "== {playerName}'s Herausforderungen ({count} / {total}) =="
+    en: "Season challenges"
+    de: "Saison-Herausforderungen"
   date_start: "2026-01-01 00:00:00"
   date_end: "2027-01-01 00:00:00"
   challenges:
@@ -15,7 +16,6 @@ test_challenge:
     - headshots_in_a_row
     - hostage_rescue
     - inflatable_castle
-    - jump_marathon
     - knife_challenge
     - long_range
     - ninja_defuse

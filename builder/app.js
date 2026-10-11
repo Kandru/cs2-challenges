@@ -920,7 +920,7 @@ function renderOutput() {
   $("yaml-preview").textContent = toYaml();
   const err = problems.filter((p) => p.level === "error");
   $("btn-export").disabled = err.length > 0;
-  $("btn-export").title = err.length ? `${err.length} validation error(s) — fix them before export` : "Download YAML";
+  $("btn-export").title = err.length ? `${err.length} validation error(s) - fix them before export` : "Download YAML";
 }
 
 function refresh() {

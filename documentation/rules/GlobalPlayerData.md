@@ -8,7 +8,7 @@ Swap `prefix` for the real prefix, e.g. `attacker.alive` or `victim.isbot`.
 |-----|------|---------|
 | `prefix.name` | string | Player name |
 | `prefix.isbot` | bool | Player is a bot |
-| `prefix.team` | string | Team — see [CsTeam](../enums/CsTeam.md) |
+| `prefix.team` | string | Team - see [CsTeam](../enums/CsTeam.md) |
 | `prefix.alive` | bool | Player is alive |
 | `prefix.ping` | int | Ping |
 | `prefix.money` | int | Money |

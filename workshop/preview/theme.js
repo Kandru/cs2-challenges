@@ -1,4 +1,4 @@
-/** Preview theme picker — mirrors gui.theme / HudTheme (palette from theme-data.js). */
+/** Preview theme picker - mirrors gui.theme / HudTheme (palette from theme-data.js). */
 (function () {
   const DATA = window.HUD_THEMES || {};
   const THEMES = Object.keys(DATA);
