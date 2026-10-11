@@ -61,6 +61,10 @@ jobs:
           # Replace wiki content with documentation/ while keeping .git
           find "$wiki_dir" -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
           cp -a documentation/. "$wiki_dir/"
+          # GitHub wiki serves targets that end in .md as raw files
+          # (raw.githubusercontent.com/wiki/...). Drop the extension so
+          # links open the rendered page. Anchors and relative paths stay.
+          python3 tools/rewrite_wiki_links.py "$wiki_dir"
 
           cat > "$wiki_dir/Home.md" <<'EOF'
           # Challenges Documentation

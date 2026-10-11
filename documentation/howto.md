@@ -1,6 +1,6 @@
 # How to start
 
-This page takes you from a clean server to a working challenge set. Field tables and HUD details live on the linked pages.
+This page takes you from a vanilla server to a working Challenge plugin.
 
 Config folder (created on first start):
 
