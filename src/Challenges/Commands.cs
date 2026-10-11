@@ -3,8 +3,6 @@ using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Modules.Commands;
 using CounterStrikeSharp.API.Modules.Extensions;
-using Challenges.Classes;
-using Challenges.Enums;
 
 namespace Challenges
 {
@@ -25,9 +23,9 @@ namespace Challenges
                     }
                     catch (Exception ex)
                     {
-                        if (ClassInstances.Count == 0)
+                        if (Modules.Count == 0)
                         {
-                            InitializeClasses(isHotReloaded: true);
+                            InitializeModules(isHotReloaded: true);
                         }
 
                         string message = Localizer["core.faultyconfig"].Value
@@ -62,7 +60,7 @@ namespace Challenges
                     }
                     break;
                 case "test-discord":
-                    if (ClassInstances.GetValueOrDefault(nameof(Notifications)) is not Notifications notes)
+                    if (Modules.GetValueOrDefault(nameof(Notifications)) is not Notifications notes)
                     {
                         command.ReplyToCommand(Localizer["admin.discord.test.no_plugin"]);
                         break;
@@ -79,15 +77,13 @@ namespace Challenges
 
         private void ReloadAll()
         {
-            // Config.Reload updates in place (no OnConfigParsed). Reload before teardown
-            // so a bad Challenges.json does not leave the plugin without classes.
             Config.Reload();
-            DestroyClasses();
-            _globalStates[GlobalStates.GlobalConfig] = Config;
+            DestroyModules();
+            _state.Config = Config;
             LogCatalogMismatches();
             LoadChallengeFiles();
             LoadSchedules();
-            InitializeClasses(isHotReloaded: true);
+            InitializeModules(isHotReloaded: true);
         }
 
         private static string FormatReloadError(Exception ex)

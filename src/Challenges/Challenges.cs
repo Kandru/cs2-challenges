@@ -3,12 +3,10 @@ using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Capabilities;
 using CounterStrikeSharp.API.Core.Translations;
 using CounterStrikeSharp.API.Modules.Extensions;
-using Challenges.Classes;
-using Challenges.Configs;
-using Challenges.Enums;
-using Challenges.Utils;
 using ChallengesShared;
+using ChallengesShared.Events;
 using System.Text.Json;
+using YamlDotNet.Serialization;
 
 namespace Challenges
 {
@@ -18,29 +16,20 @@ namespace Challenges
         public override string ModuleAuthor => "Kalle <kalle@kandru.de>";
 
         private static readonly PluginCapability<IChallengesEventSender> ChallengesEvents = new("challenges:events");
-        private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
+        private static readonly IDeserializer Yaml = new DeserializerBuilder()
+            .IgnoreUnmatchedProperties()
+            .Build();
 
         private readonly PlayerLanguageManager _playerLanguageManager = new();
-        private readonly Dictionary<GlobalStates, object> _globalStates = new()
-        {
-            { GlobalStates.ClassInstances, new Dictionary<string, ClassesBlueprint>() },
-            { GlobalStates.GlobalConfig, new PluginConfig() },
-            { GlobalStates.PlayerStates, new Dictionary<CCSPlayerController, PlayerState>() },
-            { GlobalStates.PlayerArchive, new PlayerArchive() },
-            { GlobalStates.Challenges, new Dictionary<string, ChallengeDefinition>(StringComparer.OrdinalIgnoreCase) },
-            { GlobalStates.Schedules, new Dictionary<string, ChallengeSchedule>(StringComparer.OrdinalIgnoreCase) },
-            { GlobalStates.DuringRound, false },
-            { GlobalStates.FreezeActive, false },
-        };
+        private readonly State _state = new();
 
         public required PluginConfig Config { get; set; }
 
-        private Dictionary<string, ClassesBlueprint> ClassInstances =>
-            (Dictionary<string, ClassesBlueprint>)_globalStates[GlobalStates.ClassInstances];
+        private Dictionary<string, Module> Modules => _state.Modules;
 
         public override void Load(bool hotReload)
         {
-            _globalStates[GlobalStates.PlayerLanguageManager] = _playerLanguageManager;
+            _state.PlayerLanguageManager = _playerLanguageManager;
             RegisterListener<Listeners.OnMapStart>(OnMapStart);
             RegisterListener<Listeners.OnMapEnd>(OnMapEnd);
             RegisterListener<Listeners.CheckTransmit>(CustomHud.OnCheckTransmit);
@@ -51,13 +40,12 @@ namespace Challenges
             CustomEventsSender.Instance = sender;
             Capabilities.RegisterPluginCapability(ChallengesEvents, () => sender);
 
-            // Blueprints/schedules are loaded in OnConfigParsed (and again on map start).
-            InitializeClasses(hotReload);
+            InitializeModules(hotReload);
         }
 
         public override void Unload(bool hotReload)
         {
-            DestroyClasses();
+            DestroyModules();
             RemoveListener<Listeners.OnMapStart>(OnMapStart);
             RemoveListener<Listeners.OnMapEnd>(OnMapEnd);
             RemoveListener<Listeners.CheckTransmit>(CustomHud.OnCheckTransmit);
@@ -69,7 +57,7 @@ namespace Challenges
         {
             Config = config;
             Config.Update();
-            _globalStates[GlobalStates.GlobalConfig] = config;
+            _state.Config = config;
             LogCatalogMismatches();
             int challenges = LoadChallengeFiles();
             int schedules = LoadSchedules();
@@ -83,7 +71,7 @@ namespace Challenges
             Reset();
             LoadChallengeFiles();
             LoadSchedules();
-            InitializeClasses();
+            InitializeModules();
         }
 
         private void OnMapEnd()
@@ -93,76 +81,61 @@ namespace Challenges
 
         private void Reset()
         {
-            DestroyClasses();
-            _globalStates[GlobalStates.DuringRound] = false;
-            _globalStates[GlobalStates.FreezeActive] = false;
+            DestroyModules();
+            _state.DuringRound = false;
+            _state.FreezeActive = false;
         }
 
-        private void InitializeClasses(bool isHotReloaded = false)
+        private void InitializeModules(bool isHotReloaded = false)
         {
-            if (ClassInstances.Count > 0)
+            if (Modules.Count > 0)
             {
                 return;
             }
 
-            ClassInstances.Add(nameof(PlayerManagement), new PlayerManagement(_globalStates, Localizer, isHotReloaded));
-            ClassInstances.Add(nameof(Schedules), new Schedules(_globalStates, Localizer, isHotReloaded));
-            ClassInstances.Add(nameof(ChallengeEngine), new ChallengeEngine(_globalStates, Localizer, isHotReloaded));
-            ClassInstances.Add(nameof(Notifications), new Notifications(_globalStates, Localizer, isHotReloaded));
-            ClassInstances.Add(nameof(HudDriver), new HudDriver(_globalStates, Localizer, isHotReloaded));
+            Modules.Add(nameof(PlayerManagement), new PlayerManagement(_state, Localizer, isHotReloaded));
+            Modules.Add(nameof(Schedules), new Schedules(_state, Localizer, isHotReloaded));
+            Modules.Add(nameof(ChallengeEngine), new ChallengeEngine(_state, Localizer, isHotReloaded));
+            Modules.Add(nameof(Notifications), new Notifications(_state, Localizer, isHotReloaded));
+            Modules.Add(nameof(HudDriver), new HudDriver(_state, Localizer, isHotReloaded));
             BindModuleHandlers(register: true);
         }
 
-        private void DestroyClasses()
+        private void DestroyModules()
         {
             BindModuleHandlers(register: false);
-            if (ClassInstances.TryGetValue(nameof(ChallengeEngine), out ClassesBlueprint? engine)
+            if (Modules.TryGetValue(nameof(ChallengeEngine), out Module? engine)
                 && engine is ChallengeEngine challengeEngine)
             {
                 challengeEngine.Flush();
             }
 
-            foreach (ClassesBlueprint entry in ClassInstances.Values)
+            foreach (Module entry in Modules.Values)
             {
                 entry.Destroy();
             }
-            ClassInstances.Clear();
+            Modules.Clear();
             CustomHud.Shutdown();
-            ((Dictionary<CCSPlayerController, PlayerState>)_globalStates[GlobalStates.PlayerStates]).Clear();
+            _state.PlayerStates.Clear();
         }
 
         private void BindModuleHandlers(bool register)
         {
-            foreach (ClassesBlueprint entry in ClassInstances.Values)
+            foreach (Module entry in Modules.Values)
             {
                 foreach (string listenerName in entry.Listeners)
                 {
-                    DynamicHandlers.BindModuleListener(this, listenerName, entry, register);
+                    Bindings.BindModuleListener(this, listenerName, entry, register);
                 }
 
                 foreach (string eventName in entry.Events)
                 {
-                    DynamicHandlers.BindModuleEventHandler(this, eventName, entry, register);
-                }
-
-                foreach ((int userMessageId, HookMode hookMode) in entry.UserMessages)
-                {
-                    DynamicHandlers.BindUserMessageHook(this, userMessageId, entry, hookMode, register);
-                }
-
-                foreach ((string messageName, HookMode hookMode) in entry.UserMessageNames)
-                {
-                    DynamicHandlers.BindNamedUserMessageHook(this, messageName, entry, hookMode, register);
+                    Bindings.BindModuleEventHandler(this, eventName, entry, register);
                 }
 
                 foreach ((string command, CommandBinding binding) in entry.Commands)
                 {
-                    DynamicHandlers.BindCommand(this, command, binding.Description, binding.Method, entry, register);
-                }
-
-                foreach ((string command, HookMode hookMode) in entry.CommandListeners)
-                {
-                    DynamicHandlers.BindCommandListener(this, command, entry, hookMode, register);
+                    Bindings.BindCommand(this, command, binding.Description, binding.Method, entry, register);
                 }
             }
         }
@@ -188,7 +161,7 @@ namespace Challenges
             Catalog catalog;
             try
             {
-                catalog = JsonSerializer.Deserialize<Catalog>(File.ReadAllText(path), JsonOptions) ?? new();
+                catalog = JsonSerializer.Deserialize<Catalog>(File.ReadAllText(path), PlayerFiles.JsonOptions) ?? new();
             }
             catch (Exception ex)
             {
@@ -213,9 +186,6 @@ namespace Challenges
             string dir = Path.Combine(GetConfigDir(), "blueprints");
             Directory.CreateDirectory(dir);
             var map = new Dictionary<string, ChallengeDefinition>(StringComparer.OrdinalIgnoreCase);
-            var deserializer = new YamlDotNet.Serialization.DeserializerBuilder()
-                .IgnoreUnmatchedProperties()
-                .Build();
 
             foreach (string file in Directory.GetFiles(dir, "*.yaml"))
             {
@@ -227,7 +197,7 @@ namespace Challenges
                 try
                 {
                     string id = Path.GetFileNameWithoutExtension(file);
-                    ChallengeDefinition def = deserializer.Deserialize<ChallengeDefinition>(File.ReadAllText(file))
+                    ChallengeDefinition def = Yaml.Deserialize<ChallengeDefinition>(File.ReadAllText(file))
                         ?? new ChallengeDefinition();
                     def.Id = id;
                     if (def.Title.Count == 0)
@@ -257,7 +227,7 @@ namespace Challenges
                 }
             }
 
-            _globalStates[GlobalStates.Challenges] = map;
+            _state.Challenges = map;
             return map.Count;
         }
 
@@ -300,10 +270,7 @@ namespace Challenges
             {
                 try
                 {
-                    var deserializer = new YamlDotNet.Serialization.DeserializerBuilder()
-                        .IgnoreUnmatchedProperties()
-                        .Build();
-                    schedules = deserializer.Deserialize<Dictionary<string, ChallengeSchedule>>(File.ReadAllText(path))
+                    schedules = Yaml.Deserialize<Dictionary<string, ChallengeSchedule>>(File.ReadAllText(path))
                         ?? new(StringComparer.OrdinalIgnoreCase);
                 }
                 catch (Exception ex)
@@ -318,7 +285,7 @@ namespace Challenges
                 File.WriteAllText(path, "{}\n");
             }
 
-            _globalStates[GlobalStates.Schedules] = schedules;
+            _state.Schedules = schedules;
             return schedules.Count;
         }
     }

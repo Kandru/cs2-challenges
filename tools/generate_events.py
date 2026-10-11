@@ -13,13 +13,13 @@ ROOT = Path(__file__).resolve().parents[1]
 SNAPSHOT = ROOT / "tools" / "css" / "snapshot.json"
 ALIASES = ROOT / "tools" / "event_aliases.json"
 EXTRACTORS_DIR = ROOT / "src" / "Challenges" / "extractors"
-ENGINE_DIR = ROOT / "src" / "Challenges" / "classes"
+ENGINE_DIR = ROOT / "src" / "Challenges"
 DOCS_EVENTS = ROOT / "documentation" / "events"
 DOCS_INDEX = ROOT / "documentation" / "events.md"
-EVENT_DATA = ROOT / "src" / "Challenges" / "utils" / "EventData.cs"
+EVENT_DATA = ROOT / "src" / "Challenges" / "Utils" / "EventData.cs"
 # Rule operators live in ChallengeRules; action type cases in ChallengeEngine.Simulate.
-RULES = ROOT / "src" / "Challenges" / "utils" / "ChallengeRules.cs"
-ACTIONS = ROOT / "src" / "Challenges" / "classes" / "ChallengeEngine.Simulate.cs"
+RULES = ROOT / "src" / "Challenges" / "Utils" / "ChallengeRules.cs"
+ACTIONS = ROOT / "src" / "Challenges" / "ChallengeEngine.Simulate.cs"
 WEAPONS_FILE = ROOT / "tools" / "catalog_weapons.json"
 CATALOG_OUT = ROOT / "builder" / "catalog.json"
 
@@ -486,7 +486,7 @@ def write_engine_events(snapshot: dict) -> None:
         "using CounterStrikeSharp.API.Core;",
         "using CounterStrikeSharp.API.Modules.Events;",
         "",
-        "namespace Challenges.Classes",
+        "namespace Challenges",
         "{",
         "    public partial class ChallengeEngine",
         "    {",
@@ -510,7 +510,7 @@ def write_engine_listeners(snapshot: dict, aliases: dict) -> None:
         "using CounterStrikeSharp.API.Modules.Utils;",
         "using Challenges.Utils;",
         "",
-        "namespace Challenges.Classes",
+        "namespace Challenges",
         "{",
         "    public partial class ChallengeEngine",
         "    {",
