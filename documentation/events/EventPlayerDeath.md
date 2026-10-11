@@ -47,9 +47,12 @@ Unknown keys never match - see [Rules](../rules.md).
 | `attacker.grenade` | string |
 | `attacker.grenade.holding` | string |
 | `attacker.grenade.thrown` | string |
+| `attacker.grenade.throwing` | string |
 | `victim.grenade` | string |
 | `victim.grenade.holding` | string |
 | `victim.grenade.thrown` | string |
+| `victim.grenade.throwing` | string |
 | `userid.grenade` | string |
 | `userid.grenade.holding` | string |
 | `userid.grenade.thrown` | string |
+| `userid.grenade.throwing` | string |

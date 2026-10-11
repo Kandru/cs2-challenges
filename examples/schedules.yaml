@@ -11,11 +11,16 @@ test_challenge:
     - awp_noscope_streak
     - bhop_clips
     - blind_them_by_the_light
+    - bomb_defused
+    - bomb_exploded
+    - ct_bomb_plant
     - entry_flash
+    - flashbang_kill
     - grenade_and_die
     - headshots_in_a_row
     - hostage_rescue
     - inflatable_castle
+    - killerqueen
     - knife_challenge
     - long_range
     - ninja_defuse
@@ -23,9 +28,13 @@ test_challenge:
     - one_ways
     - radio_comms
     - range_day
+    - reverse_killerqueen
     - revolver_challenge
     - scout_challenge
     - site_take
+    - swap_awp
+    - swap_hegrenade
+    - swap_scout
     - taser_challenge
     - through_the_wall
     - traded_kills

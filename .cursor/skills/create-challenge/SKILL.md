@@ -14,7 +14,7 @@ Turn a user’s goal into valid blueprint YAML and a schedule entry. Docs in thi
 
 1. Restate: event `type`, counts, stages (`requires`), filters, streak/reset, optional `data`.
 2. Read only what you need (in order): [blueprints.md](../../../documentation/blueprints.md), [schedules.md](../../../documentation/schedules.md), [rules.md](../../../documentation/rules.md), [actions.md](../../../documentation/actions.md), [events.md](../../../documentation/events.md) + the linked event page, [GlobalEventData.md](../../../documentation/rules/GlobalEventData.md) / [GlobalPlayerData.md](../../../documentation/rules/GlobalPlayerData.md), [CsTeam.md](../../../documentation/enums/CsTeam.md), [plugin-integration.md](../../../documentation/plugin-integration.md) only for `data`.
-3. Copy the closest example from [examples/blueprints/](../../../examples/blueprints/) (streaks, weapons, knife/taser/scout, utility, trade/grenade/smoke - see [situation keys](../../../documentation/rules.md#situation-keys)). Weapons: [catalog_weapons.json](../../../tools/catalog_weapons.json); prefer `contains` with short names (`ak47`, `knife`, `awp`).
+3. Copy the closest example from [examples/blueprints/](../../../examples/blueprints/) (streaks, weapons, knife/taser/scout, utility, trade/grenade/smoke/killerqueen/swap - see [situation memory](../../../documentation/rules.md#situation-memory)). Weapons: [catalog_weapons.json](../../../tools/catalog_weapons.json); prefer `contains` with short names (`ak47`, `knife`, `awp`).
 4. Write YAML → wire schedule → self-check → tell user how to reload.
 
 Ask only if the goal is ambiguous (missing event, counts, or whether a streak resets).

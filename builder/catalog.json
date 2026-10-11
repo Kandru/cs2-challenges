@@ -11232,6 +11232,10 @@
         "type": "string"
       },
       {
+        "key": "attacker.grenade.throwing",
+        "type": "string"
+      },
+      {
         "key": "victim.grenade",
         "type": "string"
       },
@@ -11244,6 +11248,10 @@
         "type": "string"
       },
       {
+        "key": "victim.grenade.throwing",
+        "type": "string"
+      },
+      {
         "key": "userid.grenade",
         "type": "string"
       },
@@ -11253,6 +11261,10 @@
       },
       {
         "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
         "type": "string"
       }
     ],

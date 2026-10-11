@@ -1,0 +1,33 @@
+title:
+  en: Swapped AWP kills
+  de: Getauschte AWP-Kills
+tasks:
+  - id: easy
+    title:
+      en: "{count}/{total} mutual AWP kills"
+      de: "{count}/{total} gegenseitige AWP-Kills"
+    type: player_trade
+    amount: 1
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: "false"
+      - key: global.isduringround
+        operator: bool==
+        value: "true"
+      - key: seconds
+        operator: <=
+        value: "5"
+      - key: same_weapon
+        operator: bool==
+        value: "true"
+      - key: weapon
+        operator: contains
+        value: awp
+      - key: isteamkill
+        operator: bool==
+        value: "false"
+      - key: victim.isbot
+        operator: bool==
+        value: "false"
+    requires: []

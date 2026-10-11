@@ -56,10 +56,11 @@ Some keys come from short-lived round memory, not from a single CSS field. They 
 | `player_trade` + `seconds`, `same_weapon`, … | [PlayerTrade](events/PlayerTrade.md) | Mutual kill within a window (either order, including same tick). Default window **5** seconds if no `seconds` rule is set. |
 | `{attacker\|victim\|userid}.grenade` | [EventPlayerDeath](events/EventPlayerDeath.md) | `none` / `holding` / `thrown` / `both` |
 | `{prefix}.grenade.holding` / `.thrown` | same | Weapon short name(s); thrown is comma-separated. Thrown names are kept about **8** seconds. |
+| `{prefix}.grenade.throwing` | same | Comma-separated short names while a grenade is in hand (active weapon), pin pulled, or thrown within the last **1** second. Empty when none apply. |
 | `insmoke`, `smoke.distance`, `smoke.age` | [EventBombDefused](events/EventBombDefused.md) / begin-defuse | Bomb origin inside a **144**-unit smoke sphere. Smokes are kept about **22** seconds. |
 | Prefer `player_bomb_defused` over `bomb_defused` | same | Credit only the defuser (the all-player type shares one data bag). |
 
-Examples: `examples/blueprints/traded_kills.yaml`, `grenade_and_die.yaml`, `ninja_defuse.yaml`.
+Examples: `examples/blueprints/traded_kills.yaml`, `grenade_and_die.yaml`, `killerqueen.yaml`, `ninja_defuse.yaml`, `swap_hegrenade.yaml`.
 
 Key names and types for each event stay on that event’s page. This section only describes timing and values the key tables do not state.
 

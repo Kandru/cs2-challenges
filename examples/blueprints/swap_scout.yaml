@@ -1,0 +1,33 @@
+title:
+  en: Swapped Scout kills
+  de: Getauschte Scout-Kills
+tasks:
+  - id: easy
+    title:
+      en: "{count}/{total} mutual Scout kills"
+      de: "{count}/{total} gegenseitige Scout-Kills"
+    type: player_trade
+    amount: 1
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: "false"
+      - key: global.isduringround
+        operator: bool==
+        value: "true"
+      - key: seconds
+        operator: <=
+        value: "5"
+      - key: same_weapon
+        operator: bool==
+        value: "true"
+      - key: weapon
+        operator: contains
+        value: ssg08
+      - key: isteamkill
+        operator: bool==
+        value: "false"
+      - key: victim.isbot
+        operator: bool==
+        value: "false"
+    requires: []

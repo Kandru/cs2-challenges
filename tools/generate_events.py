@@ -607,6 +607,7 @@ def catalog_keys_for_event(event: dict, alias: dict, suffixes: list[dict]) -> li
             add(f"{prefix}.grenade", "string")
             add(f"{prefix}.grenade.holding", "string")
             add(f"{prefix}.grenade.thrown", "string")
+            add(f"{prefix}.grenade.throwing", "string")
     elif situation == "smoke_defuse":
         add("insmoke", "bool")
         add("smoke.distance", "float")

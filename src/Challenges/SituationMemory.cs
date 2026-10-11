@@ -16,6 +16,7 @@ namespace Challenges
         private const float SmokeRadiusSq = 144f * 144f;
         private const double DefaultTradeSeconds = 5.0;
         private const double ThrownExpireSeconds = 8.0;
+        private const double ThrowingExpireSeconds = 1.0;
         private const double SmokeExpireSeconds = 22.0;
         private const PlayerButtons AttackMask = PlayerButtons.Attack | PlayerButtons.Attack2;
 
@@ -203,6 +204,7 @@ namespace Challenges
                 d["userid.grenade"] = d["victim.grenade"];
                 d["userid.grenade.holding"] = d["victim.grenade.holding"];
                 d["userid.grenade.thrown"] = d["victim.grenade.thrown"];
+                d["userid.grenade.throwing"] = d["victim.grenade.throwing"];
                 if (e.Userid is { IsValid: true } victim)
                 {
                     _holding.Remove(victim.Slot);
@@ -425,6 +427,7 @@ namespace Challenges
                 d[$"{prefix}.grenade"] = "none";
                 d[$"{prefix}.grenade.holding"] = "";
                 d[$"{prefix}.grenade.thrown"] = "";
+                d[$"{prefix}.grenade.throwing"] = "";
                 return;
             }
 
@@ -440,6 +443,7 @@ namespace Challenges
             };
             d[$"{prefix}.grenade.holding"] = holding ? holdWeapon! : "";
             d[$"{prefix}.grenade.thrown"] = thrown;
+            d[$"{prefix}.grenade.throwing"] = BuildThrowingList(player, slot, holding, holdWeapon);
         }
 
         private string BuildThrownList(int slot)
@@ -463,6 +467,67 @@ namespace Challenges
             }
 
             return _thrownScratch.Length == 0 ? "" : _thrownScratch.ToString();
+        }
+
+        /// <summary>
+        /// Grenade names for Killerqueen-style checks: active grenade in hand,
+        /// pin pulled, or thrown within the last second (switch-back window).
+        /// </summary>
+        private string BuildThrowingList(
+            CCSPlayerController player,
+            int slot,
+            bool holding,
+            string? holdWeapon)
+        {
+            _thrownScratch.Clear();
+            if (TryActiveGrenade(player, out string? active, out _))
+            {
+                AppendUniqueName(_thrownScratch, active);
+            }
+
+            if (holding)
+            {
+                AppendUniqueName(_thrownScratch, holdWeapon);
+            }
+
+            double now = NowSeconds();
+            for (int i = 0; i < _thrown.Count; i++)
+            {
+                ThrownGrenade t = _thrown[i];
+                if (t.Slot != slot || now - t.At > ThrowingExpireSeconds)
+                {
+                    continue;
+                }
+
+                AppendUniqueName(_thrownScratch, t.ShortName);
+            }
+
+            return _thrownScratch.Length == 0 ? "" : _thrownScratch.ToString();
+        }
+
+        private static void AppendUniqueName(StringBuilder sb, string? name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return;
+            }
+
+            if (sb.Length == 0)
+            {
+                sb.Append(name);
+                return;
+            }
+
+            string current = sb.ToString();
+            foreach (string part in current.Split(','))
+            {
+                if (string.Equals(part, name, StringComparison.OrdinalIgnoreCase))
+                {
+                    return;
+                }
+            }
+
+            sb.Append(',').Append(name);
         }
 
         private void WriteSmokeKeys(Dictionary<string, string> d, string eventClassName, GameEvent gameEvent)

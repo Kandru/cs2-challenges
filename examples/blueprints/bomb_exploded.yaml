@@ -1,0 +1,15 @@
+title:
+  en: Bomb exploded
+  de: Bombe explodiert
+tasks:
+  - id: easy
+    title:
+      en: "{count}/{total} bomb explosions"
+      de: "{count}/{total} Bombenexplosionen"
+    type: bomb_exploded
+    amount: 5
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: "false"
+    requires: []

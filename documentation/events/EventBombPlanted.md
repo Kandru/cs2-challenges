@@ -2,7 +2,7 @@
 
 CSS game event `bomb_planted` (`EventBombPlanted`).
 
-Who gets credit: **all connected players**.
+Who gets credit: the **event player(s)** listed under challenge types.
 
 ## Challenge types
 

@@ -1,0 +1,30 @@
+title:
+  en: Flashbang Kill
+  de: Flashbang-Kill
+tasks:
+  - id: easy
+    title:
+      en: "{count}/{total} flashbang kills"
+      de: "{count}/{total} Flashbang-Kills"
+    type: player_kill
+    amount: 1
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: "false"
+      - key: global.isduringround
+        operator: bool==
+        value: "true"
+      - key: weapon
+        operator: contains
+        value: flashbang
+      - key: isteamkill
+        operator: bool==
+        value: "false"
+      - key: isselfkill
+        operator: bool==
+        value: "false"
+      - key: victim.isbot
+        operator: bool==
+        value: "false"
+    requires: []

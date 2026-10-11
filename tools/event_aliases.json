@@ -58,8 +58,7 @@
       "player_prefixes": { "userid": "player" }
     },
     "EventBombPlanted": {
-      "types": { "_all": ["player_bomb_planted"] },
-      "audience": "all",
+      "types": { "userid": ["player_bomb_planted"] },
       "player_prefixes": { "userid": "planter" },
       "key_aliases": { "site": ["bomb_site"] }
     },
