@@ -11,9 +11,6 @@ tasks:
     cooldown: 0
     announce_progress: true
     announce_completion: true
-    data:
-      PlayerSessions:
-        setpoints: '15'
     rules:
       - key: global.iswarmup
         operator: bool==
@@ -33,9 +30,6 @@ tasks:
     cooldown: 0
     announce_progress: true
     announce_completion: true
-    data:
-      PlayerSessions:
-        setpoints: '30'
     rules:
       - key: global.iswarmup
         operator: bool==
@@ -57,9 +51,6 @@ tasks:
     cooldown: 0
     announce_progress: true
     announce_completion: true
-    data:
-      PlayerSessions:
-        setpoints: '50'
     rules:
       - key: global.iswarmup
         operator: bool==
