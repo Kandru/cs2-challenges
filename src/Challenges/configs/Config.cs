@@ -55,8 +55,17 @@ namespace Challenges.Configs
     public class PluginConfigDiscord
     {
         [JsonPropertyName("language")] public string Language { get; set; } = "en";
-        [JsonPropertyName("webhook_on_challenge_completed")] public string WebhookChallengeCompleted { get; set; } = "";
-        [JsonPropertyName("webhook_on_new_schedule")] public string WebhookNewSchedule { get; set; } = "";
+        /// <summary>IANA/Windows timezone id for Discord dates (e.g. <c>Europe/Berlin</c>). Empty = server local.</summary>
+        [JsonPropertyName("timezone")] public string Timezone { get; set; } = "";
+        [JsonPropertyName("webhook_url")] public string WebhookUrl { get; set; } = "";
+        [JsonPropertyName("on_task_completed")] public bool OnTaskCompleted { get; set; }
+        [JsonPropertyName("on_challenge_completed")] public bool OnChallengeCompleted { get; set; } = true;
+        [JsonPropertyName("on_new_schedule")] public bool OnNewSchedule { get; set; } = true;
+        /// <summary>
+        /// Task-completion Discord body: <c>full</c> (checklist), <c>short</c> (completed task only),
+        /// or <c>none</c> (no task posts; challenge/schedule embeds only).
+        /// </summary>
+        [JsonPropertyName("task_list")] public string TaskList { get; set; } = "full";
     }
 
     public class TempDataConfig

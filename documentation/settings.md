@@ -31,8 +31,12 @@ Created on first start. Example:
   },
   "discord": {
     "language": "en",
-    "webhook_on_challenge_completed": "",
-    "webhook_on_new_schedule": ""
+    "timezone": "Europe/Berlin",
+    "webhook_url": "",
+    "on_task_completed": false,
+    "on_challenge_completed": true,
+    "on_new_schedule": true,
+    "task_list": "full"
   },
   "ConfigVersion": 1
 }
@@ -50,9 +54,13 @@ Created on first start. Example:
 | `gui.progress_duration` | Seconds the progress tracker stays up. |
 | `gui.tracker_rows` | Rows on the tracker GUI (clamped 1–5). |
 | `notifications.*` | Chat and sound on progress / complete / rule broken. Empty sound string = no sound. Sound paths play at full volume; soundevent names respect player volume. |
-| `discord.language` | Language for Discord messages. |
-| `discord.webhook_on_challenge_completed` | Webhook URL when a challenge is completed. |
-| `discord.webhook_on_new_schedule` | Webhook URL when a new schedule becomes active. |
+| `discord.language` | Language for Discord embed titles, field labels, and dates (`en`, `de`, …). Challenge/task names use the matching title from the blueprint. |
+| `discord.timezone` | Timezone for schedule start/end (IANA/Windows id, e.g. `Europe/Berlin`). Empty = server local. Shown as `UTC`, `UTC+1`, … after a culture-formatted date (`discord.language`). |
+| `discord.webhook_url` | Discord webhook URL. Empty disables all Discord posts. |
+| `discord.on_task_completed` | Post an embed when a visible task is completed (default `false`). Skipped when a challenge-complete post is sent for the same finish. Challenges with only one visible task never get a task card — only the challenge embed. |
+| `discord.on_challenge_completed` | Post an embed when every visible task of a challenge is completed (default `true`). |
+| `discord.on_new_schedule` | Post an embed when a new schedule becomes active (default `true`). |
+| `discord.task_list` | Task-completion body: `full` (challenge name + all-tasks checklist with counts), `short` (only `✅ count/total` for the finished task), or `none` (no task embeds). Default `full`. Ignored for single-task challenges. |
 
 ## Chat commands
 
@@ -68,6 +76,7 @@ Created on first start. Example:
 | `challenges reload` | Reload config, blueprints, and schedules. |
 | `challenges disable` | Disable the plugin and remember that. |
 | `challenges enable` | Enable the plugin and remember that. |
+| `challenges test-discord` | Post sample Discord embeds (schedule, challenge, task full/short) to `discord.webhook_url` using the loaded schedule/challenges. Fails if the URL or data is missing. |
 
 ## Build from source
 

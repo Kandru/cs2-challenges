@@ -32,6 +32,30 @@ namespace Challenges.Classes
 
         public void ClearAnnouncement() => NewScheduleAnnouncementPending = false;
 
+        /// <summary>Active schedule, or the first loaded schedule that resolves any challenges.</summary>
+        public bool TryGetSample(out RunningSchedule schedule)
+        {
+            if (Current is { Challenges.Count: > 0 } current)
+            {
+                schedule = current;
+                return true;
+            }
+
+            foreach ((string scheduleId, ChallengeSchedule entry) in Loaded)
+            {
+                if (Resolve(scheduleId, entry) is not { Challenges.Count: > 0 } running)
+                {
+                    continue;
+                }
+
+                schedule = running;
+                return true;
+            }
+
+            schedule = null!;
+            return false;
+        }
+
         public static bool TryParseDate(string value, out DateTime utc) =>
             DateTime.TryParseExact(
                 value,
@@ -75,32 +99,10 @@ namespace Challenges.Classes
                     continue;
                 }
 
-                RunningSchedule running = new()
+                RunningSchedule? running = Resolve(scheduleId, schedule);
+                if (running == null)
                 {
-                    ScheduleId = scheduleId,
-                    Key = BuildKey(schedule),
-                    Title = schedule.Title,
-                    StartDate = schedule.StartDate,
-                    EndDate = schedule.EndDate,
-                };
-
-                HashSet<string> seen = new(StringComparer.OrdinalIgnoreCase);
-                foreach (string rawId in schedule.Challenges)
-                {
-                    string id = ChallengeId(rawId);
-                    if (!seen.Add(id))
-                    {
-                        continue;
-                    }
-
-                    if (Challenges.TryGetValue(id, out ChallengeDefinition? definition))
-                    {
-                        running.Challenges.Add(definition);
-                    }
-                    else
-                    {
-                        DebugPrint($"schedule {scheduleId} references unknown challenge {id}");
-                    }
+                    continue;
                 }
 
                 Current = running;
@@ -113,8 +115,41 @@ namespace Challenges.Classes
                     NewScheduleAnnouncementPending = true;
                 }
 
-                break;
+                return;
             }
+        }
+
+        private RunningSchedule? Resolve(string scheduleId, ChallengeSchedule schedule)
+        {
+            RunningSchedule running = new()
+            {
+                ScheduleId = scheduleId,
+                Key = BuildKey(schedule),
+                Title = schedule.Title,
+                StartDate = schedule.StartDate,
+                EndDate = schedule.EndDate,
+            };
+
+            HashSet<string> seen = new(StringComparer.OrdinalIgnoreCase);
+            foreach (string rawId in schedule.Challenges)
+            {
+                string id = ChallengeId(rawId);
+                if (!seen.Add(id))
+                {
+                    continue;
+                }
+
+                if (Challenges.TryGetValue(id, out ChallengeDefinition? definition))
+                {
+                    running.Challenges.Add(definition);
+                }
+                else
+                {
+                    DebugPrint($"schedule {scheduleId} references unknown challenge {id}");
+                }
+            }
+
+            return running;
         }
     }
 }

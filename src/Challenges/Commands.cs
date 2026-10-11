@@ -3,14 +3,15 @@ using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Modules.Commands;
 using CounterStrikeSharp.API.Modules.Extensions;
+using Challenges.Classes;
 using Challenges.Enums;
 
 namespace Challenges
 {
     public partial class Challenges
     {
-        [ConsoleCommand("challenges", "Challenges admin commands: reload | enable | disable | check-catalog")]
-        [CommandHelper(whoCanExecute: CommandUsage.SERVER_ONLY, minArgs: 1, usage: "<reload|enable|disable|check-catalog>")]
+        [ConsoleCommand("challenges", "Challenges admin commands: reload | enable | disable | check-catalog | test-discord")]
+        [CommandHelper(whoCanExecute: CommandUsage.SERVER_ONLY, minArgs: 1, usage: "<reload|enable|disable|check-catalog|test-discord>")]
         public void CommandAdmin(CCSPlayerController? player, CommandInfo command)
         {
             string subCommand = command.GetArg(1);
@@ -59,6 +60,15 @@ namespace Challenges
                         Console.WriteLine(message);
                         command.ReplyToCommand(message);
                     }
+                    break;
+                case "test-discord":
+                    if (ClassInstances.GetValueOrDefault(nameof(Notifications)) is not Notifications notes)
+                    {
+                        command.ReplyToCommand(Localizer["admin.discord.test.no_plugin"]);
+                        break;
+                    }
+
+                    command.ReplyToCommand(notes.SendDiscordTestSamples() ?? Localizer["admin.discord.test.ok"].Value);
                     break;
                 default:
                     command.ReplyToCommand(Localizer["admin.unknown_command"].Value

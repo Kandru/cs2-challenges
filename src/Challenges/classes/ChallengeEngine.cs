@@ -662,7 +662,7 @@ namespace Challenges.Classes
             }
 
             Notes.NotifyCompletion(player, challenge, task);
-            Notes.DiscordChallengeCompleted(player, challenge, task);
+            Notes.DiscordCompletion(player, state, schedule, challenge, task, solvedNow);
             RunActions(player, state, schedule, challenge, task, now);
             TriggerCompleted(player, challenge, task);
 
