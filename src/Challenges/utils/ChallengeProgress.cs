@@ -156,5 +156,56 @@ namespace Challenges.Utils
 
             return Math.Min(amount, GetTaskAmount(state, scheduleKey, challengeId, task.Id));
         }
+
+        public static TaskProgress GetOrCreate(PlayerState state, string scheduleKey, string challengeId, string taskId)
+        {
+            if (!state.Challenges.TryGetValue(scheduleKey, out var challenges))
+            {
+                state.Challenges[scheduleKey] = challenges = new Dictionary<string, Dictionary<string, TaskProgress>>();
+            }
+
+            if (!challenges.TryGetValue(challengeId, out var tasks))
+            {
+                challenges[challengeId] = tasks = new Dictionary<string, TaskProgress>();
+            }
+
+            if (!tasks.TryGetValue(taskId, out TaskProgress? progress))
+            {
+                tasks[taskId] = progress = new TaskProgress();
+            }
+
+            return progress;
+        }
+
+        /// <summary>Deep-copies amounts / last updates for worker shadow seeds.</summary>
+        public static Dictionary<string, Dictionary<string, Dictionary<string, TaskProgress>>> CloneChallenges(
+            Dictionary<string, Dictionary<string, Dictionary<string, TaskProgress>>> source)
+        {
+            Dictionary<string, Dictionary<string, Dictionary<string, TaskProgress>>> clone =
+                new(source.Count, StringComparer.Ordinal);
+            foreach ((string scheduleKey, Dictionary<string, Dictionary<string, TaskProgress>> challenges) in source)
+            {
+                Dictionary<string, Dictionary<string, TaskProgress>> challengeClone =
+                    new(challenges.Count, StringComparer.Ordinal);
+                foreach ((string challengeId, Dictionary<string, TaskProgress> tasks) in challenges)
+                {
+                    Dictionary<string, TaskProgress> taskClone = new(tasks.Count, StringComparer.Ordinal);
+                    foreach ((string taskId, TaskProgress progress) in tasks)
+                    {
+                        taskClone[taskId] = new TaskProgress
+                        {
+                            Amount = progress.Amount,
+                            LastUpdate = progress.LastUpdate,
+                        };
+                    }
+
+                    challengeClone[challengeId] = taskClone;
+                }
+
+                clone[scheduleKey] = challengeClone;
+            }
+
+            return clone;
+        }
     }
 }

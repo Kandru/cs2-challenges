@@ -116,6 +116,12 @@ namespace Challenges
         private void DestroyClasses()
         {
             BindModuleHandlers(register: false);
+            if (ClassInstances.TryGetValue(nameof(ChallengeEngine), out ClassesBlueprint? engine)
+                && engine is ChallengeEngine challengeEngine)
+            {
+                challengeEngine.Flush();
+            }
+
             foreach (ClassesBlueprint entry in ClassInstances.Values)
             {
                 entry.Destroy();

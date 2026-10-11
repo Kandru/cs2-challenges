@@ -1,20 +1,17 @@
-using System.Globalization;
-using System.Text;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Events;
 using Challenges.Configs;
 using Challenges.Enums;
 using Challenges.Extractors;
-using Challenges.Huds;
 using Challenges.Utils;
 using Microsoft.Extensions.Localization;
 
 namespace Challenges.Classes
 {
     /// <summary>
-    /// Turns game events into task progress. Extraction happens inside the event hook, rules/progress/actions
-    /// run on the next frame so the game thread never mutates state while the event is still being dispatched.
+    /// Turns game events into task progress. Native extraction stays on the game thread; rule checks and
+    /// progress simulation run on a single background worker; patches apply on the next world update.
     /// </summary>
     public partial class ChallengeEngine : ClassesBlueprint
     {
@@ -169,7 +166,7 @@ namespace Challenges.Classes
 
             try
             {
-                List<(CCSPlayerController Player, string Type)>? valid = FilterTargets(targets);
+                List<ProgressTarget>? valid = FilterTargets(targets);
                 if (valid == null)
                 {
                     if (GlobalConfig.Debug.Enable)
@@ -184,7 +181,7 @@ namespace Challenges.Classes
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[Challenges] {listenerName} failed: {ex.Message}");
+                Log($"{listenerName} failed: {ex.Message}");
             }
         }
 
@@ -209,7 +206,7 @@ namespace Challenges.Classes
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"[Challenges] situation {eventName} failed: {ex.Message}");
+                    Log($"situation {eventName} failed: {ex.Message}");
                 }
             }
 
@@ -229,7 +226,7 @@ namespace Challenges.Classes
 
                 try
                 {
-                    List<(CCSPlayerController Player, string Type)>? targets = FilterTargets(extractor.Targets(gameEvent));
+                    List<ProgressTarget>? targets = FilterTargets(extractor.Targets(gameEvent));
                     if (targets == null)
                     {
                         if (GlobalConfig.Debug.Enable)
@@ -251,7 +248,7 @@ namespace Challenges.Classes
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"[Challenges] {eventName} failed: {ex.Message}");
+                    Log($"{eventName} failed: {ex.Message}");
                 }
             }
 
@@ -259,44 +256,75 @@ namespace Challenges.Classes
         }
 
         private bool CanHandle() =>
-            !_destroyed && _tasksByType.Count > 0 && GlobalConfig.Enabled;
+            !_destroyed && !_flushed && _tasksByType.Count > 0 && GlobalConfig.Enabled;
 
-        private List<(CCSPlayerController Player, string Type)>? FilterTargets(
+        private List<ProgressTarget>? FilterTargets(
             IEnumerable<(CCSPlayerController? Player, string Type)> targets)
         {
-            List<(CCSPlayerController Player, string Type)>? valid = null;
+            List<ProgressTarget>? valid = null;
             foreach ((CCSPlayerController? player, string type) in targets)
             {
-                // Bots/HLTV are never admitted; ProcessPlayer re-checks IsValid.
-                if (player != null
-                    && PlayerStates.ContainsKey(player)
-                    && _tasksByType.ContainsKey(type))
+                if (player is not { IsValid: true }
+                    || !_tasksByType.TryGetValue(type, out List<(ChallengeDefinition Challenge, ChallengeTask Task)>? candidates))
                 {
-                    (valid ??= []).Add((player, type));
+                    continue;
                 }
+
+                string? steamId = player.NetworkIDString;
+                if (!SteamIds.IsCreditable(steamId))
+                {
+                    continue;
+                }
+
+                if (!PlayerStates.TryGetValue(player, out PlayerState? state)
+                    || state.SteamId.Length == 0
+                    || !state.SteamId.Equals(steamId, StringComparison.OrdinalIgnoreCase))
+                {
+                    BindPlayer(player, steamId);
+                }
+
+                (valid ??= []).Add(new ProgressTarget
+                {
+                    SteamId = steamId,
+                    Slot = player.Slot,
+                    UserId = player.UserId,
+                    Name = player.PlayerName ?? string.Empty,
+                    Index = player.Index,
+                    Candidates = candidates,
+                });
             }
 
             return valid;
         }
 
-        private void Enqueue(
-            string source,
-            Dictionary<string, string> data,
-            List<(CCSPlayerController Player, string Type)> targets)
+        private void Enqueue(string source, Dictionary<string, string> data, List<ProgressTarget> targets)
         {
+            if (CurrentSchedule is not { } schedule || targets.Count == 0)
+            {
+                return;
+            }
+
             MergeGlobalData(data);
-            Server.NextFrame(() => ProcessTargets(source, targets, data));
+            _ = TryEnqueueWork(new ProgressWorkItem
+            {
+                Source = source,
+                Data = data,
+                ScheduleKey = schedule.Key,
+                Schedule = schedule,
+                Debug = GlobalConfig.Debug.Enable,
+                AllowBots = GlobalConfig.Debug.AllowBots,
+                Now = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+                Targets = targets,
+            });
         }
 
         /// <summary>Enqueue progress for a single player (e.g. synthetic <c>player_trade</c>).</summary>
         private void EnqueueOne(CCSPlayerController player, string type, Dictionary<string, string> data)
         {
-            if (!PlayerStates.ContainsKey(player) || !_tasksByType.ContainsKey(type))
+            if (FilterTargets([(player, type)]) is { } targets)
             {
-                return;
+                Enqueue(type, data, targets);
             }
-
-            Enqueue(type, data, [(player, type)]);
         }
 
         private bool UsesAnyType(IExtractor extractor)
@@ -317,11 +345,13 @@ namespace Challenges.Classes
             data["global.iswarmup"] = EventData.Bool(GetGameRules()?.WarmupPeriod ?? false);
             data["global.isduringround"] = EventData.Bool((bool)_globalStates[GlobalStates.DuringRound]);
             data["global.mapname"] = Server.MapName;
-            if (_usesHostageKey)
+            if (!_usesHostageKey)
             {
-                _hasHostages ??= Utilities.FindAllEntitiesByDesignerName<CBaseEntity>("hostage_entity").Any();
-                data["global.hashostages"] = EventData.Bool(_hasHostages.Value);
+                return;
             }
+
+            _hasHostages ??= Utilities.FindAllEntitiesByDesignerName<CBaseEntity>("hostage_entity").Any();
+            data["global.hashostages"] = EventData.Bool(_hasHostages.Value);
         }
 
         private CCSGameRules? GetGameRules()
@@ -335,121 +365,9 @@ namespace Challenges.Classes
             return _gameRulesProxy?.GameRules;
         }
 
-        private void ProcessTargets(
-            string source,
-            List<(CCSPlayerController Player, string Type)> targets,
-            Dictionary<string, string> data)
-        {
-            if (_destroyed)
-            {
-                return;
-            }
-
-            foreach ((CCSPlayerController player, string type) in targets)
-            {
-                try
-                {
-                    ProcessPlayer(player, source, type, data);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"[Challenges] progress failed: {ex.Message}");
-                }
-            }
-        }
-
-        private void ProcessPlayer(
-            CCSPlayerController player,
-            string source,
-            string type,
-            Dictionary<string, string> data)
-        {
-            if (!player.IsValid
-                || CurrentSchedule is not { } schedule
-                || !PlayerStates.TryGetValue(player, out PlayerState? state)
-                || !_tasksByType.TryGetValue(type, out List<(ChallengeDefinition Challenge, ChallengeTask Task)>? candidates))
-            {
-                return;
-            }
-
-            PruneOutdated(state, schedule.Key);
-            long now = UnixNow();
-            bool debug = GlobalConfig.Debug.Enable;
-            string scheduleKey = schedule.Key;
-
-            // Snapshot first: finishing a task on this event must not unlock and credit the next one.
-            List<(ChallengeDefinition Challenge, ChallengeTask Task)> eligible = [];
-            foreach ((ChallengeDefinition challenge, ChallengeTask task) in candidates)
-            {
-                if (!IsSkipped(state, scheduleKey, challenge, task, data, now, debug, out string? skip))
-                {
-                    eligible.Add((challenge, task));
-                    continue;
-                }
-
-                if (debug)
-                {
-                    DebugPrint($"{player.PlayerName} {source} {challenge.Id}/{task.Id} skip {skip}");
-                }
-            }
-
-            if (eligible.Count == 0)
-            {
-                return;
-            }
-
-            List<TrackerProgressItem>? touched = null;
-            foreach ((ChallengeDefinition challenge, ChallengeTask task) in eligible)
-            {
-                if (!player.IsValid)
-                {
-                    return;
-                }
-
-                // A prior eligible task's actions may have marked this one complete.
-                if (ChallengeProgress.IsTaskComplete(state, scheduleKey, challenge.Id, task))
-                {
-                    if (debug)
-                    {
-                        DebugPrint($"{player.PlayerName} {source} {challenge.Id}/{task.Id} skip done");
-                    }
-
-                    continue;
-                }
-
-                TrackerProgressKind kind = ApplyProgress(player, state, schedule, challenge, task, now, source, data, debug);
-                if (!task.Visible)
-                {
-                    continue;
-                }
-
-                (touched ??= []).Add(new TrackerProgressItem
-                {
-                    ChallengeId = challenge.Id,
-                    TaskId = task.Id,
-                    Kind = kind,
-                });
-            }
-
-            if (touched == null)
-            {
-                return;
-            }
-
-            if (GlobalConfig.Gui.ShowOnProgress)
-            {
-                Tracker.ShowProgress(player, touched);
-            }
-
-            if (HudMenu.IsOpen(player))
-            {
-                Menu.Paint(player);
-            }
-        }
-
         private void PruneOutdated(PlayerState state, string scheduleKey)
         {
-            if (!_pruned.Add(state))
+            if (scheduleKey.Length == 0 || !_pruned.Add(state))
             {
                 return;
             }
@@ -480,277 +398,5 @@ namespace Challenges.Classes
 
             state.Dirty = true;
         }
-
-        /// <summary>
-        /// Returns true when the task must not receive progress.
-        /// <paramref name="reason"/> is only populated when <paramref name="explain"/> is true.
-        /// </summary>
-        private bool IsSkipped(
-            PlayerState state,
-            string scheduleKey,
-            ChallengeDefinition challenge,
-            ChallengeTask task,
-            Dictionary<string, string> data,
-            long now,
-            bool explain,
-            out string? reason)
-        {
-            reason = null;
-
-            if (ChallengeProgress.IsTaskComplete(state, scheduleKey, challenge.Id, task))
-            {
-                if (explain)
-                {
-                    reason = "done";
-                }
-
-                return true;
-            }
-
-            if (!ChallengeProgress.AreRequirementsMet(state, scheduleKey, challenge, task))
-            {
-                if (explain)
-                {
-                    reason = "locked";
-                }
-
-                return true;
-            }
-
-            if (task.Cooldown > 0
-                && ChallengeProgress.GetProgress(state, scheduleKey, challenge.Id, task.Id) is { } progress
-                && progress.LastUpdate + task.Cooldown > now)
-            {
-                if (explain)
-                {
-                    reason = $"cooldown {progress.LastUpdate + task.Cooldown - now}s";
-                }
-
-                return true;
-            }
-
-            return !RulesPass(task, data, explain, out reason);
-        }
-
-        /// <summary>False when a rule fails; <paramref name="reason"/> set only when <paramref name="explain"/>.</summary>
-        private bool RulesPass(
-            ChallengeTask task,
-            Dictionary<string, string> data,
-            bool explain,
-            out string? reason)
-        {
-            reason = null;
-            bool allowBots = GlobalConfig.Debug.AllowBots;
-            foreach (ChallengeRule rule in task.Rules)
-            {
-                if (allowBots
-                    && rule.Operator == "bool=="
-                    && rule.Key.EndsWith(".isbot", StringComparison.Ordinal)
-                    && rule.Value.Equals("false", StringComparison.OrdinalIgnoreCase))
-                {
-                    continue;
-                }
-
-                if (!data.TryGetValue(rule.Key, out string? current))
-                {
-                    if (explain)
-                    {
-                        reason = $"{rule.Key} {rule.Operator} {rule.Value} (missing)";
-                    }
-
-                    return false;
-                }
-
-                if (!TryEvaluateRule(rule, current, out bool matched))
-                {
-                    if (explain)
-                    {
-                        reason = $"{rule.Key} unknown operator {rule.Operator}";
-                    }
-
-                    return false;
-                }
-
-                if (!matched)
-                {
-                    if (explain)
-                    {
-                        reason = $"{rule.Key} {rule.Operator} {rule.Value} ({current})";
-                    }
-
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        /// <summary>False when the operator is unknown; otherwise <paramref name="matched"/> is the comparison result.</summary>
-        private static bool TryEvaluateRule(ChallengeRule rule, string current, out bool matched)
-        {
-            string target = rule.Value;
-            switch (rule.Operator)
-            {
-                case "==":
-                    matched = string.Equals(current, target, StringComparison.OrdinalIgnoreCase);
-                    return true;
-                case "!=":
-                    matched = !string.Equals(current, target, StringComparison.OrdinalIgnoreCase);
-                    return true;
-                case ">":
-                    matched = TryCompare(current, target, out int gt) && gt > 0;
-                    return true;
-                case "<":
-                    matched = TryCompare(current, target, out int lt) && lt < 0;
-                    return true;
-                case ">=":
-                    matched = TryCompare(current, target, out int ge) && ge >= 0;
-                    return true;
-                case "<=":
-                    matched = TryCompare(current, target, out int le) && le <= 0;
-                    return true;
-                case "bool==":
-                    matched = bool.TryParse(current, out bool a) && bool.TryParse(target, out bool b) && a == b;
-                    return true;
-                case "bool!=":
-                    matched = bool.TryParse(current, out bool c) && bool.TryParse(target, out bool d) && c != d;
-                    return true;
-                case "contains":
-                    matched = current.Contains(target, StringComparison.OrdinalIgnoreCase);
-                    return true;
-                case "!contains":
-                    matched = !current.Contains(target, StringComparison.OrdinalIgnoreCase);
-                    return true;
-                default:
-                    matched = false;
-                    return false;
-            }
-        }
-
-        private static bool TryCompare(string current, string target, out int result)
-        {
-            if (!float.TryParse(current, NumberStyles.Float, CultureInfo.InvariantCulture, out float left)
-                || !float.TryParse(target, NumberStyles.Float, CultureInfo.InvariantCulture, out float right))
-            {
-                result = 0;
-                return false;
-            }
-
-            result = left.CompareTo(right);
-            return true;
-        }
-
-        private static string FormatRuleParams(ChallengeTask task, Dictionary<string, string> data)
-        {
-            int count = task.Rules.Count;
-            if (count == 0)
-            {
-                return string.Empty;
-            }
-
-            StringBuilder sb = new();
-            for (int i = 0; i < count; i++)
-            {
-                ChallengeRule rule = task.Rules[i];
-                if (i > 0)
-                {
-                    sb.Append(' ');
-                }
-
-                sb.Append(rule.Key);
-                sb.Append('=');
-                sb.Append(data.TryGetValue(rule.Key, out string? value) ? value : "?");
-            }
-
-            return sb.ToString();
-        }
-
-        private TrackerProgressKind ApplyProgress(
-            CCSPlayerController player,
-            PlayerState state,
-            RunningSchedule schedule,
-            ChallengeDefinition challenge,
-            ChallengeTask task,
-            long now,
-            string source,
-            Dictionary<string, string> data,
-            bool debug)
-        {
-            bool wasSolved = ChallengeProgress.IsChallengeSolved(state, schedule.Key, challenge);
-            TaskProgress progress = GetOrCreateProgress(state, schedule.Key, challenge.Id, task.Id);
-            progress.Amount++;
-            progress.LastUpdate = now;
-            state.Dirty = true;
-
-            int goal = Math.Max(1, task.Amount);
-            int amount = progress.Amount;
-
-            if (amount < goal)
-            {
-                if (debug)
-                {
-                    string parms = FormatRuleParams(task, data);
-                    DebugPrint(parms.Length == 0
-                        ? $"{player.PlayerName} {source} {challenge.Id}/{task.Id} +1 {amount}/{goal}"
-                        : $"{player.PlayerName} {source} {challenge.Id}/{task.Id} +1 {amount}/{goal} {parms}");
-                }
-
-                Notes.NotifyProgress(player, challenge, task, amount);
-                TriggerProgress(player, challenge, task, amount);
-                return TrackerProgressKind.Progress;
-            }
-
-            bool solvedNow = task.Visible
-                && !wasSolved
-                && ChallengeProgress.IsChallengeSolved(state, schedule.Key, challenge);
-            if (solvedNow)
-            {
-                state.Statistics.AmountChallengesSolved++;
-            }
-
-            if (debug)
-            {
-                string outcome = solvedNow ? "solved" : "complete";
-                string parms = FormatRuleParams(task, data);
-                DebugPrint(parms.Length == 0
-                    ? $"{player.PlayerName} {source} {challenge.Id}/{task.Id} {outcome} {amount}/{goal}"
-                    : $"{player.PlayerName} {source} {challenge.Id}/{task.Id} {outcome} {amount}/{goal} {parms}");
-            }
-
-            Notes.NotifyCompletion(player, challenge, task);
-            Notes.DiscordCompletion(player, state, schedule, challenge, task, solvedNow);
-            RunActions(player, state, schedule, challenge, task, now);
-            TriggerCompleted(player, challenge, task);
-
-            if (solvedNow)
-            {
-                TriggerChallengeSolved(player, challenge);
-                return TrackerProgressKind.ChallengeSolved;
-            }
-
-            return TrackerProgressKind.TaskSolved;
-        }
-
-        private static TaskProgress GetOrCreateProgress(PlayerState state, string scheduleKey, string challengeId, string taskId)
-        {
-            if (!state.Challenges.TryGetValue(scheduleKey, out var challenges))
-            {
-                state.Challenges[scheduleKey] = challenges = new Dictionary<string, Dictionary<string, TaskProgress>>();
-            }
-
-            if (!challenges.TryGetValue(challengeId, out var tasks))
-            {
-                challenges[challengeId] = tasks = new Dictionary<string, TaskProgress>();
-            }
-
-            if (!tasks.TryGetValue(taskId, out TaskProgress? progress))
-            {
-                tasks[taskId] = progress = new TaskProgress();
-            }
-
-            return progress;
-        }
-
-        private static long UnixNow() => DateTimeOffset.UtcNow.ToUnixTimeSeconds();
     }
 }

@@ -196,9 +196,9 @@ namespace Challenges.Classes
             }
 
             string steamId = player.NetworkIDString;
-            if (string.IsNullOrEmpty(steamId))
+            if (!SteamIds.IsCreditable(steamId))
             {
-                DebugPrint($"bind skipped for {player.PlayerName}: empty steam id");
+                DebugPrint($"bind skipped for {player.PlayerName}: missing steam id");
                 return;
             }
 
@@ -230,24 +230,38 @@ namespace Challenges.Classes
         {
             ApplyIdentity(player, state);
             string label = $"{state.Username} ({state.SteamId})";
-            if (state.Dirty)
+            string steamId = state.SteamId;
+            ChallengeEngine engine = GetClass<ChallengeEngine>();
+
+            CustomHud.ReleasePlayer(player);
+            PlayerStates.Remove(player);
+            engine.ForgetPlayer(player, state);
+            state.ResetSession();
+            Archive.PatchOfflineScore(state, Context.Schedule, DebugPrint);
+
+            void Save()
             {
+                if (!state.Dirty)
+                {
+                    DebugPrint($"disconnect {label}: no save (unchanged)");
+                    return;
+                }
+
                 DebugPrint($"disconnect {label}: saving dirty state to disk");
                 if (!Archive.TryWrite(GlobalConfig, state, warn: Warn, debug: DebugPrint))
                 {
                     DebugPrint($"disconnect {label}: save failed or blocked");
                 }
             }
-            else
+
+            if (SteamIds.IsCreditable(steamId) && engine.HasPending(steamId))
             {
-                DebugPrint($"disconnect {label}: no save (unchanged)");
+                DebugPrint($"disconnect {label}: deferring save until progress queue drains");
+                engine.WhenIdle(steamId, Save);
+                return;
             }
 
-            CustomHud.ReleasePlayer(player);
-            PlayerStates.Remove(player);
-            GetClass<ChallengeEngine>().ForgetPlayer(player, state);
-            state.ResetSession();
-            Archive.PatchOfflineScore(state, Context.Schedule, DebugPrint);
+            Save();
         }
 
         private static void ApplyIdentity(CCSPlayerController player, PlayerState state)
