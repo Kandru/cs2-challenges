@@ -17,8 +17,9 @@ ENGINE_DIR = ROOT / "src" / "Challenges" / "classes"
 DOCS_EVENTS = ROOT / "documentation" / "events"
 DOCS_INDEX = ROOT / "documentation" / "events.md"
 EVENT_DATA = ROOT / "src" / "Challenges" / "utils" / "EventData.cs"
-ENGINE = ROOT / "src" / "Challenges" / "classes" / "ChallengeEngine.cs"
-ACTIONS = ROOT / "src" / "Challenges" / "classes" / "ChallengeEngine.Actions.cs"
+# Rule operators live in ChallengeRules; action type cases in ChallengeEngine.Simulate.
+RULES = ROOT / "src" / "Challenges" / "utils" / "ChallengeRules.cs"
+ACTIONS = ROOT / "src" / "Challenges" / "classes" / "ChallengeEngine.Simulate.cs"
 WEAPONS_FILE = ROOT / "tools" / "catalog_weapons.json"
 CATALOG_OUT = ROOT / "builder" / "catalog.json"
 
@@ -958,7 +959,7 @@ def write_docs(snapshot: dict, aliases: dict, suffixes: list[dict]) -> None:
 
 
 def write_catalog(snapshot: dict, aliases: dict, suffixes: list[dict]) -> None:
-    operators = RE_CASE.findall(ENGINE.read_text(encoding="utf-8"))
+    operators = RE_CASE.findall(RULES.read_text(encoding="utf-8"))
     action_types: list[str] = []
     seen_actions: set[str] = set()
     for action in RE_CASE.findall(ACTIONS.read_text(encoding="utf-8")):
