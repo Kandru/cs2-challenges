@@ -42,9 +42,9 @@ test_challenge:
     - taser_challenge
     - through_the_wall
     - traded_kills
+    - trust_fall
     - unarmored
     - untouchable
-    - trust_fall
     - while_flashed
     - weapon_ak47
     - weapon_aug
