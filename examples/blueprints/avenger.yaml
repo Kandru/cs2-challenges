@@ -1,0 +1,93 @@
+title:
+  en: Avenger
+  de: Rächer
+tasks:
+  - id: easy
+    title:
+      en: '{count}/{total} revenge kills'
+      de: '{count}/{total} Rache-Kills'
+    type: player_kill
+    amount: 3
+    cooldown: 0
+    announce_progress: true
+    announce_completion: true
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: 'false'
+      - key: global.isduringround
+        operator: bool==
+        value: 'true'
+      - key: revenge
+        operator: bool==
+        value: 'true'
+      - key: isselfkill
+        operator: bool==
+        value: 'false'
+      - key: isteamkill
+        operator: bool==
+        value: 'false'
+      - key: victim.isbot
+        operator: bool==
+        value: 'false'
+    requires: []
+  - id: medium
+    title:
+      en: '{count}/{total} revenge kills'
+      de: '{count}/{total} Rache-Kills'
+    type: player_kill
+    amount: 10
+    cooldown: 0
+    announce_progress: true
+    announce_completion: true
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: 'false'
+      - key: global.isduringround
+        operator: bool==
+        value: 'true'
+      - key: revenge
+        operator: bool==
+        value: 'true'
+      - key: isselfkill
+        operator: bool==
+        value: 'false'
+      - key: isteamkill
+        operator: bool==
+        value: 'false'
+      - key: victim.isbot
+        operator: bool==
+        value: 'false'
+    requires:
+      - easy
+  - id: hard
+    title:
+      en: '{count}/{total} revenge kills'
+      de: '{count}/{total} Rache-Kills'
+    type: player_kill
+    amount: 25
+    cooldown: 0
+    announce_progress: true
+    announce_completion: true
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: 'false'
+      - key: global.isduringround
+        operator: bool==
+        value: 'true'
+      - key: revenge
+        operator: bool==
+        value: 'true'
+      - key: isselfkill
+        operator: bool==
+        value: 'false'
+      - key: isteamkill
+        operator: bool==
+        value: 'false'
+      - key: victim.isbot
+        operator: bool==
+        value: 'false'
+    requires:
+      - medium
