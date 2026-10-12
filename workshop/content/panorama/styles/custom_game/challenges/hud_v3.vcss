@@ -715,11 +715,34 @@ Label.MenuFilterLabel
 	width: 100%;
 	height: fill-parent-flow( 1.0 );
 	flow-children: down;
-	padding: 6px 8px 10px 8px;
+	padding-top: 6px;
+	padding-bottom: 10px;
 	background-color: #ffffff0d;
 	border: 1px solid #ffffff14;
 	border-radius: 3px;
 	overflow: clip;
+}
+
+/* Horizontal inset is spacers, not padding. width:100% children measure the
+   border box and ignore padding, which clipped the right-aligned percent. */
+.MenuRowInset
+{
+	width: 100%;
+	height: fill-parent-flow( 1.0 );
+	flow-children: right;
+}
+
+.MenuRowPad
+{
+	width: 8px;
+	height: 100%;
+}
+
+.MenuRowBody
+{
+	width: fill-parent-flow( 1.0 );
+	height: 100%;
+	flow-children: down;
 }
 
 .MenuRow.is-off
@@ -791,6 +814,48 @@ Label.MenuFilterLabel
 .MenuTasksCol
 {
 	margin-right: 6px;
+}
+
+/* Menu columns share the tracker padding rule, but width:100% children ignore
+   that padding and overflow the right edge. Spacers inset the menu columns. */
+.MenuRow .MenuTasksCol,
+.MenuRow .MenuByCol
+{
+	padding-top: 6px;
+	padding-right: 0px;
+	padding-bottom: 6px;
+	padding-left: 0px;
+}
+
+.MenuRow .MenuTasksCol
+{
+	margin-right: 0px;
+}
+
+.MenuColGap
+{
+	width: 6px;
+	height: 100%;
+}
+
+.MenuColInset
+{
+	width: 100%;
+	height: fill-parent-flow( 1.0 );
+	flow-children: right;
+}
+
+.MenuColPad
+{
+	width: 8px;
+	height: 100%;
+}
+
+.MenuColBody
+{
+	width: fill-parent-flow( 1.0 );
+	height: 100%;
+	flow-children: down;
 }
 
 Label.MenuColHead
@@ -940,7 +1005,7 @@ Label.MenuTaskLabel
 
 Label.MenuByLabel
 {
-	width: 100%;
+	width: fill-parent-flow( 1.0 );
 	height: 100%;
 	font-size: 14;
 	color: #e8eef4;
