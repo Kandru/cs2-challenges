@@ -8,8 +8,8 @@ test_challenge:
   date_start: "2026-01-01 00:00:00"
   date_end: "2027-01-01 00:00:00"
   challenges:
-    - awp_noscope_streak
     - avenger
+    - awp_noscope_streak
     - bhop_clips
     - blind_them_by_the_light
     - bomb_defused
