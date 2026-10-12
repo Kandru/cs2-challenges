@@ -9,19 +9,23 @@ test_challenge:
   date_end: "2027-01-01 00:00:00"
   challenges:
     - awp_noscope_streak
+    - avenger
     - bhop_clips
     - blind_them_by_the_light
     - bomb_defused
     - bomb_exploded
     - ct_bomb_plant
     - entry_flash
+    - flash_assist
     - flashbang_kill
     - grenade_and_die
     - headshots_in_a_row
     - hostage_rescue
     - inflatable_castle
     - killerqueen
+    - kitless_defuse
     - knife_challenge
+    - last_gasp
     - long_range
     - ninja_defuse
     - noscopes_in_a_row
@@ -38,6 +42,8 @@ test_challenge:
     - taser_challenge
     - through_the_wall
     - traded_kills
+    - unarmored
+    - untouchable
     - trust_fall
     - while_flashed
     - weapon_ak47

@@ -1,0 +1,168 @@
+title:
+  en: With my last breath
+  de: Mit letzter Kraft
+tasks:
+  - id: easy
+    title:
+      en: '{count}/{total} kills below 20 HP'
+      de: '{count}/{total} Kills mit unter 20 HP'
+    type: player_kill
+    amount: 5
+    cooldown: 0
+    announce_progress: true
+    announce_completion: true
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: 'false'
+      - key: global.isduringround
+        operator: bool==
+        value: 'true'
+      - key: attacker.alive
+        operator: bool==
+        value: 'true'
+      - key: attacker.health
+        operator: '<'
+        value: '20'
+      - key: isselfkill
+        operator: bool==
+        value: 'false'
+      - key: isteamkill
+        operator: bool==
+        value: 'false'
+      - key: victim.isbot
+        operator: bool==
+        value: 'false'
+    requires: []
+  - id: medium
+    title:
+      en: '{count}/{total} kills below 20 HP without dying'
+      de: '{count}/{total} Kills mit unter 20 HP ohne zu sterben'
+    type: player_kill
+    amount: 2
+    cooldown: 0
+    announce_progress: true
+    announce_completion: true
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: 'false'
+      - key: global.isduringround
+        operator: bool==
+        value: 'true'
+      - key: attacker.alive
+        operator: bool==
+        value: 'true'
+      - key: attacker.health
+        operator: '<'
+        value: '20'
+      - key: isselfkill
+        operator: bool==
+        value: 'false'
+      - key: isteamkill
+        operator: bool==
+        value: 'false'
+      - key: victim.isbot
+        operator: bool==
+        value: 'false'
+    actions:
+      - type: task.mark_completed
+        values:
+          - medium_died
+    requires:
+      - easy
+  - id: medium_died
+    title:
+      en: 'Rule broken: died'
+      de: 'Regel verletzt: gestorben'
+    type: player_death
+    amount: 1
+    cooldown: 0
+    visible: false
+    announce_progress: false
+    announce_completion: false
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: 'false'
+      - key: global.isduringround
+        operator: bool==
+        value: 'true'
+    actions:
+      - type: notify.player.progress.rule_broken
+        values:
+          - medium
+      - type: task.reset_progress
+        values:
+          - medium
+      - type: task.reset_completed
+        values:
+          - medium_died
+    requires:
+      - easy
+  - id: hard
+    title:
+      en: '{count}/{total} kills below 15 HP without dying'
+      de: '{count}/{total} Kills mit unter 15 HP ohne zu sterben'
+    type: player_kill
+    amount: 3
+    cooldown: 0
+    announce_progress: true
+    announce_completion: true
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: 'false'
+      - key: global.isduringround
+        operator: bool==
+        value: 'true'
+      - key: attacker.alive
+        operator: bool==
+        value: 'true'
+      - key: attacker.health
+        operator: '<'
+        value: '15'
+      - key: isselfkill
+        operator: bool==
+        value: 'false'
+      - key: isteamkill
+        operator: bool==
+        value: 'false'
+      - key: victim.isbot
+        operator: bool==
+        value: 'false'
+    actions:
+      - type: task.mark_completed
+        values:
+          - hard_died
+    requires:
+      - medium
+  - id: hard_died
+    title:
+      en: 'Rule broken: died'
+      de: 'Regel verletzt: gestorben'
+    type: player_death
+    amount: 1
+    cooldown: 0
+    visible: false
+    announce_progress: false
+    announce_completion: false
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: 'false'
+      - key: global.isduringround
+        operator: bool==
+        value: 'true'
+    actions:
+      - type: notify.player.progress.rule_broken
+        values:
+          - hard
+      - type: task.reset_progress
+        values:
+          - hard
+      - type: task.reset_completed
+        values:
+          - hard_died
+    requires:
+      - medium
