@@ -56,3 +56,4 @@ Unknown keys never match - see [Rules](../rules.md).
 | `userid.grenade.holding` | string |
 | `userid.grenade.thrown` | string |
 | `userid.grenade.throwing` | string |
+| `isace` | bool |

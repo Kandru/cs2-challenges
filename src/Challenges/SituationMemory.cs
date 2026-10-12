@@ -4,6 +4,7 @@ using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using Challenges.Utils;
 using CounterStrikeSharp.API.Modules.Events;
+using CounterStrikeSharp.API.Modules.Utils;
 
 namespace Challenges
 {
@@ -19,6 +20,8 @@ namespace Challenges
         private const double ThrowingExpireSeconds = 1.0;
         private const double SmokeExpireSeconds = 22.0;
         private const PlayerButtons AttackMask = PlayerButtons.Attack | PlayerButtons.Attack2;
+        private const int AceMinEnemies = 2;
+        private const int AceMaxTarget = 5;
 
         private static readonly HashSet<string> GrenadeNames = new(StringComparer.OrdinalIgnoreCase)
         {
@@ -31,6 +34,8 @@ namespace Challenges
         private readonly List<LiveSmoke> _smokes = [];
         private readonly HashSet<string> _watchEvents = new(StringComparer.Ordinal);
         private readonly HashSet<int> _pendingThrownRemove = [];
+        private readonly Dictionary<int, int> _aceKills = [];
+        private readonly int[] _aceEnemies = new int[4];
         private readonly StringBuilder _thrownScratch = new(32);
 
         private float _bombX;
@@ -38,18 +43,23 @@ namespace Challenges
         private float _bombZ;
         private bool _hasBombOrigin;
         private bool _thrownFlushScheduled;
+        private bool _aceSnapshotTaken;
+        private bool _aceResult;
+        private EventPlayerDeath? _aceEvent;
         private double _tradeRetentionSeconds = DefaultTradeSeconds;
 
         public bool TradeEnabled { get; private set; }
         public bool GrenadeEnabled { get; private set; }
         public bool SmokeEnabled { get; private set; }
-        public bool AnyEnabled => TradeEnabled | GrenadeEnabled | SmokeEnabled;
+        public bool AceEnabled { get; private set; }
+        public bool AnyEnabled => TradeEnabled | GrenadeEnabled | SmokeEnabled | AceEnabled;
 
         public void Configure(IEnumerable<ChallengeTask> tasks)
         {
             bool trade = false;
             bool grenade = false;
             bool smoke = false;
+            bool ace = false;
             double maxTrade = 0;
 
             foreach (ChallengeTask task in tasks)
@@ -67,6 +77,11 @@ namespace Challenges
                     if (!grenade && key.Contains(".grenade", StringComparison.Ordinal))
                     {
                         grenade = true;
+                    }
+
+                    if (!ace && string.Equals(key, "isace", StringComparison.Ordinal))
+                    {
+                        ace = true;
                     }
 
                     if (!smoke
@@ -99,12 +114,18 @@ namespace Challenges
             TradeEnabled = trade;
             GrenadeEnabled = grenade;
             SmokeEnabled = smoke;
+            AceEnabled = ace;
             _tradeRetentionSeconds = trade && maxTrade > 0 ? maxTrade : DefaultTradeSeconds;
 
             _watchEvents.Clear();
-            if (trade | grenade)
+            if (trade | grenade | ace)
             {
                 _watchEvents.Add("EventPlayerDeath");
+            }
+
+            if (ace)
+            {
+                _watchEvents.Add("EventRoundFreezeEnd");
             }
 
             if (grenade)
@@ -139,6 +160,11 @@ namespace Challenges
             _pendingThrownRemove.Clear();
             _thrownFlushScheduled = false;
             _hasBombOrigin = false;
+            _aceKills.Clear();
+            Array.Clear(_aceEnemies);
+            _aceSnapshotTaken = false;
+            _aceResult = false;
+            _aceEvent = null;
         }
 
         public void ForgetPlayer(CCSPlayerController player)
@@ -156,11 +182,19 @@ namespace Challenges
             switch (eventClassName)
             {
                 case "EventPlayerDeath":
+                    if (AceEnabled)
+                    {
+                        OnAceDeath((EventPlayerDeath)gameEvent);
+                    }
+
                     if (TradeEnabled)
                     {
                         OnPlayerDeath((EventPlayerDeath)gameEvent, enqueueOne);
                     }
 
+                    return;
+                case "EventRoundFreezeEnd":
+                    SnapshotAceTeams(null);
                     return;
                 case "EventGrenadeThrown":
                     OnGrenadeThrown((EventGrenadeThrown)gameEvent);
@@ -196,6 +230,11 @@ namespace Challenges
 
         public void Enrich(string eventClassName, GameEvent gameEvent, Dictionary<string, string> d)
         {
+            if (AceEnabled && eventClassName == "EventPlayerDeath")
+            {
+                d["isace"] = EventData.Bool(ReferenceEquals(gameEvent, _aceEvent) && _aceResult);
+            }
+
             if (GrenadeEnabled && eventClassName == "EventPlayerDeath")
             {
                 var e = (EventPlayerDeath)gameEvent;
@@ -250,6 +289,61 @@ namespace Challenges
             {
                 _holding.Remove(slot);
             }
+        }
+
+        /// <summary>Alive human players per team at freeze end. <paramref name="includeVictim"/> is counted even if already dead.</summary>
+        private void SnapshotAceTeams(CCSPlayerController? includeVictim)
+        {
+            Array.Clear(_aceEnemies);
+            foreach (CCSPlayerController player in Players.GetHumans())
+            {
+                int team = player.TeamNum;
+                if (team is (int)CsTeam.Terrorist or (int)CsTeam.CounterTerrorist
+                    && (player.PawnIsAlive || ReferenceEquals(player, includeVictim)))
+                {
+                    _aceEnemies[team]++;
+                }
+            }
+
+            _aceSnapshotTaken = true;
+        }
+
+        /// <summary>
+        /// An ace is the kill that completes the enemy team (human players only, bots ignored)
+        /// by a single player: at least two enemies at freeze end, target is min(enemies, 5).
+        /// </summary>
+        private void OnAceDeath(EventPlayerDeath e)
+        {
+            _aceEvent = e;
+            _aceResult = false;
+            CCSPlayerController? attacker = e.Attacker;
+            CCSPlayerController? victim = e.Userid;
+            if (!Players.IsHumanViewer(attacker)
+                || !Players.IsHumanViewer(victim)
+                || ReferenceEquals(attacker, victim))
+            {
+                return;
+            }
+
+            int enemyTeam = victim.TeamNum;
+            if (attacker.TeamNum == enemyTeam
+                || enemyTeam is not ((int)CsTeam.Terrorist or (int)CsTeam.CounterTerrorist))
+            {
+                return;
+            }
+
+            if (!_aceSnapshotTaken)
+            {
+                // Freeze end was not seen (freezetime 0 or hot reload): best effort at the first kill.
+                SnapshotAceTeams(victim);
+            }
+
+            _aceKills.TryGetValue(attacker.Slot, out int kills);
+            kills++;
+            _aceKills[attacker.Slot] = kills;
+
+            int enemies = _aceEnemies[enemyTeam];
+            _aceResult = enemies >= AceMinEnemies && kills == Math.Min(enemies, AceMaxTarget);
         }
 
         private void OnPlayerDeath(

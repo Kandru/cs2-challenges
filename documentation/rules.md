@@ -58,6 +58,7 @@ Some keys come from short-lived round memory, not from a single CSS field. They 
 | `{prefix}.grenade.holding` / `.thrown` | same | Weapon short name(s); thrown is comma-separated. Thrown names are kept about **8** seconds. |
 | `{prefix}.grenade.throwing` | same | Comma-separated short names while a grenade is in hand (active weapon), pin pulled, or thrown within the last **1** second. Empty when none apply. |
 | `insmoke`, `smoke.distance`, `smoke.age` | [EventBombDefused](events/EventBombDefused.md) / begin-defuse | Bomb origin inside a **144**-unit smoke sphere. Smokes are kept about **22** seconds. |
+| `isace` | [EventPlayerDeath](events/EventPlayerDeath.md) (`player_kill`) | `true` on the kill that completes the enemy team by a single player. Only **human** players count (bots are ignored). Needs at least **2** enemies alive at freeze end; the target is the enemy count, capped at **5**. Team kills and bot victims never count. If freeze end is missed (freeze time 0, hot reload), the count is taken at the first kill of the round. |
 | Prefer `player_bomb_defused` over `bomb_defused` | same | Credit only the defuser (the all-player type shares one data bag). |
 
 Examples: `examples/blueprints/traded_kills.yaml`, `grenade_and_die.yaml`, `killerqueen.yaml`, `ninja_defuse.yaml`, `swap_hegrenade.yaml`.
