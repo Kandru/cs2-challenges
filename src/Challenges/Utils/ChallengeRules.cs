@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text;
+using Challenges.Utils;
 
 namespace Challenges
 {
@@ -77,7 +78,19 @@ namespace Challenges
                     continue;
                 }
 
-                if (!data.TryGetValue(rule.Key, out string? current))
+                if (string.Equals(rule.Key, "isace", StringComparison.Ordinal)
+                    && !string.Equals(task.Type, "player_kill", StringComparison.Ordinal))
+                {
+                    if (explain)
+                    {
+                        reason = "isace requires player_kill";
+                    }
+
+                    return false;
+                }
+
+                string lookupKey = DataLookupKey(rule);
+                if (!data.TryGetValue(lookupKey, out string? current))
                 {
                     if (explain)
                     {
@@ -130,11 +143,16 @@ namespace Challenges
 
                 sb.Append(rule.Key);
                 sb.Append('=');
-                sb.Append(data.TryGetValue(rule.Key, out string? value) ? value : "?");
+                sb.Append(data.TryGetValue(DataLookupKey(rule), out string? value) ? value : "?");
             }
 
             return sb.ToString();
         }
+
+        private static string DataLookupKey(ChallengeRule rule) =>
+            string.Equals(rule.Key, "isace", StringComparison.Ordinal)
+                ? AceBounds.DataKey(rule)
+                : rule.Key;
 
         private static bool TryEvaluate(ChallengeRule rule, string current, out bool matched)
         {

@@ -4,11 +4,12 @@ using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using Challenges.Utils;
 using CounterStrikeSharp.API.Modules.Events;
+using CounterStrikeSharp.API.Modules.Utils;
 
 namespace Challenges
 {
     /// <summary>
-    /// Volatile round memory for trade kills, grenade holding/thrown, and smoke defuses.
+    /// Volatile round memory for trade kills, grenade holding/thrown, smoke defuses, and aces.
     /// Never persisted. Cleared on round start, map end, and unload.
     /// </summary>
     internal sealed class SituationMemory
@@ -31,6 +32,10 @@ namespace Challenges
         private readonly List<LiveSmoke> _smokes = [];
         private readonly HashSet<string> _watchEvents = new(StringComparer.Ordinal);
         private readonly HashSet<int> _pendingThrownRemove = [];
+        private readonly List<AceBound> _aceBounds = [];
+        private readonly Dictionary<int, int> _aceKills = [];
+        private readonly HashSet<(int Slot, int Min, int Max)> _aceCredited = [];
+        private readonly HashSet<string> _aceHits = new(StringComparer.Ordinal);
         private readonly StringBuilder _thrownScratch = new(32);
 
         private float _bombX;
@@ -43,15 +48,19 @@ namespace Challenges
         public bool TradeEnabled { get; private set; }
         public bool GrenadeEnabled { get; private set; }
         public bool SmokeEnabled { get; private set; }
-        public bool AnyEnabled => TradeEnabled | GrenadeEnabled | SmokeEnabled;
+        public bool AceEnabled { get; private set; }
+        public bool AnyEnabled => TradeEnabled | GrenadeEnabled | SmokeEnabled | AceEnabled;
 
         public void Configure(IEnumerable<ChallengeTask> tasks)
         {
             bool trade = false;
             bool grenade = false;
             bool smoke = false;
+            bool ace = false;
             double maxTrade = 0;
+            HashSet<(int Min, int Max)> aceSeen = [];
 
+            _aceBounds.Clear();
             foreach (ChallengeTask task in tasks)
             {
                 bool isTrade = string.Equals(task.Type, "player_trade", StringComparison.Ordinal);
@@ -74,6 +83,16 @@ namespace Challenges
                             || key.EndsWith(".insmoke", StringComparison.Ordinal)))
                     {
                         smoke = true;
+                    }
+
+                    if (string.Equals(key, "isace", StringComparison.Ordinal))
+                    {
+                        ace = true;
+                        (int min, int max) = AceBounds.Resolve(rule, warn: true);
+                        if (aceSeen.Add((min, max)))
+                        {
+                            _aceBounds.Add(new AceBound(min, max, AceBounds.DataKey(min, max)));
+                        }
                     }
 
                     if (!isTrade
@@ -99,10 +118,11 @@ namespace Challenges
             TradeEnabled = trade;
             GrenadeEnabled = grenade;
             SmokeEnabled = smoke;
+            AceEnabled = ace;
             _tradeRetentionSeconds = trade && maxTrade > 0 ? maxTrade : DefaultTradeSeconds;
 
             _watchEvents.Clear();
-            if (trade | grenade)
+            if (trade | grenade | ace)
             {
                 _watchEvents.Add("EventPlayerDeath");
             }
@@ -139,6 +159,9 @@ namespace Challenges
             _pendingThrownRemove.Clear();
             _thrownFlushScheduled = false;
             _hasBombOrigin = false;
+            _aceKills.Clear();
+            _aceCredited.Clear();
+            _aceHits.Clear();
         }
 
         public void ForgetPlayer(CCSPlayerController player)
@@ -146,6 +169,8 @@ namespace Challenges
             int slot = player.Slot;
             _holding.Remove(slot);
             _thrown.RemoveAll(t => t.Slot == slot);
+            _aceKills.Remove(slot);
+            _aceCredited.RemoveWhere(entry => entry.Slot == slot);
         }
 
         public void Observe(
@@ -156,6 +181,11 @@ namespace Challenges
             switch (eventClassName)
             {
                 case "EventPlayerDeath":
+                    if (AceEnabled)
+                    {
+                        OnAceDeath((EventPlayerDeath)gameEvent);
+                    }
+
                     if (TradeEnabled)
                     {
                         OnPlayerDeath((EventPlayerDeath)gameEvent, enqueueOne);
@@ -196,6 +226,11 @@ namespace Challenges
 
         public void Enrich(string eventClassName, GameEvent gameEvent, Dictionary<string, string> d)
         {
+            if (AceEnabled && eventClassName == "EventPlayerDeath")
+            {
+                WriteAceKeys(d);
+            }
+
             if (GrenadeEnabled && eventClassName == "EventPlayerDeath")
             {
                 var e = (EventPlayerDeath)gameEvent;
@@ -250,6 +285,77 @@ namespace Challenges
             {
                 _holding.Remove(slot);
             }
+        }
+
+        private void WriteAceKeys(Dictionary<string, string> d)
+        {
+            foreach (AceBound bound in _aceBounds)
+            {
+                d[bound.Key] = EventData.Bool(_aceHits.Contains(bound.Key));
+            }
+        }
+
+        private void OnAceDeath(EventPlayerDeath e)
+        {
+            _aceHits.Clear();
+
+            CCSPlayerController? attacker = e.Attacker;
+            CCSPlayerController? victim = e.Userid;
+            if (!Players.IsHumanViewer(attacker)
+                || !Players.IsHumanViewer(victim)
+                || ReferenceEquals(attacker, victim))
+            {
+                return;
+            }
+
+            int enemyTeam = victim.TeamNum;
+            if (attacker.TeamNum == enemyTeam
+                || enemyTeam is not ((int)CsTeam.Terrorist or (int)CsTeam.CounterTerrorist))
+            {
+                return;
+            }
+
+            int slot = attacker.Slot;
+            _aceKills.TryGetValue(slot, out int kills);
+            kills++;
+            _aceKills[slot] = kills;
+
+            int enemies = CountEnemyHumans(victim, enemyTeam);
+            foreach (AceBound bound in _aceBounds)
+            {
+                if (enemies < bound.Min || kills != Math.Min(enemies, bound.Max))
+                {
+                    continue;
+                }
+
+                if (!_aceCredited.Add((slot, bound.Min, bound.Max)))
+                {
+                    continue;
+                }
+
+                _aceHits.Add(bound.Key);
+            }
+        }
+
+        private static int CountEnemyHumans(CCSPlayerController victim, int team)
+        {
+            int count = 0;
+            bool sawVictim = false;
+            foreach (CCSPlayerController player in Players.GetHumans())
+            {
+                if (player.TeamNum != team)
+                {
+                    continue;
+                }
+
+                count++;
+                if (ReferenceEquals(player, victim))
+                {
+                    sawVictim = true;
+                }
+            }
+
+            return sawVictim ? count : count + 1;
         }
 
         private void OnPlayerDeath(
@@ -772,5 +878,7 @@ namespace Challenges
             public float Z { get; } = z;
             public double At { get; } = at;
         }
+
+        private readonly record struct AceBound(int Min, int Max, string Key);
     }
 }

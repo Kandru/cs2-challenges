@@ -18,6 +18,7 @@ test_challenge:
     - entry_flash
     - flash_assist
     - flashbang_kill
+    - flawless_ace
     - grenade_and_die
     - headshots_in_a_row
     - hostage_rescue
@@ -36,6 +37,7 @@ test_challenge:
     - revolver_challenge
     - scout_challenge
     - site_take
+    - solo_hero
     - swap_awp
     - swap_hegrenade
     - swap_scout

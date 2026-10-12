@@ -1,0 +1,155 @@
+title:
+  en: Flawless ace
+  de: Ace ohne Kratzer
+tasks:
+  - id: clean_round
+    title:
+      en: 'Clean round'
+      de: 'Saubere Runde'
+    type: round_end
+    amount: 1
+    cooldown: 0
+    visible: false
+    announce_progress: false
+    announce_completion: false
+    rules:
+      - key: global.mapname
+        operator: ==
+        value: '__never__'
+    requires: []
+  - id: clean_round_start
+    title:
+      en: 'New round'
+      de: 'Neue Runde'
+    type: round_start
+    amount: 1
+    cooldown: 0
+    visible: false
+    announce_progress: false
+    announce_completion: false
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: 'false'
+    actions:
+      - type: task.mark_completed
+        values:
+          - clean_round
+      - type: task.reset_completed
+        values:
+          - clean_round_start
+    requires: []
+  - id: clean_round_hit
+    title:
+      en: 'Took damage'
+      de: 'Schaden genommen'
+    type: player_hurt_victim
+    amount: 1
+    cooldown: 0
+    visible: false
+    announce_progress: false
+    announce_completion: false
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: 'false'
+      - key: global.isduringround
+        operator: bool==
+        value: 'true'
+    actions:
+      - type: task.reset_completed
+        values:
+          - clean_round
+      - type: task.reset_completed
+        values:
+          - clean_round_hit
+    requires: []
+  - id: easy
+    title:
+      en: '{count}/{total} ace without taking damage'
+      de: '{count}/{total} Ace ohne Schaden zu nehmen'
+    type: player_kill
+    amount: 1
+    cooldown: 0
+    announce_progress: true
+    announce_completion: true
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: 'false'
+      - key: global.isduringround
+        operator: bool==
+        value: 'true'
+      - key: isace
+        operator: bool==
+        value: 'true'
+        min_players: 2
+        max_players: 5
+      - key: isteamkill
+        operator: bool==
+        value: 'false'
+      - key: victim.isbot
+        operator: bool==
+        value: 'false'
+    requires:
+      - clean_round
+  - id: medium
+    title:
+      en: '{count}/{total} aces without taking damage'
+      de: '{count}/{total} Aces ohne Schaden zu nehmen'
+    type: player_kill
+    amount: 3
+    cooldown: 0
+    announce_progress: true
+    announce_completion: true
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: 'false'
+      - key: global.isduringround
+        operator: bool==
+        value: 'true'
+      - key: isace
+        operator: bool==
+        value: 'true'
+        min_players: 2
+        max_players: 5
+      - key: isteamkill
+        operator: bool==
+        value: 'false'
+      - key: victim.isbot
+        operator: bool==
+        value: 'false'
+    requires:
+      - easy
+      - clean_round
+  - id: hard
+    title:
+      en: '{count}/{total} aces without taking damage'
+      de: '{count}/{total} Aces ohne Schaden zu nehmen'
+    type: player_kill
+    amount: 5
+    cooldown: 0
+    announce_progress: true
+    announce_completion: true
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: 'false'
+      - key: global.isduringround
+        operator: bool==
+        value: 'true'
+      - key: isace
+        operator: bool==
+        value: 'true'
+        min_players: 2
+        max_players: 5
+      - key: isteamkill
+        operator: bool==
+        value: 'false'
+      - key: victim.isbot
+        operator: bool==
+        value: 'false'
+    requires:
+      - medium
+      - clean_round

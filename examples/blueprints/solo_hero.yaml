@@ -1,0 +1,153 @@
+title:
+  en: Solo hero
+  de: Solo-Held
+tasks:
+  - id: easy
+    title:
+      en: '{count}/{total} aces (whole enemy team killed alone)'
+      de: '{count}/{total} Aces (gesamtes Gegnerteam allein getötet)'
+    type: player_kill
+    amount: 3
+    cooldown: 0
+    announce_progress: true
+    announce_completion: true
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: 'false'
+      - key: global.isduringround
+        operator: bool==
+        value: 'true'
+      - key: isace
+        operator: bool==
+        value: 'true'
+        min_players: 2
+        max_players: 5
+      - key: isteamkill
+        operator: bool==
+        value: 'false'
+      - key: victim.isbot
+        operator: bool==
+        value: 'false'
+    requires: []
+  - id: medium
+    title:
+      en: '{count}/{total} aces (whole enemy team killed alone)'
+      de: '{count}/{total} Aces (gesamtes Gegnerteam allein getötet)'
+    type: player_kill
+    amount: 5
+    cooldown: 0
+    announce_progress: true
+    announce_completion: true
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: 'false'
+      - key: global.isduringround
+        operator: bool==
+        value: 'true'
+      - key: isace
+        operator: bool==
+        value: 'true'
+        min_players: 2
+        max_players: 5
+      - key: isteamkill
+        operator: bool==
+        value: 'false'
+      - key: victim.isbot
+        operator: bool==
+        value: 'false'
+    requires:
+      - easy
+  - id: hard
+    title:
+      en: '{count}/{total} aces in consecutive rounds'
+      de: '{count}/{total} Aces in aufeinanderfolgenden Runden'
+    type: player_kill
+    amount: 2
+    cooldown: 0
+    announce_progress: true
+    announce_completion: true
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: 'false'
+      - key: global.isduringround
+        operator: bool==
+        value: 'true'
+      - key: isace
+        operator: bool==
+        value: 'true'
+        min_players: 2
+        max_players: 5
+      - key: isteamkill
+        operator: bool==
+        value: 'false'
+      - key: victim.isbot
+        operator: bool==
+        value: 'false'
+    requires:
+      - medium
+  - id: hard_seen
+    title:
+      en: 'Ace seen'
+      de: 'Ace gesehen'
+    type: player_kill
+    amount: 1
+    cooldown: 0
+    visible: false
+    announce_progress: false
+    announce_completion: false
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: 'false'
+      - key: global.isduringround
+        operator: bool==
+        value: 'true'
+      - key: isace
+        operator: bool==
+        value: 'true'
+        min_players: 2
+        max_players: 5
+      - key: isteamkill
+        operator: bool==
+        value: 'false'
+      - key: victim.isbot
+        operator: bool==
+        value: 'false'
+    actions:
+      - type: task.reset_progress
+        values:
+          - hard_gap
+      - type: task.reset_completed
+        values:
+          - hard_seen
+    requires:
+      - medium
+  - id: hard_gap
+    title:
+      en: 'Round without ace'
+      de: 'Runde ohne Ace'
+    type: round_start
+    amount: 2
+    cooldown: 0
+    visible: false
+    announce_progress: false
+    announce_completion: false
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: 'false'
+    actions:
+      - type: notify.player.progress.rule_broken
+        values:
+          - hard
+      - type: task.reset_progress
+        values:
+          - hard
+      - type: task.reset_completed
+        values:
+          - hard_gap
+    requires:
+      - medium

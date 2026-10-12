@@ -55,6 +55,11 @@ namespace Challenges
         [YamlMember(Alias = "key")] public string Key { get; set; } = "";
         [YamlMember(Alias = "operator")] public string Operator { get; set; } = "==";
         [YamlMember(Alias = "value")] public string Value { get; set; } = "";
+        // Optional isace bounds (defaults 2 / 5). Ignored for other keys.
+        [YamlMember(Alias = "min_players", DefaultValuesHandling = DefaultValuesHandling.OmitDefaults)]
+        public int? MinPlayers { get; set; }
+        [YamlMember(Alias = "max_players", DefaultValuesHandling = DefaultValuesHandling.OmitDefaults)]
+        public int? MaxPlayers { get; set; }
     }
 
     public sealed class ChallengeAction
