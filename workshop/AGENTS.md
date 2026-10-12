@@ -42,7 +42,7 @@ No panel create / width / colour / image from C#. Layout edits need VPK republis
 
 ### Tracker ([`Tracker.cs`](../src/Challenges/Hud/Tracker.cs))
 
-Top-right 420px, never clickable. Title/count/hint (`!c`); up to 5 rows (`gui.tracker_rows` default 3). **Freeze** (`mp_freezetime > 0`): unsolved, % desc, unsolved tasks only, drain = freezetime. **Progress:** `ShowProgress` kinds Progress/TaskSolved/ChallengeSolved; challenge solved → up-next after `gui.progress_duration`. **Rule broken:** queue via `ShowRuleBroken`; freeze clears queue; after freeze, remaining breaks play.
+Top-right 420px, never clickable. Title/count/hint (`!c`); up to 5 rows (`gui.tracker_rows` default 3). **Freeze** (`mp_freezetime > 0`): unsolved, % desc, unsolved tasks only, drain = freezetime. **Progress:** `ShowProgress` kinds Progress/TaskSolved/ChallengeSolved; challenge solved → up-next after `gui.progress_duration`. **Rule broken:** queue via `ShowRuleBroken`; freeze clears queue; after freeze, remaining breaks play. **Intermission:** `cs_intermission` → `Tracker.Hide` (map vote).
 
 ### Menu ([`Menu.cs`](../src/Challenges/Hud/Menu.cs))
 

@@ -12,6 +12,8 @@ During freeze time the plugin can show a small card (top-right):
 
 When a visible task advances, a progress tracker can appear for `gui.progress_duration` seconds (minimum 1). Row count is `gui.tracker_rows`, clamped to 1–5. Controlled by `gui.show_on_progress` (default on).
 
+The tracker closes automatically when `cs_intermission` fires (match end / map vote).
+
 The tracker hint uses `command_prefix` plus the shortest name in `menu_commands` (default `!c`). An empty `menu_commands` list disables chat menu commands and hides that hint.
 
 ## Menu

@@ -90,16 +90,7 @@ namespace Challenges
 
         public static void Hide(CCSPlayerController player)
         {
-            if (Context.GetState(player) is { } state)
-            {
-                ClearProgressState(state);
-                state.TrackerRuleBrokenQueue.Clear();
-                state.TrackerFreezeVisible = false;
-                state.TrackerFreezeUntil = null;
-                state.TrackerFreezeDuration = 0;
-                state.TrackerFingerprint = null;
-            }
-
+            Context.GetState(player)?.ClearTrackerUi();
             CustomHud.HidePanel(player, Panel);
         }
 

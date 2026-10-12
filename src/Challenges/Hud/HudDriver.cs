@@ -4,7 +4,7 @@ using Microsoft.Extensions.Localization;
 
 namespace Challenges
 {
-    /// <summary>Round-lifecycle driver for the tracker HUD (freeze-time mode) and per-round HUD reset.</summary>
+    /// <summary>Round-lifecycle driver for the tracker HUD: freeze-time show, progress reset, intermission hide.</summary>
     public class HudDriver : Module
     {
         private bool _destroyed;
@@ -24,6 +24,7 @@ namespace Challenges
             "EventRoundStart",
             "EventRoundFreezeEnd",
             "EventRoundEnd",
+            "EventCsIntermission",
         ];
 
         public override List<string> Listeners => ["OnCustomHudClicked"];
@@ -106,6 +107,17 @@ namespace Challenges
         {
             State.DuringRound = false;
             State.FreezeActive = false;
+            return HookResult.Continue;
+        }
+
+        public HookResult EventCsIntermission(EventCsIntermission @event, GameEventInfo info)
+        {
+            State.FreezeActive = false;
+            foreach (CCSPlayerController player in Players.GetHumans())
+            {
+                Tracker.Hide(player);
+            }
+
             return HookResult.Continue;
         }
 
