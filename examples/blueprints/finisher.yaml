@@ -1,0 +1,113 @@
+title:
+  en: Scavenger
+  de: Abstauber
+tasks:
+  - id: easy
+    title:
+      en: '{count}/{total} kills on enemies below 20 HP'
+      de: '{count}/{total} Kills an Gegnern mit unter 20 HP'
+    type: player_kill
+    amount: 5
+    cooldown: 0
+    announce_progress: true
+    announce_completion: true
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: 'false'
+      - key: global.isduringround
+        operator: bool==
+        value: 'true'
+      - key: dmg_health
+        operator: '<'
+        value: '20'
+      - key: isselfkill
+        operator: bool==
+        value: 'false'
+      - key: isteamkill
+        operator: bool==
+        value: 'false'
+      - key: victim.isbot
+        operator: bool==
+        value: 'false'
+    requires: []
+  - id: medium
+    title:
+      en: '{count}/{total} kills on enemies below 20 HP'
+      de: '{count}/{total} Kills an Gegnern mit unter 20 HP'
+    type: player_kill
+    amount: 15
+    cooldown: 0
+    announce_progress: true
+    announce_completion: true
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: 'false'
+      - key: global.isduringround
+        operator: bool==
+        value: 'true'
+      - key: dmg_health
+        operator: '<'
+        value: '20'
+      - key: isselfkill
+        operator: bool==
+        value: 'false'
+      - key: isteamkill
+        operator: bool==
+        value: 'false'
+      - key: victim.isbot
+        operator: bool==
+        value: 'false'
+    requires:
+      - easy
+  - id: hard
+    title:
+      en: '{count}/{total} kills on enemies below 20 HP in one round'
+      de: '{count}/{total} Kills an Gegnern mit unter 20 HP in einer Runde'
+    type: player_kill
+    amount: 3
+    cooldown: 0
+    announce_progress: true
+    announce_completion: true
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: 'false'
+      - key: global.isduringround
+        operator: bool==
+        value: 'true'
+      - key: dmg_health
+        operator: '<'
+        value: '20'
+      - key: isselfkill
+        operator: bool==
+        value: 'false'
+      - key: isteamkill
+        operator: bool==
+        value: 'false'
+      - key: victim.isbot
+        operator: bool==
+        value: 'false'
+    requires:
+      - medium
+  - id: hard_newround
+    title:
+      en: 'New round'
+      de: 'Neue Runde'
+    type: round_start
+    amount: 1
+    cooldown: 0
+    visible: false
+    announce_progress: false
+    announce_completion: false
+    rules: []
+    actions:
+      - type: task.reset_progress
+        values:
+          - hard
+      - type: task.reset_completed
+        values:
+          - hard_newround
+    requires:
+      - medium

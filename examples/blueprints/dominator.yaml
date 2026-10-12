@@ -1,0 +1,116 @@
+title:
+  en: Dominator
+  de: Dominierer
+tasks:
+  - id: easy
+    title:
+      en: '{count}/{total} domination'
+      de: '{count}/{total} Domination'
+    type: player_kill
+    amount: 1
+    cooldown: 0
+    announce_progress: true
+    announce_completion: true
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: 'false'
+      - key: global.isduringround
+        operator: bool==
+        value: 'true'
+      - key: dominated
+        operator: bool==
+        value: 'true'
+      - key: isselfkill
+        operator: bool==
+        value: 'false'
+      - key: isteamkill
+        operator: bool==
+        value: 'false'
+      - key: victim.isbot
+        operator: bool==
+        value: 'false'
+    requires: []
+  - id: medium
+    title:
+      en: '{count}/{total} dominations in one match'
+      de: '{count}/{total} Dominationen in einem Match'
+    type: player_kill
+    amount: 2
+    cooldown: 0
+    announce_progress: true
+    announce_completion: true
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: 'false'
+      - key: global.isduringround
+        operator: bool==
+        value: 'true'
+      - key: dominated
+        operator: bool==
+        value: 'true'
+      - key: isselfkill
+        operator: bool==
+        value: 'false'
+      - key: isteamkill
+        operator: bool==
+        value: 'false'
+      - key: victim.isbot
+        operator: bool==
+        value: 'false'
+    requires:
+      - easy
+  - id: hard
+    title:
+      en: '{count}/{total} dominations in one match'
+      de: '{count}/{total} Dominationen in einem Match'
+    type: player_kill
+    amount: 5
+    cooldown: 0
+    announce_progress: true
+    announce_completion: true
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: 'false'
+      - key: global.isduringround
+        operator: bool==
+        value: 'true'
+      - key: dominated
+        operator: bool==
+        value: 'true'
+      - key: isselfkill
+        operator: bool==
+        value: 'false'
+      - key: isteamkill
+        operator: bool==
+        value: 'false'
+      - key: victim.isbot
+        operator: bool==
+        value: 'false'
+    requires:
+      - medium
+  - id: medium_newmatch
+    title:
+      en: 'New match'
+      de: 'Neues Match'
+    type: begin_new_match
+    amount: 1
+    cooldown: 0
+    visible: false
+    announce_progress: false
+    announce_completion: false
+    rules: []
+    actions:
+      - type: task.reset_progress
+        values:
+          - medium
+      - type: task.reset_progress
+        values:
+          - hard
+      - type: task.reset_completed
+        values:
+          - medium_newmatch
+    requires:
+      - easy

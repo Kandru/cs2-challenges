@@ -14,9 +14,12 @@ test_challenge:
     - bomb_defused
     - bomb_exploded
     - ct_bomb_plant
+    - dominator
     - entry_flash
+    - finisher
     - flashbang_kill
     - grenade_and_die
+    - hard_landing
     - headshots_in_a_row
     - hostage_rescue
     - inflatable_castle
@@ -26,6 +29,7 @@ test_challenge:
     - ninja_defuse
     - noscopes_in_a_row
     - one_ways
+    - pyromaniac
     - radio_comms
     - range_day
     - reverse_killerqueen

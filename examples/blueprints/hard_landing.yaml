@@ -1,0 +1,128 @@
+title:
+  en: Hard landing
+  de: Bruchlandung
+tasks:
+  - id: easy
+    title:
+      en: '{count}/{total} fall with 30+ damage survived'
+      de: '{count}/{total} Sturz mit 30+ Schaden überlebt'
+    type: player_falldamage
+    amount: 1
+    cooldown: 0
+    announce_progress: true
+    announce_completion: true
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: 'false'
+      - key: global.isduringround
+        operator: bool==
+        value: 'true'
+      - key: damage
+        operator: '>='
+        value: '30'
+      - key: player.alive
+        operator: bool==
+        value: 'true'
+    requires: []
+  - id: medium
+    title:
+      en: '{count}/{total} falls with 30+ damage in one round'
+      de: '{count}/{total} Stürze mit 30+ Schaden in einer Runde'
+    type: player_falldamage
+    amount: 3
+    cooldown: 0
+    announce_progress: true
+    announce_completion: true
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: 'false'
+      - key: global.isduringround
+        operator: bool==
+        value: 'true'
+      - key: damage
+        operator: '>='
+        value: '30'
+      - key: player.alive
+        operator: bool==
+        value: 'true'
+    requires:
+      - easy
+  - id: medium_newround
+    title:
+      en: 'New round'
+      de: 'Neue Runde'
+    type: round_start
+    amount: 1
+    cooldown: 0
+    visible: false
+    announce_progress: false
+    announce_completion: false
+    rules: []
+    actions:
+      - type: task.reset_progress
+        values:
+          - medium
+      - type: task.reset_completed
+        values:
+          - medium_newround
+    requires:
+      - easy
+  - id: hard
+    title:
+      en: '{count}/{total} falls with 30+ damage without dying'
+      de: '{count}/{total} Stürze mit 30+ Schaden ohne zu sterben'
+    type: player_falldamage
+    amount: 5
+    cooldown: 0
+    announce_progress: true
+    announce_completion: true
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: 'false'
+      - key: global.isduringround
+        operator: bool==
+        value: 'true'
+      - key: damage
+        operator: '>='
+        value: '30'
+      - key: player.alive
+        operator: bool==
+        value: 'true'
+    actions:
+      - type: task.mark_completed
+        values:
+          - hard_died
+    requires:
+      - medium
+  - id: hard_died
+    title:
+      en: 'Rule broken: died'
+      de: 'Regel verletzt: gestorben'
+    type: player_death
+    amount: 1
+    cooldown: 0
+    visible: false
+    announce_progress: false
+    announce_completion: false
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: 'false'
+      - key: global.isduringround
+        operator: bool==
+        value: 'true'
+    actions:
+      - type: notify.player.progress.rule_broken
+        values:
+          - hard
+      - type: task.reset_progress
+        values:
+          - hard
+      - type: task.reset_completed
+        values:
+          - hard_died
+    requires:
+      - medium
