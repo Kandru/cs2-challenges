@@ -25,14 +25,11 @@ namespace Challenges
         [JsonIgnore] public string MenuFilter = "progress";
         [JsonIgnore] public ScoreboardSort ScoreboardSort = ScoreboardSort.Solved;
         [JsonIgnore] public ScoreboardFilter ScoreboardFilter = ScoreboardFilter.Online;
-        [JsonIgnore] public string? MenuDetailChallengeId;
         /// <summary>Steam id of the player whose progress the list shows; null/empty = viewer.</summary>
         [JsonIgnore] public string? MenuSubjectSteamId;
-        [JsonIgnore] public readonly string?[] MenuRowChallengeIds = new string?[Menu.ListSlots];
         [JsonIgnore] public readonly string?[] MenuScoreRowSteamIds = new string?[Menu.ScoreSlots];
-        /// <summary>How many list / detail slots the last paint filled (unused clears stop here).</summary>
+        /// <summary>How many list slots the last paint filled (unused clears stop here).</summary>
         [JsonIgnore] public int MenuListPainted;
-        [JsonIgnore] public int MenuDetailPainted;
         [JsonIgnore] public bool TrackerFreezeVisible;
         [JsonIgnore] public DateTime? TrackerFreezeUntil;
         [JsonIgnore] public float TrackerFreezeDuration;
@@ -68,11 +65,8 @@ namespace Challenges
             MenuFilter = "progress";
             ScoreboardSort = ScoreboardSort.Solved;
             ScoreboardFilter = ScoreboardFilter.Online;
-            MenuDetailChallengeId = null;
             MenuSubjectSteamId = null;
             MenuListPainted = 0;
-            MenuDetailPainted = 0;
-            Array.Clear(MenuRowChallengeIds);
             Array.Clear(MenuScoreRowSteamIds);
             ClearTrackerUi();
         }

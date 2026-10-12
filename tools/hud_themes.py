@@ -47,10 +47,6 @@ OVERRIDE_RULES = """\
 .{cls} .MenuFilterBtn:active {{ border: 1px solid {accent}; }}
 .{cls} .MenuTitleNav:hover {{ border: 1px solid {a}66; }}
 .{cls} .MenuTitleNav:active {{ border: 1px solid {accent}; }}
-.{cls} .MenuRow:hover {{ border: 1px solid {a}66; }}
-.{cls} .MenuRow:active {{ border: 1px solid {accent}; }}
-.{cls} .MenuRow.is-selected {{ background-color: {a}22; border: 1px solid {accent}; }}
-.{cls} .MenuRow.is-selected:hover {{ background-color: {a}44; border: 1px solid {accent}; }}
 .{cls} .ScoreSelfCard {{ background-color: {a}18; border: 1px solid {accent}; }}
 .{cls} .ScoreRow:hover {{ border: 1px solid {a}66; border-bottom: 1px solid {a}66; }}
 .{cls} .ScoreRow:active {{ border: 1px solid {accent}; border-bottom: 1px solid {accent}; }}

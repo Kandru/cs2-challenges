@@ -1,0 +1,1700 @@
+/* ============================================================================
+   Challenges HUD - one stylesheet for tracker.xml and menu.xml.
+   Shared chrome comes from the Prophunt kit (workshop/example/hud.vcss).
+   Hex colours only; no @define/var/rgba/display. Bars use clip ladders (p0 ... p100).
+   Hide with ph-off (cards) / is-off (rows). Do not name a class "hidden".
+   ============================================================================ */
+
+/* Shared chrome */
+
+.HudScreen
+{
+	width: 100%;
+	height: 100%;
+	z-index: 99999;
+}
+
+.HudScreen.TrackerScreen
+{
+	z-index: 99998;
+}
+
+.ph-card
+{
+	opacity: 1;
+	transform: translateY( 0px ) scale3d( 1, 1, 1 );
+	brightness: 1;
+	transition-property: opacity, transform, brightness;
+	transition-duration: 1.0s;
+	transition-timing-function: ease-out;
+	overflow: noclip noclip;
+	border-radius: 3px;
+}
+
+.ph-card.ph-fading
+{
+	opacity: 0;
+}
+
+/* Not "hidden" - that name exists on csgostyles and would collide. */
+.ph-card.ph-off
+{
+	visibility: collapse;
+	opacity: 0;
+	transition-duration: 0s;
+}
+
+.ph-bg
+{
+	width: 100%;
+	height: 100%;
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #12171ee8 ), to( #0b0f14f2 ) );
+	background-image: url("s2r://panorama/images/backgrounds/bluedots_large_png.vtex");
+	background-size: 360px 360px;
+	background-repeat: repeat;
+	background-img-opacity: 0.03;
+	border: 1px solid #ffffff14;
+	border-radius: 3px;
+	box-shadow: #000000c0 0px 8px 30px 0px;
+	world-blur: gaussian( 2 );
+	z-index: 0;
+}
+
+.ph-bar
+{
+	width: 3px;
+	height: 100%;
+	background-color: #f0a531;
+	z-index: 5;
+}
+
+.ph-bar-left
+{
+	horizontal-align: left;
+}
+
+.ph-bar-right
+{
+	horizontal-align: right;
+}
+
+/* Fullscreen shell - 68px inset clears RoundStatus (4px + 60px + 4px gap).
+   Content uses fill-parent-flow / fit-children; ph-bg uses ignore-parent-flow.
+   PropGrid cannot use this (asymmetric 68/36 inset + flow children) - see spacers. */
+.ph-fs
+{
+	width: 100%;
+	height: 100%;
+	padding-top: 68px;
+	padding-right: 68px;
+	padding-bottom: 68px;
+	padding-left: 68px;
+}
+
+/* Shared title row - Prop/Sound/Weapon/Shop/Rules. */
+.ph-titlebar
+{
+	width: 100%;
+	height: 44px;
+	flow-children: right;
+	padding-left: 18px;
+	padding-right: 18px;
+	background-color: #ffffff14;
+	border-bottom: 1px solid #d9d9d90a;
+}
+
+Label.ph-title
+{
+	width: fill-parent-flow( 1.0 );
+	vertical-align: middle;
+	font-size: 15;
+	letter-spacing: 1.6px;
+	text-transform: uppercase;
+	color: #ffffff;
+}
+
+Label.ph-money
+{
+	vertical-align: middle;
+	font-size: 14;
+	letter-spacing: 1px;
+	color: #9ccf4f;
+}
+
+/* Button label: parent must be flow-children:none. No height:100% - that
+   pins the glyph to the top and makes vertical-align a no-op. */
+Label.ph-btn-label
+{
+	width: 100%;
+	horizontal-align: center;
+	vertical-align: middle;
+	text-align: center;
+}
+
+/* Shared title-bar icon buttons (close X, stop, maximize) + Prev/Next label. */
+.ph-icon-btn
+{
+	width: 28px;
+	height: 28px;
+	flow-children: none;
+	background-color: #ffffff0d;
+	border: 0px solid transparent;
+	border-radius: 3px;
+	vertical-align: middle;
+	transition-property: background-color;
+	transition-duration: 0.15s;
+}
+
+.ph-icon-btn:hover
+{
+	background-color: #ffffff1c;
+	cursor: pointer;
+	sound: "UIPanorama.generic_button_rollover";
+}
+
+.ph-icon-btn:active
+{
+	background-color: #ffffff2e;
+	sound: "UIPanorama.generic_button_press";
+}
+
+.ph-close-x
+{
+	width: 12px;
+	height: 2px;
+	horizontal-align: center;
+	vertical-align: middle;
+	background-color: #ffffff;
+	border-radius: 1px;
+}
+
+.ph-close-x-a
+{
+	transform: rotateZ( 45deg );
+}
+
+.ph-close-x-b
+{
+	transform: rotateZ( -45deg );
+}
+
+Label.ph-nav-label
+{
+	width: 100%;
+	horizontal-align: center;
+	vertical-align: middle;
+	text-align: center;
+	font-size: 14;
+	color: #e8eef4;
+}
+
+.ph-stat
+{
+	width: 100%;
+	flow-children: down;
+}
+
+.ph-stat.is-off
+{
+	visibility: collapse;
+}
+
+.ph-stat-lab
+{
+	width: 100%;
+	height: 18px;
+	flow-children: right;
+	margin-bottom: 6px;
+}
+
+Label.ph-stat-name
+{
+	width: fill-parent-flow( 1.0 );
+	height: 100%;
+	font-size: 14;
+	letter-spacing: 1.2px;
+	text-transform: uppercase;
+	color: #e8eef4;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	vertical-align: middle;
+}
+
+Label.ph-stat-val
+{
+	width: 72px;
+	height: 100%;
+	font-size: 14;
+	color: #f0a531;
+	text-align: right;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	vertical-align: middle;
+}
+
+Label.ph-stat-when
+{
+	width: 150px;
+	height: 100%;
+	font-size: 14;
+	color: #9aa2ac;
+	text-align: right;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	vertical-align: middle;
+	margin-right: 8px;
+}
+
+.ph-stat-track
+{
+	width: 100%;
+	height: 7px;
+	flow-children: none;
+	border-radius: 4px;
+	background-color: #ffffff12;
+	overflow: clip;
+}
+
+.ph-stat-fill
+{
+	height: 100%;
+	width: 100%;
+	border-radius: 4px;
+	background-color: gradient( linear, 0% 0%, 100% 0%, from( #f0a531 ), to( #ffd27a ) );
+	transition-property: clip;
+	transition-duration: 0.35s;
+	clip: rect( 0%, 0%, 100%, 0% );
+}
+
+.ph-stat-fill.p100 { clip: rect( 0%, 100%, 100%, 0% ); }
+.ph-stat-fill.p99 { clip: rect( 0%, 99%, 100%, 0% ); }
+.ph-stat-fill.p98 { clip: rect( 0%, 98%, 100%, 0% ); }
+.ph-stat-fill.p97 { clip: rect( 0%, 97%, 100%, 0% ); }
+.ph-stat-fill.p96 { clip: rect( 0%, 96%, 100%, 0% ); }
+.ph-stat-fill.p95 { clip: rect( 0%, 95%, 100%, 0% ); }
+.ph-stat-fill.p94 { clip: rect( 0%, 94%, 100%, 0% ); }
+.ph-stat-fill.p93 { clip: rect( 0%, 93%, 100%, 0% ); }
+.ph-stat-fill.p92 { clip: rect( 0%, 92%, 100%, 0% ); }
+.ph-stat-fill.p91 { clip: rect( 0%, 91%, 100%, 0% ); }
+.ph-stat-fill.p90 { clip: rect( 0%, 90%, 100%, 0% ); }
+.ph-stat-fill.p89 { clip: rect( 0%, 89%, 100%, 0% ); }
+.ph-stat-fill.p88 { clip: rect( 0%, 88%, 100%, 0% ); }
+.ph-stat-fill.p87 { clip: rect( 0%, 87%, 100%, 0% ); }
+.ph-stat-fill.p86 { clip: rect( 0%, 86%, 100%, 0% ); }
+.ph-stat-fill.p85 { clip: rect( 0%, 85%, 100%, 0% ); }
+.ph-stat-fill.p84 { clip: rect( 0%, 84%, 100%, 0% ); }
+.ph-stat-fill.p83 { clip: rect( 0%, 83%, 100%, 0% ); }
+.ph-stat-fill.p82 { clip: rect( 0%, 82%, 100%, 0% ); }
+.ph-stat-fill.p81 { clip: rect( 0%, 81%, 100%, 0% ); }
+.ph-stat-fill.p80 { clip: rect( 0%, 80%, 100%, 0% ); }
+.ph-stat-fill.p79 { clip: rect( 0%, 79%, 100%, 0% ); }
+.ph-stat-fill.p78 { clip: rect( 0%, 78%, 100%, 0% ); }
+.ph-stat-fill.p77 { clip: rect( 0%, 77%, 100%, 0% ); }
+.ph-stat-fill.p76 { clip: rect( 0%, 76%, 100%, 0% ); }
+.ph-stat-fill.p75 { clip: rect( 0%, 75%, 100%, 0% ); }
+.ph-stat-fill.p74 { clip: rect( 0%, 74%, 100%, 0% ); }
+.ph-stat-fill.p73 { clip: rect( 0%, 73%, 100%, 0% ); }
+.ph-stat-fill.p72 { clip: rect( 0%, 72%, 100%, 0% ); }
+.ph-stat-fill.p71 { clip: rect( 0%, 71%, 100%, 0% ); }
+.ph-stat-fill.p70 { clip: rect( 0%, 70%, 100%, 0% ); }
+.ph-stat-fill.p69 { clip: rect( 0%, 69%, 100%, 0% ); }
+.ph-stat-fill.p68 { clip: rect( 0%, 68%, 100%, 0% ); }
+.ph-stat-fill.p67 { clip: rect( 0%, 67%, 100%, 0% ); }
+.ph-stat-fill.p66 { clip: rect( 0%, 66%, 100%, 0% ); }
+.ph-stat-fill.p65 { clip: rect( 0%, 65%, 100%, 0% ); }
+.ph-stat-fill.p64 { clip: rect( 0%, 64%, 100%, 0% ); }
+.ph-stat-fill.p63 { clip: rect( 0%, 63%, 100%, 0% ); }
+.ph-stat-fill.p62 { clip: rect( 0%, 62%, 100%, 0% ); }
+.ph-stat-fill.p61 { clip: rect( 0%, 61%, 100%, 0% ); }
+.ph-stat-fill.p60 { clip: rect( 0%, 60%, 100%, 0% ); }
+.ph-stat-fill.p59 { clip: rect( 0%, 59%, 100%, 0% ); }
+.ph-stat-fill.p58 { clip: rect( 0%, 58%, 100%, 0% ); }
+.ph-stat-fill.p57 { clip: rect( 0%, 57%, 100%, 0% ); }
+.ph-stat-fill.p56 { clip: rect( 0%, 56%, 100%, 0% ); }
+.ph-stat-fill.p55 { clip: rect( 0%, 55%, 100%, 0% ); }
+.ph-stat-fill.p54 { clip: rect( 0%, 54%, 100%, 0% ); }
+.ph-stat-fill.p53 { clip: rect( 0%, 53%, 100%, 0% ); }
+.ph-stat-fill.p52 { clip: rect( 0%, 52%, 100%, 0% ); }
+.ph-stat-fill.p51 { clip: rect( 0%, 51%, 100%, 0% ); }
+.ph-stat-fill.p50 { clip: rect( 0%, 50%, 100%, 0% ); }
+.ph-stat-fill.p49 { clip: rect( 0%, 49%, 100%, 0% ); }
+.ph-stat-fill.p48 { clip: rect( 0%, 48%, 100%, 0% ); }
+.ph-stat-fill.p47 { clip: rect( 0%, 47%, 100%, 0% ); }
+.ph-stat-fill.p46 { clip: rect( 0%, 46%, 100%, 0% ); }
+.ph-stat-fill.p45 { clip: rect( 0%, 45%, 100%, 0% ); }
+.ph-stat-fill.p44 { clip: rect( 0%, 44%, 100%, 0% ); }
+.ph-stat-fill.p43 { clip: rect( 0%, 43%, 100%, 0% ); }
+.ph-stat-fill.p42 { clip: rect( 0%, 42%, 100%, 0% ); }
+.ph-stat-fill.p41 { clip: rect( 0%, 41%, 100%, 0% ); }
+.ph-stat-fill.p40 { clip: rect( 0%, 40%, 100%, 0% ); }
+.ph-stat-fill.p39 { clip: rect( 0%, 39%, 100%, 0% ); }
+.ph-stat-fill.p38 { clip: rect( 0%, 38%, 100%, 0% ); }
+.ph-stat-fill.p37 { clip: rect( 0%, 37%, 100%, 0% ); }
+.ph-stat-fill.p36 { clip: rect( 0%, 36%, 100%, 0% ); }
+.ph-stat-fill.p35 { clip: rect( 0%, 35%, 100%, 0% ); }
+.ph-stat-fill.p34 { clip: rect( 0%, 34%, 100%, 0% ); }
+.ph-stat-fill.p33 { clip: rect( 0%, 33%, 100%, 0% ); }
+.ph-stat-fill.p32 { clip: rect( 0%, 32%, 100%, 0% ); }
+.ph-stat-fill.p31 { clip: rect( 0%, 31%, 100%, 0% ); }
+.ph-stat-fill.p30 { clip: rect( 0%, 30%, 100%, 0% ); }
+.ph-stat-fill.p29 { clip: rect( 0%, 29%, 100%, 0% ); }
+.ph-stat-fill.p28 { clip: rect( 0%, 28%, 100%, 0% ); }
+.ph-stat-fill.p27 { clip: rect( 0%, 27%, 100%, 0% ); }
+.ph-stat-fill.p26 { clip: rect( 0%, 26%, 100%, 0% ); }
+.ph-stat-fill.p25 { clip: rect( 0%, 25%, 100%, 0% ); }
+.ph-stat-fill.p24 { clip: rect( 0%, 24%, 100%, 0% ); }
+.ph-stat-fill.p23 { clip: rect( 0%, 23%, 100%, 0% ); }
+.ph-stat-fill.p22 { clip: rect( 0%, 22%, 100%, 0% ); }
+.ph-stat-fill.p21 { clip: rect( 0%, 21%, 100%, 0% ); }
+.ph-stat-fill.p20 { clip: rect( 0%, 20%, 100%, 0% ); }
+.ph-stat-fill.p19 { clip: rect( 0%, 19%, 100%, 0% ); }
+.ph-stat-fill.p18 { clip: rect( 0%, 18%, 100%, 0% ); }
+.ph-stat-fill.p17 { clip: rect( 0%, 17%, 100%, 0% ); }
+.ph-stat-fill.p16 { clip: rect( 0%, 16%, 100%, 0% ); }
+.ph-stat-fill.p15 { clip: rect( 0%, 15%, 100%, 0% ); }
+.ph-stat-fill.p14 { clip: rect( 0%, 14%, 100%, 0% ); }
+.ph-stat-fill.p13 { clip: rect( 0%, 13%, 100%, 0% ); }
+.ph-stat-fill.p12 { clip: rect( 0%, 12%, 100%, 0% ); }
+.ph-stat-fill.p11 { clip: rect( 0%, 11%, 100%, 0% ); }
+.ph-stat-fill.p10 { clip: rect( 0%, 10%, 100%, 0% ); }
+.ph-stat-fill.p9 { clip: rect( 0%, 9%, 100%, 0% ); }
+.ph-stat-fill.p8 { clip: rect( 0%, 8%, 100%, 0% ); }
+.ph-stat-fill.p7 { clip: rect( 0%, 7%, 100%, 0% ); }
+.ph-stat-fill.p6 { clip: rect( 0%, 6%, 100%, 0% ); }
+.ph-stat-fill.p5 { clip: rect( 0%, 5%, 100%, 0% ); }
+.ph-stat-fill.p4 { clip: rect( 0%, 4%, 100%, 0% ); }
+.ph-stat-fill.p3 { clip: rect( 0%, 3%, 100%, 0% ); }
+.ph-stat-fill.p2 { clip: rect( 0%, 2%, 100%, 0% ); }
+.ph-stat-fill.p1 { clip: rect( 0%, 1%, 100%, 0% ); }
+.ph-stat-fill.p0 { clip: rect( 0%, 0%, 100%, 0% ); }
+
+/* ============================================================================
+   Tracker - top-right card; tasks only (no completers).
+   ============================================================================ */
+
+.Tracker
+{
+	width: 420px;
+	horizontal-align: right;
+	vertical-align: top;
+	margin-top: 10px;
+	margin-right: 10px;
+	z-index: 100;
+}
+
+.TrackerContent
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: down;
+	overflow: noclip noclip;
+	z-index: 2;
+}
+
+.TrackerBody
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: down;
+	padding: 8px 12px 6px 14px;
+}
+
+.TrackerTimerRow
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: right;
+	margin-bottom: 8px;
+}
+
+.TrackerTimerRow.is-off
+{
+	visibility: collapse;
+}
+
+.TrackerTimerPadL
+{
+	width: 14px;
+	height: 1px;
+}
+
+.TrackerTimerPadR
+{
+	width: 12px;
+	height: 1px;
+}
+
+.TrackerTimer
+{
+	width: fill-parent-flow( 1.0 );
+}
+
+.TrackerTimer .ph-stat-fill
+{
+	transition-duration: 0s;
+}
+
+.TrackerRow
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: down;
+	padding: 8px 8px 8px 8px;
+	margin-bottom: 6px;
+	background-color: #ffffff0d;
+	border: 1px solid #ffffff14;
+	border-radius: 3px;
+}
+
+.TrackerRow.is-off
+{
+	visibility: collapse;
+}
+
+Label.TrackerCount
+{
+	margin-left: 10px;
+}
+
+.Tracker .ph-titlebar
+{
+	height: fit-children;
+	min-height: 44px;
+	padding-top: 8px;
+	padding-bottom: 8px;
+}
+
+.TrackerTitleStack
+{
+	width: fill-parent-flow( 1.0 );
+	height: fit-children;
+	flow-children: down;
+	vertical-align: middle;
+}
+
+.Tracker .ph-title
+{
+	width: 100%;
+}
+
+Label.TrackerHint
+{
+	width: 100%;
+	font-size: 14;
+	letter-spacing: 0px;
+	text-transform: none;
+	color: #9aa2ac;
+	margin-top: 2px;
+}
+
+Label.TrackerHint.is-off
+{
+	visibility: collapse;
+}
+
+.TrackerRow .ph-stat-lab
+{
+	height: 16px;
+	margin-bottom: 4px;
+}
+
+.TrackerRow Label.ph-stat-name
+{
+	font-size: 14;
+	letter-spacing: 1.2px;
+	color: #e8eef4;
+}
+
+.TrackerRow Label.ph-stat-val
+{
+	width: 52px;
+	font-size: 14;
+	color: #f0a531;
+}
+
+.TrackerRow .MenuRowHead
+{
+	margin-bottom: 6px;
+}
+
+.TrackerRowSplit
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: down;
+}
+
+.TrackerRow .MenuTasksCol,
+.TrackerRow .MenuByCol
+{
+	width: 100%;
+	margin-right: 0px;
+	margin-bottom: 4px;
+	padding: 6px 8px 6px 8px;
+}
+
+.TrackerRow .MenuByCol
+{
+	margin-bottom: 0px;
+}
+
+/* ============================================================================
+   Menu - fullscreen frame (.ph-fs), list 2/3 + scoreboard 1/3.
+   Challenge cards: compact header + 50/50 tasks|completers (2-col names).
+   List paginated (4 cards, equal height, no scroll); scoreboard keeps ScoreTitleBar pagination.
+   ============================================================================ */
+
+.MenuRoot
+{
+	z-index: 300;
+}
+
+.MenuContent
+{
+	width: 100%;
+	height: 100%;
+	flow-children: down;
+	z-index: 2;
+}
+
+.MenuRoot .ph-titlebar
+{
+	padding-right: 12px;
+}
+
+.MenuBody
+{
+	width: 100%;
+	height: fill-parent-flow( 1.0 );
+	flow-children: down;
+	padding-left: 18px;
+	padding-right: 18px;
+	padding-top: 12px;
+	padding-bottom: 12px;
+}
+
+/* fill-parent-flow leaves room for MenuCredit under the columns. */
+.MenuColumns
+{
+	width: 100%;
+	height: fill-parent-flow( 1.0 );
+	flow-children: right;
+}
+
+.MenuList
+{
+	width: fill-parent-flow( 2.0 );
+	height: 100%;
+	flow-children: down;
+	margin-right: 18px;
+	overflow: clip;
+}
+
+.MenuScore
+{
+	width: fill-parent-flow( 1.0 );
+	height: 100%;
+	flow-children: down;
+	overflow: clip;
+}
+
+.MenuScore.is-off
+{
+	visibility: collapse;
+}
+
+.MenuFilterBar
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: right;
+	margin-bottom: 10px;
+}
+
+.MenuFilterBtn
+{
+	height: 26px;
+	flow-children: none;
+	padding-left: 10px;
+	padding-right: 10px;
+	margin-right: 6px;
+	background-color: #ffffff0d;
+	border: 1px solid #00000000;
+	border-radius: 3px;
+	wash-color: none;
+	transition-property: background-color, border;
+	transition-duration: 0.15s;
+}
+
+.MenuFilterBtn:hover
+{
+	background-color: #ffffff1c;
+	border: 1px solid #f0a53166;
+	cursor: pointer;
+	sound: "UIPanorama.generic_button_rollover";
+}
+
+.MenuFilterBtn:active
+{
+	background-color: #ffffff2e;
+	border: 1px solid #f0a531;
+	sound: "UIPanorama.generic_button_press";
+}
+
+.MenuFilterBtn.active
+{
+	background-color: #f0a53122;
+	border: 1px solid #f0a531;
+}
+
+.MenuFilterBtn.active:hover
+{
+	background-color: #f0a53144;
+	border: 1px solid #f0a531;
+}
+
+.MenuFilterBtn.is-disabled
+{
+	opacity: 0.35;
+	wash-color: #808080;
+}
+
+.MenuFilterBtn.is-disabled:hover
+{
+	background-color: #ffffff0d;
+	border: 1px solid #00000000;
+	cursor: default;
+}
+
+.ScoreFilterBar
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: right;
+	margin-bottom: 8px;
+}
+
+.ScoreFilterGroup
+{
+	width: fit-children;
+	height: fit-children;
+	flow-children: right;
+}
+
+.ScoreFilterSpacer
+{
+	width: fill-parent-flow( 1.0 );
+	height: 1px;
+}
+
+.ScoreFilterGroup .MenuFilterBtn:last-child
+{
+	margin-right: 0px;
+}
+
+Label.MenuFilterLabel
+{
+	font-size: 14;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	color: #e8eef4;
+	white-space: nowrap;
+	vertical-align: middle;
+}
+
+.MenuRows
+{
+	width: 100%;
+	height: fill-parent-flow( 1.0 );
+	flow-children: down;
+	overflow: clip;
+}
+
+.MenuRow
+{
+	width: 100%;
+	height: fill-parent-flow( 1.0 );
+	flow-children: down;
+	padding: 6px 8px 10px 8px;
+	background-color: #ffffff0d;
+	border: 1px solid #ffffff14;
+	border-radius: 3px;
+	overflow: clip;
+}
+
+.MenuRow.is-off
+{
+	visibility: collapse;
+}
+
+.MenuRow.empty
+{
+	visibility: collapse;
+}
+
+.MenuRowHead
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: down;
+	margin-bottom: 6px;
+}
+
+.MenuRow .ph-stat-lab
+{
+	height: 16px;
+	margin-bottom: 4px;
+}
+
+.MenuRow Label.ph-stat-name
+{
+	font-size: 14;
+	letter-spacing: 1.2px;
+	color: #e8eef4;
+}
+
+.MenuRow Label.ph-stat-val
+{
+	width: 56px;
+	font-size: 14;
+	color: #f0a531;
+}
+
+.MenuRow Label.ph-stat-when
+{
+	width: 150px;
+	font-size: 14;
+	color: #9aa2ac;
+}
+
+.MenuRowSplit
+{
+	width: 100%;
+	height: fill-parent-flow( 1.0 );
+	flow-children: right;
+	overflow: clip;
+}
+
+.MenuTasksCol,
+.MenuByCol
+{
+	width: fill-parent-flow( 1.0 );
+	height: 100%;
+	flow-children: down;
+	padding: 6px 8px 6px 8px;
+	background-color: #0b0f14aa;
+	border: 1px solid #ffffff14;
+	border-radius: 3px;
+	overflow: clip;
+}
+
+.MenuTasksCol
+{
+	margin-right: 6px;
+}
+
+Label.MenuColHead
+{
+	width: 100%;
+	font-size: 14;
+	letter-spacing: 1.2px;
+	text-transform: uppercase;
+	color: #f0a531;
+	margin-bottom: 4px;
+}
+
+.MenuTasks,
+.MenuByList
+{
+	width: 100%;
+	height: fill-parent-flow( 1.0 );
+	flow-children: down;
+	overflow: clip;
+}
+
+.MenuTask
+{
+	width: 100%;
+	height: 20px;
+	flow-children: right;
+	margin-bottom: 2px;
+	padding-left: 5px;
+	padding-right: 6px;
+	background-color: #ffffff0a;
+	border: 1px solid #ffffff10;
+	border-radius: 2px;
+}
+
+.MenuTask.is-off
+{
+	visibility: collapse;
+}
+
+.MenuTask.is-done
+{
+	background-color: #9ccf4f18;
+	border: 1px solid #9ccf4f44;
+}
+
+.MenuTask.is-broken
+{
+	background-color: #e05a5a22;
+	border: 1px solid #e05a5a66;
+}
+
+.MenuTaskMark
+{
+	width: 3px;
+	height: 12px;
+	margin-right: 6px;
+	vertical-align: middle;
+	background-color: #f0a531;
+	border-radius: 1px;
+}
+
+.MenuTask.is-done .MenuTaskMark
+{
+	background-color: #9ccf4f;
+}
+
+.MenuTask.is-broken .MenuTaskMark
+{
+	background-color: #e05a5a;
+}
+
+Label.MenuTaskLabel
+{
+	width: fill-parent-flow( 1.0 );
+	height: 100%;
+	font-size: 14;
+	letter-spacing: 0.4px;
+	color: #c5ccd4;
+	vertical-align: middle;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.MenuTask.is-done Label.MenuTaskLabel
+{
+	color: #9ccf4f;
+}
+
+.MenuTask.is-broken Label.MenuTaskLabel
+{
+	color: #e05a5a;
+}
+
+.MenuByRow
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: right;
+	margin-bottom: 2px;
+}
+
+.MenuBy
+{
+	width: fill-parent-flow( 1.0 );
+	height: 20px;
+	flow-children: right;
+	padding-left: 6px;
+	padding-right: 6px;
+	background-color: #ffffff0a;
+	border: 1px solid #ffffff10;
+	border-radius: 2px;
+}
+
+.MenuBy.is-off
+{
+	visibility: collapse;
+}
+
+.MenuByRow .MenuBy
+{
+	margin-left: 3px;
+	margin-right: 0px;
+}
+
+.MenuByRow .MenuBy:first-child,
+.MenuByRow .MenuBy.is-off
+{
+	margin-left: 0px;
+}
+
+.MenuBy.is-empty
+{
+	background-color: #00000000;
+	border: 1px solid #00000000;
+}
+
+.MenuBy.is-you
+{
+	background-color: #3d8f4522;
+	border: 1px solid #3d8f45;
+}
+
+.MenuBy.is-you Label.MenuByLabel
+{
+	color: #6fdc78;
+}
+
+Label.MenuByLabel
+{
+	width: 100%;
+	height: 100%;
+	font-size: 14;
+	color: #e8eef4;
+	vertical-align: middle;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.MenuBy.is-empty Label.MenuByLabel
+{
+	color: #8b8f94;
+}
+
+.MenuEmpty
+{
+	width: 100%;
+	font-size: 14;
+	color: #8b8f94;
+	text-align: center;
+	margin-top: 12px;
+}
+
+.MenuEmpty.is-off
+{
+	visibility: collapse;
+}
+
+/* Hardcoded English credit in menu.xml - not a dialog variable. */
+Label.MenuCredit
+{
+	width: 100%;
+	height: fit-children;
+	margin-top: 8px;
+	padding-top: 8px;
+	border-top: 1px solid #d9d9d90a;
+	font-size: 14;
+	color: #8b8f94;
+	text-align: center;
+	text-overflow: shrink;
+}
+
+/* prev | [pad] title… (page) [pad] | next - equal pads center the pair; title ellipsizes; page never shrinks. */
+.ScoreTitleBar
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: right;
+	margin-bottom: 6px;
+	overflow: clip;
+}
+
+.ScoreTitleCenter
+{
+	width: fill-parent-flow( 1.0 );
+	height: fit-children;
+	flow-children: none;
+	margin-left: 6px;
+	margin-right: 6px;
+	vertical-align: middle;
+	overflow: clip;
+}
+
+.ScoreTitleCluster
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: right;
+	vertical-align: middle;
+	overflow: clip;
+}
+
+.ScoreTitlePad
+{
+	width: fill-parent-flow( 1.0 );
+	height: 1px;
+}
+
+Label.ScoreTitle
+{
+	width: fill-parent-flow( 1.0 );
+	font-size: 15;
+	letter-spacing: 1.6px;
+	text-transform: uppercase;
+	color: #e8eef4;
+	text-align: right;
+	vertical-align: middle;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	margin-right: 6px;
+}
+
+Label.ScoreTitlePage
+{
+	width: fit-children;
+	height: fit-children;
+	font-size: 15;
+	letter-spacing: 1.6px;
+	color: #f0a531;
+	text-align: center;
+	vertical-align: middle;
+	white-space: nowrap;
+}
+
+.MenuTitleNav
+{
+	width: 36px;
+	height: 28px;
+	flow-children: none;
+	vertical-align: middle;
+	background-color: #ffffff0d;
+	border: 1px solid #00000000;
+	border-radius: 3px;
+	transition-property: background-color, border;
+	transition-duration: 0.15s;
+}
+
+.MenuTitleNav:hover
+{
+	background-color: #ffffff1c;
+	border: 1px solid #f0a53166;
+	cursor: pointer;
+	sound: "UIPanorama.generic_button_rollover";
+}
+
+.MenuTitleNav:active
+{
+	background-color: #ffffff2e;
+	border: 1px solid #f0a531;
+	sound: "UIPanorama.generic_button_press";
+}
+
+.MenuTitleNav.is-disabled,
+.MenuTitleNav.is-disabled:hover
+{
+	opacity: 0.35;
+	border: 1px solid #00000000;
+	background-color: #ffffff0d;
+	cursor: default;
+	sound: "";
+}
+
+.ScoreSelfCard
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: down;
+	padding: 12px 12px 12px 12px;
+	margin-bottom: 10px;
+	background-color: #f0a53118;
+	border: 1px solid #f0a531;
+	border-radius: 3px;
+}
+
+.ScoreSelfCard.empty
+{
+	visibility: collapse;
+}
+
+.ScoreSelfTop
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: right;
+	margin-bottom: 10px;
+}
+
+Label.ScoreSelfRank
+{
+	width: 48px;
+	font-size: 18;
+	color: #f0a531;
+	vertical-align: middle;
+}
+
+Label.ScoreSelfName
+{
+	width: fill-parent-flow( 1.0 );
+	font-size: 15;
+	color: #ffffff;
+	vertical-align: middle;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.ScoreSelfStats
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: right;
+}
+
+.ScoreSelfStat
+{
+	width: fill-parent-flow( 1.0 );
+	height: fit-children;
+	flow-children: down;
+	padding: 8px 10px 8px 10px;
+	margin-right: 6px;
+	background-color: #0b0f14aa;
+	border: 1px solid #ffffff14;
+	border-radius: 3px;
+}
+
+.ScoreSelfStat:last-child
+{
+	margin-right: 0px;
+}
+
+Label.ScoreSelfStatLabel
+{
+	width: 100%;
+	font-size: 14;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	color: #9aa2ac;
+	margin-bottom: 4px;
+}
+
+Label.ScoreSelfStatVal
+{
+	width: 100%;
+	font-size: 16;
+	color: #f0a531;
+}
+
+.ScoreHeader
+{
+	width: 100%;
+	height: 32px;
+	flow-children: right;
+	padding: 0px 10px 0px 10px;
+	margin-bottom: 0px;
+	background-color: #ffffff14;
+	border-top: 1px solid #f0a53166;
+	border-bottom: 1px solid #f0a53166;
+}
+
+Label.ScoreHead
+{
+	font-size: 14;
+	letter-spacing: 1.2px;
+	text-transform: uppercase;
+	color: #9aa2ac;
+	vertical-align: middle;
+}
+
+Label.ScoreHead.sort-active
+{
+	color: #f0a531;
+}
+
+.ScoreRows
+{
+	width: 100%;
+	height: fill-parent-flow( 1.0 );
+	flow-children: down;
+	overflow: squish scroll;
+	border: 1px solid #ffffff14;
+	border-top: 1px solid #00000000;
+	background-color: #0b0f1488;
+}
+
+.ScoreRow
+{
+	width: 100%;
+	height: 32px;
+	flow-children: right;
+	padding: 0px 10px 0px 10px;
+	margin-bottom: 0px;
+	background-color: #00000000;
+	border: 1px solid #00000000;
+	border-bottom: 1px solid #ffffff0a;
+	border-radius: 0px;
+	wash-color: none;
+	transition-property: background-color, border;
+	transition-duration: 0.15s;
+}
+
+.ScoreRow.alt
+{
+	background-color: #ffffff08;
+}
+
+.ScoreRow.empty,
+.ScoreRow.is-off
+{
+	visibility: collapse;
+}
+
+.ScoreRow:hover
+{
+	background-color: #ffffff14;
+	border: 1px solid #f0a53166;
+	border-bottom: 1px solid #f0a53166;
+}
+
+.ScoreRow:active
+{
+	background-color: #ffffff1e;
+	border: 1px solid #f0a531;
+	border-bottom: 1px solid #f0a531;
+	sound: "UIPanorama.generic_button_press";
+}
+
+.ScoreRow.is-self
+{
+	background-color: #f0a53122;
+	border-bottom: 1px solid #f0a53144;
+}
+
+.ScoreRow.is-viewing
+{
+	background-color: #f0a53122;
+	border: 1px solid #f0a531;
+	border-bottom: 1px solid #f0a531;
+}
+
+.ScoreRow.is-viewing:hover
+{
+	background-color: #f0a53144;
+	border: 1px solid #f0a531;
+	border-bottom: 1px solid #f0a531;
+}
+
+Label.ScoreRank
+{
+	width: 36px;
+	font-size: 14;
+	color: #f0a531;
+	vertical-align: middle;
+}
+
+Label.ScoreName
+{
+	width: fill-parent-flow( 1.0 );
+	font-size: 14;
+	color: #e8eef4;
+	vertical-align: middle;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+Label.ScoreCur
+{
+	width: 96px;
+	font-size: 14;
+	color: #f0a531;
+	text-align: right;
+	vertical-align: middle;
+	margin-right: 10px;
+}
+
+Label.ScoreTot
+{
+	width: 72px;
+	font-size: 14;
+	color: #ffffff;
+	text-align: right;
+	vertical-align: middle;
+}
+
+.ScoreHeader Label.ScoreCur,
+.ScoreHeader Label.ScoreTot
+{
+	font-size: 14;
+	color: #9aa2ac;
+}
+
+.ScoreHeader Label.ScoreCur.sort-active,
+.ScoreHeader Label.ScoreTot.sort-active
+{
+	color: #f0a531;
+}
+
+/* >>> hud_themes:begin */
+/* Accent themes (gui.theme). Generated from tools/hud_themes.py - do not edit by hand. */
+/* Gold is the baked-in default; other themes override accents. CT/T = stock CS2 colours. */
+
+.theme-red .ph-bar { background-color: #e05a5a; }
+.theme-red .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #a83a3a ), to( #e05a5a ) ); }
+.theme-red Label.ph-stat-val,
+.theme-red Label.ScoreSelfRank,
+.theme-red Label.ScoreSelfStatVal,
+.theme-red Label.ScoreRank,
+.theme-red .ScoreRow Label.ScoreCur,
+.theme-red Label.ScoreTitlePage,
+.theme-red Label.ScoreHead.sort-active
+{ color: #e05a5a; }
+.theme-red .MenuFilterBtn.active { background-color: #e05a5a22; border: 1px solid #e05a5a; }
+.theme-red .MenuFilterBtn.active:hover { background-color: #e05a5a44; border: 1px solid #e05a5a; }
+.theme-red .MenuFilterBtn:hover { border: 1px solid #e05a5a66; }
+.theme-red .MenuFilterBtn:active { border: 1px solid #e05a5a; }
+.theme-red .MenuTitleNav:hover { border: 1px solid #e05a5a66; }
+.theme-red .MenuTitleNav:active { border: 1px solid #e05a5a; }
+.theme-red .ScoreSelfCard { background-color: #e05a5a18; border: 1px solid #e05a5a; }
+.theme-red .ScoreRow:hover { border: 1px solid #e05a5a66; border-bottom: 1px solid #e05a5a66; }
+.theme-red .ScoreRow:active { border: 1px solid #e05a5a; border-bottom: 1px solid #e05a5a; }
+.theme-red .ScoreRow.is-self { background-color: #e05a5a22; border-bottom: 1px solid #e05a5a44; }
+.theme-red .ScoreRow.is-viewing { background-color: #e05a5a22; border: 1px solid #e05a5a; border-bottom: 1px solid #e05a5a; }
+.theme-red .ScoreRow.is-viewing:hover { background-color: #e05a5a44; border: 1px solid #e05a5a; border-bottom: 1px solid #e05a5a; }
+.theme-red .ScoreHeader { border-top: 1px solid #e05a5a66; border-bottom: 1px solid #e05a5a66; }
+.theme-red .MenuTask.is-done .MenuTaskMark { background-color: #e05a5a; }
+
+.theme-coral .ph-bar { background-color: #ff7a59; }
+.theme-coral .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #c44830 ), to( #ff7a59 ) ); }
+.theme-coral Label.ph-stat-val,
+.theme-coral Label.ScoreSelfRank,
+.theme-coral Label.ScoreSelfStatVal,
+.theme-coral Label.ScoreRank,
+.theme-coral .ScoreRow Label.ScoreCur,
+.theme-coral Label.ScoreTitlePage,
+.theme-coral Label.ScoreHead.sort-active
+{ color: #ff7a59; }
+.theme-coral .MenuFilterBtn.active { background-color: #ff7a5922; border: 1px solid #ff7a59; }
+.theme-coral .MenuFilterBtn.active:hover { background-color: #ff7a5944; border: 1px solid #ff7a59; }
+.theme-coral .MenuFilterBtn:hover { border: 1px solid #ff7a5966; }
+.theme-coral .MenuFilterBtn:active { border: 1px solid #ff7a59; }
+.theme-coral .MenuTitleNav:hover { border: 1px solid #ff7a5966; }
+.theme-coral .MenuTitleNav:active { border: 1px solid #ff7a59; }
+.theme-coral .ScoreSelfCard { background-color: #ff7a5918; border: 1px solid #ff7a59; }
+.theme-coral .ScoreRow:hover { border: 1px solid #ff7a5966; border-bottom: 1px solid #ff7a5966; }
+.theme-coral .ScoreRow:active { border: 1px solid #ff7a59; border-bottom: 1px solid #ff7a59; }
+.theme-coral .ScoreRow.is-self { background-color: #ff7a5922; border-bottom: 1px solid #ff7a5944; }
+.theme-coral .ScoreRow.is-viewing { background-color: #ff7a5922; border: 1px solid #ff7a59; border-bottom: 1px solid #ff7a59; }
+.theme-coral .ScoreRow.is-viewing:hover { background-color: #ff7a5944; border: 1px solid #ff7a59; border-bottom: 1px solid #ff7a59; }
+.theme-coral .ScoreHeader { border-top: 1px solid #ff7a5966; border-bottom: 1px solid #ff7a5966; }
+.theme-coral .MenuTask.is-done .MenuTaskMark { background-color: #ff7a59; }
+
+.theme-orange .ph-bar { background-color: #ff8a3d; }
+.theme-orange .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #c45a1a ), to( #ff8a3d ) ); }
+.theme-orange Label.ph-stat-val,
+.theme-orange Label.ScoreSelfRank,
+.theme-orange Label.ScoreSelfStatVal,
+.theme-orange Label.ScoreRank,
+.theme-orange .ScoreRow Label.ScoreCur,
+.theme-orange Label.ScoreTitlePage,
+.theme-orange Label.ScoreHead.sort-active
+{ color: #ff8a3d; }
+.theme-orange .MenuFilterBtn.active { background-color: #ff8a3d22; border: 1px solid #ff8a3d; }
+.theme-orange .MenuFilterBtn.active:hover { background-color: #ff8a3d44; border: 1px solid #ff8a3d; }
+.theme-orange .MenuFilterBtn:hover { border: 1px solid #ff8a3d66; }
+.theme-orange .MenuFilterBtn:active { border: 1px solid #ff8a3d; }
+.theme-orange .MenuTitleNav:hover { border: 1px solid #ff8a3d66; }
+.theme-orange .MenuTitleNav:active { border: 1px solid #ff8a3d; }
+.theme-orange .ScoreSelfCard { background-color: #ff8a3d18; border: 1px solid #ff8a3d; }
+.theme-orange .ScoreRow:hover { border: 1px solid #ff8a3d66; border-bottom: 1px solid #ff8a3d66; }
+.theme-orange .ScoreRow:active { border: 1px solid #ff8a3d; border-bottom: 1px solid #ff8a3d; }
+.theme-orange .ScoreRow.is-self { background-color: #ff8a3d22; border-bottom: 1px solid #ff8a3d44; }
+.theme-orange .ScoreRow.is-viewing { background-color: #ff8a3d22; border: 1px solid #ff8a3d; border-bottom: 1px solid #ff8a3d; }
+.theme-orange .ScoreRow.is-viewing:hover { background-color: #ff8a3d44; border: 1px solid #ff8a3d; border-bottom: 1px solid #ff8a3d; }
+.theme-orange .ScoreHeader { border-top: 1px solid #ff8a3d66; border-bottom: 1px solid #ff8a3d66; }
+.theme-orange .MenuTask.is-done .MenuTaskMark { background-color: #ff8a3d; }
+
+.theme-copper .ph-bar { background-color: #e08a5a; }
+.theme-copper .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #a85a30 ), to( #e08a5a ) ); }
+.theme-copper Label.ph-stat-val,
+.theme-copper Label.ScoreSelfRank,
+.theme-copper Label.ScoreSelfStatVal,
+.theme-copper Label.ScoreRank,
+.theme-copper .ScoreRow Label.ScoreCur,
+.theme-copper Label.ScoreTitlePage,
+.theme-copper Label.ScoreHead.sort-active
+{ color: #e08a5a; }
+.theme-copper .MenuFilterBtn.active { background-color: #e08a5a22; border: 1px solid #e08a5a; }
+.theme-copper .MenuFilterBtn.active:hover { background-color: #e08a5a44; border: 1px solid #e08a5a; }
+.theme-copper .MenuFilterBtn:hover { border: 1px solid #e08a5a66; }
+.theme-copper .MenuFilterBtn:active { border: 1px solid #e08a5a; }
+.theme-copper .MenuTitleNav:hover { border: 1px solid #e08a5a66; }
+.theme-copper .MenuTitleNav:active { border: 1px solid #e08a5a; }
+.theme-copper .ScoreSelfCard { background-color: #e08a5a18; border: 1px solid #e08a5a; }
+.theme-copper .ScoreRow:hover { border: 1px solid #e08a5a66; border-bottom: 1px solid #e08a5a66; }
+.theme-copper .ScoreRow:active { border: 1px solid #e08a5a; border-bottom: 1px solid #e08a5a; }
+.theme-copper .ScoreRow.is-self { background-color: #e08a5a22; border-bottom: 1px solid #e08a5a44; }
+.theme-copper .ScoreRow.is-viewing { background-color: #e08a5a22; border: 1px solid #e08a5a; border-bottom: 1px solid #e08a5a; }
+.theme-copper .ScoreRow.is-viewing:hover { background-color: #e08a5a44; border: 1px solid #e08a5a; border-bottom: 1px solid #e08a5a; }
+.theme-copper .ScoreHeader { border-top: 1px solid #e08a5a66; border-bottom: 1px solid #e08a5a66; }
+.theme-copper .MenuTask.is-done .MenuTaskMark { background-color: #e08a5a; }
+
+.theme-gold .ph-bar { background-color: #f0a531; }
+.theme-gold .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #f0a531 ), to( #ffd27a ) ); }
+
+.theme-t .ph-bar { background-color: #eabe54; }
+.theme-t .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #c9a03a ), to( #eabe54 ) ); }
+.theme-t Label.ph-stat-val,
+.theme-t Label.ScoreSelfRank,
+.theme-t Label.ScoreSelfStatVal,
+.theme-t Label.ScoreRank,
+.theme-t .ScoreRow Label.ScoreCur,
+.theme-t Label.ScoreTitlePage,
+.theme-t Label.ScoreHead.sort-active
+{ color: #eabe54; }
+.theme-t .MenuFilterBtn.active { background-color: #eabe5422; border: 1px solid #eabe54; }
+.theme-t .MenuFilterBtn.active:hover { background-color: #eabe5444; border: 1px solid #eabe54; }
+.theme-t .MenuFilterBtn:hover { border: 1px solid #eabe5466; }
+.theme-t .MenuFilterBtn:active { border: 1px solid #eabe54; }
+.theme-t .MenuTitleNav:hover { border: 1px solid #eabe5466; }
+.theme-t .MenuTitleNav:active { border: 1px solid #eabe54; }
+.theme-t .ScoreSelfCard { background-color: #eabe5418; border: 1px solid #eabe54; }
+.theme-t .ScoreRow:hover { border: 1px solid #eabe5466; border-bottom: 1px solid #eabe5466; }
+.theme-t .ScoreRow:active { border: 1px solid #eabe54; border-bottom: 1px solid #eabe54; }
+.theme-t .ScoreRow.is-self { background-color: #eabe5422; border-bottom: 1px solid #eabe5444; }
+.theme-t .ScoreRow.is-viewing { background-color: #eabe5422; border: 1px solid #eabe54; border-bottom: 1px solid #eabe54; }
+.theme-t .ScoreRow.is-viewing:hover { background-color: #eabe5444; border: 1px solid #eabe54; border-bottom: 1px solid #eabe54; }
+.theme-t .ScoreHeader { border-top: 1px solid #eabe5466; border-bottom: 1px solid #eabe5466; }
+.theme-t .MenuTask.is-done .MenuTaskMark { background-color: #eabe54; }
+
+.theme-lime .ph-bar { background-color: #c6f04a; }
+.theme-lime .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #7aa81a ), to( #c6f04a ) ); }
+.theme-lime Label.ph-stat-val,
+.theme-lime Label.ScoreSelfRank,
+.theme-lime Label.ScoreSelfStatVal,
+.theme-lime Label.ScoreRank,
+.theme-lime .ScoreRow Label.ScoreCur,
+.theme-lime Label.ScoreTitlePage,
+.theme-lime Label.ScoreHead.sort-active
+{ color: #c6f04a; }
+.theme-lime .MenuFilterBtn.active { background-color: #c6f04a22; border: 1px solid #c6f04a; }
+.theme-lime .MenuFilterBtn.active:hover { background-color: #c6f04a44; border: 1px solid #c6f04a; }
+.theme-lime .MenuFilterBtn:hover { border: 1px solid #c6f04a66; }
+.theme-lime .MenuFilterBtn:active { border: 1px solid #c6f04a; }
+.theme-lime .MenuTitleNav:hover { border: 1px solid #c6f04a66; }
+.theme-lime .MenuTitleNav:active { border: 1px solid #c6f04a; }
+.theme-lime .ScoreSelfCard { background-color: #c6f04a18; border: 1px solid #c6f04a; }
+.theme-lime .ScoreRow:hover { border: 1px solid #c6f04a66; border-bottom: 1px solid #c6f04a66; }
+.theme-lime .ScoreRow:active { border: 1px solid #c6f04a; border-bottom: 1px solid #c6f04a; }
+.theme-lime .ScoreRow.is-self { background-color: #c6f04a22; border-bottom: 1px solid #c6f04a44; }
+.theme-lime .ScoreRow.is-viewing { background-color: #c6f04a22; border: 1px solid #c6f04a; border-bottom: 1px solid #c6f04a; }
+.theme-lime .ScoreRow.is-viewing:hover { background-color: #c6f04a44; border: 1px solid #c6f04a; border-bottom: 1px solid #c6f04a; }
+.theme-lime .ScoreHeader { border-top: 1px solid #c6f04a66; border-bottom: 1px solid #c6f04a66; }
+.theme-lime .MenuTask.is-done .MenuTaskMark { background-color: #c6f04a; }
+
+.theme-green .ph-bar { background-color: #6fdc78; }
+.theme-green .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #3d8f45 ), to( #6fdc78 ) ); }
+.theme-green Label.ph-stat-val,
+.theme-green Label.ScoreSelfRank,
+.theme-green Label.ScoreSelfStatVal,
+.theme-green Label.ScoreRank,
+.theme-green .ScoreRow Label.ScoreCur,
+.theme-green Label.ScoreTitlePage,
+.theme-green Label.ScoreHead.sort-active
+{ color: #6fdc78; }
+.theme-green .MenuFilterBtn.active { background-color: #6fdc7822; border: 1px solid #6fdc78; }
+.theme-green .MenuFilterBtn.active:hover { background-color: #6fdc7844; border: 1px solid #6fdc78; }
+.theme-green .MenuFilterBtn:hover { border: 1px solid #6fdc7866; }
+.theme-green .MenuFilterBtn:active { border: 1px solid #6fdc78; }
+.theme-green .MenuTitleNav:hover { border: 1px solid #6fdc7866; }
+.theme-green .MenuTitleNav:active { border: 1px solid #6fdc78; }
+.theme-green .ScoreSelfCard { background-color: #6fdc7818; border: 1px solid #6fdc78; }
+.theme-green .ScoreRow:hover { border: 1px solid #6fdc7866; border-bottom: 1px solid #6fdc7866; }
+.theme-green .ScoreRow:active { border: 1px solid #6fdc78; border-bottom: 1px solid #6fdc78; }
+.theme-green .ScoreRow.is-self { background-color: #6fdc7822; border-bottom: 1px solid #6fdc7844; }
+.theme-green .ScoreRow.is-viewing { background-color: #6fdc7822; border: 1px solid #6fdc78; border-bottom: 1px solid #6fdc78; }
+.theme-green .ScoreRow.is-viewing:hover { background-color: #6fdc7844; border: 1px solid #6fdc78; border-bottom: 1px solid #6fdc78; }
+.theme-green .ScoreHeader { border-top: 1px solid #6fdc7866; border-bottom: 1px solid #6fdc7866; }
+.theme-green .MenuTask.is-done .MenuTaskMark { background-color: #6fdc78; }
+
+.theme-teal .ph-bar { background-color: #2ec9a6; }
+.theme-teal .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #17856c ), to( #2ec9a6 ) ); }
+.theme-teal Label.ph-stat-val,
+.theme-teal Label.ScoreSelfRank,
+.theme-teal Label.ScoreSelfStatVal,
+.theme-teal Label.ScoreRank,
+.theme-teal .ScoreRow Label.ScoreCur,
+.theme-teal Label.ScoreTitlePage,
+.theme-teal Label.ScoreHead.sort-active
+{ color: #2ec9a6; }
+.theme-teal .MenuFilterBtn.active { background-color: #2ec9a622; border: 1px solid #2ec9a6; }
+.theme-teal .MenuFilterBtn.active:hover { background-color: #2ec9a644; border: 1px solid #2ec9a6; }
+.theme-teal .MenuFilterBtn:hover { border: 1px solid #2ec9a666; }
+.theme-teal .MenuFilterBtn:active { border: 1px solid #2ec9a6; }
+.theme-teal .MenuTitleNav:hover { border: 1px solid #2ec9a666; }
+.theme-teal .MenuTitleNav:active { border: 1px solid #2ec9a6; }
+.theme-teal .ScoreSelfCard { background-color: #2ec9a618; border: 1px solid #2ec9a6; }
+.theme-teal .ScoreRow:hover { border: 1px solid #2ec9a666; border-bottom: 1px solid #2ec9a666; }
+.theme-teal .ScoreRow:active { border: 1px solid #2ec9a6; border-bottom: 1px solid #2ec9a6; }
+.theme-teal .ScoreRow.is-self { background-color: #2ec9a622; border-bottom: 1px solid #2ec9a644; }
+.theme-teal .ScoreRow.is-viewing { background-color: #2ec9a622; border: 1px solid #2ec9a6; border-bottom: 1px solid #2ec9a6; }
+.theme-teal .ScoreRow.is-viewing:hover { background-color: #2ec9a644; border: 1px solid #2ec9a6; border-bottom: 1px solid #2ec9a6; }
+.theme-teal .ScoreHeader { border-top: 1px solid #2ec9a666; border-bottom: 1px solid #2ec9a666; }
+.theme-teal .MenuTask.is-done .MenuTaskMark { background-color: #2ec9a6; }
+
+.theme-cyan .ph-bar { background-color: #3ee0f0; }
+.theme-cyan .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #1a9bb0 ), to( #3ee0f0 ) ); }
+.theme-cyan Label.ph-stat-val,
+.theme-cyan Label.ScoreSelfRank,
+.theme-cyan Label.ScoreSelfStatVal,
+.theme-cyan Label.ScoreRank,
+.theme-cyan .ScoreRow Label.ScoreCur,
+.theme-cyan Label.ScoreTitlePage,
+.theme-cyan Label.ScoreHead.sort-active
+{ color: #3ee0f0; }
+.theme-cyan .MenuFilterBtn.active { background-color: #3ee0f022; border: 1px solid #3ee0f0; }
+.theme-cyan .MenuFilterBtn.active:hover { background-color: #3ee0f044; border: 1px solid #3ee0f0; }
+.theme-cyan .MenuFilterBtn:hover { border: 1px solid #3ee0f066; }
+.theme-cyan .MenuFilterBtn:active { border: 1px solid #3ee0f0; }
+.theme-cyan .MenuTitleNav:hover { border: 1px solid #3ee0f066; }
+.theme-cyan .MenuTitleNav:active { border: 1px solid #3ee0f0; }
+.theme-cyan .ScoreSelfCard { background-color: #3ee0f018; border: 1px solid #3ee0f0; }
+.theme-cyan .ScoreRow:hover { border: 1px solid #3ee0f066; border-bottom: 1px solid #3ee0f066; }
+.theme-cyan .ScoreRow:active { border: 1px solid #3ee0f0; border-bottom: 1px solid #3ee0f0; }
+.theme-cyan .ScoreRow.is-self { background-color: #3ee0f022; border-bottom: 1px solid #3ee0f044; }
+.theme-cyan .ScoreRow.is-viewing { background-color: #3ee0f022; border: 1px solid #3ee0f0; border-bottom: 1px solid #3ee0f0; }
+.theme-cyan .ScoreRow.is-viewing:hover { background-color: #3ee0f044; border: 1px solid #3ee0f0; border-bottom: 1px solid #3ee0f0; }
+.theme-cyan .ScoreHeader { border-top: 1px solid #3ee0f066; border-bottom: 1px solid #3ee0f066; }
+.theme-cyan .MenuTask.is-done .MenuTaskMark { background-color: #3ee0f0; }
+
+.theme-blue .ph-bar { background-color: #5b8cff; }
+.theme-blue .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #2d56c4 ), to( #5b8cff ) ); }
+.theme-blue Label.ph-stat-val,
+.theme-blue Label.ScoreSelfRank,
+.theme-blue Label.ScoreSelfStatVal,
+.theme-blue Label.ScoreRank,
+.theme-blue .ScoreRow Label.ScoreCur,
+.theme-blue Label.ScoreTitlePage,
+.theme-blue Label.ScoreHead.sort-active
+{ color: #5b8cff; }
+.theme-blue .MenuFilterBtn.active { background-color: #5b8cff22; border: 1px solid #5b8cff; }
+.theme-blue .MenuFilterBtn.active:hover { background-color: #5b8cff44; border: 1px solid #5b8cff; }
+.theme-blue .MenuFilterBtn:hover { border: 1px solid #5b8cff66; }
+.theme-blue .MenuFilterBtn:active { border: 1px solid #5b8cff; }
+.theme-blue .MenuTitleNav:hover { border: 1px solid #5b8cff66; }
+.theme-blue .MenuTitleNav:active { border: 1px solid #5b8cff; }
+.theme-blue .ScoreSelfCard { background-color: #5b8cff18; border: 1px solid #5b8cff; }
+.theme-blue .ScoreRow:hover { border: 1px solid #5b8cff66; border-bottom: 1px solid #5b8cff66; }
+.theme-blue .ScoreRow:active { border: 1px solid #5b8cff; border-bottom: 1px solid #5b8cff; }
+.theme-blue .ScoreRow.is-self { background-color: #5b8cff22; border-bottom: 1px solid #5b8cff44; }
+.theme-blue .ScoreRow.is-viewing { background-color: #5b8cff22; border: 1px solid #5b8cff; border-bottom: 1px solid #5b8cff; }
+.theme-blue .ScoreRow.is-viewing:hover { background-color: #5b8cff44; border: 1px solid #5b8cff; border-bottom: 1px solid #5b8cff; }
+.theme-blue .ScoreHeader { border-top: 1px solid #5b8cff66; border-bottom: 1px solid #5b8cff66; }
+.theme-blue .MenuTask.is-done .MenuTaskMark { background-color: #5b8cff; }
+
+.theme-ct .ph-bar { background-color: #96c8fa; }
+.theme-ct .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #5a9fd4 ), to( #96c8fa ) ); }
+.theme-ct Label.ph-stat-val,
+.theme-ct Label.ScoreSelfRank,
+.theme-ct Label.ScoreSelfStatVal,
+.theme-ct Label.ScoreRank,
+.theme-ct .ScoreRow Label.ScoreCur,
+.theme-ct Label.ScoreTitlePage,
+.theme-ct Label.ScoreHead.sort-active
+{ color: #96c8fa; }
+.theme-ct .MenuFilterBtn.active { background-color: #96c8fa22; border: 1px solid #96c8fa; }
+.theme-ct .MenuFilterBtn.active:hover { background-color: #96c8fa44; border: 1px solid #96c8fa; }
+.theme-ct .MenuFilterBtn:hover { border: 1px solid #96c8fa66; }
+.theme-ct .MenuFilterBtn:active { border: 1px solid #96c8fa; }
+.theme-ct .MenuTitleNav:hover { border: 1px solid #96c8fa66; }
+.theme-ct .MenuTitleNav:active { border: 1px solid #96c8fa; }
+.theme-ct .ScoreSelfCard { background-color: #96c8fa18; border: 1px solid #96c8fa; }
+.theme-ct .ScoreRow:hover { border: 1px solid #96c8fa66; border-bottom: 1px solid #96c8fa66; }
+.theme-ct .ScoreRow:active { border: 1px solid #96c8fa; border-bottom: 1px solid #96c8fa; }
+.theme-ct .ScoreRow.is-self { background-color: #96c8fa22; border-bottom: 1px solid #96c8fa44; }
+.theme-ct .ScoreRow.is-viewing { background-color: #96c8fa22; border: 1px solid #96c8fa; border-bottom: 1px solid #96c8fa; }
+.theme-ct .ScoreRow.is-viewing:hover { background-color: #96c8fa44; border: 1px solid #96c8fa; border-bottom: 1px solid #96c8fa; }
+.theme-ct .ScoreHeader { border-top: 1px solid #96c8fa66; border-bottom: 1px solid #96c8fa66; }
+.theme-ct .MenuTask.is-done .MenuTaskMark { background-color: #96c8fa; }
+
+.theme-purple .ph-bar { background-color: #b07cff; }
+.theme-purple .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #7a4fc4 ), to( #b07cff ) ); }
+.theme-purple Label.ph-stat-val,
+.theme-purple Label.ScoreSelfRank,
+.theme-purple Label.ScoreSelfStatVal,
+.theme-purple Label.ScoreRank,
+.theme-purple .ScoreRow Label.ScoreCur,
+.theme-purple Label.ScoreTitlePage,
+.theme-purple Label.ScoreHead.sort-active
+{ color: #b07cff; }
+.theme-purple .MenuFilterBtn.active { background-color: #b07cff22; border: 1px solid #b07cff; }
+.theme-purple .MenuFilterBtn.active:hover { background-color: #b07cff44; border: 1px solid #b07cff; }
+.theme-purple .MenuFilterBtn:hover { border: 1px solid #b07cff66; }
+.theme-purple .MenuFilterBtn:active { border: 1px solid #b07cff; }
+.theme-purple .MenuTitleNav:hover { border: 1px solid #b07cff66; }
+.theme-purple .MenuTitleNav:active { border: 1px solid #b07cff; }
+.theme-purple .ScoreSelfCard { background-color: #b07cff18; border: 1px solid #b07cff; }
+.theme-purple .ScoreRow:hover { border: 1px solid #b07cff66; border-bottom: 1px solid #b07cff66; }
+.theme-purple .ScoreRow:active { border: 1px solid #b07cff; border-bottom: 1px solid #b07cff; }
+.theme-purple .ScoreRow.is-self { background-color: #b07cff22; border-bottom: 1px solid #b07cff44; }
+.theme-purple .ScoreRow.is-viewing { background-color: #b07cff22; border: 1px solid #b07cff; border-bottom: 1px solid #b07cff; }
+.theme-purple .ScoreRow.is-viewing:hover { background-color: #b07cff44; border: 1px solid #b07cff; border-bottom: 1px solid #b07cff; }
+.theme-purple .ScoreHeader { border-top: 1px solid #b07cff66; border-bottom: 1px solid #b07cff66; }
+.theme-purple .MenuTask.is-done .MenuTaskMark { background-color: #b07cff; }
+
+.theme-magenta .ph-bar { background-color: #e85dff; }
+.theme-magenta .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #a030c0 ), to( #e85dff ) ); }
+.theme-magenta Label.ph-stat-val,
+.theme-magenta Label.ScoreSelfRank,
+.theme-magenta Label.ScoreSelfStatVal,
+.theme-magenta Label.ScoreRank,
+.theme-magenta .ScoreRow Label.ScoreCur,
+.theme-magenta Label.ScoreTitlePage,
+.theme-magenta Label.ScoreHead.sort-active
+{ color: #e85dff; }
+.theme-magenta .MenuFilterBtn.active { background-color: #e85dff22; border: 1px solid #e85dff; }
+.theme-magenta .MenuFilterBtn.active:hover { background-color: #e85dff44; border: 1px solid #e85dff; }
+.theme-magenta .MenuFilterBtn:hover { border: 1px solid #e85dff66; }
+.theme-magenta .MenuFilterBtn:active { border: 1px solid #e85dff; }
+.theme-magenta .MenuTitleNav:hover { border: 1px solid #e85dff66; }
+.theme-magenta .MenuTitleNav:active { border: 1px solid #e85dff; }
+.theme-magenta .ScoreSelfCard { background-color: #e85dff18; border: 1px solid #e85dff; }
+.theme-magenta .ScoreRow:hover { border: 1px solid #e85dff66; border-bottom: 1px solid #e85dff66; }
+.theme-magenta .ScoreRow:active { border: 1px solid #e85dff; border-bottom: 1px solid #e85dff; }
+.theme-magenta .ScoreRow.is-self { background-color: #e85dff22; border-bottom: 1px solid #e85dff44; }
+.theme-magenta .ScoreRow.is-viewing { background-color: #e85dff22; border: 1px solid #e85dff; border-bottom: 1px solid #e85dff; }
+.theme-magenta .ScoreRow.is-viewing:hover { background-color: #e85dff44; border: 1px solid #e85dff; border-bottom: 1px solid #e85dff; }
+.theme-magenta .ScoreHeader { border-top: 1px solid #e85dff66; border-bottom: 1px solid #e85dff66; }
+.theme-magenta .MenuTask.is-done .MenuTaskMark { background-color: #e85dff; }
+
+.theme-pink .ph-bar { background-color: #ff6b9a; }
+.theme-pink .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #c43a68 ), to( #ff6b9a ) ); }
+.theme-pink Label.ph-stat-val,
+.theme-pink Label.ScoreSelfRank,
+.theme-pink Label.ScoreSelfStatVal,
+.theme-pink Label.ScoreRank,
+.theme-pink .ScoreRow Label.ScoreCur,
+.theme-pink Label.ScoreTitlePage,
+.theme-pink Label.ScoreHead.sort-active
+{ color: #ff6b9a; }
+.theme-pink .MenuFilterBtn.active { background-color: #ff6b9a22; border: 1px solid #ff6b9a; }
+.theme-pink .MenuFilterBtn.active:hover { background-color: #ff6b9a44; border: 1px solid #ff6b9a; }
+.theme-pink .MenuFilterBtn:hover { border: 1px solid #ff6b9a66; }
+.theme-pink .MenuFilterBtn:active { border: 1px solid #ff6b9a; }
+.theme-pink .MenuTitleNav:hover { border: 1px solid #ff6b9a66; }
+.theme-pink .MenuTitleNav:active { border: 1px solid #ff6b9a; }
+.theme-pink .ScoreSelfCard { background-color: #ff6b9a18; border: 1px solid #ff6b9a; }
+.theme-pink .ScoreRow:hover { border: 1px solid #ff6b9a66; border-bottom: 1px solid #ff6b9a66; }
+.theme-pink .ScoreRow:active { border: 1px solid #ff6b9a; border-bottom: 1px solid #ff6b9a; }
+.theme-pink .ScoreRow.is-self { background-color: #ff6b9a22; border-bottom: 1px solid #ff6b9a44; }
+.theme-pink .ScoreRow.is-viewing { background-color: #ff6b9a22; border: 1px solid #ff6b9a; border-bottom: 1px solid #ff6b9a; }
+.theme-pink .ScoreRow.is-viewing:hover { background-color: #ff6b9a44; border: 1px solid #ff6b9a; border-bottom: 1px solid #ff6b9a; }
+.theme-pink .ScoreHeader { border-top: 1px solid #ff6b9a66; border-bottom: 1px solid #ff6b9a66; }
+.theme-pink .MenuTask.is-done .MenuTaskMark { background-color: #ff6b9a; }
+
+.theme-silver .ph-bar { background-color: #c9d2dc; }
+.theme-silver .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #8a96a6 ), to( #c9d2dc ) ); }
+.theme-silver Label.ph-stat-val,
+.theme-silver Label.ScoreSelfRank,
+.theme-silver Label.ScoreSelfStatVal,
+.theme-silver Label.ScoreRank,
+.theme-silver .ScoreRow Label.ScoreCur,
+.theme-silver Label.ScoreTitlePage,
+.theme-silver Label.ScoreHead.sort-active
+{ color: #c9d2dc; }
+.theme-silver .MenuFilterBtn.active { background-color: #c9d2dc22; border: 1px solid #c9d2dc; }
+.theme-silver .MenuFilterBtn.active:hover { background-color: #c9d2dc44; border: 1px solid #c9d2dc; }
+.theme-silver .MenuFilterBtn:hover { border: 1px solid #c9d2dc66; }
+.theme-silver .MenuFilterBtn:active { border: 1px solid #c9d2dc; }
+.theme-silver .MenuTitleNav:hover { border: 1px solid #c9d2dc66; }
+.theme-silver .MenuTitleNav:active { border: 1px solid #c9d2dc; }
+.theme-silver .ScoreSelfCard { background-color: #c9d2dc18; border: 1px solid #c9d2dc; }
+.theme-silver .ScoreRow:hover { border: 1px solid #c9d2dc66; border-bottom: 1px solid #c9d2dc66; }
+.theme-silver .ScoreRow:active { border: 1px solid #c9d2dc; border-bottom: 1px solid #c9d2dc; }
+.theme-silver .ScoreRow.is-self { background-color: #c9d2dc22; border-bottom: 1px solid #c9d2dc44; }
+.theme-silver .ScoreRow.is-viewing { background-color: #c9d2dc22; border: 1px solid #c9d2dc; border-bottom: 1px solid #c9d2dc; }
+.theme-silver .ScoreRow.is-viewing:hover { background-color: #c9d2dc44; border: 1px solid #c9d2dc; border-bottom: 1px solid #c9d2dc; }
+.theme-silver .ScoreHeader { border-top: 1px solid #c9d2dc66; border-bottom: 1px solid #c9d2dc66; }
+.theme-silver .MenuTask.is-done .MenuTaskMark { background-color: #c9d2dc; }
+
+/* <<< hud_themes:end */

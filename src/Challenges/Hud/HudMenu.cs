@@ -29,7 +29,6 @@ namespace Challenges
         public const string BtnScoreFilterOnline = "ch-score-f-online";
         public const string BtnScoreSortSolved = "ch-score-s-solved";
         public const string BtnScoreSortLifetime = "ch-score-s-lifetime";
-        public const string BtnDetailBack = "ch-detail-back";
 
         private const float CaptureDelaySeconds = 0.2f;
 

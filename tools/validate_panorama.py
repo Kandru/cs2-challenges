@@ -13,11 +13,12 @@ WORKSHOP = ROOT / "workshop"
 CONTENT = WORKSHOP / "content" / "panorama"
 LAYOUTS = CONTENT / "layout" / "custom_game" / "challenges"
 STYLES = CONTENT / "styles" / "custom_game" / "challenges"
-HUD_VCSS = STYLES / "hud.vcss"
 HUD_CSS = STYLES / "hud.css"
 EXAMPLE_VCSS = WORKSHOP / "example" / "hud.vcss"
 PREVIEW = WORKSHOP / "preview"
-HUD_THEME_CS = ROOT / "src" / "Challenges" / "huds" / "HudTheme.cs"
+HUD_DIR = ROOT / "src" / "Challenges" / "Hud"
+HUD_THEME_CS = HUD_DIR / "HudTheme.cs"
+VERSION_CS = ROOT / "src" / "Challenges" / "Version.cs"
 THEME_DATA_JS = PREVIEW / "theme-data.js"
 
 if str(TOOLS) not in sys.path:
@@ -51,11 +52,9 @@ REJECTED_ATTRS = frozenset({"texturewidth", "textureheight"})
 REJECTED_PSEUDO = re.compile(r":(?:selected|disabled|focus)\b")
 
 # Mirrors CustomHud.LayoutIndexForPanel: tracker ids route to layout 0, everything else to layout 1.
-TRACKER_FILE = "tracker.xml"
-MENU_FILE = "menu.xml"
-MENU_CS = ROOT / "src" / "Challenges" / "huds" / "Menu.cs"
-CARD_CS = ROOT / "src" / "Challenges" / "huds" / "ChallengeCardPaint.cs"
-TRACKER_CS = ROOT / "src" / "Challenges" / "huds" / "Tracker.cs"
+MENU_CS = HUD_DIR / "Menu.cs"
+CARD_CS = HUD_DIR / "ChallengeCardPaint.cs"
+TRACKER_CS = HUD_DIR / "Tracker.cs"
 # Engine hard limit on CCSCustomHudLayout.m_vecDialogVariableNames.
 MENU_DIALOG_VAR_ENGINE_CAP = 1244
 
@@ -71,16 +70,28 @@ def csharp_consts(path: Path, *names: str) -> dict[str, int]:
     return values
 
 
+def panorama_version() -> str:
+    text = VERSION_CS.read_text(encoding="utf-8")
+    match = re.search(r'PanoramaVersion\s*=\s*"([^"]+)"', text)
+    if not match:
+        raise SystemExit(f"missing PanoramaVersion in {VERSION_CS.relative_to(ROOT)}")
+    return match.group(1)
+
+
+PANORAMA_VERSION = panorama_version()
+TRACKER_FILE = f"tracker_{PANORAMA_VERSION}.xml"
+MENU_FILE = f"menu_{PANORAMA_VERSION}.xml"
+HUD_SHEET = f"hud_{PANORAMA_VERSION}.vcss"
+HUD_VCSS = STYLES / HUD_SHEET
+
 _TRACKER = csharp_consts(TRACKER_CS, "MaxRows")
-_MENU = csharp_consts(MENU_CS, "ListSlots", "ScoreSlots", "DetailSlots", "DetailRuleSlots")
+_MENU = csharp_consts(MENU_CS, "ListSlots", "ScoreSlots")
 _CARD = csharp_consts(CARD_CS, "TaskSlots", "CompleterSlots")
 TRACKER_ROWS = _TRACKER["MaxRows"]
 MENU_LIST_SLOTS = _MENU["ListSlots"]
 MENU_SCORE_SLOTS = _MENU["ScoreSlots"]
 MENU_TASK_SLOTS = _CARD["TaskSlots"]
 MENU_BY_SLOTS = _CARD["CompleterSlots"]
-MENU_DETAIL_SLOTS = _MENU["DetailSlots"]
-MENU_DETAIL_RULE_SLOTS = _MENU["DetailRuleSlots"]
 
 TRACKER_IDS = (
     {"Tracker", "ch-ttimer", "ch-ttimer-fill", "ch-tr-hint"}
@@ -116,16 +127,12 @@ MENU_IDS = (
         "ch-menu-empty",
         "ch-spin",
         "ch-score",
-        "ch-detail",
-        "ch-detail-back",
     }
     | {f"ch-mrow-{i}" for i in range(MENU_LIST_SLOTS)}
     | {f"ch-mfill-{i}" for i in range(MENU_LIST_SLOTS)}
     | {f"ch-mtask-{i}-{t}" for i in range(MENU_LIST_SLOTS) for t in range(MENU_TASK_SLOTS)}
     | {f"ch-mby-{i}-{b}" for i in range(MENU_LIST_SLOTS) for b in range(MENU_BY_SLOTS)}
     | {f"ch-srow-{i}" for i in range(MENU_SCORE_SLOTS)}
-    | {f"ch-drow-{i}" for i in range(MENU_DETAIL_SLOTS)}
-    | {f"ch-drule-{i}-{r}" for i in range(MENU_DETAIL_SLOTS) for r in range(MENU_DETAIL_RULE_SLOTS)}
 )
 MENU_VARS = (
     {
@@ -158,8 +165,6 @@ MENU_VARS = (
         "spin_rank",
         "spin_l_cur",
         "spin_l_tot",
-        "detail_title",
-        "detail_back",
     }
     | {f"m{i}_title" for i in range(MENU_LIST_SLOTS)}
     | {f"m{i}_when" for i in range(MENU_LIST_SLOTS)}
@@ -170,8 +175,6 @@ MENU_VARS = (
     | {f"s{i}_name" for i in range(MENU_SCORE_SLOTS)}
     | {f"s{i}_cur" for i in range(MENU_SCORE_SLOTS)}
     | {f"s{i}_tot" for i in range(MENU_SCORE_SLOTS)}
-    | {f"d{i}_title" for i in range(MENU_DETAIL_SLOTS)}
-    | {f"d{i}_r{r}" for i in range(MENU_DETAIL_SLOTS) for r in range(MENU_DETAIL_RULE_SLOTS)}
 )
 REQUIRED_CLASSES = {
     "ph-off",
@@ -181,7 +184,6 @@ REQUIRED_CLASSES = {
     "is-empty",
     "is-disabled",
     "is-you",
-    "is-selected",
     "active",
     "sort-active",
     "empty",
@@ -190,16 +192,6 @@ REQUIRED_CLASSES = {
     *hud_themes.class_names(),
     *(f"p{p}" for p in range(0, 101, 10)),
 }
-
-
-def addon_file(directory: Path, name: str) -> Path:
-    """Canonical name, or the `_v2` copy when that is what the workshop folder has."""
-    path = directory / name
-    if path.is_file() or path.is_symlink():
-        return path
-    stem, ext = name.rsplit(".", 1)
-    versioned = directory / f"{stem}_v2.{ext}"
-    return versioned if versioned.is_file() or versioned.is_symlink() else path
 
 
 def strip_comments(css: str) -> str:
@@ -214,8 +206,9 @@ def css_properties(css: str) -> set[str]:
 
 
 def check_css(failures: list[str]) -> None:
-    sheet = addon_file(STYLES, "hud.vcss")
-    css_link = addon_file(STYLES, "hud.css")
+    sheet = HUD_VCSS
+    css_link = HUD_CSS
+    sheet_label = sheet.name
     if not sheet.is_file():
         failures.append(f"missing {sheet.relative_to(ROOT)}")
         return
@@ -228,32 +221,32 @@ def check_css(failures: list[str]) -> None:
 
     for match in BAD_CSS.finditer(code):
         line = code.count("\n", 0, match.start()) + 1
-        failures.append(f"hud.vcss:{line}: forbidden token '{match.group(0).strip()}'")
+        failures.append(f"{sheet_label}:{line}: forbidden token '{match.group(0).strip()}'")
 
     if REJECTED_PSEUDO.search(code):
-        failures.append("hud.vcss: :selected/:disabled/:focus pseudo-classes are rejected by the client")
+        failures.append(f"{sheet_label}: :selected/:disabled/:focus pseudo-classes are rejected by the client")
 
     if any(cls.lower() == "hidden" for cls in re.findall(r"\.([A-Za-z_][\w-]*)", code)):
-        failures.append("hud.vcss: class name 'hidden' collides with csgostyles - use ph-off / is-off")
+        failures.append(f"{sheet_label}: class name 'hidden' collides with csgostyles - use ph-off / is-off")
 
     if code.count("{") != code.count("}"):
-        failures.append("hud.vcss: unbalanced braces")
+        failures.append(f"{sheet_label}: unbalanced braces")
 
     if EXAMPLE_VCSS.is_file():
         known = css_properties(EXAMPLE_VCSS.read_text(encoding="utf-8"))
         for prop in sorted(css_properties(text) - known):
-            failures.append(f"hud.vcss: property '{prop}' is not used by the known-good example sheet")
+            failures.append(f"{sheet_label}: property '{prop}' is not used by the known-good example sheet")
 
     classes = set(re.findall(r"\.([A-Za-z_][\w-]*)", code))
     for cls in sorted(REQUIRED_CLASSES - classes):
-        failures.append(f"hud.vcss: missing class .{cls}")
+        failures.append(f"{sheet_label}: missing class .{cls}")
     for pct in range(0, 101):
         if f".ph-stat-fill.p{pct}" not in code:
-            failures.append(f"hud.vcss: missing .ph-stat-fill.p{pct} (SetPercent / SetStepPercent ladder)")
+            failures.append(f"{sheet_label}: missing .ph-stat-fill.p{pct} (SetPercent / SetStepPercent ladder)")
 
 
 def check_layout(name: str, expected_ids: set[str], expected_vars: set[str], failures: list[str]) -> None:
-    path = addon_file(LAYOUTS, name)
+    path = LAYOUTS / name
     rel = path.relative_to(ROOT)
     if not path.is_file():
         failures.append(f"missing {rel}")
@@ -294,13 +287,14 @@ def check_layout(name: str, expected_ids: set[str], expected_vars: set[str], fai
         failures.append(f"{rel}: dialog variable {{s:{extra}}} is not written by C#")
 
     includes = {m for el in root.iter("include") for m in INCLUDE_RE.findall(el.attrib.get("src", ""))}
-    if "hud.vcss" not in includes:
-        failures.append(f"{rel}: must include challenges/hud.vcss")
+    if HUD_SHEET not in includes:
+        failures.append(f"{rel}: must include challenges/{HUD_SHEET}")
     for include in includes:
-        if not addon_file(STYLES, include).is_file():
+        if not (STYLES / include).is_file():
             failures.append(f"{rel}: include {include} does not exist")
 
-    panel_ids_with_flag = [el for el in root.iter("Panel") if el.attrib.get("id") == name.split(".")[0].capitalize()]
+    root_name = "Tracker" if name.startswith("tracker") else "Menu"
+    panel_ids_with_flag = [el for el in root.iter("Panel") if el.attrib.get("id") == root_name]
     for panel in panel_ids_with_flag:
         if "ph-off" not in panel.attrib.get("class", "").split():
             failures.append(f"{rel}: root card '{panel.attrib['id']}' must start with class ph-off")
@@ -326,24 +320,23 @@ def check_hud_theme_cs(failures: list[str]) -> None:
         failures.append(f"missing {HUD_THEME_CS.relative_to(ROOT)}")
         return
     text = HUD_THEME_CS.read_text(encoding="utf-8")
-    match = re.search(r"string\[\]\s+Names\s*=\s*\[(.*?)\]", text, re.S)
+    match = re.search(r"Entry\[\]\s+All\s*=\s*\[(.*?)\]\s*;", text, re.S)
     if not match:
-        failures.append("HudTheme.cs: missing Names array")
+        failures.append("HudTheme.cs: missing All entry array")
         return
-    found = re.findall(r'"([a-z]+)"', match.group(1))
+    found = re.findall(r'new\(\s*"([a-z]+)"\s*,', match.group(1))
     expected = hud_themes.names()
     if found != expected:
         failures.append(
-            f"HudTheme.cs Names must match tools/hud_themes.py ({', '.join(expected)})"
+            f"HudTheme.cs All must match tools/hud_themes.py ({', '.join(expected)})"
         )
 
 
 def sync_generated() -> list[str]:
     """Refresh generated theme artifacts. Returns relative paths that were written."""
     written: list[str] = []
-    sheet = addon_file(STYLES, "hud.vcss")
-    if hud_themes.sync_vcss_section(sheet):
-        written.append(str(sheet.relative_to(ROOT)))
+    if hud_themes.sync_vcss_section(HUD_VCSS):
+        written.append(str(HUD_VCSS.relative_to(ROOT)))
     if hud_themes.sync_file(THEME_DATA_JS, hud_themes.render_theme_data_js()):
         written.append(str(THEME_DATA_JS.relative_to(ROOT)))
     return written
@@ -371,7 +364,7 @@ def main() -> int:
         return 1
 
     note = f"; synced {', '.join(written)}" if written else ""
-    print(f"Panorama validation OK (tracker.xml, menu.xml, hud.vcss){note}")
+    print(f"Panorama validation OK ({TRACKER_FILE}, {MENU_FILE}, {HUD_SHEET}){note}")
     return 0
 
 

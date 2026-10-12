@@ -1,12 +1,12 @@
 # HUD (AI)
 
-C# under [`src/Challenges/Hud/`](../src/Challenges/Hud/): [`CustomHud.cs`](../src/Challenges/Hud/CustomHud.cs) (spawn, transmit, `SetText` / `SetHasClass`, staggered `OnTick`, fade `ph-fading` → `ph-off`), painters [`Tracker`](../src/Challenges/Hud/Tracker.cs) / [`Menu`](../src/Challenges/Hud/Menu.cs), [`Context`](../src/Challenges/Hud/Context.cs) + [`HudDriver`](../src/Challenges/Hud/HudDriver.cs), input [`HudMenu.cs`](../src/Challenges/Hud/HudMenu.cs). Helpers in [`Utils/`](../src/Challenges/Utils/). One stylesheet: [`hud.vcss`](content/panorama/styles/custom_game/challenges/hud.vcss) (see [panorama-css.md](panorama-css.md)). [`example/hud.vcss`](example/hud.vcss) is Prophunt reference only.
+C# under [`src/Challenges/Hud/`](../src/Challenges/Hud/): [`CustomHud.cs`](../src/Challenges/Hud/CustomHud.cs) (spawn, transmit, `SetText` / `SetHasClass`, staggered `OnTick`, fade `ph-fading` → `ph-off`), painters [`Tracker`](../src/Challenges/Hud/Tracker.cs) / [`Menu`](../src/Challenges/Hud/Menu.cs), [`Context`](../src/Challenges/Hud/Context.cs) + [`HudDriver`](../src/Challenges/Hud/HudDriver.cs), input [`HudMenu.cs`](../src/Challenges/Hud/HudMenu.cs). Helpers in [`Utils/`](../src/Challenges/Utils/). Stylesheet: [`hud_vN.vcss`](content/panorama/styles/custom_game/challenges/) (see [panorama-css.md](panorama-css.md)). [`example/hud.vcss`](example/hud.vcss) is Prophunt reference only.
 
 `workshop/content` is the addon root (copy into `csgo_addons/<addon>/`). `AGENTS.md`, `panorama-css.md`, `example/`, `preview/` stay beside it. Layouts load as `panorama/layout/custom_game/challenges/<name>.vxml_c`.
 
 ## Panorama versions
 
-Repo sources stay `tracker.xml`, `menu.xml`, `hud.vcss` - never add `vN` to those names here. `PanoramaVersion` in [`Version.cs`](../src/Challenges/Version.cs) selects `tracker_vN` / `menu_vN` at runtime. On workshop copy, rename layouts and the stylesheet include by hand. Bump only when panel ids / dialog vars / classes / structure would break old DLLs; keep older generations in the published addon.
+Repo keeps versioned sources `tracker_vN.xml`, `menu_vN.xml`, `hud_vN.vcss`. `PanoramaVersion` in [`Version.cs`](../src/Challenges/Version.cs) selects those at runtime. Bump only when panel ids / dialog vars / classes / structure would break old DLLs; keep older generations in the published addon.
 
 ## Theme / type / bars
 
@@ -35,8 +35,8 @@ No panel create / width / colour / image from C#. Layout edits need VPK republis
 
 | Layout | Root | Routed ids |
 | --- | --- | --- |
-| `tracker.xml` | `Tracker` | `Tracker`, `ch-tr-hint`, `ch-trow-*`, `ch-tfill-*`, `ch-ttask-*`, `ch-ttimer*` |
-| `menu.xml` | `Menu` | every other `ch-*` / `ph-*` |
+| `tracker_vN.xml` | `Tracker` | `Tracker`, `ch-tr-hint`, `ch-trow-*`, `ch-tfill-*`, `ch-ttask-*`, `ch-ttimer*` |
+| `menu_vN.xml` | `Menu` | every other `ch-*` / `ph-*` |
 
 `make panorama` validates ids/`{s:…}` against C# and the 1244 dialog-var cap.
 
@@ -46,8 +46,8 @@ Top-right 420px, never clickable. Title/count/hint (`!c`); up to 5 rows (`gui.tr
 
 ### Menu ([`Menu.cs`](../src/Challenges/Hud/Menu.cs))
 
-`!c` → mouse capture. Filters all/solved/progress/ending/starting with counts; list + detail scroll; cards `ch-mrow-0…19`; scoreboard inspect sets `MenuSubjectSteamId`; detail = tasks + rule chips (`TaskRuleSummary`); ending/starting windows 7d. Tracker `z-index` 99998 under open menu.
+`!c` → mouse capture. Filters all/solved/progress/ending/starting with counts; paginated list (4 cards/page, equal height, no scroll); cards `ch-mrow-0…3` are non-clickable; scoreboard inspect sets `MenuSubjectSteamId` (list shows that player’s progress); ending/starting windows 7d. Tracker `z-index` 99998 under open menu.
 
 ## Classes / check
 
-`.ph-fs` · `.ph-card` / `.ph-fading` / `.ph-off` · `.ph-bg` / `.ph-bar` · titlebar/btn/stat · menu/score/detail/tracker · `.theme-*`. Before inventing CSS: [panorama-css.md](panorama-css.md), `make panorama`, previews under `preview/`. Update this file when HUD behaviour changes.
+`.ph-fs` · `.ph-card` / `.ph-fading` / `.ph-off` · `.ph-bg` / `.ph-bar` · titlebar/btn/stat · menu/score/tracker · `.theme-*`. Before inventing CSS: [panorama-css.md](panorama-css.md), `make panorama`, previews under `preview/`. Update this file when HUD behaviour changes.

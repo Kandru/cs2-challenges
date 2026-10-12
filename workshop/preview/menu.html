@@ -8,7 +8,7 @@
 <body>
 <div class="stage" data-theme="gold">
   <div class="preview-controls preview-bar">
-    <div class="preview-note">Fullscreen menu mock. Use theme swatches to preview <code>gui.theme</code>.</div>
+    <div class="preview-note">Fullscreen menu mock (4 cards/page, no detail). Theme swatches preview <code>gui.theme</code>.</div>
     <div id="preview-themes" class="preview-themes"></div>
   </div>
   <div id="Menu" class="MenuRoot ph-fs ph-card theme-gold">
@@ -23,133 +23,25 @@
         <div class="MenuColumns">
           <div class="MenuList">
             <div class="ScoreTitleBar">
-              <button class="MenuTitleNav is-disabled">&lt;</button>
+              <button type="button" class="MenuTitleNav" id="list-prev">&lt;</button>
               <div class="ScoreTitleCenter">
                 <div class="ScoreTitleCluster">
                   <div class="ScoreTitlePad"></div>
                   <span class="ScoreTitle">Challenges of Alice</span>
-                  <span class="ScoreTitlePage">(1 / 2)</span>
+                  <span class="ScoreTitlePage" id="list-page">(1 / 2)</span>
                   <div class="ScoreTitlePad"></div>
                 </div>
               </div>
-              <button class="MenuTitleNav">&gt;</button>
+              <button type="button" class="MenuTitleNav" id="list-next">&gt;</button>
             </div>
             <div class="MenuFilterBar">
               <button class="MenuFilterBtn"><span class="MenuFilterLabel">All (20)</span></button>
               <button class="MenuFilterBtn"><span class="MenuFilterLabel">Solved (2)</span></button>
-              <button class="MenuFilterBtn active"><span class="MenuFilterLabel">Progress (3)</span></button>
+              <button class="MenuFilterBtn active"><span class="MenuFilterLabel">Progress (5)</span></button>
               <button class="MenuFilterBtn"><span class="MenuFilterLabel">Ending soon (1)</span></button>
               <button class="MenuFilterBtn is-disabled"><span class="MenuFilterLabel">Starting soon (0)</span></button>
             </div>
-            <div class="MenuRows">
-              <!-- Sorted by % desc, then active, then soonest start. Click a card to open detail. -->
-              <div class="MenuRow is-selected" data-detail="ak">
-                <div class="MenuRowHead">
-                  <div class="ph-stat-lab"><span class="ph-stat-name">Weapon: AK-47 With A Very Long Subtitle</span><span class="ph-stat-when">two days left</span><span class="ph-stat-val">70%</span></div>
-                  <div class="ph-stat-track"><div class="ph-stat-fill p70"></div></div>
-                </div>
-                <div class="MenuRowSplit">
-                  <div class="MenuTasksCol">
-                    <span class="MenuColHead">Tasks</span>
-                    <div class="MenuTasks">
-                      <div class="MenuTask is-done"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">5/5 AK-47 kills in a single round somehow</span></div>
-                      <div class="MenuTask is-done"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">10/10 AK-47 kills</span></div>
-                      <div class="MenuTask"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">5/25 AK-47 kills</span></div>
-                    </div>
-                  </div>
-                  <div class="MenuByCol">
-                    <span class="MenuColHead">Solved by</span>
-                    <div class="MenuByList">
-                      <div class="MenuByRow">
-                        <div class="MenuBy is-empty"><span class="MenuByLabel">Nobody yet</span></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="MenuRow" data-detail="knife">
-                <div class="MenuRowHead">
-                  <div class="ph-stat-lab"><span class="ph-stat-name">Sharp and Deadly</span><span class="ph-stat-when">this week</span><span class="ph-stat-val">40%</span></div>
-                  <div class="ph-stat-track"><div class="ph-stat-fill p40"></div></div>
-                </div>
-                <div class="MenuRowSplit">
-                  <div class="MenuTasksCol">
-                    <span class="MenuColHead">Tasks</span>
-                    <div class="MenuTasks">
-                      <div class="MenuTask is-done"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">5/5 knife kills</span></div>
-                      <div class="MenuTask"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">2/10 knife kills without taking damage</span></div>
-                      <div class="MenuTask"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">0/25 knife kills</span></div>
-                    </div>
-                  </div>
-                  <div class="MenuByCol">
-                    <span class="MenuColHead">Solved by</span>
-                    <div class="MenuByList">
-                      <div class="MenuByRow">
-                        <div class="MenuBy is-you"><span class="MenuByLabel">YOU</span></div>
-                        <div class="MenuBy"><span class="MenuByLabel">BobTheBuilderExtraLong</span></div>
-                      </div>
-                      <div class="MenuByRow">
-                        <div class="MenuBy"><span class="MenuByLabel">Carol</span></div>
-                        <div class="MenuBy"><span class="MenuByLabel">Dave</span></div>
-                      </div>
-                      <div class="MenuByRow">
-                        <div class="MenuBy"><span class="MenuByLabel">Eve</span></div>
-                        <div class="MenuBy is-empty"><span class="MenuByLabel">+3 more</span></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="MenuRow" data-detail="hs">
-                <div class="MenuRowHead">
-                  <div class="ph-stat-lab"><span class="ph-stat-name">Headshots in a row</span><span class="ph-stat-when">one hour left</span><span class="ph-stat-val">30%</span></div>
-                  <div class="ph-stat-track"><div class="ph-stat-fill p30"></div></div>
-                </div>
-                <div class="MenuRowSplit">
-                  <div class="MenuTasksCol">
-                    <span class="MenuColHead">Tasks</span>
-                    <div class="MenuTasks">
-                      <div class="MenuTask is-done"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">3/3 headshots</span></div>
-                      <div class="MenuTask"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">3/10 headshots</span></div>
-                      <div class="MenuTask"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">0/25 headshots</span></div>
-                    </div>
-                  </div>
-                  <div class="MenuByCol">
-                    <span class="MenuColHead">Solved by</span>
-                    <div class="MenuByList">
-                      <div class="MenuByRow">
-                        <div class="MenuBy"><span class="MenuByLabel">Alice</span></div>
-                        <div class="MenuBy"><span class="MenuByLabel">Frank</span></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="MenuRow" data-detail="awp">
-                <div class="MenuRowHead">
-                  <div class="ph-stat-lab"><span class="ph-stat-name">AWP Master</span><span class="ph-stat-when">in a week</span><span class="ph-stat-val">0%</span></div>
-                  <div class="ph-stat-track"><div class="ph-stat-fill p0"></div></div>
-                </div>
-                <div class="MenuRowSplit">
-                  <div class="MenuTasksCol">
-                    <span class="MenuColHead">Tasks</span>
-                    <div class="MenuTasks">
-                      <div class="MenuTask"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">0/3 AWP kills</span></div>
-                      <div class="MenuTask"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">0/10 AWP kills</span></div>
-                      <div class="MenuTask"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">0/25 AWP kills</span></div>
-                    </div>
-                  </div>
-                  <div class="MenuByCol">
-                    <span class="MenuColHead">Solved by</span>
-                    <div class="MenuByList">
-                      <div class="MenuByRow">
-                        <div class="MenuBy is-empty"><span class="MenuByLabel">Nobody yet</span></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <div class="MenuRows" id="menu-rows"></div>
           </div>
           <div id="ch-score" class="MenuScore">
             <div class="ScoreTitleBar">
@@ -203,13 +95,6 @@
               <div class="ScoreRow"><span class="ScoreRank">#3</span><span class="ScoreName">Bob</span><span class="ScoreCur">2 / 12</span><span class="ScoreTot">15</span></div>
             </div>
           </div>
-          <div id="ch-detail" class="MenuDetail is-off">
-            <div class="DetailTitleBar">
-              <button type="button" class="MenuFilterBtn DetailBackInline" id="detail-back"><span class="MenuFilterLabel">Back</span></button>
-              <span class="DetailTitle" id="detail-title">Weapon: AK-47 With A Very Long Subtitle That Should Ellipsis</span>
-            </div>
-            <div class="DetailRows" id="detail-rows"></div>
-          </div>
         </div>
         <div class="MenuCredit">Free plugin by kandru.net. Donations are welcome if you enjoy it. More plugins: github.com/kandru</div>
       </div>
@@ -220,111 +105,122 @@
 <script src="theme.js"></script>
 <script>
 PreviewTheme.mount('#Menu');
-const details = {
-  ak: {
+
+const PAGE_SIZE = 4;
+const challenges = [
+  {
     title: 'Weapon: AK-47 With A Very Long Subtitle',
-    rows: [
-      { title: '5/5 AK-47 kills in a single round', rules: 'Weapon: AK47 · Enemy kill · Against a player', done: true },
-      { title: '10/10 AK-47 kills', rules: 'Weapon: AK47 · Enemy kill · Against a player', done: true },
-      { title: '5/25 AK-47 kills', rules: 'Weapon: AK47 · Enemy kill · Against a player', done: false },
+    when: 'two days left', pct: 70,
+    tasks: [
+      { label: '5/5 AK-47 kills in a single round somehow', done: true },
+      { label: '10/10 AK-47 kills', done: true },
+      { label: '5/25 AK-47 kills', done: false },
     ],
+    by: [{ label: 'Nobody yet', empty: true }],
   },
-  knife: {
+  {
     title: 'Sharp and Deadly',
-    rows: [
-      { title: '5/5 knife kills', rules: 'Weapon: KNIFE · Enemy kill · Against a player', done: true },
-      { title: '2/10 knife kills without taking damage', rules: 'Weapon: KNIFE · Enemy kill · Against a player · Not a bot', done: false },
-      { title: 'Rule broken: you died because of a knife', rules: 'Weapon: KNIFE · Against a player', broken: true },
-      { title: '0/25 knife kills', rules: 'Weapon: KNIFE · Enemy kill · Against a player', done: false },
-      { title: 'Rule broken: you died because of a knife', rules: 'Weapon: KNIFE · Against a player', broken: true },
+    when: 'this week', pct: 40,
+    tasks: [
+      { label: '5/5 knife kills', done: true },
+      { label: '2/10 knife kills without taking damage', done: false },
+      { label: '0/25 knife kills', done: false },
+    ],
+    by: [
+      { label: 'YOU', you: true }, { label: 'BobTheBuilderExtraLong' },
+      { label: 'Carol' }, { label: 'Dave' },
+      { label: 'Eve' }, { label: '+3 more', empty: true },
     ],
   },
-  hs: {
+  {
     title: 'Headshots in a row',
-    rows: [
-      { title: '3/3 headshots', rules: 'Headshot · Against a player', done: true },
-      { title: 'Rule broken: without headshot', rules: 'Not a headshot', broken: true },
-      { title: '3/10 headshots', rules: 'Headshot · Against a player', done: false },
-      { title: 'Rule broken: without headshot', rules: 'Not a headshot', broken: true },
-      { title: '0/25 headshots', rules: 'Headshot · Against a player', done: false },
-      { title: 'Rule broken: without headshot', rules: 'Not a headshot', broken: true },
+    when: 'one hour left', pct: 30,
+    tasks: [
+      { label: '3/3 headshots', done: true },
+      { label: '3/10 headshots', done: false },
+      { label: '0/25 headshots', done: false },
     ],
+    by: [{ label: 'Alice' }, { label: 'Frank' }],
   },
-  awp: {
+  {
     title: 'AWP Master',
-    rows: [
-      { title: '0/3 AWP kills', rules: 'Weapon: AWP · Enemy kill · Against a player', done: false },
-      { title: '0/10 AWP kills', rules: 'Weapon: AWP · Enemy kill · Against a player', done: false },
-      { title: '0/25 AWP kills', rules: 'Weapon: AWP · Enemy kill · Against a player', done: false },
+    when: 'in a week', pct: 0,
+    tasks: [
+      { label: '0/3 AWP kills', done: false },
+      { label: '0/10 AWP kills', done: false },
+      { label: '0/25 AWP kills', done: false },
     ],
+    by: [{ label: 'Nobody yet', empty: true }],
   },
-};
-const scoreCol = document.getElementById('ch-score');
-const detailCol = document.getElementById('ch-detail');
-const detailRows = document.getElementById('detail-rows');
-const detailTitle = document.getElementById('detail-title');
-function ruleChips(rules) {
-  const parts = rules ? rules.split(' · ').filter(Boolean) : [];
-  if (!parts.length) return '';
-  const slots = 8;
-  const overflow = parts.length > slots ? parts.length - (slots - 1) : 0;
-  const shown = overflow > 0 ? slots - 1 : parts.length;
-  const chips = [];
-  for (let i = 0; i < slots; i++) {
-    if (i === slots - 1 && overflow > 0) {
-      chips.push(`<div class="DetailRule"><span class="DetailRuleLabel">${parts.slice(shown).join(' · ')}</span></div>`);
-      continue;
-    }
-    if (i < shown) {
-      chips.push(`<div class="DetailRule"><span class="DetailRuleLabel">${parts[i]}</span></div>`);
-      continue;
-    }
-    if (shown > 0 && shown % 2 === 1 && i === shown) {
-      chips.push('<div class="DetailRule is-empty"><span class="DetailRuleLabel"></span></div>');
-      continue;
-    }
-    chips.push('<div class="DetailRule is-off"><span class="DetailRuleLabel"></span></div>');
-  }
+  {
+    title: 'Utility Expert',
+    when: 'three days left', pct: 50,
+    tasks: [
+      { label: '5/5 flash assists', done: true },
+      { label: '2/10 smoke blocks', done: false },
+      { label: '0/15 HE kills', done: false },
+    ],
+    by: [{ label: 'Alice' }, { label: 'Nobody yet', empty: true }],
+  },
+];
+
+let page = 0;
+const rowsEl = document.getElementById('menu-rows');
+const pageEl = document.getElementById('list-page');
+const prevBtn = document.getElementById('list-prev');
+const nextBtn = document.getElementById('list-next');
+
+function byHtml(entries) {
+  const chips = entries.map(e => {
+    const cls = e.you ? ' is-you' : e.empty ? ' is-empty' : '';
+    return `<div class="MenuBy${cls}"><span class="MenuByLabel">${e.label}</span></div>`;
+  });
   let html = '';
   for (let i = 0; i < chips.length; i += 2) {
-    html += `<div class="DetailRuleRow">${chips[i]}${chips[i + 1] || ''}</div>`;
+    html += `<div class="MenuByRow">${chips[i]}${chips[i + 1] || ''}</div>`;
   }
-  return `<div class="DetailRuleList">${html}</div>`;
+  return html;
 }
-function paintDetail(key) {
-  const data = details[key];
-  if (!data) return;
-  detailTitle.textContent = data.title;
-  detailRows.innerHTML = data.rows.map(r => {
-    const state = r.broken ? ' is-broken' : r.done ? ' is-done' : '';
-    return `<div class="DetailRow${state}"><span class="DetailTaskTitle">${r.title}</span>${ruleChips(r.rules)}</div>`;
-  }).join('');
+
+function cardHtml(c) {
+  const tasks = c.tasks.map(t =>
+    `<div class="MenuTask${t.done ? ' is-done' : ''}"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">${t.label}</span></div>`
+  ).join('');
+  return `<div class="MenuRow">
+    <div class="MenuRowHead">
+      <div class="ph-stat-lab"><span class="ph-stat-name">${c.title}</span><span class="ph-stat-when">${c.when}</span><span class="ph-stat-val">${c.pct}%</span></div>
+      <div class="ph-stat-track"><div class="ph-stat-fill p${c.pct}"></div></div>
+    </div>
+    <div class="MenuRowSplit">
+      <div class="MenuTasksCol">
+        <span class="MenuColHead">Tasks</span>
+        <div class="MenuTasks">${tasks}</div>
+      </div>
+      <div class="MenuByCol">
+        <span class="MenuColHead">Solved by</span>
+        <div class="MenuByList">${byHtml(c.by)}</div>
+      </div>
+    </div>
+  </div>`;
 }
-function openDetail(key) {
-  scoreCol.classList.add('is-off');
-  detailCol.classList.remove('is-off');
-  document.querySelectorAll('.MenuRow[data-detail]').forEach(r => {
-    r.classList.toggle('is-selected', r.dataset.detail === key);
-  });
-  paintDetail(key);
+
+function paint() {
+  const pages = Math.max(1, Math.ceil(challenges.length / PAGE_SIZE));
+  page = Math.max(0, Math.min(page, pages - 1));
+  const start = page * PAGE_SIZE;
+  const slice = challenges.slice(start, start + PAGE_SIZE);
+  rowsEl.innerHTML = slice.map(cardHtml).join('');
+  pageEl.textContent = `(${page + 1} / ${pages})`;
+  prevBtn.classList.toggle('is-disabled', page <= 0);
+  nextBtn.classList.toggle('is-disabled', page >= pages - 1);
 }
-function closeDetail() {
-  scoreCol.classList.remove('is-off');
-  detailCol.classList.add('is-off');
-  document.querySelectorAll('.MenuRow[data-detail]').forEach(r => r.classList.remove('is-selected'));
-}
-document.querySelectorAll('.MenuRow[data-detail]').forEach(row => {
-  row.addEventListener('click', () => {
-    const key = row.dataset.detail;
-    if (row.classList.contains('is-selected') && !detailCol.classList.contains('is-off')) {
-      closeDetail();
-      return;
-    }
-    openDetail(key);
-  });
+
+prevBtn.addEventListener('click', () => { if (page > 0) { page--; paint(); } });
+nextBtn.addEventListener('click', () => {
+  const pages = Math.max(1, Math.ceil(challenges.length / PAGE_SIZE));
+  if (page < pages - 1) { page++; paint(); }
 });
-document.getElementById('detail-back').addEventListener('click', closeDetail);
-openDetail('ak');
+paint();
 </script>
 </body>
 </html>

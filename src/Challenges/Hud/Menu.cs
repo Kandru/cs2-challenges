@@ -4,16 +4,14 @@ using CounterStrikeSharp.API.Core;
 namespace Challenges
 {
     /// <summary>
-    /// Fullscreen challenge menu: scrollable challenge cards (header + 50/50 tasks|completers),
-    /// a paginated scoreboard, and a scrollable challenge detail column.
+    /// Fullscreen challenge menu: paginated challenge cards (4/page, header + 50/50 tasks|completers)
+    /// and a paginated scoreboard.
     /// </summary>
     public static class Menu
     {
         public const string Panel = "Menu";
-        public const int ListSlots = 20;
+        public const int ListSlots = 4;
         public const int ScoreSlots = 12;
-        public const int DetailSlots = 20;
-        public const int DetailRuleSlots = 8;
         public const string FilterAll = "all";
         public const string FilterSolved = "solved";
         public const string FilterProgress = "progress";
@@ -21,8 +19,6 @@ namespace Challenges
         public const string FilterStarting = "starting";
         private const string ScoreHeadCurId = "ch-score-h-cur";
         private const string ScoreHeadTotId = "ch-score-h-tot";
-        private const string ScoreColumnId = "ch-score";
-        private const string DetailColumnId = "ch-detail";
         private const string EmptyLabelId = "ch-menu-empty";
         private static readonly TimeSpan EndingSoonWindow = TimeSpan.FromDays(7);
 
@@ -44,7 +40,6 @@ namespace Challenges
             "score_f_all", "score_f_online", "score_s_solved", "score_s_lifetime",
             "score_h_rank", "score_h_name", "score_h_cur", "score_h_tot",
             "spin_name", "spin_cur", "spin_tot", "spin_rank", "spin_l_cur", "spin_l_tot",
-            "detail_title", "detail_back",
         ];
 
         private static readonly (string Var, string Key)[] ChromeLabels =
@@ -67,18 +62,16 @@ namespace Challenges
 
         private sealed record FilterDef(string Id, string ButtonId, string Var, string Key);
 
-        private static string FilterFor(string buttonId)
+        private static string FilterFor(string buttonId) => buttonId switch
         {
-            foreach (FilterDef filter in FilterDefs)
-            {
-                if (filter.ButtonId == buttonId)
-                {
-                    return filter.Id;
-                }
-            }
+            HudMenu.BtnFilterAll => FilterAll,
+            HudMenu.BtnFilterSolved => FilterSolved,
+            HudMenu.BtnFilterProgress => FilterProgress,
+            HudMenu.BtnFilterEnding => FilterEnding,
+            HudMenu.BtnFilterStarting => FilterStarting,
+            _ => FilterProgress,
+        };
 
-            return FilterProgress;
-        }
         private sealed record MenuSubject(PlayerState Progress, string? Name);
 
         private sealed record Entry(
@@ -87,6 +80,7 @@ namespace Challenges
             string When,
             bool IsActive,
             DateTime SortTime);
+
         private sealed record ScoreEntry(
             string Name,
             string SteamId,
@@ -102,10 +96,10 @@ namespace Challenges
         private static readonly string[] ListWhenVars = Ids("m", ListSlots, "_when");
         private static readonly string[] ListMetaVars = Ids("m", ListSlots, "_meta");
         private static readonly string[] ScoreRowIds = Ids("ch-srow-", ScoreSlots);
-        private static readonly string[] DetailRowIds = Ids("ch-drow-", DetailSlots);
-        private static readonly string[] DetailTitleVars = Ids("d", DetailSlots, "_title");
-        private static readonly string[][] DetailRuleIds = RuleIds("ch-drule-", DetailSlots, DetailRuleSlots);
-        private static readonly string[][] DetailRuleVars = RuleIds("d", DetailSlots, DetailRuleSlots, "_r");
+        private static readonly string[] ScoreRankVars = Ids("s", ScoreSlots, "_rank");
+        private static readonly string[] ScoreNameVars = Ids("s", ScoreSlots, "_name");
+        private static readonly string[] ScoreCurVars = Ids("s", ScoreSlots, "_cur");
+        private static readonly string[] ScoreTotVars = Ids("s", ScoreSlots, "_tot");
         private static readonly ChallengeCardPaint.Slots[] ListCardSlots = CreateListCardSlots();
 
         public static bool IsMenuLayout(CCSCustomHudLayout layout) => CustomHud.IsLayout(layout, Panel);
@@ -121,44 +115,15 @@ namespace Challenges
             return ids;
         }
 
-        private static string[][] RuleIds(string prefix, int rows, int slots, string mid = "-")
-        {
-            string[][] ids = new string[rows][];
-            for (int row = 0; row < rows; row++)
-            {
-                string[] rowIds = new string[slots];
-                for (int slot = 0; slot < slots; slot++)
-                {
-                    rowIds[slot] = prefix + row + mid + slot;
-                }
-
-                ids[row] = rowIds;
-            }
-
-            return ids;
-        }
-
         private static ChallengeCardPaint.Slots[] CreateListCardSlots()
         {
             ChallengeCardPaint.Slots[] slots = new ChallengeCardPaint.Slots[ListSlots];
             for (int row = 0; row < ListSlots; row++)
             {
-                string[] taskIds = new string[ChallengeCardPaint.TaskSlots];
-                string[] taskVars = new string[ChallengeCardPaint.TaskSlots];
-                string[] byIds = new string[ChallengeCardPaint.CompleterSlots];
-                string[] byVars = new string[ChallengeCardPaint.CompleterSlots];
-                for (int t = 0; t < ChallengeCardPaint.TaskSlots; t++)
-                {
-                    taskIds[t] = $"ch-mtask-{row}-{t}";
-                    taskVars[t] = $"m{row}_t{t}";
-                }
-
-                for (int b = 0; b < ChallengeCardPaint.CompleterSlots; b++)
-                {
-                    byIds[b] = $"ch-mby-{row}-{b}";
-                    byVars[b] = $"m{row}_by{b}";
-                }
-
+                string[] taskIds = Ids($"ch-mtask-{row}-", ChallengeCardPaint.TaskSlots);
+                string[] taskVars = Ids($"m{row}_t", ChallengeCardPaint.TaskSlots);
+                string[] byIds = Ids($"ch-mby-{row}-", ChallengeCardPaint.CompleterSlots);
+                string[] byVars = Ids($"m{row}_by", ChallengeCardPaint.CompleterSlots);
                 slots[row] = new ChallengeCardPaint.Slots(
                     Panel,
                     t => taskIds[t],
@@ -183,11 +148,8 @@ namespace Challenges
             state.ScoreboardSort = ScoreboardSort.Solved;
             state.ScoreboardFilter = ScoreboardFilter.Online;
             state.MenuSubjectSteamId = null;
-            state.MenuDetailChallengeId = null;
             // Force the first paint to clear any rows left from a previous open.
             state.MenuListPainted = ListSlots;
-            state.MenuDetailPainted = DetailSlots;
-            Array.Clear(state.MenuRowChallengeIds);
             Array.Clear(state.MenuScoreRowSteamIds);
             state.ActiveMenu = ActiveMenu.Challenges;
 
@@ -267,12 +229,8 @@ namespace Challenges
                     state.MenuFilter = FilterFor(buttonId);
                     state.MenuListPage = 0;
                     break;
-                case HudMenu.BtnDetailBack:
-                    state.MenuDetailChallengeId = null;
-                    break;
                 default:
-                    if (TrySelectListRow(state, buttonId)
-                        || TrySelectScoreRow(player, state, buttonId))
+                    if (TrySelectScoreRow(player, state, buttonId))
                     {
                         break;
                     }
@@ -281,25 +239,6 @@ namespace Challenges
             }
 
             Paint(player);
-        }
-
-        private static bool TrySelectListRow(PlayerState state, string buttonId)
-        {
-            if (!buttonId.StartsWith("ch-mrow-", StringComparison.Ordinal)
-                || !int.TryParse(buttonId.AsSpan("ch-mrow-".Length), out int row)
-                || (uint)row >= (uint)ListSlots
-                || state.MenuRowChallengeIds[row] is not { Length: > 0 } challengeId)
-            {
-                return false;
-            }
-
-            state.MenuDetailChallengeId = string.Equals(
-                state.MenuDetailChallengeId,
-                challengeId,
-                StringComparison.Ordinal)
-                ? null
-                : challengeId;
-            return true;
         }
 
         private static bool TrySelectScoreRow(CCSPlayerController player, PlayerState state, string buttonId)
@@ -316,7 +255,6 @@ namespace Challenges
             bool clear = SameSteam(steamId, state.MenuSubjectSteamId)
                 || SameSteam(steamId, player.NetworkIDString);
             state.MenuSubjectSteamId = clear ? null : steamId;
-            state.MenuDetailChallengeId = null;
             state.MenuListPage = 0;
             return true;
         }
@@ -326,12 +264,18 @@ namespace Challenges
             && !string.IsNullOrEmpty(b)
             && string.Equals(a, b, StringComparison.OrdinalIgnoreCase);
 
-        private static bool IsDisabled(CCSPlayerController player, string buttonId) =>
-            buttonId is (HudMenu.BtnScorePrev or HudMenu.BtnScoreNext
+        private static bool IsDisabled(CCSPlayerController player, string buttonId)
+        {
+            if (buttonId is not (HudMenu.BtnScorePrev or HudMenu.BtnScoreNext
                 or HudMenu.BtnListPrev or HudMenu.BtnListNext
                 or HudMenu.BtnFilterSolved or HudMenu.BtnFilterProgress
-                or HudMenu.BtnFilterEnding or HudMenu.BtnFilterStarting)
-            && CustomHud.HasClass(player, buttonId, "is-disabled");
+                or HudMenu.BtnFilterEnding or HudMenu.BtnFilterStarting))
+            {
+                return false;
+            }
+
+            return CustomHud.HasClass(player, buttonId, "is-disabled");
+        }
 
         public static void WriteDefaults(CCSPlayerController player)
         {
@@ -367,8 +311,6 @@ namespace Challenges
                 ClearScoreSlot(player, i);
             }
 
-            ClearDetailView(player, allSlots: true);
-
             CustomHud.SetHasClass(player, PinnedRowId, "empty", true);
             CustomHud.SetHasClass(player, ScoreHeadCurId, "sort-active", false);
             CustomHud.SetHasClass(player, ScoreHeadTotId, "sort-active", false);
@@ -390,7 +332,6 @@ namespace Challenges
             PaintChrome(player, state, subject);
             PaintList(player, state, subject.Progress, schedule);
             PaintScoreboard(player, state, schedule);
-            PaintDetail(player, state, subject.Progress, schedule);
         }
 
         private static MenuSubject ResolveSubject(CCSPlayerController viewer, PlayerState viewerState)
@@ -495,23 +436,17 @@ namespace Challenges
         private static int CountScheduleWindow(
             Func<ChallengeSchedule, DateTime?> dateOf,
             DateTime now,
-            TimeSpan? maxAhead)
-        {
-            int count = 0;
-            foreach (var _ in ScheduleWindowChallenges(dateOf, now, maxAhead))
-            {
-                count++;
-            }
-
-            return count;
-        }
+            TimeSpan? maxAhead) =>
+            VisitScheduleWindow(dateOf, now, maxAhead, onChallenge: null);
 
         /// <summary>Unique challenges in schedules whose date falls in (now, now+maxAhead].</summary>
-        private static IEnumerable<(ChallengeDefinition Challenge, DateTime Date)> ScheduleWindowChallenges(
+        private static int VisitScheduleWindow(
             Func<ChallengeSchedule, DateTime?> dateOf,
             DateTime now,
-            TimeSpan? maxAhead)
+            TimeSpan? maxAhead,
+            Action<ChallengeDefinition, DateTime>? onChallenge)
         {
+            int count = 0;
             HashSet<string> seen = new(StringComparer.OrdinalIgnoreCase);
             foreach (ChallengeSchedule schedule in Context.ScheduleMap.Values)
             {
@@ -533,9 +468,12 @@ namespace Challenges
                         continue;
                     }
 
-                    yield return (challenge, date);
+                    count++;
+                    onChallenge?.Invoke(challenge, date);
                 }
             }
+
+            return count;
         }
 
         private static void PaintChrome(CCSPlayerController player, PlayerState state, MenuSubject subject)
@@ -554,7 +492,6 @@ namespace Challenges
             string next = Context.Text(player, "hud.menu.next");
             CustomHud.SetText(player, Panel, "score_prev", prev);
             CustomHud.SetText(player, Panel, "score_next", next);
-            CustomHud.SetText(player, Panel, "detail_back", Context.Text(player, "hud.menu.detail.back"));
 
             bool sortLifetime = state.ScoreboardSort == ScoreboardSort.Lifetime;
             CustomHud.SetHasClass(player, ScoreHeadCurId, "sort-active", !sortLifetime);
@@ -618,7 +555,6 @@ namespace Challenges
             string? scheduleKey = schedule?.Key;
             // Progress/Solved only contain the active schedule; other filters may include extras.
             bool scheduleOnly = session.MenuFilter is FilterProgress or FilterSolved;
-            string? detailId = session.MenuDetailChallengeId;
             int pageStart = session.MenuListPage * ListSlots;
             int painted = Math.Min(ListSlots, entries.Count - pageStart);
 
@@ -626,7 +562,6 @@ namespace Challenges
             {
                 Entry entry = entries[pageStart + i];
                 ChallengeDefinition challenge = entry.Challenge;
-                session.MenuRowChallengeIds[i] = challenge.Id;
                 bool inSchedule = scheduleOnly
                     || (schedule != null && schedule.Challenges.Contains(challenge));
                 string rowId = ListRowIds[i];
@@ -636,11 +571,6 @@ namespace Challenges
                 CustomHud.SetStepPercent(player, ListFillIds[i], entry.Percent);
                 CustomHud.SetHasClass(player, rowId, "empty", false);
                 CustomHud.SetHasClass(player, rowId, "is-off", false);
-                CustomHud.SetHasClass(
-                    player,
-                    rowId,
-                    "is-selected",
-                    detailId != null && string.Equals(detailId, challenge.Id, StringComparison.Ordinal));
                 ChallengeCardPaint.Slots card = ListCardSlots[i];
                 ChallengeCardPaint.PaintTasks(
                     player,
@@ -661,11 +591,12 @@ namespace Challenges
         private static void ClearUnusedListSlots(CCSPlayerController player, PlayerState session, int painted)
         {
             int clearUntil = session.MenuListPainted;
-            string?[] ids = session.MenuRowChallengeIds;
-            for (int i = painted; i < clearUntil; i++)
+            if (painted < clearUntil)
             {
-                ids[i] = null;
-                ClearListSlot(player, i);
+                for (int i = painted; i < clearUntil; i++)
+                {
+                    ClearListSlot(player, i);
+                }
             }
 
             session.MenuListPainted = painted;
@@ -680,181 +611,9 @@ namespace Challenges
             string rowId = ListRowIds[row];
             CustomHud.SetHasClass(player, rowId, "empty", true);
             CustomHud.SetHasClass(player, rowId, "is-off", false);
-            CustomHud.SetHasClass(player, rowId, "is-selected", false);
             ChallengeCardPaint.Slots slots = ListCardSlots[row];
             ChallengeCardPaint.ClearTasks(player, slots);
             ChallengeCardPaint.ClearCompleters(player, slots);
-        }
-
-        private static void PaintDetail(
-            CCSPlayerController player,
-            PlayerState session,
-            PlayerState progress,
-            RunningSchedule? schedule)
-        {
-            string? challengeId = session.MenuDetailChallengeId;
-            if (string.IsNullOrEmpty(challengeId))
-            {
-                ClearDetailView(player);
-                return;
-            }
-
-            if (!Context.ChallengeMap.TryGetValue(challengeId, out ChallengeDefinition? challenge))
-            {
-                session.MenuDetailChallengeId = null;
-                ClearDetailView(player);
-                return;
-            }
-
-            CustomHud.SetHasClass(player, ScoreColumnId, "is-off", true);
-            CustomHud.SetHasClass(player, DetailColumnId, "is-off", false);
-            CustomHud.SetText(player, Panel, "detail_title", Titles.For(player, challenge.Title));
-
-            List<ChallengeTask> tasks = TaskRuleSummary.DetailInOrder(challenge);
-            string? scheduleKey = schedule != null && InSchedule(schedule, challenge.Id)
-                ? schedule.Key
-                : null;
-            int painted = Math.Min(tasks.Count, DetailSlots);
-
-            for (int i = 0; i < painted; i++)
-            {
-                ChallengeTask task = tasks[i];
-                bool broken = !task.Visible;
-                string title;
-                bool done = false;
-                if (broken)
-                {
-                    title = Titles.For(player, task.Title);
-                }
-                else
-                {
-                    int amount = Math.Max(1, task.Amount);
-                    int count = ChallengeProgress.GetTaskCount(progress, scheduleKey, challenge.Id, task);
-                    done = scheduleKey != null
-                        && ChallengeProgress.IsTaskComplete(progress, scheduleKey, challenge.Id, task);
-                    title = Titles.For(player, task.Title, count, amount);
-                }
-
-                string rowId = DetailRowIds[i];
-                CustomHud.SetText(player, Panel, DetailTitleVars[i], title);
-                PaintDetailRules(player, i, TaskRuleSummary.Parts(player, task));
-                CustomHud.SetHasClass(player, rowId, "empty", false);
-                CustomHud.SetHasClass(player, rowId, "is-off", false);
-                CustomHud.SetHasClass(player, rowId, "is-done", done);
-                CustomHud.SetHasClass(player, rowId, "is-broken", broken);
-            }
-
-            int clearUntil = session.MenuDetailPainted;
-            for (int i = painted; i < clearUntil; i++)
-            {
-                ClearDetailSlot(player, i);
-            }
-
-            session.MenuDetailPainted = painted;
-        }
-
-        private static void PaintDetailRules(CCSPlayerController player, int row, List<string> parts)
-        {
-            int overflow = parts.Count > DetailRuleSlots ? parts.Count - (DetailRuleSlots - 1) : 0;
-            int shown = overflow > 0 ? DetailRuleSlots - 1 : parts.Count;
-
-            for (int slot = 0; slot < DetailRuleSlots; slot++)
-            {
-                if (slot == DetailRuleSlots - 1 && overflow > 0)
-                {
-                    SetDetailRule(
-                        player,
-                        row,
-                        slot,
-                        string.Join(" · ", parts.GetRange(shown, parts.Count - shown)),
-                        empty: false);
-                    continue;
-                }
-
-                if (slot < shown)
-                {
-                    SetDetailRule(player, row, slot, parts[slot], empty: false);
-                    continue;
-                }
-
-                // Transparent partner so an odd last chip stays half-width.
-                if (shown > 0 && shown % 2 == 1 && slot == shown)
-                {
-                    SetDetailRule(player, row, slot, string.Empty, empty: true);
-                    continue;
-                }
-
-                ClearDetailRule(player, row, slot);
-            }
-        }
-
-        private static void SetDetailRule(
-            CCSPlayerController player,
-            int row,
-            int slot,
-            string text,
-            bool empty)
-        {
-            string ruleId = DetailRuleIds[row][slot];
-            CustomHud.SetText(player, Panel, DetailRuleVars[row][slot], text);
-            CustomHud.SetHasClass(player, ruleId, "is-off", false);
-            CustomHud.SetHasClass(player, ruleId, "is-empty", empty);
-        }
-
-        private static void ClearDetailRule(CCSPlayerController player, int row, int slot)
-        {
-            string ruleId = DetailRuleIds[row][slot];
-            CustomHud.SetText(player, Panel, DetailRuleVars[row][slot], string.Empty);
-            CustomHud.SetHasClass(player, ruleId, "is-off", true);
-            CustomHud.SetHasClass(player, ruleId, "is-empty", false);
-        }
-
-        private static void ClearDetailView(CCSPlayerController player, bool allSlots = false)
-        {
-            CustomHud.SetHasClass(player, ScoreColumnId, "is-off", false);
-            CustomHud.SetHasClass(player, DetailColumnId, "is-off", true);
-            CustomHud.SetText(player, Panel, "detail_title", string.Empty);
-
-            int clearUntil = DetailSlots;
-            if (!allSlots && Context.GetState(player) is { } state)
-            {
-                clearUntil = state.MenuDetailPainted;
-                state.MenuDetailPainted = 0;
-            }
-
-            for (int i = 0; i < clearUntil; i++)
-            {
-                ClearDetailSlot(player, i);
-            }
-        }
-
-        private static void ClearDetailSlot(CCSPlayerController player, int row)
-        {
-            CustomHud.SetText(player, Panel, DetailTitleVars[row], string.Empty);
-            for (int slot = 0; slot < DetailRuleSlots; slot++)
-            {
-                ClearDetailRule(player, row, slot);
-            }
-
-            string rowId = DetailRowIds[row];
-            CustomHud.SetHasClass(player, rowId, "empty", true);
-            CustomHud.SetHasClass(player, rowId, "is-off", false);
-            CustomHud.SetHasClass(player, rowId, "is-done", false);
-            CustomHud.SetHasClass(player, rowId, "is-broken", false);
-        }
-
-        private static bool InSchedule(RunningSchedule schedule, string challengeId)
-        {
-            List<ChallengeDefinition> challenges = schedule.Challenges;
-            for (int i = 0; i < challenges.Count; i++)
-            {
-                if (string.Equals(challenges[i].Id, challengeId, StringComparison.Ordinal))
-                {
-                    return true;
-                }
-            }
-
-            return false;
         }
 
         private static List<Entry> BuildEntries(
@@ -946,10 +705,10 @@ namespace Challenges
             TimeSpan? maxAhead)
         {
             List<Entry> entries = [];
-            foreach ((ChallengeDefinition challenge, DateTime date) in ScheduleWindowChallenges(dateOf, now, maxAhead))
+            VisitScheduleWindow(dateOf, now, maxAhead, (challenge, date) =>
             {
                 entries.Add(make(challenge) with { SortTime = date });
-            }
+            });
 
             // Percent desc, then schedule time, then title A–Z.
             return entries
@@ -1044,18 +803,22 @@ namespace Challenges
                 int index = pageStart + i;
                 if (index >= board.Count)
                 {
-                    state.MenuScoreRowSteamIds[i] = null;
-                    ClearScoreSlot(player, i);
-                    continue;
+                    for (int j = i; j < ScoreSlots; j++)
+                    {
+                        state.MenuScoreRowSteamIds[j] = null;
+                        ClearScoreSlot(player, j);
+                    }
+
+                    break;
                 }
 
                 ScoreEntry entry = board[index];
                 string rowId = ScoreRowIds[i];
                 state.MenuScoreRowSteamIds[i] = entry.SteamId;
-                CustomHud.SetText(player, Panel, $"s{i}_rank", Context.FormatRank(player, index + 1));
-                CustomHud.SetText(player, Panel, $"s{i}_name", entry.Name);
-                CustomHud.SetText(player, Panel, $"s{i}_cur", Context.FormatCount(player, entry.Current, available));
-                CustomHud.SetText(player, Panel, $"s{i}_tot", Context.FormatNumber(player, entry.Total));
+                CustomHud.SetText(player, Panel, ScoreRankVars[i], Context.FormatRank(player, index + 1));
+                CustomHud.SetText(player, Panel, ScoreNameVars[i], entry.Name);
+                CustomHud.SetText(player, Panel, ScoreCurVars[i], Context.FormatCount(player, entry.Current, available));
+                CustomHud.SetText(player, Panel, ScoreTotVars[i], Context.FormatNumber(player, entry.Total));
                 CustomHud.SetHasClass(player, rowId, "empty", false);
                 CustomHud.SetHasClass(player, rowId, "is-off", false);
                 CustomHud.SetHasClass(
@@ -1090,12 +853,8 @@ namespace Challenges
                 bySteam[steam] = new ScoreEntry(human.PlayerName, steam, current, total, human);
             }
 
-            if (viewerState.ScoreboardFilter != ScoreboardFilter.All)
-            {
-                return bySteam.Values.ToList();
-            }
-
-            if (Context.Archive is not { } archive)
+            if (viewerState.ScoreboardFilter != ScoreboardFilter.All
+                || Context.Archive is not { } archive)
             {
                 return bySteam.Values.ToList();
             }
@@ -1116,10 +875,10 @@ namespace Challenges
 
         private static void ClearScoreSlot(CCSPlayerController player, int index)
         {
-            CustomHud.SetText(player, Panel, $"s{index}_rank", string.Empty);
-            CustomHud.SetText(player, Panel, $"s{index}_name", string.Empty);
-            CustomHud.SetText(player, Panel, $"s{index}_cur", string.Empty);
-            CustomHud.SetText(player, Panel, $"s{index}_tot", string.Empty);
+            CustomHud.SetText(player, Panel, ScoreRankVars[index], string.Empty);
+            CustomHud.SetText(player, Panel, ScoreNameVars[index], string.Empty);
+            CustomHud.SetText(player, Panel, ScoreCurVars[index], string.Empty);
+            CustomHud.SetText(player, Panel, ScoreTotVars[index], string.Empty);
             string rowId = ScoreRowIds[index];
             CustomHud.SetHasClass(player, rowId, "empty", true);
             CustomHud.SetHasClass(player, rowId, "is-off", true);
