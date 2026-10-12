@@ -1,0 +1,104 @@
+title:
+  en: Flash assist
+  de: Flash-Assist
+tasks:
+  - id: easy
+    title:
+      en: '{count}/{total} flash assist'
+      de: '{count}/{total} Flash-Assist'
+    type: player_kill_assist
+    amount: 1
+    cooldown: 0
+    announce_progress: true
+    announce_completion: true
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: 'false'
+      - key: global.isduringround
+        operator: bool==
+        value: 'true'
+      - key: assistedflash
+        operator: bool==
+        value: 'true'
+      - key: isteamkill
+        operator: bool==
+        value: 'false'
+      - key: victim.isbot
+        operator: bool==
+        value: 'false'
+    requires: []
+  - id: medium
+    title:
+      en: '{count}/{total} flash assists'
+      de: '{count}/{total} Flash-Assists'
+    type: player_kill_assist
+    amount: 10
+    cooldown: 0
+    announce_progress: true
+    announce_completion: true
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: 'false'
+      - key: global.isduringround
+        operator: bool==
+        value: 'true'
+      - key: assistedflash
+        operator: bool==
+        value: 'true'
+      - key: isteamkill
+        operator: bool==
+        value: 'false'
+      - key: victim.isbot
+        operator: bool==
+        value: 'false'
+    requires:
+      - easy
+  - id: hard
+    title:
+      en: '{count}/{total} flash assists in one round'
+      de: '{count}/{total} Flash-Assists in einer Runde'
+    type: player_kill_assist
+    amount: 2
+    cooldown: 0
+    announce_progress: true
+    announce_completion: true
+    rules:
+      - key: global.iswarmup
+        operator: bool==
+        value: 'false'
+      - key: global.isduringround
+        operator: bool==
+        value: 'true'
+      - key: assistedflash
+        operator: bool==
+        value: 'true'
+      - key: isteamkill
+        operator: bool==
+        value: 'false'
+      - key: victim.isbot
+        operator: bool==
+        value: 'false'
+    requires:
+      - medium
+  - id: hard_newround
+    title:
+      en: 'New round'
+      de: 'Neue Runde'
+    type: round_start
+    amount: 1
+    cooldown: 0
+    visible: false
+    announce_progress: false
+    announce_completion: false
+    rules: []
+    actions:
+      - type: task.reset_progress
+        values:
+          - hard
+      - type: task.reset_completed
+        values:
+          - hard_newround
+    requires:
+      - medium
