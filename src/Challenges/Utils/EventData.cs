@@ -12,53 +12,29 @@ namespace Challenges.Utils
 
         /// <summary>
         /// Writes the player properties selected by <paramref name="fields"/> under <paramref name="keys"/>
-        /// (from <see cref="PlayerKeys.For"/>). Nothing is read when no field is requested.
+        /// (from <see cref="PlayerKeys.For"/> of the controller's canonical prefix). Nothing is read when no
+        /// field is requested; every property is read at most once.
         /// </summary>
         public static void FillPlayer(
             Dictionary<string, string> d,
             CCSPlayerController? player,
             string[] keys,
-            PlayerFields fields) =>
-            FillPlayer(d, player, keys, fields, keys, PlayerFields.None);
-
-        /// <summary>
-        /// Same controller under two prefixes (e.g. <c>userid</c> / <c>victim</c>): every property is read
-        /// once and written to each prefix that requests it.
-        /// </summary>
-        public static void FillPlayer(
-            Dictionary<string, string> d,
-            CCSPlayerController? player,
-            string[] keysA,
-            PlayerFields fieldsA,
-            string[] keysB,
-            PlayerFields fieldsB)
+            PlayerFields fields)
         {
-            PlayerFields all = fieldsA | fieldsB;
-            if (all == PlayerFields.None || player == null || !player.IsValid)
+            if (fields == PlayerFields.None || player == null || !player.IsValid)
             {
                 return;
             }
 
-            CSMatchStats_t? stats = (all & PlayerFields.Stats) != 0
+            CSMatchStats_t? stats = (fields & PlayerFields.Stats) != 0
                 ? player.ActionTrackingServices?.MatchStats
                 : null;
             for (int i = 0; i < PlayerKeys.Count; i++)
             {
                 PlayerFields bit = (PlayerFields)(1 << i);
-                if ((all & bit) == 0)
+                if ((fields & bit) != 0)
                 {
-                    continue;
-                }
-
-                string value = Read(player, bit, stats);
-                if ((fieldsA & bit) != 0)
-                {
-                    d[keysA[i]] = value;
-                }
-
-                if ((fieldsB & bit) != 0)
-                {
-                    d[keysB[i]] = value;
+                    d[keys[i]] = Read(player, bit, stats);
                 }
             }
         }
@@ -70,15 +46,6 @@ namespace Challenges.Utils
             FillDemand need,
             int prefix) =>
             FillPlayer(d, player, need.PrefixKeys[prefix], need.Prefixes[prefix]);
-
-        /// <summary>Generated extractors: one controller under prefixes <paramref name="a"/> and <paramref name="b"/>.</summary>
-        public static void FillPlayer(
-            Dictionary<string, string> d,
-            CCSPlayerController? player,
-            FillDemand need,
-            int a,
-            int b) =>
-            FillPlayer(d, player, need.PrefixKeys[a], need.Prefixes[a], need.PrefixKeys[b], need.Prefixes[b]);
 
         private static string Read(CCSPlayerController player, PlayerFields field, CSMatchStats_t? stats) =>
             field switch

@@ -154,62 +154,79 @@ def csharp_list(items: list[str]) -> str:
     return "[" + ", ".join(f'"{i}"' for i in items) + "]"
 
 
-def emit_key_group(names: list[str], expr: str, keys: list[str], owner: str, indent: str) -> list[str]:
-    """Write one value under its key and key aliases; computed only when one of them is needed."""
-    idx = [register(keys, n, owner) for n in names]
-    if len(idx) == 1:
-        return [f'{indent}if (need.Keys[{idx[0]}]) d["{names[0]}"] = {expr};']
-
-    cond = " || ".join(f"need.Keys[{i}]" for i in idx)
-    if len(idx) == 2:
-        (a, b), (key_a, key_b) = idx, names
-        return [f'{indent}if ({cond}) need.WriteAliases(d, {a}, "{key_a}", {b}, "{key_b}", {expr});']
-
-    inner = indent + "    "
-    lines = [f"{indent}if ({cond})", f"{indent}{{", f"{inner}string value = {expr};"]
-    for i, n in zip(idx, names):
-        lines.append(f'{inner}if (need.Keys[{i}]) d["{n}"] = value;')
-    lines.append(f"{indent}}}")
+def csharp_alias_map(name: str, aliases: dict[str, str]) -> list[str]:
+    """Static alias -> canonical table property; the shared empty instance when there are none."""
+    head = f"        public IReadOnlyDictionary<string, string> {name} {{ get; }} ="
+    if not aliases:
+        return [f"{head} ReadOnlyDictionary<string, string>.Empty;"]
+    lines = [f"{head} new Dictionary<string, string>(StringComparer.Ordinal)", "        {"]
+    lines.extend(f'            ["{alias}"] = "{canonical}",' for alias, canonical in aliases.items())
+    lines.append("        };")
     return lines
 
 
-def emit_player_fill(expr: str, names: list[str], prefixes: list[str], owner: str, indent: str) -> list[str]:
-    """One FillPlayer call per controller; reads each property once even under two prefixes."""
-    idx = [register(prefixes, n, owner) for n in names]
-    if len(idx) == 1:
-        i = idx[0]
-        return [f"{indent}if (need.Prefixes[{i}] != PlayerFields.None) EventData.FillPlayer(d, {expr}, need, {i});"]
-    if len(idx) == 2:
-        a, b = idx
-        return [
-            f"{indent}if ((need.Prefixes[{a}] | need.Prefixes[{b}]) != PlayerFields.None) "
-            f"EventData.FillPlayer(d, {expr}, need, {a}, {b});"
-        ]
-    raise SystemExit(f"more than two prefixes for one controller in {owner}")
+def add_aliases(names: list[str], aliases: dict[str, str], owner: str) -> None:
+    """names[0] is canonical; every further name resolves to it at load and is never written."""
+    for alt in names[1:]:
+        if alt in aliases:
+            raise SystemExit(f"duplicate alias {alt} in {owner}")
+        aliases[alt] = names[0]
 
 
-def emit_event_fill(event: dict, alias: dict) -> tuple[list[str], list[str], list[str]]:
-    """Return (keys, prefixes, fill_lines) for a game event extractor."""
+def check_aliases(names: list[str], aliases: dict[str, str], owner: str) -> None:
+    for alt in aliases:
+        if alt in names:
+            raise SystemExit(f"alias {alt} is also a canonical name in {owner}")
+
+
+def emit_key_group(
+    names: list[str], expr: str, keys: list[str], aliases: dict[str, str], owner: str, indent: str
+) -> list[str]:
+    """Write one value under its canonical key; the other names are key aliases resolved at load."""
+    i = register(keys, names[0], owner)
+    add_aliases(names, aliases, owner)
+    return [f'{indent}if (need.Keys[{i}]) d["{names[0]}"] = {expr};']
+
+
+def emit_player_fill(
+    expr: str, names: list[str], prefixes: list[str], aliases: dict[str, str], owner: str, indent: str
+) -> list[str]:
+    """One FillPlayer call per controller under its canonical prefix; other names are prefix aliases."""
+    i = register(prefixes, names[0], owner)
+    add_aliases(names, aliases, owner)
+    return [f"{indent}if (need.Prefixes[{i}] != PlayerFields.None) EventData.FillPlayer(d, {expr}, need, {i});"]
+
+
+def emit_event_fill(
+    event: dict, alias: dict
+) -> tuple[list[str], list[str], dict[str, str], dict[str, str], list[str]]:
+    """Return (keys, prefixes, key_aliases, prefix_aliases, fill_lines) for a game event extractor."""
     owner = event["class_name"]
     indent = "            "
     bool_coerce = set(alias.get("bool_coerce", []))
-    key_aliases: dict[str, list[str]] = alias.get("key_aliases", {})
+    alias_names: dict[str, list[str]] = alias.get("key_aliases", {})
     keys: list[str] = []
     prefixes: list[str] = []
+    key_aliases: dict[str, str] = {}
+    prefix_aliases: dict[str, str] = {}
     lines: list[str] = []
     props = event["properties"]
     for prop in props:
         if prop["kind"] == "player":
             continue
         field = prop["field"]
-        names = [field, *key_aliases.get(field, [])]
-        lines.extend(emit_key_group(names, csharp_expr_for_prop(prop, bool_coerce), keys, owner, indent))
+        names = [field, *alias_names.get(field, [])]
+        lines.extend(
+            emit_key_group(names, csharp_expr_for_prop(prop, bool_coerce), keys, key_aliases, owner, indent)
+        )
 
     players = [p for p in props if p["kind"] == "player"]
     for prop in players:
         names = player_prefixes_for(prop["field"], players, alias)
-        lines.extend(emit_player_fill(f"e.{prop['csharp']}", names, prefixes, owner, indent))
-    return keys, prefixes, lines
+        lines.extend(emit_player_fill(f"e.{prop['csharp']}", names, prefixes, prefix_aliases, owner, indent))
+    check_aliases(keys, key_aliases, owner)
+    check_aliases(prefixes, prefix_aliases, owner)
+    return keys, prefixes, key_aliases, prefix_aliases, lines
 
 
 def emit_targets(event: dict, alias: dict, types: list[str], audience: str) -> list[str]:
@@ -266,7 +283,7 @@ def generate_event_extractor(event: dict, alias: dict) -> str:
     cls = extractor_class_name(event["class_name"])
     types, audience = event_challenge_types(event, alias)
     derived = alias.get("derived")
-    keys, prefixes, fill_lines = emit_event_fill(event, alias)
+    keys, prefixes, key_aliases, prefix_aliases, fill_lines = emit_event_fill(event, alias)
     derived_keys = [k for k, _ in DERIVED_KEYS.get(derived, [])] if derived else []
     if derived and not derived_keys:
         raise SystemExit(f"unknown derived kind {derived} in {event['class_name']}")
@@ -280,12 +297,13 @@ def generate_event_extractor(event: dict, alias: dict) -> str:
     target_lines = emit_targets(event, alias, types, audience)
     needs_utilities = any("Utilities." in line for line in target_lines)
     usings = [
+        "using System.Collections.ObjectModel;",
         "using CounterStrikeSharp.API.Core;",
         "using CounterStrikeSharp.API.Modules.Events;",
         "using Challenges.Utils;",
     ]
     if needs_utilities:
-        usings.insert(0, "using CounterStrikeSharp.API;")
+        usings.insert(1, "using CounterStrikeSharp.API;")
 
     body_fill = "\n".join(
         [
@@ -320,6 +338,8 @@ def generate_event_extractor(event: dict, alias: dict) -> str:
             f"        public IReadOnlyList<string> Keys {{ get; }} = {csharp_list(keys)};",
             f"        public IReadOnlyList<string> PlayerPrefixes {{ get; }} = {csharp_list(prefixes)};",
             f"        public IReadOnlyList<string> DerivedKeys {{ get; }} = {csharp_list(derived_keys)};",
+            *csharp_alias_map("KeyAliases", key_aliases),
+            *csharp_alias_map("PrefixAliases", prefix_aliases),
             "",
             body_fill,
             "",
@@ -334,12 +354,13 @@ def generate_event_extractor(event: dict, alias: dict) -> str:
 def generate_listener_extractor(listener: dict, alias: dict, snapshot: dict) -> str:
     name = listener["name"]
     types = listener_challenge_types(listener, alias)
-    keys, prefixes, _, _, _ = emit_listener_fill(listener, alias, snapshot)
+    keys, prefixes, key_aliases, prefix_aliases, _, _, _ = emit_listener_fill(listener, alias, snapshot)
     cls = name  # OnMapStart etc.
     return "\n".join(
         [
             "// <auto-generated> by tools/generate_events.py - do not edit.",
             "#nullable enable",
+            "using System.Collections.ObjectModel;",
             "using CounterStrikeSharp.API.Core;",
             "using CounterStrikeSharp.API.Modules.Events;",
             "using Challenges.Utils;",
@@ -355,6 +376,8 @@ def generate_listener_extractor(listener: dict, alias: dict, snapshot: dict) -> 
             f"        public IReadOnlyList<string> Keys {{ get; }} = {csharp_list(keys)};",
             f"        public IReadOnlyList<string> PlayerPrefixes {{ get; }} = {csharp_list(prefixes)};",
             "        public IReadOnlyList<string> DerivedKeys { get; } = [];",
+            *csharp_alias_map("KeyAliases", key_aliases),
+            *csharp_alias_map("PrefixAliases", prefix_aliases),
             "",
             FILL_SIGNATURE,
             "        {",
@@ -376,20 +399,22 @@ def listener_player_params(listener: dict) -> list[dict]:
 
 def emit_listener_fill(
     listener: dict, alias: dict, snapshot: dict
-) -> tuple[list[str], list[str], list[str], list[str], list[str]]:
-    """Return (keys, prefixes, resolve_lines, target_exprs, fill_lines)."""
+) -> tuple[list[str], list[str], dict[str, str], dict[str, str], list[str], list[str], list[str]]:
+    """Return (keys, prefixes, key_aliases, prefix_aliases, resolve_lines, target_exprs, fill_lines)."""
     owner = listener["name"]
     indent = "            "
-    key_aliases = alias.get("key_aliases", {})
+    alias_names = alias.get("key_aliases", {})
     player_prefixes = alias.get("player_prefixes", {})
     keys: list[str] = []
     prefixes: list[str] = []
+    key_aliases: dict[str, str] = {}
+    prefix_aliases: dict[str, str] = {}
     resolve: list[str] = []
     lines: list[str] = []
     target_exprs: list[str] = []
 
     def group(names: list[str], expr: str) -> None:
-        lines.extend(emit_key_group(names, expr, keys, owner, indent))
+        lines.extend(emit_key_group(names, expr, keys, key_aliases, owner, indent))
 
     for param in listener["parameters"]:
         kind = param["kind"]
@@ -400,20 +425,20 @@ def emit_listener_fill(
         if kind == "player":
             prefix = player_prefixes.get("player", "player")
             names = [prefix] if name == prefix else [prefix, name]
-            lines.extend(emit_player_fill(name, names, prefixes, owner, indent))
+            lines.extend(emit_player_fill(name, names, prefixes, prefix_aliases, owner, indent))
             target_exprs.append(name)
         elif kind == "pawn":
             resolve.append(f"{indent}CCSPlayerController? {name}Controller = {name}.OriginalController?.Value;")
-            lines.extend(emit_player_fill(f"{name}Controller", ["player"], prefixes, owner, indent))
+            lines.extend(emit_player_fill(f"{name}Controller", ["player"], prefixes, prefix_aliases, owner, indent))
             target_exprs.append(f"{name}Controller")
         elif kind == "slot":
             resolve.append(f"{indent}CCSPlayerController? {name}Player = Utilities.GetPlayerFromSlot({name});")
-            lines.extend(emit_player_fill(f"{name}Player", ["player"], prefixes, owner, indent))
+            lines.extend(emit_player_fill(f"{name}Player", ["player"], prefixes, prefix_aliases, owner, indent))
             target_exprs.append(f"{name}Player")
         elif kind == "string":
-            group([key, *key_aliases.get(key, [])], name)
+            group([key, *alias_names.get(key, [])], name)
         elif kind == "bool":
-            group([key, *key_aliases.get(key, [])], f"EventData.Bool({name})")
+            group([key, *alias_names.get(key, [])], f"EventData.Bool({name})")
         elif kind in {"int", "float"}:
             group([key], f"EventData.Num({name})")
         elif kind == "steamid":
@@ -445,7 +470,9 @@ def emit_listener_fill(
         else:
             raise SystemExit(f"unsupported listener param kind {kind} in {listener['name']}")
 
-    return keys, prefixes, resolve, target_exprs, lines
+    check_aliases(keys, key_aliases, owner)
+    check_aliases(prefixes, prefix_aliases, owner)
+    return keys, prefixes, key_aliases, prefix_aliases, resolve, target_exprs, lines
 
 
 def generate_listener_method(listener: dict, alias: dict, snapshot: dict) -> str:
@@ -454,7 +481,7 @@ def generate_listener_method(listener: dict, alias: dict, snapshot: dict) -> str
     params = ", ".join(f"{p['type']} {p['name']}" for p in listener["parameters"])
     ret = listener["return"]
     exit_line = "                return HookResult.Continue;" if ret == "HookResult" else "                return;"
-    _, _, resolve, target_exprs, fill_lines = emit_listener_fill(listener, alias, snapshot)
+    _, _, _, _, resolve, target_exprs, fill_lines = emit_listener_fill(listener, alias, snapshot)
 
     preamble: list[str] = []
     if name == "OnPlayerButtonsChanged":

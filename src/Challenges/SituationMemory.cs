@@ -1,4 +1,4 @@
-using System.Globalization;
+using System.Collections.ObjectModel;
 using System.Text;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
@@ -20,14 +20,29 @@ namespace Challenges
         private const double ThrowingExpireSeconds = 1.0;
         private const double SmokeExpireSeconds = 22.0;
         private const PlayerButtons AttackMask = PlayerButtons.Attack | PlayerButtons.Attack2;
-        /// <summary>Four grenade keys for each of attacker, victim and userid.</summary>
-        private const int GrenadeKeyCount = 12;
-        /// <summary>insmoke, smoke.distance, smoke.age, {player}.insmoke, userid.insmoke.</summary>
-        private const int SmokeKeyCount = 5;
+        /// <summary>Four grenade keys for each of attacker and userid.</summary>
+        private const int GrenadeKeyCount = 8;
+        /// <summary>insmoke, smoke.distance, smoke.age, userid.insmoke.</summary>
+        private const int SmokeKeyCount = 4;
+
+        /// <summary>Synthetic challenge type emitted for a mutual kill.</summary>
+        public const string TradeType = "player_trade";
+
+        /// <summary>
+        /// Key layout of <see cref="TradeType"/>. The other player is written under <c>victim</c> only;
+        /// rules may also use <c>userid</c>, resolved at load.
+        /// </summary>
+        public static readonly SyntheticKeySource TradeKeys = new(
+            [
+                "seconds", "weapon", "other_weapon", "same_weapon",
+                "headshot", "other_headshot", "isteamkill", "isselfkill",
+            ],
+            ["attacker", "victim"],
+            ReadOnlyDictionary<string, string>.Empty,
+            new Dictionary<string, string>(StringComparer.Ordinal) { ["userid"] = "victim" });
 
         private static readonly string[] TradeAttackerKeys = PlayerKeys.For("attacker");
         private static readonly string[] TradeVictimKeys = PlayerKeys.For("victim");
-        private static readonly string[] TradeUseridKeys = PlayerKeys.For("userid");
 
         private static readonly HashSet<string> GrenadeNames = new(StringComparer.OrdinalIgnoreCase)
         {
@@ -57,7 +72,6 @@ namespace Challenges
         /// <summary>Player fields the loaded <c>player_trade</c> rules read, per trade prefix.</summary>
         private PlayerFields _tradeAttackerFields;
         private PlayerFields _tradeVictimFields;
-        private PlayerFields _tradeUseridFields;
 
         public bool TradeEnabled { get; private set; }
         public bool GrenadeEnabled { get; private set; }
@@ -69,6 +83,7 @@ namespace Challenges
         public RoundRoster Roster => _roster;
         public bool AnyEnabled => TradeEnabled | GrenadeEnabled | SmokeEnabled | AceEnabled;
 
+        /// <summary>Enables the situations the loaded rules use; reads canonical keys (<see cref="CompiledRule.Key"/>).</summary>
         public void Configure(IEnumerable<ChallengeTask> tasks)
         {
             bool trade = false;
@@ -78,27 +93,25 @@ namespace Challenges
             double maxTrade = 0;
             PlayerFields tradeAttacker = PlayerFields.None;
             PlayerFields tradeVictim = PlayerFields.None;
-            PlayerFields tradeUserid = PlayerFields.None;
             HashSet<(int Min, int Max)> aceSeen = [];
 
             _aceBounds.Clear();
             foreach (ChallengeTask task in tasks)
             {
-                bool isTrade = string.Equals(task.Type, "player_trade", StringComparison.Ordinal);
+                bool isTrade = string.Equals(task.Type, TradeType, StringComparison.Ordinal);
                 if (isTrade)
                 {
                     trade = true;
                 }
 
                 bool sawSeconds = false;
-                foreach (ChallengeRule rule in task.Rules)
+                foreach (CompiledRule rule in task.CompiledRules)
                 {
                     string key = rule.Key;
                     if (isTrade)
                     {
                         tradeAttacker |= PlayerKeys.TryMatch(key, "attacker", out PlayerFields a) ? a : PlayerFields.None;
                         tradeVictim |= PlayerKeys.TryMatch(key, "victim", out PlayerFields v) ? v : PlayerFields.None;
-                        tradeUserid |= PlayerKeys.TryMatch(key, "userid", out PlayerFields u) ? u : PlayerFields.None;
                     }
 
                     if (!grenade && key.Contains(".grenade", StringComparison.Ordinal))
@@ -113,10 +126,10 @@ namespace Challenges
                         smoke = true;
                     }
 
-                    if (string.Equals(key, "isace", StringComparison.Ordinal))
+                    if (string.Equals(key, AceBounds.RuleKey, StringComparison.Ordinal))
                     {
                         ace = true;
-                        (int min, int max) = AceBounds.Resolve(rule, warn: true);
+                        (int min, int max) = AceBounds.Resolve(rule.Source, warn: true);
                         if (aceSeen.Add((min, max)))
                         {
                             _aceBounds.Add(new AceBound(min, max, AceBounds.DataKey(min, max)));
@@ -125,7 +138,7 @@ namespace Challenges
 
                     if (!isTrade
                         || !string.Equals(key, "seconds", StringComparison.Ordinal)
-                        || !float.TryParse(rule.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out float sec))
+                        || rule.Number is not double sec)
                     {
                         continue;
                     }
@@ -146,7 +159,6 @@ namespace Challenges
             TradeEnabled = trade;
             _tradeAttackerFields = tradeAttacker;
             _tradeVictimFields = tradeVictim;
-            _tradeUseridFields = tradeUserid;
             GrenadeEnabled = grenade;
             SmokeEnabled = smoke;
             AceEnabled = ace;
@@ -316,12 +328,9 @@ namespace Challenges
             if (GrenadeEnabled && eventClassName == "EventPlayerDeath")
             {
                 var e = (EventPlayerDeath)gameEvent;
+                // Canonical PlayerDeath prefixes; victim.* rules resolve to userid.* at load.
                 WriteGrenadeKeys(d, "attacker", e.Attacker);
-                WriteGrenadeKeys(d, "victim", e.Userid);
-                d["userid.grenade"] = d["victim.grenade"];
-                d["userid.grenade.holding"] = d["victim.grenade.holding"];
-                d["userid.grenade.thrown"] = d["victim.grenade.thrown"];
-                d["userid.grenade.throwing"] = d["victim.grenade.throwing"];
+                WriteGrenadeKeys(d, "userid", e.Userid);
                 if (e.Userid is { IsValid: true } victim)
                 {
                     _holding.Remove(victim.Slot);
@@ -507,8 +516,8 @@ namespace Challenges
                 ["isselfkill"] = "false",
             };
             EventData.FillPlayer(d, player, TradeAttackerKeys, _tradeAttackerFields);
-            EventData.FillPlayer(d, other, TradeVictimKeys, _tradeVictimFields, TradeUseridKeys, _tradeUseridFields);
-            enqueueOne(player, "player_trade", d);
+            EventData.FillPlayer(d, other, TradeVictimKeys, _tradeVictimFields);
+            enqueueOne(player, TradeType, d);
         }
 
         private void OnGrenadeThrown(EventGrenadeThrown e)
@@ -724,10 +733,8 @@ namespace Challenges
             d["smoke.distance"] = EventData.Num(bombDist);
             d["smoke.age"] = EventData.Num(bombAge);
 
-            string playerPrefix = eventClassName == "EventBombBegindefuse" ? "player" : "defuser";
-            string playerInSmoke = EventData.Bool(playerIn);
-            d[$"{playerPrefix}.insmoke"] = playerInSmoke;
-            d["userid.insmoke"] = playerInSmoke;
+            // Canonical bomb event prefix; player.insmoke / defuser.insmoke resolve to it at load.
+            d["userid.insmoke"] = EventData.Bool(playerIn);
         }
 
         private void ProbeBomb(out bool inside, out float distance, out float age)

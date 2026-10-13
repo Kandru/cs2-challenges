@@ -146,7 +146,10 @@ namespace Challenges
             return sb.ToString();
         }
 
-        /// <summary>Prepares every rule of <paramref name="task"/>; call after the task is normalized.</summary>
+        /// <summary>
+        /// Prepares every rule of <paramref name="task"/>; call after the task is normalized. Keys are resolved to
+        /// their canonical spelling for the task type (<see cref="RuleKeys.Canonical"/>).
+        /// </summary>
         public static CompiledRule[] Compile(ChallengeTask task)
         {
             List<ChallengeRule> rules = task.Rules;
@@ -159,7 +162,10 @@ namespace Challenges
             for (int i = 0; i < compiled.Length; i++)
             {
                 ChallengeRule rule = rules[i];
-                compiled[i] = new CompiledRule(rule, rule.Key, ParseOperator(rule.Operator));
+                compiled[i] = new CompiledRule(
+                    rule,
+                    RuleKeys.Canonical(task.Type, rule.Key),
+                    ParseOperator(rule.Operator));
             }
 
             return compiled;

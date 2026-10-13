@@ -46,6 +46,8 @@ Available on almost every event:
 
 Team names: [CsTeam](../enums/CsTeam.md).
 
+Some keys have more than one spelling (for example `dmg_armor` and `dmgarmor`), and some players more than one prefix (for example `userid` and `victim` on `player_death`, `userid` and `defuser` on `player_bomb_defused`). The event pages list every spelling; they are interchangeable. The plugin resolves them once when the blueprint loads, so using an alias costs nothing per event. Debug output shows the key as written in the blueprint.
+
 `global.isduringround` is `true` from round start (including freeze time) until round end, and `false` between rounds. `global.iswarmup` is separate (warmup period from game rules).
 
 Rules only decide whether an event **counts**. They never hide a challenge from the menu.

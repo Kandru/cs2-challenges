@@ -633,8 +633,8 @@ namespace Challenges
 
             Dictionary<string, string> d = new(need.Capacity);
             if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, player, need, 0);
-            if (need.Keys[0] || need.Keys[1]) need.WriteAliases(d, 0, "message", 1, "text", message);
-            if (need.Keys[2] || need.Keys[3]) need.WriteAliases(d, 2, "teamchat", 3, "teamonly", EventData.Bool(teamChat));
+            if (need.Keys[0]) d["message"] = message;
+            if (need.Keys[1]) d["teamchat"] = EventData.Bool(teamChat);
             HandleListener("OnPlayerChat", d, valid, closed);
         }
 

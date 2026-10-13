@@ -74,9 +74,9 @@ namespace Challenges
         }
 
         /// <summary>
-        /// Union of the keys the rules of <paramref name="types"/> read, mapped onto the extractor's keys,
-        /// player prefixes and derived keys. Keys owned by situations or <c>global.*</c> do not match and
-        /// are ignored.
+        /// Union of the canonical keys the rules of <paramref name="types"/> read, mapped onto the extractor's
+        /// keys, player prefixes and derived keys. Keys owned by situations or <c>global.*</c> do not match
+        /// and are ignored.
         /// </summary>
         private static FillDemand BuildDemand(IExtractor extractor, TypePlan[] types, int extraKeys)
         {
@@ -97,7 +97,7 @@ namespace Challenges
             {
                 foreach ((_, ChallengeTask task) in type.Tasks)
                 {
-                    foreach (ChallengeRule rule in task.Rules)
+                    foreach (CompiledRule rule in task.CompiledRules)
                     {
                         need.Add(rule.Key, extractor.Keys, extractor.PlayerPrefixes, extractor.DerivedKeys);
                     }

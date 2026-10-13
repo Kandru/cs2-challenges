@@ -84,7 +84,7 @@ namespace Challenges
 
                         plan.Tasks.Add((challenge, task));
                         allTasks.Add(task);
-                        foreach (ChallengeRule rule in task.Rules)
+                        foreach (CompiledRule rule in task.CompiledRules)
                         {
                             globalKeys |= GlobalKey(rule.Key);
                         }
