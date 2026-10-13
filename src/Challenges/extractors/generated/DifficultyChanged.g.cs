@@ -12,20 +12,35 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventDifficultyChanged";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["difficulty_changed"];
+        public IReadOnlyList<string> Keys { get; } = ["newDifficulty", "oldDifficulty", "strDifficulty"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = [];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventDifficultyChanged)gameEvent;
-            d["newDifficulty"] = EventData.Num(e.Newdifficulty);
-            d["oldDifficulty"] = EventData.Num(e.Olddifficulty);
-            d["strDifficulty"] = e.Strdifficulty;
+            if (need.Keys[0])
+            {
+                d["newDifficulty"] = EventData.Num(e.Newdifficulty);
+            }
+            if (need.Keys[1])
+            {
+                d["oldDifficulty"] = EventData.Num(e.Olddifficulty);
+            }
+            if (need.Keys[2])
+            {
+                d["strDifficulty"] = e.Strdifficulty;
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
-            foreach (var entry in Utilities.GetPlayers())
+            if (need.Types[0])
             {
-                buffer.Add((entry, "difficulty_changed"));
+                foreach (var entry in Utilities.GetPlayers())
+                {
+                    buffer.Add((entry, "difficulty_changed"));
+                }
             }
         }
     }

@@ -12,22 +12,49 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventHostageRescued";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["hostage_rescued"];
+        public IReadOnlyList<string> Keys { get; } = ["hostage", "site", "rescue_site"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = ["userid", "player"];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventHostageRescued)gameEvent;
-            d["hostage"] = EventData.Num(e.Hostage);
-            d["site"] = EventData.Num(e.Site);
-            d["rescue_site"] = d["site"];
-            EventData.FillPlayer(d, e.Userid, "userid");
-            EventData.FillPlayer(d, e.Userid, "player");
+            if (need.Keys[0])
+            {
+                d["hostage"] = EventData.Num(e.Hostage);
+            }
+            if (need.Keys[1] || need.Keys[2])
+            {
+                string value = EventData.Num(e.Site);
+                if (need.Keys[1])
+                {
+                    d["site"] = value;
+                }
+                if (need.Keys[2])
+                {
+                    d["rescue_site"] = value;
+                }
+            }
+            if ((need.Prefixes[0] | need.Prefixes[1]) != PlayerFields.None)
+            {
+                EventData.FillPlayer(
+                    d,
+                    e.Userid,
+                    need.PrefixKeys[0],
+                    need.Prefixes[0],
+                    need.PrefixKeys[1],
+                    need.Prefixes[1]);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
-            foreach (var entry in Utilities.GetPlayers())
+            if (need.Types[0])
             {
-                buffer.Add((entry, "hostage_rescued"));
+                foreach (var entry in Utilities.GetPlayers())
+                {
+                    buffer.Add((entry, "hostage_rescued"));
+                }
             }
         }
     }

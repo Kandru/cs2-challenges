@@ -11,22 +11,48 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventPlayerConnect";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["player_connect"];
+        public IReadOnlyList<string> Keys { get; } = ["bot", "name", "networkid", "xuid"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = ["userid", "player"];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventPlayerConnect)gameEvent;
-            d["bot"] = EventData.Bool(e.Bot);
-            d["name"] = e.Name;
-            d["networkid"] = e.Networkid;
-            d["xuid"] = EventData.Num(e.Xuid);
-            EventData.FillPlayer(d, e.Userid, "userid");
-            EventData.FillPlayer(d, e.Userid, "player");
+            if (need.Keys[0])
+            {
+                d["bot"] = EventData.Bool(e.Bot);
+            }
+            if (need.Keys[1])
+            {
+                d["name"] = e.Name;
+            }
+            if (need.Keys[2])
+            {
+                d["networkid"] = e.Networkid;
+            }
+            if (need.Keys[3])
+            {
+                d["xuid"] = EventData.Num(e.Xuid);
+            }
+            if ((need.Prefixes[0] | need.Prefixes[1]) != PlayerFields.None)
+            {
+                EventData.FillPlayer(
+                    d,
+                    e.Userid,
+                    need.PrefixKeys[0],
+                    need.Prefixes[0],
+                    need.PrefixKeys[1],
+                    need.Prefixes[1]);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
             var e = (EventPlayerConnect)gameEvent;
-            buffer.Add((e.Userid, "player_connect"));
+            if (need.Types[0])
+            {
+                buffer.Add((e.Userid, "player_connect"));
+            }
         }
     }
 }

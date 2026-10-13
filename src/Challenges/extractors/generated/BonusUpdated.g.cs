@@ -12,21 +12,39 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventBonusUpdated";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["bonus_updated"];
+        public IReadOnlyList<string> Keys { get; } = ["numadvanced", "numbronze", "numgold", "numsilver"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = [];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventBonusUpdated)gameEvent;
-            d["numadvanced"] = EventData.Num(e.Numadvanced);
-            d["numbronze"] = EventData.Num(e.Numbronze);
-            d["numgold"] = EventData.Num(e.Numgold);
-            d["numsilver"] = EventData.Num(e.Numsilver);
+            if (need.Keys[0])
+            {
+                d["numadvanced"] = EventData.Num(e.Numadvanced);
+            }
+            if (need.Keys[1])
+            {
+                d["numbronze"] = EventData.Num(e.Numbronze);
+            }
+            if (need.Keys[2])
+            {
+                d["numgold"] = EventData.Num(e.Numgold);
+            }
+            if (need.Keys[3])
+            {
+                d["numsilver"] = EventData.Num(e.Numsilver);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
-            foreach (var entry in Utilities.GetPlayers())
+            if (need.Types[0])
             {
-                buffer.Add((entry, "bonus_updated"));
+                foreach (var entry in Utilities.GetPlayers())
+                {
+                    buffer.Add((entry, "bonus_updated"));
+                }
             }
         }
     }

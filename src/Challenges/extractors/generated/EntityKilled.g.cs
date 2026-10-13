@@ -12,21 +12,39 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventEntityKilled";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["entity_killed"];
+        public IReadOnlyList<string> Keys { get; } = ["damagebits", "entindex_attacker", "entindex_inflictor", "entindex_killed"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = [];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventEntityKilled)gameEvent;
-            d["damagebits"] = EventData.Num(e.Damagebits);
-            d["entindex_attacker"] = EventData.Num(e.EntindexAttacker);
-            d["entindex_inflictor"] = EventData.Num(e.EntindexInflictor);
-            d["entindex_killed"] = EventData.Num(e.EntindexKilled);
+            if (need.Keys[0])
+            {
+                d["damagebits"] = EventData.Num(e.Damagebits);
+            }
+            if (need.Keys[1])
+            {
+                d["entindex_attacker"] = EventData.Num(e.EntindexAttacker);
+            }
+            if (need.Keys[2])
+            {
+                d["entindex_inflictor"] = EventData.Num(e.EntindexInflictor);
+            }
+            if (need.Keys[3])
+            {
+                d["entindex_killed"] = EventData.Num(e.EntindexKilled);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
-            foreach (var entry in Utilities.GetPlayers())
+            if (need.Types[0])
             {
-                buffer.Add((entry, "entity_killed"));
+                foreach (var entry in Utilities.GetPlayers())
+                {
+                    buffer.Add((entry, "entity_killed"));
+                }
             }
         }
     }

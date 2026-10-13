@@ -12,18 +12,27 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventGameEnd";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["game_end"];
+        public IReadOnlyList<string> Keys { get; } = ["winner"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = [];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventGameEnd)gameEvent;
-            d["winner"] = EventData.Num(e.Winner);
+            if (need.Keys[0])
+            {
+                d["winner"] = EventData.Num(e.Winner);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
-            foreach (var entry in Utilities.GetPlayers())
+            if (need.Types[0])
             {
-                buffer.Add((entry, "game_end"));
+                foreach (var entry in Utilities.GetPlayers())
+                {
+                    buffer.Add((entry, "game_end"));
+                }
             }
         }
     }

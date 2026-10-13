@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Events;
@@ -17,6 +18,8 @@ namespace Challenges
 
         /// <summary>Reused target scratch list. Game thread only, not reentrant.</summary>
         private readonly List<(CCSPlayerController? Player, string Type)> _targetBuffer = [];
+        /// <summary>Same for generated listener handlers, so a listener can never clobber an event's list.</summary>
+        private readonly List<(CCSPlayerController? Player, string Type)> _listenerTargets = [];
         /// <summary>Resolved identity per player slot, keyed by user id. Game thread only.</summary>
         private readonly SlotIdentity?[] _slots = new SlotIdentity?[MaxSlots];
         private readonly HashSet<PlayerState> _pruned = [];
@@ -24,6 +27,7 @@ namespace Challenges
         private readonly SituationMemory _situations = new();
         private Dictionary<string, TypePlan> _types = new(StringComparer.Ordinal);
         private Dictionary<string, ExtractorPlan[]> _activeExtractorsByEvent = new(StringComparer.Ordinal);
+        private Dictionary<string, ExtractorPlan> _activeListeners = new(StringComparer.Ordinal);
         private List<string> _boundEvents = [];
         private List<string> _boundListeners = [];
         private bool _usesHostageKey;
@@ -57,7 +61,6 @@ namespace Challenges
             Dictionary<string, TypePlan> byType = new(StringComparer.Ordinal);
             List<ChallengeTask> allTasks = [];
             bool hostageKey = false;
-            bool isBotKey = false;
 
             if (CurrentSchedule is { } schedule)
             {
@@ -78,24 +81,16 @@ namespace Challenges
                         plan.Tasks.Add((challenge, task));
                         allTasks.Add(task);
 
-                        if (hostageKey && isBotKey)
+                        if (hostageKey)
                         {
                             continue;
                         }
 
                         foreach (ChallengeRule rule in task.Rules)
                         {
-                            if (!hostageKey && rule.Key == "global.hashostages")
+                            if (rule.Key == "global.hashostages")
                             {
                                 hostageKey = true;
-                            }
-                            else if (!isBotKey && rule.Key.EndsWith(".isbot", StringComparison.Ordinal))
-                            {
-                                isBotKey = true;
-                            }
-
-                            if (hostageKey && isBotKey)
-                            {
                                 break;
                             }
                         }
@@ -112,18 +107,22 @@ namespace Challenges
             _types = byType;
             _gateUnion = gateUnion;
             _usesHostageKey = hostageKey;
-            EventData.IncludeIsBot = isBotKey;
             _situations.Configure(allTasks);
 
             HashSet<string> bound = new(StringComparer.Ordinal);
             List<string> events = [];
             List<string> listeners = [];
             Dictionary<string, List<ExtractorPlan>> active = new(StringComparer.Ordinal);
+            Dictionary<string, ExtractorPlan> activeListeners = new(StringComparer.Ordinal);
             foreach (IExtractor extractor in Registry.All)
             {
                 TypePlan[] types = ActiveTypes(extractor, byType);
                 bool used = types.Length > 0;
-                if (used && extractor.Kind == ExtractorKind.GameEvent)
+                if (used && extractor.Kind == ExtractorKind.Listener)
+                {
+                    activeListeners[extractor.EventClassName] = new ExtractorPlan(extractor, types);
+                }
+                else if (used)
                 {
                     if (!active.TryGetValue(extractor.EventClassName, out List<ExtractorPlan>? list))
                     {
@@ -156,6 +155,7 @@ namespace Challenges
             }
 
             _activeExtractorsByEvent = activeByEvent;
+            _activeListeners = activeListeners;
             _boundEvents = events;
             _boundListeners = listeners;
         }
@@ -186,40 +186,81 @@ namespace Challenges
             _types = new(StringComparer.Ordinal);
             _gateUnion = GlobalGate.None;
             _activeExtractorsByEvent = new(StringComparer.Ordinal);
+            _activeListeners = new(StringComparer.Ordinal);
             _boundEvents = [];
             _boundListeners = [];
             _pruned.Clear();
             Array.Clear(_slots);
             _gameRulesProxy = null;
             _situations.Clear();
-            EventData.IncludeIsBot = false;
         }
 
-        /// <summary>Listener entry point used by generated <c>ChallengeEngine.Listeners.cs</c> handlers.</summary>
-        private void HandleListener(
+        /// <summary>
+        /// First step of a generated listener handler: one dictionary lookup when no loaded type uses the
+        /// listener, then the global gates. False means the handler returns without reading anything.
+        /// </summary>
+        private bool BeginListener(
             string listenerName,
-            Dictionary<string, string> data,
-            List<(CCSPlayerController? Player, string Type)> targets)
+            [NotNullWhen(true)] out ExtractorPlan? plan,
+            out GlobalGate closed)
         {
-            if (!CanHandle())
+            closed = GlobalGate.None;
+            if (!CanHandle() || !_activeListeners.TryGetValue(listenerName, out plan))
             {
-                return;
+                plan = null;
+                return false;
             }
 
+            closed = ReadClosedGates();
+            if (!plan.AllClosed(closed))
+            {
+                return true;
+            }
+
+            if (GlobalConfig.Debug.Enable)
+            {
+                DebugPrint($"{listenerName} gated");
+            }
+
+            return false;
+        }
+
+        /// <summary>Cleared target scratch list for generated listener handlers.</summary>
+        private List<(CCSPlayerController? Player, string Type)> ListenerTargets()
+        {
+            _listenerTargets.Clear();
+            return _listenerTargets;
+        }
+
+        /// <summary>Generated listener handlers: valid targets, or null when the handler can stop.</summary>
+        private List<ProgressTarget>? FilterListenerTargets(
+            string listenerName,
+            List<(CCSPlayerController? Player, string Type)> targets,
+            GlobalGate closed)
+        {
             try
             {
-                List<ProgressTarget>? valid = FilterTargets(targets, ReadClosedGates());
-                if (valid == null)
+                List<ProgressTarget>? valid = FilterTargets(targets, closed);
+                if (valid == null && GlobalConfig.Debug.Enable)
                 {
-                    if (GlobalConfig.Debug.Enable)
-                    {
-                        DebugPrint($"{listenerName} no targets");
-                    }
-
-                    return;
+                    DebugPrint($"{listenerName} no targets");
                 }
 
-                Enqueue(listenerName, data, valid);
+                return valid;
+            }
+            catch (Exception ex)
+            {
+                Log($"{listenerName} failed: {ex.Message}");
+                return null;
+            }
+        }
+
+        /// <summary>Last step of a generated listener handler.</summary>
+        private void HandleListener(string listenerName, Dictionary<string, string> data, List<ProgressTarget> targets)
+        {
+            try
+            {
+                Enqueue(listenerName, data, targets);
             }
             catch (Exception ex)
             {
@@ -276,7 +317,7 @@ namespace Challenges
                 try
                 {
                     _targetBuffer.Clear();
-                    extractor.Targets(gameEvent, _targetBuffer);
+                    extractor.Targets(gameEvent, _targetBuffer, plan.Demand);
                     List<ProgressTarget>? targets = FilterTargets(_targetBuffer, closed);
                     if (targets == null)
                     {
@@ -289,7 +330,7 @@ namespace Challenges
                     }
 
                     Dictionary<string, string> data = [];
-                    extractor.Fill(gameEvent, data);
+                    extractor.Fill(gameEvent, data, plan.Demand);
                     if (enrich)
                     {
                         _situations.Enrich(eventName, gameEvent, data);

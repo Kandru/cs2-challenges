@@ -12,19 +12,31 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventInventoryUpdated";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["inventory_updated"];
+        public IReadOnlyList<string> Keys { get; } = ["itemdef", "itemid"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = [];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventInventoryUpdated)gameEvent;
-            d["itemdef"] = EventData.Num(e.Itemdef);
-            d["itemid"] = EventData.Num(e.Itemid);
+            if (need.Keys[0])
+            {
+                d["itemdef"] = EventData.Num(e.Itemdef);
+            }
+            if (need.Keys[1])
+            {
+                d["itemid"] = EventData.Num(e.Itemid);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
-            foreach (var entry in Utilities.GetPlayers())
+            if (need.Types[0])
             {
-                buffer.Add((entry, "inventory_updated"));
+                foreach (var entry in Utilities.GetPlayers())
+                {
+                    buffer.Add((entry, "inventory_updated"));
+                }
             }
         }
     }

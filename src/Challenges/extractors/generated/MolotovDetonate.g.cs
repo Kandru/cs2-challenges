@@ -11,21 +11,44 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventMolotovDetonate";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["molotov_detonate"];
+        public IReadOnlyList<string> Keys { get; } = ["x", "y", "z"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = ["userid", "player"];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventMolotovDetonate)gameEvent;
-            d["x"] = EventData.Num(e.X);
-            d["y"] = EventData.Num(e.Y);
-            d["z"] = EventData.Num(e.Z);
-            EventData.FillPlayer(d, e.Userid, "userid");
-            EventData.FillPlayer(d, e.Userid, "player");
+            if (need.Keys[0])
+            {
+                d["x"] = EventData.Num(e.X);
+            }
+            if (need.Keys[1])
+            {
+                d["y"] = EventData.Num(e.Y);
+            }
+            if (need.Keys[2])
+            {
+                d["z"] = EventData.Num(e.Z);
+            }
+            if ((need.Prefixes[0] | need.Prefixes[1]) != PlayerFields.None)
+            {
+                EventData.FillPlayer(
+                    d,
+                    e.Userid,
+                    need.PrefixKeys[0],
+                    need.Prefixes[0],
+                    need.PrefixKeys[1],
+                    need.Prefixes[1]);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
             var e = (EventMolotovDetonate)gameEvent;
-            buffer.Add((e.Userid, "molotov_detonate"));
+            if (need.Types[0])
+            {
+                buffer.Add((e.Userid, "molotov_detonate"));
+            }
         }
     }
 }

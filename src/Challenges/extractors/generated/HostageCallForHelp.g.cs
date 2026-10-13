@@ -12,18 +12,27 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventHostageCallForHelp";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["hostage_call_for_help"];
+        public IReadOnlyList<string> Keys { get; } = ["hostage"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = [];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventHostageCallForHelp)gameEvent;
-            d["hostage"] = EventData.Num(e.Hostage);
+            if (need.Keys[0])
+            {
+                d["hostage"] = EventData.Num(e.Hostage);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
-            foreach (var entry in Utilities.GetPlayers())
+            if (need.Types[0])
             {
-                buffer.Add((entry, "hostage_call_for_help"));
+                foreach (var entry in Utilities.GetPlayers())
+                {
+                    buffer.Add((entry, "hostage_call_for_help"));
+                }
             }
         }
     }

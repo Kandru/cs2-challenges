@@ -12,19 +12,31 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventNavBlocked";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["nav_blocked"];
+        public IReadOnlyList<string> Keys { get; } = ["area", "blocked"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = [];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventNavBlocked)gameEvent;
-            d["area"] = EventData.Num(e.Area);
-            d["blocked"] = EventData.Bool(e.Blocked);
+            if (need.Keys[0])
+            {
+                d["area"] = EventData.Num(e.Area);
+            }
+            if (need.Keys[1])
+            {
+                d["blocked"] = EventData.Bool(e.Blocked);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
-            foreach (var entry in Utilities.GetPlayers())
+            if (need.Types[0])
             {
-                buffer.Add((entry, "nav_blocked"));
+                foreach (var entry in Utilities.GetPlayers())
+                {
+                    buffer.Add((entry, "nav_blocked"));
+                }
             }
         }
     }

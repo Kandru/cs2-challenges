@@ -12,21 +12,39 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventVotePassed";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["vote_passed"];
+        public IReadOnlyList<string> Keys { get; } = ["details", "param1", "reliable", "team"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = [];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventVotePassed)gameEvent;
-            d["details"] = e.Details;
-            d["param1"] = e.Param1;
-            d["reliable"] = EventData.Num(e.Reliable);
-            d["team"] = EventData.Num(e.Team);
+            if (need.Keys[0])
+            {
+                d["details"] = e.Details;
+            }
+            if (need.Keys[1])
+            {
+                d["param1"] = e.Param1;
+            }
+            if (need.Keys[2])
+            {
+                d["reliable"] = EventData.Num(e.Reliable);
+            }
+            if (need.Keys[3])
+            {
+                d["team"] = EventData.Num(e.Team);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
-            foreach (var entry in Utilities.GetPlayers())
+            if (need.Types[0])
             {
-                buffer.Add((entry, "vote_passed"));
+                foreach (var entry in Utilities.GetPlayers())
+                {
+                    buffer.Add((entry, "vote_passed"));
+                }
             }
         }
     }

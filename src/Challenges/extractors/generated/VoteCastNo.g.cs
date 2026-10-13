@@ -12,19 +12,31 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventVoteCastNo";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["vote_cast_no"];
+        public IReadOnlyList<string> Keys { get; } = ["entityid", "team"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = [];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventVoteCastNo)gameEvent;
-            d["entityid"] = EventData.Num(e.Entityid);
-            d["team"] = EventData.Num(e.Team);
+            if (need.Keys[0])
+            {
+                d["entityid"] = EventData.Num(e.Entityid);
+            }
+            if (need.Keys[1])
+            {
+                d["team"] = EventData.Num(e.Team);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
-            foreach (var entry in Utilities.GetPlayers())
+            if (need.Types[0])
             {
-                buffer.Add((entry, "vote_cast_no"));
+                foreach (var entry in Utilities.GetPlayers())
+                {
+                    buffer.Add((entry, "vote_cast_no"));
+                }
             }
         }
     }

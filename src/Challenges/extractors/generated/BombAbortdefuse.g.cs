@@ -11,18 +11,32 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventBombAbortdefuse";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["player_bomb_abortdefuse"];
+        public IReadOnlyList<string> Keys { get; } = [];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = ["userid", "player"];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventBombAbortdefuse)gameEvent;
-            EventData.FillPlayer(d, e.Userid, "userid");
-            EventData.FillPlayer(d, e.Userid, "player");
+            if ((need.Prefixes[0] | need.Prefixes[1]) != PlayerFields.None)
+            {
+                EventData.FillPlayer(
+                    d,
+                    e.Userid,
+                    need.PrefixKeys[0],
+                    need.Prefixes[0],
+                    need.PrefixKeys[1],
+                    need.Prefixes[1]);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
             var e = (EventBombAbortdefuse)gameEvent;
-            buffer.Add((e.Userid, "player_bomb_abortdefuse"));
+            if (need.Types[0])
+            {
+                buffer.Add((e.Userid, "player_bomb_abortdefuse"));
+            }
         }
     }
 }

@@ -12,18 +12,27 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventEnableRestartVoting";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["enable_restart_voting"];
+        public IReadOnlyList<string> Keys { get; } = ["enable"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = [];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventEnableRestartVoting)gameEvent;
-            d["enable"] = EventData.Bool(e.Enable);
+            if (need.Keys[0])
+            {
+                d["enable"] = EventData.Bool(e.Enable);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
-            foreach (var entry in Utilities.GetPlayers())
+            if (need.Types[0])
             {
-                buffer.Add((entry, "enable_restart_voting"));
+                foreach (var entry in Utilities.GetPlayers())
+                {
+                    buffer.Add((entry, "enable_restart_voting"));
+                }
             }
         }
     }

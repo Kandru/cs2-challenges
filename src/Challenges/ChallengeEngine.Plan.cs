@@ -1,4 +1,5 @@
 using Challenges.Extractors;
+using Challenges.Utils;
 
 namespace Challenges
 {
@@ -32,11 +33,12 @@ namespace Challenges
             public bool IsClosed(GlobalGate closed) => (Gate & closed) != 0;
         }
 
-        /// <summary>An extractor with at least one active type, plus its active types.</summary>
+        /// <summary>An extractor with at least one active type, its active types, and what to fill.</summary>
         private sealed class ExtractorPlan(IExtractor extractor, TypePlan[] types)
         {
             public IExtractor Extractor { get; } = extractor;
             public TypePlan[] Types { get; } = types;
+            public FillDemand Demand { get; } = BuildDemand(extractor, types);
 
             public bool AllClosed(GlobalGate closed)
             {
@@ -55,6 +57,40 @@ namespace Challenges
 
                 return true;
             }
+        }
+
+        /// <summary>
+        /// Union of the keys the rules of <paramref name="types"/> read, mapped onto the extractor's keys,
+        /// player prefixes and derived keys. Keys owned by situations or <c>global.*</c> do not match and
+        /// are ignored.
+        /// </summary>
+        private static FillDemand BuildDemand(IExtractor extractor, TypePlan[] types)
+        {
+            IReadOnlyList<string> challengeTypes = extractor.ChallengeTypes;
+            FillDemand need = new(challengeTypes.Count, extractor.Keys.Count, extractor.PlayerPrefixes);
+            for (int i = 0; i < challengeTypes.Count; i++)
+            {
+                foreach (TypePlan type in types)
+                {
+                    if (string.Equals(type.Type, challengeTypes[i], StringComparison.Ordinal))
+                    {
+                        need.Types[i] = true;
+                    }
+                }
+            }
+
+            foreach (TypePlan type in types)
+            {
+                foreach ((_, ChallengeTask task) in type.Tasks)
+                {
+                    foreach (ChallengeRule rule in task.Rules)
+                    {
+                        need.Add(rule.Key, extractor.Keys, extractor.PlayerPrefixes, extractor.DerivedKeys);
+                    }
+                }
+            }
+
+            return need;
         }
 
         /// <summary>Union of all type gates; selects which global values must be read per event.</summary>

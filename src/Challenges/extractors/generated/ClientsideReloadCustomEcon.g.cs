@@ -12,18 +12,27 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventClientsideReloadCustomEcon";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["clientside_reload_custom_econ"];
+        public IReadOnlyList<string> Keys { get; } = ["steamid"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = [];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventClientsideReloadCustomEcon)gameEvent;
-            d["steamid"] = e.Steamid;
+            if (need.Keys[0])
+            {
+                d["steamid"] = e.Steamid;
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
-            foreach (var entry in Utilities.GetPlayers())
+            if (need.Types[0])
             {
-                buffer.Add((entry, "clientside_reload_custom_econ"));
+                foreach (var entry in Utilities.GetPlayers())
+                {
+                    buffer.Add((entry, "clientside_reload_custom_econ"));
+                }
             }
         }
     }

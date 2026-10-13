@@ -11,22 +11,56 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventPlayerChangename";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["player_changed_name"];
+        public IReadOnlyList<string> Keys { get; } = ["newname", "new_name", "oldname", "old_name"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = ["userid", "player"];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventPlayerChangename)gameEvent;
-            d["newname"] = e.Newname;
-            d["new_name"] = d["newname"];
-            d["oldname"] = e.Oldname;
-            d["old_name"] = d["oldname"];
-            EventData.FillPlayer(d, e.Userid, "userid");
-            EventData.FillPlayer(d, e.Userid, "player");
+            if (need.Keys[0] || need.Keys[1])
+            {
+                string value = e.Newname;
+                if (need.Keys[0])
+                {
+                    d["newname"] = value;
+                }
+                if (need.Keys[1])
+                {
+                    d["new_name"] = value;
+                }
+            }
+            if (need.Keys[2] || need.Keys[3])
+            {
+                string value = e.Oldname;
+                if (need.Keys[2])
+                {
+                    d["oldname"] = value;
+                }
+                if (need.Keys[3])
+                {
+                    d["old_name"] = value;
+                }
+            }
+            if ((need.Prefixes[0] | need.Prefixes[1]) != PlayerFields.None)
+            {
+                EventData.FillPlayer(
+                    d,
+                    e.Userid,
+                    need.PrefixKeys[0],
+                    need.Prefixes[0],
+                    need.PrefixKeys[1],
+                    need.Prefixes[1]);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
             var e = (EventPlayerChangename)gameEvent;
-            buffer.Add((e.Userid, "player_changed_name"));
+            if (need.Types[0])
+            {
+                buffer.Add((e.Userid, "player_changed_name"));
+            }
         }
     }
 }

@@ -12,19 +12,31 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventInstructorServerHintStop";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["instructor_server_hint_stop"];
+        public IReadOnlyList<string> Keys { get; } = ["hint_entindex", "hint_name"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = [];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventInstructorServerHintStop)gameEvent;
-            d["hint_entindex"] = EventData.Num(e.HintEntindex);
-            d["hint_name"] = e.HintName;
+            if (need.Keys[0])
+            {
+                d["hint_entindex"] = EventData.Num(e.HintEntindex);
+            }
+            if (need.Keys[1])
+            {
+                d["hint_name"] = e.HintName;
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
-            foreach (var entry in Utilities.GetPlayers())
+            if (need.Types[0])
             {
-                buffer.Add((entry, "instructor_server_hint_stop"));
+                foreach (var entry in Utilities.GetPlayers())
+                {
+                    buffer.Add((entry, "instructor_server_hint_stop"));
+                }
             }
         }
     }

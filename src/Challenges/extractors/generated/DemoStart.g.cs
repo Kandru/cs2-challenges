@@ -12,21 +12,39 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventDemoStart";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["demo_start"];
+        public IReadOnlyList<string> Keys { get; } = ["dota_combatlog_list", "dota_hero_chase_list", "dota_pick_hero_list", "local"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = [];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventDemoStart)gameEvent;
-            d["dota_combatlog_list"] = EventData.Num(e.DotaCombatlogList);
-            d["dota_hero_chase_list"] = EventData.Num(e.DotaHeroChaseList);
-            d["dota_pick_hero_list"] = EventData.Num(e.DotaPickHeroList);
-            d["local"] = EventData.Num(e.Local);
+            if (need.Keys[0])
+            {
+                d["dota_combatlog_list"] = EventData.Num(e.DotaCombatlogList);
+            }
+            if (need.Keys[1])
+            {
+                d["dota_hero_chase_list"] = EventData.Num(e.DotaHeroChaseList);
+            }
+            if (need.Keys[2])
+            {
+                d["dota_pick_hero_list"] = EventData.Num(e.DotaPickHeroList);
+            }
+            if (need.Keys[3])
+            {
+                d["local"] = EventData.Num(e.Local);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
-            foreach (var entry in Utilities.GetPlayers())
+            if (need.Types[0])
             {
-                buffer.Add((entry, "demo_start"));
+                foreach (var entry in Utilities.GetPlayers())
+                {
+                    buffer.Add((entry, "demo_start"));
+                }
             }
         }
     }

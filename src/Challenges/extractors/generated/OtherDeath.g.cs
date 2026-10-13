@@ -12,29 +12,71 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventOtherDeath";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["other_death"];
+        public IReadOnlyList<string> Keys { get; } = ["attacker", "attackerblind", "headshot", "noscope", "otherid", "othertype", "penetrated", "thrusmoke", "weapon", "weapon_fauxitemid", "weapon_itemid", "weapon_originalowner_xuid"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = [];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventOtherDeath)gameEvent;
-            d["attacker"] = EventData.Num(e.Attacker);
-            d["attackerblind"] = EventData.Bool(e.Attackerblind);
-            d["headshot"] = EventData.Bool(e.Headshot);
-            d["noscope"] = EventData.Bool(e.Noscope);
-            d["otherid"] = EventData.Num(e.Otherid);
-            d["othertype"] = e.Othertype;
-            d["penetrated"] = EventData.Num(e.Penetrated);
-            d["thrusmoke"] = EventData.Bool(e.Thrusmoke);
-            d["weapon"] = e.Weapon;
-            d["weapon_fauxitemid"] = e.WeaponFauxitemid;
-            d["weapon_itemid"] = e.WeaponItemid;
-            d["weapon_originalowner_xuid"] = e.WeaponOriginalownerXuid;
+            if (need.Keys[0])
+            {
+                d["attacker"] = EventData.Num(e.Attacker);
+            }
+            if (need.Keys[1])
+            {
+                d["attackerblind"] = EventData.Bool(e.Attackerblind);
+            }
+            if (need.Keys[2])
+            {
+                d["headshot"] = EventData.Bool(e.Headshot);
+            }
+            if (need.Keys[3])
+            {
+                d["noscope"] = EventData.Bool(e.Noscope);
+            }
+            if (need.Keys[4])
+            {
+                d["otherid"] = EventData.Num(e.Otherid);
+            }
+            if (need.Keys[5])
+            {
+                d["othertype"] = e.Othertype;
+            }
+            if (need.Keys[6])
+            {
+                d["penetrated"] = EventData.Num(e.Penetrated);
+            }
+            if (need.Keys[7])
+            {
+                d["thrusmoke"] = EventData.Bool(e.Thrusmoke);
+            }
+            if (need.Keys[8])
+            {
+                d["weapon"] = e.Weapon;
+            }
+            if (need.Keys[9])
+            {
+                d["weapon_fauxitemid"] = e.WeaponFauxitemid;
+            }
+            if (need.Keys[10])
+            {
+                d["weapon_itemid"] = e.WeaponItemid;
+            }
+            if (need.Keys[11])
+            {
+                d["weapon_originalowner_xuid"] = e.WeaponOriginalownerXuid;
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
-            foreach (var entry in Utilities.GetPlayers())
+            if (need.Types[0])
             {
-                buffer.Add((entry, "other_death"));
+                foreach (var entry in Utilities.GetPlayers())
+                {
+                    buffer.Add((entry, "other_death"));
+                }
             }
         }
     }

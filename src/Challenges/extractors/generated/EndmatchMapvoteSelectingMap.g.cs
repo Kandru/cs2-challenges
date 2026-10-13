@@ -12,28 +12,67 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventEndmatchMapvoteSelectingMap";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["endmatch_mapvote_selecting_map"];
+        public IReadOnlyList<string> Keys { get; } = ["count", "slot1", "slot10", "slot2", "slot3", "slot4", "slot5", "slot6", "slot7", "slot8", "slot9"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = [];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventEndmatchMapvoteSelectingMap)gameEvent;
-            d["count"] = EventData.Num(e.Count);
-            d["slot1"] = EventData.Num(e.Slot1);
-            d["slot10"] = EventData.Num(e.Slot10);
-            d["slot2"] = EventData.Num(e.Slot2);
-            d["slot3"] = EventData.Num(e.Slot3);
-            d["slot4"] = EventData.Num(e.Slot4);
-            d["slot5"] = EventData.Num(e.Slot5);
-            d["slot6"] = EventData.Num(e.Slot6);
-            d["slot7"] = EventData.Num(e.Slot7);
-            d["slot8"] = EventData.Num(e.Slot8);
-            d["slot9"] = EventData.Num(e.Slot9);
+            if (need.Keys[0])
+            {
+                d["count"] = EventData.Num(e.Count);
+            }
+            if (need.Keys[1])
+            {
+                d["slot1"] = EventData.Num(e.Slot1);
+            }
+            if (need.Keys[2])
+            {
+                d["slot10"] = EventData.Num(e.Slot10);
+            }
+            if (need.Keys[3])
+            {
+                d["slot2"] = EventData.Num(e.Slot2);
+            }
+            if (need.Keys[4])
+            {
+                d["slot3"] = EventData.Num(e.Slot3);
+            }
+            if (need.Keys[5])
+            {
+                d["slot4"] = EventData.Num(e.Slot4);
+            }
+            if (need.Keys[6])
+            {
+                d["slot5"] = EventData.Num(e.Slot5);
+            }
+            if (need.Keys[7])
+            {
+                d["slot6"] = EventData.Num(e.Slot6);
+            }
+            if (need.Keys[8])
+            {
+                d["slot7"] = EventData.Num(e.Slot7);
+            }
+            if (need.Keys[9])
+            {
+                d["slot8"] = EventData.Num(e.Slot8);
+            }
+            if (need.Keys[10])
+            {
+                d["slot9"] = EventData.Num(e.Slot9);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
-            foreach (var entry in Utilities.GetPlayers())
+            if (need.Types[0])
             {
-                buffer.Add((entry, "endmatch_mapvote_selecting_map"));
+                foreach (var entry in Utilities.GetPlayers())
+                {
+                    buffer.Add((entry, "endmatch_mapvote_selecting_map"));
+                }
             }
         }
     }

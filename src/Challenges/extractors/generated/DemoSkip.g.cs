@@ -12,22 +12,43 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventDemoSkip";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["demo_skip"];
+        public IReadOnlyList<string> Keys { get; } = ["dota_hero_chase_list", "local", "playback_tick", "skipto_tick", "user_message_list"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = [];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventDemoSkip)gameEvent;
-            d["dota_hero_chase_list"] = EventData.Num(e.DotaHeroChaseList);
-            d["local"] = EventData.Num(e.Local);
-            d["playback_tick"] = EventData.Num(e.PlaybackTick);
-            d["skipto_tick"] = EventData.Num(e.SkiptoTick);
-            d["user_message_list"] = EventData.Num(e.UserMessageList);
+            if (need.Keys[0])
+            {
+                d["dota_hero_chase_list"] = EventData.Num(e.DotaHeroChaseList);
+            }
+            if (need.Keys[1])
+            {
+                d["local"] = EventData.Num(e.Local);
+            }
+            if (need.Keys[2])
+            {
+                d["playback_tick"] = EventData.Num(e.PlaybackTick);
+            }
+            if (need.Keys[3])
+            {
+                d["skipto_tick"] = EventData.Num(e.SkiptoTick);
+            }
+            if (need.Keys[4])
+            {
+                d["user_message_list"] = EventData.Num(e.UserMessageList);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
-            foreach (var entry in Utilities.GetPlayers())
+            if (need.Types[0])
             {
-                buffer.Add((entry, "demo_skip"));
+                foreach (var entry in Utilities.GetPlayers())
+                {
+                    buffer.Add((entry, "demo_skip"));
+                }
             }
         }
     }

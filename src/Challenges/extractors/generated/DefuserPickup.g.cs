@@ -11,19 +11,36 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventDefuserPickup";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["player_defuser_pickup"];
+        public IReadOnlyList<string> Keys { get; } = ["entityid"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = ["userid", "player"];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventDefuserPickup)gameEvent;
-            d["entityid"] = EventData.Num(e.Entityid);
-            EventData.FillPlayer(d, e.Userid, "userid");
-            EventData.FillPlayer(d, e.Userid, "player");
+            if (need.Keys[0])
+            {
+                d["entityid"] = EventData.Num(e.Entityid);
+            }
+            if ((need.Prefixes[0] | need.Prefixes[1]) != PlayerFields.None)
+            {
+                EventData.FillPlayer(
+                    d,
+                    e.Userid,
+                    need.PrefixKeys[0],
+                    need.Prefixes[0],
+                    need.PrefixKeys[1],
+                    need.Prefixes[1]);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
             var e = (EventDefuserPickup)gameEvent;
-            buffer.Add((e.Userid, "player_defuser_pickup"));
+            if (need.Types[0])
+            {
+                buffer.Add((e.Userid, "player_defuser_pickup"));
+            }
         }
     }
 }

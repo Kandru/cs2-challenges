@@ -12,18 +12,27 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventRepostXboxAchievements";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["repost_xbox_achievements"];
+        public IReadOnlyList<string> Keys { get; } = ["splitscreenplayer"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = [];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventRepostXboxAchievements)gameEvent;
-            d["splitscreenplayer"] = EventData.Num(e.Splitscreenplayer);
+            if (need.Keys[0])
+            {
+                d["splitscreenplayer"] = EventData.Num(e.Splitscreenplayer);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
-            foreach (var entry in Utilities.GetPlayers())
+            if (need.Types[0])
             {
-                buffer.Add((entry, "repost_xbox_achievements"));
+                foreach (var entry in Utilities.GetPlayers())
+                {
+                    buffer.Add((entry, "repost_xbox_achievements"));
+                }
             }
         }
     }

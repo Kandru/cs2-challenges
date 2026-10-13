@@ -2,20 +2,25 @@
 #nullable enable
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Events;
+using Challenges.Utils;
 
 namespace Challenges.Extractors
 {
+    /// <summary>Key layout of the <c>OnPlayerTakeDamagePre</c> listener; filled by <c>ChallengeEngine.OnPlayerTakeDamagePre</c>.</summary>
     public sealed class ListenerOnPlayerTakeDamagePre : IExtractor
     {
         public ExtractorKind Kind => ExtractorKind.Listener;
         public string EventClassName => "OnPlayerTakeDamagePre";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["on_player_take_damage_pre"];
+        public IReadOnlyList<string> Keys { get; } = ["damage.damage", "damage.totalled_damage", "damage.bits_damage_type", "damage.damage_custom", "damage.ammo_type", "damage.original_damage", "damage.should_bleed", "damage.should_spark", "damage.damage_flags", "damage.hit_group_id", "damage.num_objects_penetrated", "damage.friendly_fire_damage_reduction_ratio", "damage.stopped_bullet", "damage.in_take_damage_flow"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = ["player"];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
         }
     }

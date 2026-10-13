@@ -12,18 +12,27 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventFirstbombsIncomingWarning";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["firstbombs_incoming_warning"];
+        public IReadOnlyList<string> Keys { get; } = ["global"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = [];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventFirstbombsIncomingWarning)gameEvent;
-            d["global"] = EventData.Bool(e.Global);
+            if (need.Keys[0])
+            {
+                d["global"] = EventData.Bool(e.Global);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
-            foreach (var entry in Utilities.GetPlayers())
+            if (need.Types[0])
             {
-                buffer.Add((entry, "firstbombs_incoming_warning"));
+                foreach (var entry in Utilities.GetPlayers())
+                {
+                    buffer.Add((entry, "firstbombs_incoming_warning"));
+                }
             }
         }
     }

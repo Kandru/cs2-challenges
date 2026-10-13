@@ -12,18 +12,27 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventGamePhaseChanged";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["game_phase_changed"];
+        public IReadOnlyList<string> Keys { get; } = ["new_phase"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = [];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventGamePhaseChanged)gameEvent;
-            d["new_phase"] = EventData.Num(e.NewPhase);
+            if (need.Keys[0])
+            {
+                d["new_phase"] = EventData.Num(e.NewPhase);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
-            foreach (var entry in Utilities.GetPlayers())
+            if (need.Types[0])
             {
-                buffer.Add((entry, "game_phase_changed"));
+                foreach (var entry in Utilities.GetPlayers())
+                {
+                    buffer.Add((entry, "game_phase_changed"));
+                }
             }
         }
     }

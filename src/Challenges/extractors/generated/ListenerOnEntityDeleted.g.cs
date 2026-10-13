@@ -2,20 +2,25 @@
 #nullable enable
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Events;
+using Challenges.Utils;
 
 namespace Challenges.Extractors
 {
+    /// <summary>Key layout of the <c>OnEntityDeleted</c> listener; filled by <c>ChallengeEngine.OnEntityDeleted</c>.</summary>
     public sealed class ListenerOnEntityDeleted : IExtractor
     {
         public ExtractorKind Kind => ExtractorKind.Listener;
         public string EventClassName => "OnEntityDeleted";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["on_entity_deleted"];
+        public IReadOnlyList<string> Keys { get; } = ["entity.designername", "entity.index"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = [];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
         }
     }

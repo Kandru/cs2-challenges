@@ -12,19 +12,31 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventDmBonusWeaponStart";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["dm_bonus_weapon_start"];
+        public IReadOnlyList<string> Keys { get; } = ["Pos", "time"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = [];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventDmBonusWeaponStart)gameEvent;
-            d["Pos"] = EventData.Num(e.Pos);
-            d["time"] = EventData.Num(e.Time);
+            if (need.Keys[0])
+            {
+                d["Pos"] = EventData.Num(e.Pos);
+            }
+            if (need.Keys[1])
+            {
+                d["time"] = EventData.Num(e.Time);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
-            foreach (var entry in Utilities.GetPlayers())
+            if (need.Types[0])
             {
-                buffer.Add((entry, "dm_bonus_weapon_start"));
+                foreach (var entry in Utilities.GetPlayers())
+                {
+                    buffer.Add((entry, "dm_bonus_weapon_start"));
+                }
             }
         }
     }

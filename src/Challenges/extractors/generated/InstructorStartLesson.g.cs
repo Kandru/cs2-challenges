@@ -11,23 +11,52 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventInstructorStartLesson";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["instructor_start_lesson"];
+        public IReadOnlyList<string> Keys { get; } = ["hint_name", "hint_target", "vr_controller_type", "vr_movement_type", "vr_single_controller"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = ["userid", "player"];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventInstructorStartLesson)gameEvent;
-            d["hint_name"] = e.HintName;
-            d["hint_target"] = EventData.Num(e.HintTarget);
-            d["vr_controller_type"] = EventData.Num(e.VrControllerType);
-            d["vr_movement_type"] = EventData.Num(e.VrMovementType);
-            d["vr_single_controller"] = EventData.Bool(e.VrSingleController);
-            EventData.FillPlayer(d, e.Userid, "userid");
-            EventData.FillPlayer(d, e.Userid, "player");
+            if (need.Keys[0])
+            {
+                d["hint_name"] = e.HintName;
+            }
+            if (need.Keys[1])
+            {
+                d["hint_target"] = EventData.Num(e.HintTarget);
+            }
+            if (need.Keys[2])
+            {
+                d["vr_controller_type"] = EventData.Num(e.VrControllerType);
+            }
+            if (need.Keys[3])
+            {
+                d["vr_movement_type"] = EventData.Num(e.VrMovementType);
+            }
+            if (need.Keys[4])
+            {
+                d["vr_single_controller"] = EventData.Bool(e.VrSingleController);
+            }
+            if ((need.Prefixes[0] | need.Prefixes[1]) != PlayerFields.None)
+            {
+                EventData.FillPlayer(
+                    d,
+                    e.Userid,
+                    need.PrefixKeys[0],
+                    need.Prefixes[0],
+                    need.PrefixKeys[1],
+                    need.Prefixes[1]);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
             var e = (EventInstructorStartLesson)gameEvent;
-            buffer.Add((e.Userid, "instructor_start_lesson"));
+            if (need.Types[0])
+            {
+                buffer.Add((e.Userid, "instructor_start_lesson"));
+            }
         }
     }
 }

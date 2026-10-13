@@ -5,41 +5,83 @@ namespace Challenges.Utils
 {
     public static class EventData
     {
-        /// <summary>True when any loaded task rule uses a <c>*.isbot</c> key. Written by ChallengeEngine.</summary>
-        public static bool IncludeIsBot;
-
         public static string Bool(bool value) => value ? "true" : "false";
 
         public static string Num<T>(T value) where T : IFormattable =>
             value.ToString(null, CultureInfo.InvariantCulture);
 
-        public static void FillPlayer(Dictionary<string, string> d, CCSPlayerController? player, string prefix)
+        /// <summary>
+        /// Writes the player properties selected by <paramref name="fields"/> under <paramref name="keys"/>
+        /// (from <see cref="PlayerKeys.For"/>). Nothing is read when no field is requested.
+        /// </summary>
+        public static void FillPlayer(
+            Dictionary<string, string> d,
+            CCSPlayerController? player,
+            string[] keys,
+            PlayerFields fields) =>
+            FillPlayer(d, player, keys, fields, keys, PlayerFields.None);
+
+        /// <summary>
+        /// Same controller under two prefixes (e.g. <c>userid</c> / <c>victim</c>): every property is read
+        /// once and written to each prefix that requests it.
+        /// </summary>
+        public static void FillPlayer(
+            Dictionary<string, string> d,
+            CCSPlayerController? player,
+            string[] keysA,
+            PlayerFields fieldsA,
+            string[] keysB,
+            PlayerFields fieldsB)
         {
-            if (player == null || !player.IsValid)
+            PlayerFields all = fieldsA | fieldsB;
+            if (all == PlayerFields.None || player == null || !player.IsValid)
             {
                 return;
             }
 
-            var stats = player.ActionTrackingServices?.MatchStats;
-            d[$"{prefix}.name"] = player.PlayerName;
-            if (IncludeIsBot)
+            CSMatchStats_t? stats = (all & PlayerFields.Stats) != 0
+                ? player.ActionTrackingServices?.MatchStats
+                : null;
+            for (int i = 0; i < PlayerKeys.Count; i++)
             {
-                d[$"{prefix}.isbot"] = Bool(player.IsBot);
-            }
+                PlayerFields bit = (PlayerFields)(1 << i);
+                if ((all & bit) == 0)
+                {
+                    continue;
+                }
 
-            d[$"{prefix}.team"] = player.Team.ToString();
-            d[$"{prefix}.alive"] = Bool(player.PawnIsAlive);
-            d[$"{prefix}.ping"] = Num(player.Ping);
-            d[$"{prefix}.money"] = player.InGameMoneyServices is { } money ? Num(money.Account) : "0";
-            d[$"{prefix}.score"] = Num(player.Score);
-            d[$"{prefix}.stats.kills"] = stats != null ? Num(stats.Kills) : "0";
-            d[$"{prefix}.stats.assists"] = stats != null ? Num(stats.Assists) : "0";
-            d[$"{prefix}.stats.deaths"] = stats != null ? Num(stats.Deaths) : "0";
-            d[$"{prefix}.stats.damage"] = stats != null ? Num(stats.Damage) : "0";
-            d[$"{prefix}.health"] = Num(player.PawnHealth);
-            d[$"{prefix}.armor"] = Num(player.PawnArmor);
-            d[$"{prefix}.hasdefusor"] = Bool(player.PawnHasDefuser);
-            d[$"{prefix}.hashelmet"] = Bool(player.PawnHasHelmet);
+                string value = Read(player, bit, stats);
+                if ((fieldsA & bit) != 0)
+                {
+                    d[keysA[i]] = value;
+                }
+
+                if ((fieldsB & bit) != 0)
+                {
+                    d[keysB[i]] = value;
+                }
+            }
         }
+
+        private static string Read(CCSPlayerController player, PlayerFields field, CSMatchStats_t? stats) =>
+            field switch
+            {
+                PlayerFields.Name => player.PlayerName,
+                PlayerFields.IsBot => Bool(player.IsBot),
+                PlayerFields.Team => player.Team.ToString(),
+                PlayerFields.Alive => Bool(player.PawnIsAlive),
+                PlayerFields.Ping => Num(player.Ping),
+                PlayerFields.Money => player.InGameMoneyServices is { } money ? Num(money.Account) : "0",
+                PlayerFields.Score => Num(player.Score),
+                PlayerFields.StatsKills => stats != null ? Num(stats.Kills) : "0",
+                PlayerFields.StatsAssists => stats != null ? Num(stats.Assists) : "0",
+                PlayerFields.StatsDeaths => stats != null ? Num(stats.Deaths) : "0",
+                PlayerFields.StatsDamage => stats != null ? Num(stats.Damage) : "0",
+                PlayerFields.Health => Num(player.PawnHealth),
+                PlayerFields.Armor => Num(player.PawnArmor),
+                PlayerFields.HasDefusor => Bool(player.PawnHasDefuser),
+                PlayerFields.HasHelmet => Bool(player.PawnHasHelmet),
+                _ => string.Empty,
+            };
     }
 }

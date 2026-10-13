@@ -12,20 +12,35 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventTournamentReward";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["tournament_reward"];
+        public IReadOnlyList<string> Keys { get; } = ["accountid", "defindex", "totalrewards"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = [];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventTournamentReward)gameEvent;
-            d["accountid"] = EventData.Num(e.Accountid);
-            d["defindex"] = EventData.Num(e.Defindex);
-            d["totalrewards"] = EventData.Num(e.Totalrewards);
+            if (need.Keys[0])
+            {
+                d["accountid"] = EventData.Num(e.Accountid);
+            }
+            if (need.Keys[1])
+            {
+                d["defindex"] = EventData.Num(e.Defindex);
+            }
+            if (need.Keys[2])
+            {
+                d["totalrewards"] = EventData.Num(e.Totalrewards);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
-            foreach (var entry in Utilities.GetPlayers())
+            if (need.Types[0])
             {
-                buffer.Add((entry, "tournament_reward"));
+                foreach (var entry in Utilities.GetPlayers())
+                {
+                    buffer.Add((entry, "tournament_reward"));
+                }
             }
         }
     }

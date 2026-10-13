@@ -12,19 +12,31 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventSetInstructorGroupEnabled";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["set_instructor_group_enabled"];
+        public IReadOnlyList<string> Keys { get; } = ["enabled", "group"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = [];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventSetInstructorGroupEnabled)gameEvent;
-            d["enabled"] = EventData.Num(e.Enabled);
-            d["group"] = e.Group;
+            if (need.Keys[0])
+            {
+                d["enabled"] = EventData.Num(e.Enabled);
+            }
+            if (need.Keys[1])
+            {
+                d["group"] = e.Group;
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
-            foreach (var entry in Utilities.GetPlayers())
+            if (need.Types[0])
             {
-                buffer.Add((entry, "set_instructor_group_enabled"));
+                foreach (var entry in Utilities.GetPlayers())
+                {
+                    buffer.Add((entry, "set_instructor_group_enabled"));
+                }
             }
         }
     }

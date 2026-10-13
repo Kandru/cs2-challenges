@@ -11,21 +11,44 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventAddPlayerSonarIcon";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["player_add_sonar_icon"];
+        public IReadOnlyList<string> Keys { get; } = ["pos_x", "pos_y", "pos_z"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = ["userid", "player"];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventAddPlayerSonarIcon)gameEvent;
-            d["pos_x"] = EventData.Num(e.PosX);
-            d["pos_y"] = EventData.Num(e.PosY);
-            d["pos_z"] = EventData.Num(e.PosZ);
-            EventData.FillPlayer(d, e.Userid, "userid");
-            EventData.FillPlayer(d, e.Userid, "player");
+            if (need.Keys[0])
+            {
+                d["pos_x"] = EventData.Num(e.PosX);
+            }
+            if (need.Keys[1])
+            {
+                d["pos_y"] = EventData.Num(e.PosY);
+            }
+            if (need.Keys[2])
+            {
+                d["pos_z"] = EventData.Num(e.PosZ);
+            }
+            if ((need.Prefixes[0] | need.Prefixes[1]) != PlayerFields.None)
+            {
+                EventData.FillPlayer(
+                    d,
+                    e.Userid,
+                    need.PrefixKeys[0],
+                    need.Prefixes[0],
+                    need.PrefixKeys[1],
+                    need.Prefixes[1]);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
             var e = (EventAddPlayerSonarIcon)gameEvent;
-            buffer.Add((e.Userid, "player_add_sonar_icon"));
+            if (need.Types[0])
+            {
+                buffer.Add((e.Userid, "player_add_sonar_icon"));
+            }
         }
     }
 }

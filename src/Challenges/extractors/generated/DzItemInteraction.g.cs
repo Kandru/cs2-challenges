@@ -11,20 +11,40 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventDzItemInteraction";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["dz_item_interaction"];
+        public IReadOnlyList<string> Keys { get; } = ["subject", "type"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = ["userid", "player"];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventDzItemInteraction)gameEvent;
-            d["subject"] = EventData.Num(e.Subject);
-            d["type"] = e.Type;
-            EventData.FillPlayer(d, e.Userid, "userid");
-            EventData.FillPlayer(d, e.Userid, "player");
+            if (need.Keys[0])
+            {
+                d["subject"] = EventData.Num(e.Subject);
+            }
+            if (need.Keys[1])
+            {
+                d["type"] = e.Type;
+            }
+            if ((need.Prefixes[0] | need.Prefixes[1]) != PlayerFields.None)
+            {
+                EventData.FillPlayer(
+                    d,
+                    e.Userid,
+                    need.PrefixKeys[0],
+                    need.Prefixes[0],
+                    need.PrefixKeys[1],
+                    need.Prefixes[1]);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
             var e = (EventDzItemInteraction)gameEvent;
-            buffer.Add((e.Userid, "dz_item_interaction"));
+            if (need.Types[0])
+            {
+                buffer.Add((e.Userid, "dz_item_interaction"));
+            }
         }
     }
 }

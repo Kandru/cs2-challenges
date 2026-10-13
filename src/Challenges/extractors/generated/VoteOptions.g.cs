@@ -12,23 +12,47 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventVoteOptions";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["vote_options"];
+        public IReadOnlyList<string> Keys { get; } = ["count", "option1", "option2", "option3", "option4", "option5"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = [];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventVoteOptions)gameEvent;
-            d["count"] = EventData.Num(e.Count);
-            d["option1"] = e.Option1;
-            d["option2"] = e.Option2;
-            d["option3"] = e.Option3;
-            d["option4"] = e.Option4;
-            d["option5"] = e.Option5;
+            if (need.Keys[0])
+            {
+                d["count"] = EventData.Num(e.Count);
+            }
+            if (need.Keys[1])
+            {
+                d["option1"] = e.Option1;
+            }
+            if (need.Keys[2])
+            {
+                d["option2"] = e.Option2;
+            }
+            if (need.Keys[3])
+            {
+                d["option3"] = e.Option3;
+            }
+            if (need.Keys[4])
+            {
+                d["option4"] = e.Option4;
+            }
+            if (need.Keys[5])
+            {
+                d["option5"] = e.Option5;
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
-            foreach (var entry in Utilities.GetPlayers())
+            if (need.Types[0])
             {
-                buffer.Add((entry, "vote_options"));
+                foreach (var entry in Utilities.GetPlayers())
+                {
+                    buffer.Add((entry, "vote_options"));
+                }
             }
         }
     }

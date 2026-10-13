@@ -12,20 +12,35 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventNextlevelChanged";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["nextlevel_changed"];
+        public IReadOnlyList<string> Keys { get; } = ["mapgroup", "nextlevel", "skirmishmode"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = [];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventNextlevelChanged)gameEvent;
-            d["mapgroup"] = e.Mapgroup;
-            d["nextlevel"] = e.Nextlevel;
-            d["skirmishmode"] = e.Skirmishmode;
+            if (need.Keys[0])
+            {
+                d["mapgroup"] = e.Mapgroup;
+            }
+            if (need.Keys[1])
+            {
+                d["nextlevel"] = e.Nextlevel;
+            }
+            if (need.Keys[2])
+            {
+                d["skirmishmode"] = e.Skirmishmode;
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
-            foreach (var entry in Utilities.GetPlayers())
+            if (need.Types[0])
             {
-                buffer.Add((entry, "nextlevel_changed"));
+                foreach (var entry in Utilities.GetPlayers())
+                {
+                    buffer.Add((entry, "nextlevel_changed"));
+                }
             }
         }
     }

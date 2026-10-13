@@ -12,24 +12,51 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventRoundEnd";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["round_end"];
+        public IReadOnlyList<string> Keys { get; } = ["legacy", "message", "nomusic", "player_count", "reason", "time", "winner"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = [];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventRoundEnd)gameEvent;
-            d["legacy"] = EventData.Num(e.Legacy);
-            d["message"] = e.Message;
-            d["nomusic"] = EventData.Num(e.Nomusic);
-            d["player_count"] = EventData.Num(e.PlayerCount);
-            d["reason"] = EventData.Num(e.Reason);
-            d["time"] = EventData.Num(e.Time);
-            d["winner"] = EventData.Num(e.Winner);
+            if (need.Keys[0])
+            {
+                d["legacy"] = EventData.Num(e.Legacy);
+            }
+            if (need.Keys[1])
+            {
+                d["message"] = e.Message;
+            }
+            if (need.Keys[2])
+            {
+                d["nomusic"] = EventData.Num(e.Nomusic);
+            }
+            if (need.Keys[3])
+            {
+                d["player_count"] = EventData.Num(e.PlayerCount);
+            }
+            if (need.Keys[4])
+            {
+                d["reason"] = EventData.Num(e.Reason);
+            }
+            if (need.Keys[5])
+            {
+                d["time"] = EventData.Num(e.Time);
+            }
+            if (need.Keys[6])
+            {
+                d["winner"] = EventData.Num(e.Winner);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
-            foreach (var entry in Utilities.GetPlayers())
+            if (need.Types[0])
             {
-                buffer.Add((entry, "round_end"));
+                foreach (var entry in Utilities.GetPlayers())
+                {
+                    buffer.Add((entry, "round_end"));
+                }
             }
         }
     }

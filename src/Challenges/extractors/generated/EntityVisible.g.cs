@@ -11,21 +11,44 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventEntityVisible";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["entity_visible"];
+        public IReadOnlyList<string> Keys { get; } = ["classname", "entityname", "subject"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = ["userid", "player"];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventEntityVisible)gameEvent;
-            d["classname"] = e.Classname;
-            d["entityname"] = e.Entityname;
-            d["subject"] = EventData.Num(e.Subject);
-            EventData.FillPlayer(d, e.Userid, "userid");
-            EventData.FillPlayer(d, e.Userid, "player");
+            if (need.Keys[0])
+            {
+                d["classname"] = e.Classname;
+            }
+            if (need.Keys[1])
+            {
+                d["entityname"] = e.Entityname;
+            }
+            if (need.Keys[2])
+            {
+                d["subject"] = EventData.Num(e.Subject);
+            }
+            if ((need.Prefixes[0] | need.Prefixes[1]) != PlayerFields.None)
+            {
+                EventData.FillPlayer(
+                    d,
+                    e.Userid,
+                    need.PrefixKeys[0],
+                    need.Prefixes[0],
+                    need.PrefixKeys[1],
+                    need.Prefixes[1]);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
             var e = (EventEntityVisible)gameEvent;
-            buffer.Add((e.Userid, "entity_visible"));
+            if (need.Types[0])
+            {
+                buffer.Add((e.Userid, "entity_visible"));
+            }
         }
     }
 }

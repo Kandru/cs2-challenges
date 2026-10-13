@@ -12,18 +12,27 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventPlayerStatsUpdated";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["player_stats_updated"];
+        public IReadOnlyList<string> Keys { get; } = ["forceupload"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = [];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventPlayerStatsUpdated)gameEvent;
-            d["forceupload"] = EventData.Bool(e.Forceupload);
+            if (need.Keys[0])
+            {
+                d["forceupload"] = EventData.Bool(e.Forceupload);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
-            foreach (var entry in Utilities.GetPlayers())
+            if (need.Types[0])
             {
-                buffer.Add((entry, "player_stats_updated"));
+                foreach (var entry in Utilities.GetPlayers())
+                {
+                    buffer.Add((entry, "player_stats_updated"));
+                }
             }
         }
     }

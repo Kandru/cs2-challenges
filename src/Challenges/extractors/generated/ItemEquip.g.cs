@@ -11,26 +11,64 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventItemEquip";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["item_equip"];
+        public IReadOnlyList<string> Keys { get; } = ["canzoom", "defindex", "hassilencer", "hastracers", "ispainted", "issilenced", "item", "weptype"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = ["userid", "player"];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventItemEquip)gameEvent;
-            d["canzoom"] = EventData.Bool(e.Canzoom);
-            d["defindex"] = EventData.Num(e.Defindex);
-            d["hassilencer"] = EventData.Bool(e.Hassilencer);
-            d["hastracers"] = EventData.Bool(e.Hastracers);
-            d["ispainted"] = EventData.Bool(e.Ispainted);
-            d["issilenced"] = EventData.Bool(e.Issilenced);
-            d["item"] = e.Item;
-            d["weptype"] = EventData.Num(e.Weptype);
-            EventData.FillPlayer(d, e.Userid, "userid");
-            EventData.FillPlayer(d, e.Userid, "player");
+            if (need.Keys[0])
+            {
+                d["canzoom"] = EventData.Bool(e.Canzoom);
+            }
+            if (need.Keys[1])
+            {
+                d["defindex"] = EventData.Num(e.Defindex);
+            }
+            if (need.Keys[2])
+            {
+                d["hassilencer"] = EventData.Bool(e.Hassilencer);
+            }
+            if (need.Keys[3])
+            {
+                d["hastracers"] = EventData.Bool(e.Hastracers);
+            }
+            if (need.Keys[4])
+            {
+                d["ispainted"] = EventData.Bool(e.Ispainted);
+            }
+            if (need.Keys[5])
+            {
+                d["issilenced"] = EventData.Bool(e.Issilenced);
+            }
+            if (need.Keys[6])
+            {
+                d["item"] = e.Item;
+            }
+            if (need.Keys[7])
+            {
+                d["weptype"] = EventData.Num(e.Weptype);
+            }
+            if ((need.Prefixes[0] | need.Prefixes[1]) != PlayerFields.None)
+            {
+                EventData.FillPlayer(
+                    d,
+                    e.Userid,
+                    need.PrefixKeys[0],
+                    need.Prefixes[0],
+                    need.PrefixKeys[1],
+                    need.Prefixes[1]);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
             var e = (EventItemEquip)gameEvent;
-            buffer.Add((e.Userid, "item_equip"));
+            if (need.Types[0])
+            {
+                buffer.Add((e.Userid, "item_equip"));
+            }
         }
     }
 }

@@ -11,24 +11,54 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventShowDeathpanel";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["show_deathpanel_killer_controller", "show_deathpanel_victim"];
+        public IReadOnlyList<string> Keys { get; } = ["damage_given", "damage_taken", "hits_given", "hits_taken", "killer"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = ["killer_controller", "victim"];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventShowDeathpanel)gameEvent;
-            d["damage_given"] = EventData.Num(e.DamageGiven);
-            d["damage_taken"] = EventData.Num(e.DamageTaken);
-            d["hits_given"] = EventData.Num(e.HitsGiven);
-            d["hits_taken"] = EventData.Num(e.HitsTaken);
-            d["killer"] = e.Killer.ToString();
-            EventData.FillPlayer(d, e.KillerController, "killer_controller");
-            EventData.FillPlayer(d, e.Victim, "victim");
+            if (need.Keys[0])
+            {
+                d["damage_given"] = EventData.Num(e.DamageGiven);
+            }
+            if (need.Keys[1])
+            {
+                d["damage_taken"] = EventData.Num(e.DamageTaken);
+            }
+            if (need.Keys[2])
+            {
+                d["hits_given"] = EventData.Num(e.HitsGiven);
+            }
+            if (need.Keys[3])
+            {
+                d["hits_taken"] = EventData.Num(e.HitsTaken);
+            }
+            if (need.Keys[4])
+            {
+                d["killer"] = e.Killer.ToString();
+            }
+            if (need.Prefixes[0] != PlayerFields.None)
+            {
+                EventData.FillPlayer(d, e.KillerController, need.PrefixKeys[0], need.Prefixes[0]);
+            }
+            if (need.Prefixes[1] != PlayerFields.None)
+            {
+                EventData.FillPlayer(d, e.Victim, need.PrefixKeys[1], need.Prefixes[1]);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
             var e = (EventShowDeathpanel)gameEvent;
-            buffer.Add((e.KillerController, "show_deathpanel_killer_controller"));
-            buffer.Add((e.Victim, "show_deathpanel_victim"));
+            if (need.Types[0])
+            {
+                buffer.Add((e.KillerController, "show_deathpanel_killer_controller"));
+            }
+            if (need.Types[1])
+            {
+                buffer.Add((e.Victim, "show_deathpanel_victim"));
+            }
         }
     }
 }

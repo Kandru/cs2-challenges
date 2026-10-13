@@ -12,19 +12,31 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventUgcFileDownloadStart";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["ugc_file_download_start"];
+        public IReadOnlyList<string> Keys { get; } = ["hcontent", "published_file_id"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = [];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventUgcFileDownloadStart)gameEvent;
-            d["hcontent"] = EventData.Num(e.Hcontent);
-            d["published_file_id"] = EventData.Num(e.PublishedFileId);
+            if (need.Keys[0])
+            {
+                d["hcontent"] = EventData.Num(e.Hcontent);
+            }
+            if (need.Keys[1])
+            {
+                d["published_file_id"] = EventData.Num(e.PublishedFileId);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
-            foreach (var entry in Utilities.GetPlayers())
+            if (need.Types[0])
             {
-                buffer.Add((entry, "ugc_file_download_start"));
+                foreach (var entry in Utilities.GetPlayers())
+                {
+                    buffer.Add((entry, "ugc_file_download_start"));
+                }
             }
         }
     }

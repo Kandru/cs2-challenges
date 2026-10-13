@@ -12,20 +12,35 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventAchievementEvent";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["achievement_event"];
+        public IReadOnlyList<string> Keys { get; } = ["achievement_name", "cur_val", "max_val"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = [];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventAchievementEvent)gameEvent;
-            d["achievement_name"] = e.AchievementName;
-            d["cur_val"] = EventData.Num(e.CurVal);
-            d["max_val"] = EventData.Num(e.MaxVal);
+            if (need.Keys[0])
+            {
+                d["achievement_name"] = e.AchievementName;
+            }
+            if (need.Keys[1])
+            {
+                d["cur_val"] = EventData.Num(e.CurVal);
+            }
+            if (need.Keys[2])
+            {
+                d["max_val"] = EventData.Num(e.MaxVal);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
-            foreach (var entry in Utilities.GetPlayers())
+            if (need.Types[0])
             {
-                buffer.Add((entry, "achievement_event"));
+                foreach (var entry in Utilities.GetPlayers())
+                {
+                    buffer.Add((entry, "achievement_event"));
+                }
             }
         }
     }

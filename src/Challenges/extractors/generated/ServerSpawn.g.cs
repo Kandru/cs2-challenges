@@ -12,27 +12,63 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventServerSpawn";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["server_spawn"];
+        public IReadOnlyList<string> Keys { get; } = ["addonname", "address", "dedicated", "game", "hostname", "mapname", "maxplayers", "os", "password", "port"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = [];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventServerSpawn)gameEvent;
-            d["addonname"] = e.Addonname;
-            d["address"] = e.Address;
-            d["dedicated"] = EventData.Bool(e.Dedicated);
-            d["game"] = e.Game;
-            d["hostname"] = e.Hostname;
-            d["mapname"] = e.Mapname;
-            d["maxplayers"] = EventData.Num(e.Maxplayers);
-            d["os"] = e.Os;
-            d["password"] = EventData.Bool(e.Password);
-            d["port"] = EventData.Num(e.Port);
+            if (need.Keys[0])
+            {
+                d["addonname"] = e.Addonname;
+            }
+            if (need.Keys[1])
+            {
+                d["address"] = e.Address;
+            }
+            if (need.Keys[2])
+            {
+                d["dedicated"] = EventData.Bool(e.Dedicated);
+            }
+            if (need.Keys[3])
+            {
+                d["game"] = e.Game;
+            }
+            if (need.Keys[4])
+            {
+                d["hostname"] = e.Hostname;
+            }
+            if (need.Keys[5])
+            {
+                d["mapname"] = e.Mapname;
+            }
+            if (need.Keys[6])
+            {
+                d["maxplayers"] = EventData.Num(e.Maxplayers);
+            }
+            if (need.Keys[7])
+            {
+                d["os"] = e.Os;
+            }
+            if (need.Keys[8])
+            {
+                d["password"] = EventData.Bool(e.Password);
+            }
+            if (need.Keys[9])
+            {
+                d["port"] = EventData.Num(e.Port);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
-            foreach (var entry in Utilities.GetPlayers())
+            if (need.Types[0])
             {
-                buffer.Add((entry, "server_spawn"));
+                foreach (var entry in Utilities.GetPlayers())
+                {
+                    buffer.Add((entry, "server_spawn"));
+                }
             }
         }
     }

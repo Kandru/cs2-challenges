@@ -12,21 +12,39 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventInfernoStartburn";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["inferno_startburn"];
+        public IReadOnlyList<string> Keys { get; } = ["entityid", "x", "y", "z"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = [];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventInfernoStartburn)gameEvent;
-            d["entityid"] = EventData.Num(e.Entityid);
-            d["x"] = EventData.Num(e.X);
-            d["y"] = EventData.Num(e.Y);
-            d["z"] = EventData.Num(e.Z);
+            if (need.Keys[0])
+            {
+                d["entityid"] = EventData.Num(e.Entityid);
+            }
+            if (need.Keys[1])
+            {
+                d["x"] = EventData.Num(e.X);
+            }
+            if (need.Keys[2])
+            {
+                d["y"] = EventData.Num(e.Y);
+            }
+            if (need.Keys[3])
+            {
+                d["z"] = EventData.Num(e.Z);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
-            foreach (var entry in Utilities.GetPlayers())
+            if (need.Types[0])
             {
-                buffer.Add((entry, "inferno_startburn"));
+                foreach (var entry in Utilities.GetPlayers())
+                {
+                    buffer.Add((entry, "inferno_startburn"));
+                }
             }
         }
     }

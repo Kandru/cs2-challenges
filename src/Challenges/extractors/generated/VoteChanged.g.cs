@@ -12,25 +12,55 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventVoteChanged";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["vote_changed"];
+        public IReadOnlyList<string> Keys { get; } = ["noVotes", "potentialVotes", "vote_option1", "vote_option2", "vote_option3", "vote_option4", "vote_option5", "yesVotes"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = [];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventVoteChanged)gameEvent;
-            d["noVotes"] = EventData.Num(e.Novotes);
-            d["potentialVotes"] = EventData.Num(e.Potentialvotes);
-            d["vote_option1"] = EventData.Num(e.VoteOption1);
-            d["vote_option2"] = EventData.Num(e.VoteOption2);
-            d["vote_option3"] = EventData.Num(e.VoteOption3);
-            d["vote_option4"] = EventData.Num(e.VoteOption4);
-            d["vote_option5"] = EventData.Num(e.VoteOption5);
-            d["yesVotes"] = EventData.Num(e.Yesvotes);
+            if (need.Keys[0])
+            {
+                d["noVotes"] = EventData.Num(e.Novotes);
+            }
+            if (need.Keys[1])
+            {
+                d["potentialVotes"] = EventData.Num(e.Potentialvotes);
+            }
+            if (need.Keys[2])
+            {
+                d["vote_option1"] = EventData.Num(e.VoteOption1);
+            }
+            if (need.Keys[3])
+            {
+                d["vote_option2"] = EventData.Num(e.VoteOption2);
+            }
+            if (need.Keys[4])
+            {
+                d["vote_option3"] = EventData.Num(e.VoteOption3);
+            }
+            if (need.Keys[5])
+            {
+                d["vote_option4"] = EventData.Num(e.VoteOption4);
+            }
+            if (need.Keys[6])
+            {
+                d["vote_option5"] = EventData.Num(e.VoteOption5);
+            }
+            if (need.Keys[7])
+            {
+                d["yesVotes"] = EventData.Num(e.Yesvotes);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
-            foreach (var entry in Utilities.GetPlayers())
+            if (need.Types[0])
             {
-                buffer.Add((entry, "vote_changed"));
+                foreach (var entry in Utilities.GetPlayers())
+                {
+                    buffer.Add((entry, "vote_changed"));
+                }
             }
         }
     }

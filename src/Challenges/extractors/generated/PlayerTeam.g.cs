@@ -11,25 +11,60 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventPlayerTeam";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["player_team"];
+        public IReadOnlyList<string> Keys { get; } = ["disconnect", "isbot", "name", "oldteam", "silent", "team"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = ["userid", "player"];
+        public IReadOnlyList<string> DerivedKeys { get; } = ["old_team", "new_team"];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventPlayerTeam)gameEvent;
-            d["disconnect"] = EventData.Bool(e.Disconnect);
-            d["isbot"] = EventData.Bool(e.Isbot);
-            d["name"] = e.Name;
-            d["oldteam"] = EventData.Num(e.Oldteam);
-            d["silent"] = EventData.Bool(e.Silent);
-            d["team"] = EventData.Num(e.Team);
-            EventData.FillPlayer(d, e.Userid, "userid");
-            EventData.FillPlayer(d, e.Userid, "player");
-            DerivedKeys.Apply("player_team_names", gameEvent, d);
+            if (need.Keys[0])
+            {
+                d["disconnect"] = EventData.Bool(e.Disconnect);
+            }
+            if (need.Keys[1])
+            {
+                d["isbot"] = EventData.Bool(e.Isbot);
+            }
+            if (need.Keys[2])
+            {
+                d["name"] = e.Name;
+            }
+            if (need.Keys[3])
+            {
+                d["oldteam"] = EventData.Num(e.Oldteam);
+            }
+            if (need.Keys[4])
+            {
+                d["silent"] = EventData.Bool(e.Silent);
+            }
+            if (need.Keys[5])
+            {
+                d["team"] = EventData.Num(e.Team);
+            }
+            if ((need.Prefixes[0] | need.Prefixes[1]) != PlayerFields.None)
+            {
+                EventData.FillPlayer(
+                    d,
+                    e.Userid,
+                    need.PrefixKeys[0],
+                    need.Prefixes[0],
+                    need.PrefixKeys[1],
+                    need.Prefixes[1]);
+            }
+            if (need.Derived)
+            {
+                global::Challenges.Extractors.DerivedKeys.Apply("player_team_names", gameEvent, d);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
             var e = (EventPlayerTeam)gameEvent;
-            buffer.Add((e.Userid, "player_team"));
+            if (need.Types[0])
+            {
+                buffer.Add((e.Userid, "player_team"));
+            }
         }
     }
 }

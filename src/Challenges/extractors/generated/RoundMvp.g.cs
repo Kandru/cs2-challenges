@@ -11,23 +11,52 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventRoundMvp";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["round_mvp"];
+        public IReadOnlyList<string> Keys { get; } = ["musickitid", "musickitmvps", "nomusic", "reason", "value"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = ["userid", "player"];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventRoundMvp)gameEvent;
-            d["musickitid"] = EventData.Num(e.Musickitid);
-            d["musickitmvps"] = EventData.Num(e.Musickitmvps);
-            d["nomusic"] = EventData.Num(e.Nomusic);
-            d["reason"] = EventData.Num(e.Reason);
-            d["value"] = EventData.Num(e.Value);
-            EventData.FillPlayer(d, e.Userid, "userid");
-            EventData.FillPlayer(d, e.Userid, "player");
+            if (need.Keys[0])
+            {
+                d["musickitid"] = EventData.Num(e.Musickitid);
+            }
+            if (need.Keys[1])
+            {
+                d["musickitmvps"] = EventData.Num(e.Musickitmvps);
+            }
+            if (need.Keys[2])
+            {
+                d["nomusic"] = EventData.Num(e.Nomusic);
+            }
+            if (need.Keys[3])
+            {
+                d["reason"] = EventData.Num(e.Reason);
+            }
+            if (need.Keys[4])
+            {
+                d["value"] = EventData.Num(e.Value);
+            }
+            if ((need.Prefixes[0] | need.Prefixes[1]) != PlayerFields.None)
+            {
+                EventData.FillPlayer(
+                    d,
+                    e.Userid,
+                    need.PrefixKeys[0],
+                    need.Prefixes[0],
+                    need.PrefixKeys[1],
+                    need.Prefixes[1]);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
             var e = (EventRoundMvp)gameEvent;
-            buffer.Add((e.Userid, "round_mvp"));
+            if (need.Types[0])
+            {
+                buffer.Add((e.Userid, "round_mvp"));
+            }
         }
     }
 }

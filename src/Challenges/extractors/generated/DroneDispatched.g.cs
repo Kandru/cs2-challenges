@@ -11,20 +11,40 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventDroneDispatched";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["drone_dispatched"];
+        public IReadOnlyList<string> Keys { get; } = ["drone_dispatched", "priority"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = ["userid", "player"];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventDroneDispatched)gameEvent;
-            d["drone_dispatched"] = EventData.Num(e.DroneDispatchedParam);
-            d["priority"] = EventData.Num(e.Priority);
-            EventData.FillPlayer(d, e.Userid, "userid");
-            EventData.FillPlayer(d, e.Userid, "player");
+            if (need.Keys[0])
+            {
+                d["drone_dispatched"] = EventData.Num(e.DroneDispatchedParam);
+            }
+            if (need.Keys[1])
+            {
+                d["priority"] = EventData.Num(e.Priority);
+            }
+            if ((need.Prefixes[0] | need.Prefixes[1]) != PlayerFields.None)
+            {
+                EventData.FillPlayer(
+                    d,
+                    e.Userid,
+                    need.PrefixKeys[0],
+                    need.Prefixes[0],
+                    need.PrefixKeys[1],
+                    need.Prefixes[1]);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
             var e = (EventDroneDispatched)gameEvent;
-            buffer.Add((e.Userid, "drone_dispatched"));
+            if (need.Types[0])
+            {
+                buffer.Add((e.Userid, "drone_dispatched"));
+            }
         }
     }
 }

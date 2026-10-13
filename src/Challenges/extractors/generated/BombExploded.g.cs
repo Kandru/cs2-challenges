@@ -12,21 +12,45 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventBombExploded";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["bomb_exploded"];
+        public IReadOnlyList<string> Keys { get; } = ["site", "bomb_site"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = ["userid", "exploder"];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventBombExploded)gameEvent;
-            d["site"] = EventData.Num(e.Site);
-            d["bomb_site"] = d["site"];
-            EventData.FillPlayer(d, e.Userid, "userid");
-            EventData.FillPlayer(d, e.Userid, "exploder");
+            if (need.Keys[0] || need.Keys[1])
+            {
+                string value = EventData.Num(e.Site);
+                if (need.Keys[0])
+                {
+                    d["site"] = value;
+                }
+                if (need.Keys[1])
+                {
+                    d["bomb_site"] = value;
+                }
+            }
+            if ((need.Prefixes[0] | need.Prefixes[1]) != PlayerFields.None)
+            {
+                EventData.FillPlayer(
+                    d,
+                    e.Userid,
+                    need.PrefixKeys[0],
+                    need.Prefixes[0],
+                    need.PrefixKeys[1],
+                    need.Prefixes[1]);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
-            foreach (var entry in Utilities.GetPlayers())
+            if (need.Types[0])
             {
-                buffer.Add((entry, "bomb_exploded"));
+                foreach (var entry in Utilities.GetPlayers())
+                {
+                    buffer.Add((entry, "bomb_exploded"));
+                }
             }
         }
     }

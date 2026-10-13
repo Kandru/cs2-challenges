@@ -12,21 +12,39 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventGameStart";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["game_start"];
+        public IReadOnlyList<string> Keys { get; } = ["fraglimit", "objective", "roundslimit", "timelimit"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = [];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventGameStart)gameEvent;
-            d["fraglimit"] = EventData.Num(e.Fraglimit);
-            d["objective"] = e.Objective;
-            d["roundslimit"] = EventData.Num(e.Roundslimit);
-            d["timelimit"] = EventData.Num(e.Timelimit);
+            if (need.Keys[0])
+            {
+                d["fraglimit"] = EventData.Num(e.Fraglimit);
+            }
+            if (need.Keys[1])
+            {
+                d["objective"] = e.Objective;
+            }
+            if (need.Keys[2])
+            {
+                d["roundslimit"] = EventData.Num(e.Roundslimit);
+            }
+            if (need.Keys[3])
+            {
+                d["timelimit"] = EventData.Num(e.Timelimit);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
-            foreach (var entry in Utilities.GetPlayers())
+            if (need.Types[0])
             {
-                buffer.Add((entry, "game_start"));
+                foreach (var entry in Utilities.GetPlayers())
+                {
+                    buffer.Add((entry, "game_start"));
+                }
             }
         }
     }

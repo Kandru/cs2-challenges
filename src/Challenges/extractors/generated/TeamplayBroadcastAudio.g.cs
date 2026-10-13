@@ -12,19 +12,31 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventTeamplayBroadcastAudio";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["teamplay_broadcast_audio"];
+        public IReadOnlyList<string> Keys { get; } = ["sound", "team"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = [];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventTeamplayBroadcastAudio)gameEvent;
-            d["sound"] = e.Sound;
-            d["team"] = EventData.Num(e.Team);
+            if (need.Keys[0])
+            {
+                d["sound"] = e.Sound;
+            }
+            if (need.Keys[1])
+            {
+                d["team"] = EventData.Num(e.Team);
+            }
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
-            foreach (var entry in Utilities.GetPlayers())
+            if (need.Types[0])
             {
-                buffer.Add((entry, "teamplay_broadcast_audio"));
+                foreach (var entry in Utilities.GetPlayers())
+                {
+                    buffer.Add((entry, "teamplay_broadcast_audio"));
+                }
             }
         }
     }
