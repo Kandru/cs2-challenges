@@ -39,6 +39,10 @@ Created on first start. Example:
     "on_new_schedule": true,
     "task_list": "full"
   },
+  "persistence": {
+    "autosave_on_round_end": true,
+    "autosave_per_tick": 2
+  },
   "temp_data": {
     "current_schedule_key": ""
   },
@@ -66,6 +70,8 @@ Created on first start. Example:
 | `discord.on_challenge_completed` | Post when every visible task of a challenge is completed (default `true`). |
 | `discord.on_new_schedule` | Post when a new schedule becomes active (default `true`). |
 | `discord.task_list` | Task-completion body: `full` (challenge name + all-tasks checklist), `short` (only the finished task line), or `none` (no task embeds). Default `full`. Ignored for single-task challenges. |
+| `persistence.autosave_on_round_end` | Save players with unsaved progress at the end of every round (default `true`), so a server crash loses at most the current round. `false` saves only on disconnect, map change, and unload. |
+| `persistence.autosave_per_tick` | Maximum number of player files prepared per server tick while saves are queued (default `2`, minimum `1`). Files are written in the background; map change and unload still write everything before continuing. |
 | `temp_data.current_schedule_key` | Written by the plugin when the active schedule’s progress key changes. Do not edit by hand. |
 
 Tracker, menu, and language behavior: [In game](../tutorial/in-game.md).

@@ -24,6 +24,8 @@ namespace Challenges
         private readonly State _state = new();
         /// <summary>Cached for the per-tick patch pump; null while modules are down.</summary>
         private ChallengeEngine? _engine;
+        /// <summary>Cached for the per-tick save pump; null while modules are down.</summary>
+        private PlayerSaveQueue? _saves;
 
         public required PluginConfig Config { get; set; }
 
@@ -58,6 +60,7 @@ namespace Challenges
         private void OnTick()
         {
             _engine?.OnTick();
+            _saves?.Pump();
             CustomHud.OnTick();
         }
 
@@ -99,7 +102,8 @@ namespace Challenges
                 return;
             }
 
-            Modules.Add(nameof(PlayerManagement), new PlayerManagement(_state, Localizer, isHotReloaded));
+            PlayerManagement players = new(_state, Localizer, isHotReloaded);
+            Modules.Add(nameof(PlayerManagement), players);
             Modules.Add(nameof(Schedules), new Schedules(_state, Localizer, isHotReloaded));
             ChallengeEngine engine = new(_state, Localizer, isHotReloaded);
             Modules.Add(nameof(ChallengeEngine), engine);
@@ -107,12 +111,14 @@ namespace Challenges
             Modules.Add(nameof(HudDriver), new HudDriver(_state, Localizer, isHotReloaded));
             BindModuleHandlers(register: true);
             _engine = engine;
+            _saves = players.Saves;
         }
 
         private void DestroyModules()
         {
             BindModuleHandlers(register: false);
             _engine = null;
+            _saves = null;
             if (Modules.TryGetValue(nameof(ChallengeEngine), out Module? engine)
                 && engine is ChallengeEngine challengeEngine)
             {

@@ -140,6 +140,9 @@ namespace Challenges
 
         public PlayerState GetOrCreate(string steamId) => GetOrCreate(steamId, out _);
 
+        /// <summary>True when a corrupt file could not be quarantined and must not be overwritten.</summary>
+        public bool IsWriteBlocked(string steamId) => _blockedWrites.Contains(steamId);
+
         /// <summary>
         /// Rebuilds offline rank snapshots only when the schedule key changes.
         /// </summary>
@@ -200,7 +203,7 @@ namespace Challenges
                 return false;
             }
 
-            if (_blockedWrites.Contains(steamId))
+            if (IsWriteBlocked(steamId))
             {
                 warn?.Invoke($"skip save: writes blocked for {steamId} (corrupt file left in place)");
                 return false;

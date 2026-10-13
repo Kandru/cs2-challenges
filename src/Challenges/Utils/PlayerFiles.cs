@@ -34,8 +34,14 @@ namespace Challenges
             return state;
         }
 
+        public static byte[] Serialize(PlayerState state) =>
+            JsonSerializer.SerializeToUtf8Bytes(state, JsonOptions);
+
         /// <summary>Atomic write via temp file + replace.</summary>
-        public static void Write(string path, PlayerState state)
+        public static void Write(string path, PlayerState state) => WriteBytes(path, Serialize(state));
+
+        /// <summary>Atomic write of already serialized bytes via temp file + replace. Safe off the game thread.</summary>
+        public static void WriteBytes(string path, byte[] bytes)
         {
             string? dir = Path.GetDirectoryName(path);
             if (!string.IsNullOrEmpty(dir))
@@ -44,7 +50,7 @@ namespace Challenges
             }
 
             string temp = path + ".tmp";
-            File.WriteAllBytes(temp, JsonSerializer.SerializeToUtf8Bytes(state, JsonOptions));
+            File.WriteAllBytes(temp, bytes);
             File.Move(temp, path, overwrite: true);
         }
 
