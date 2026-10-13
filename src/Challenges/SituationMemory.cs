@@ -181,6 +181,14 @@ namespace Challenges
             _thrown.RemoveAll(t => t.Slot == slot);
             _aceKills.Remove(slot);
             _aceCredited.RemoveWhere(entry => entry.Slot == slot);
+            for (int i = _kills.Count - 1; i >= 0; i--)
+            {
+                KillRecord k = _kills[i];
+                if (k.AttackerSlot == slot || k.VictimSlot == slot)
+                {
+                    _kills.RemoveAt(i);
+                }
+            }
         }
 
         public void Observe(
