@@ -29,5 +29,7 @@ namespace Challenges.Extractors
         {
             if (need.Types[0]) Players.AddAll(buffer, "dm_bonus_weapon_start");
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex) => null;
     }
 }

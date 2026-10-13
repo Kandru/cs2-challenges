@@ -31,5 +31,16 @@ namespace Challenges.Extractors
             if (need.Types[0]) buffer.Add((e.Attacker, "vip_killed_attacker"));
             if (need.Types[1]) buffer.Add((e.Userid, "vip_killed_userid"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventVipKilled)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Attacker,
+                1 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }

@@ -31,5 +31,7 @@ namespace Challenges.Extractors
         {
             if (need.Types[0]) Players.AddAll(buffer, "inferno_extinguish");
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex) => null;
     }
 }

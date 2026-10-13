@@ -38,5 +38,7 @@ namespace Challenges.Extractors
         {
             if (need.Types[0]) Players.AddAll(buffer, "endmatch_mapvote_selecting_map");
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex) => null;
     }
 }

@@ -35,5 +35,15 @@ namespace Challenges.Extractors
             var e = (EventAddPlayerSonarIcon)gameEvent;
             if (need.Types[0]) buffer.Add((e.Userid, "player_add_sonar_icon"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventAddPlayerSonarIcon)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }

@@ -33,8 +33,16 @@ Unknown keys never match — see [Rules](../rules.md).
 | [player data](../../rules/GlobalPlayerData.md) | prefixes `userid`, `defuser` |
 | `site` | int |
 | `bomb_site` | int |
+| `userid.grenade` | string |
+| `userid.grenade.holding` | string |
+| `userid.grenade.thrown` | string |
+| `userid.grenade.throwing` | string |
+| `userid.insmoke` | bool |
+| `defuser.grenade` | string |
+| `defuser.grenade.holding` | string |
+| `defuser.grenade.thrown` | string |
+| `defuser.grenade.throwing` | string |
+| `defuser.insmoke` | bool |
 | `insmoke` | bool |
 | `smoke.distance` | float |
 | `smoke.age` | float |
-| `userid.insmoke` | bool |
-| `defuser.insmoke` | bool |

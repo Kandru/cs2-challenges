@@ -43,5 +43,15 @@ namespace Challenges.Extractors
             var e = (EventAddBulletHitMarker)gameEvent;
             if (need.Types[0]) buffer.Add((e.Userid, "add_bullet_hit_marker"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventAddBulletHitMarker)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }

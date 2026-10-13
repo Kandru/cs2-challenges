@@ -34,5 +34,15 @@ namespace Challenges.Extractors
             var e = (EventSeasoncoinLevelup)gameEvent;
             if (need.Types[0]) buffer.Add((e.Userid, "seasoncoin_levelup"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventSeasoncoinLevelup)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }

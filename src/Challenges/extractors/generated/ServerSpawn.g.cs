@@ -37,5 +37,7 @@ namespace Challenges.Extractors
         {
             if (need.Types[0]) Players.AddAll(buffer, "server_spawn");
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex) => null;
     }
 }

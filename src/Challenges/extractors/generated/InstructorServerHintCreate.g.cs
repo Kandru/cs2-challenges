@@ -57,5 +57,16 @@ namespace Challenges.Extractors
             if (need.Types[0]) buffer.Add((e.HintActivatorUserid, "instructor_server_hint_create_hint_activator_userid"));
             if (need.Types[1]) buffer.Add((e.Userid, "instructor_server_hint_create_userid"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventInstructorServerHintCreate)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.HintActivatorUserid,
+                1 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }

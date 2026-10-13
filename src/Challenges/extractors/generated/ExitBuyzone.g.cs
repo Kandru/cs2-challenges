@@ -33,5 +33,15 @@ namespace Challenges.Extractors
             var e = (EventExitBuyzone)gameEvent;
             if (need.Types[0]) buffer.Add((e.Userid, "exit_buyzone"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventExitBuyzone)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }

@@ -32,5 +32,15 @@ namespace Challenges.Extractors
             var e = (EventSilencerDetach)gameEvent;
             if (need.Types[0]) buffer.Add((e.Userid, "silencer_detach"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventSilencerDetach)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }

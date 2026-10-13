@@ -33,5 +33,15 @@ namespace Challenges.Extractors
             var e = (EventJointeamFailed)gameEvent;
             if (need.Types[0]) buffer.Add((e.Userid, "jointeam_failed"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventJointeamFailed)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }

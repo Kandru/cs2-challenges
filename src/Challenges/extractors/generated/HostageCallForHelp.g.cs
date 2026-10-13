@@ -28,5 +28,7 @@ namespace Challenges.Extractors
         {
             if (need.Types[0]) Players.AddAll(buffer, "hostage_call_for_help");
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex) => null;
     }
 }

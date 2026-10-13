@@ -32,5 +32,15 @@ namespace Challenges.Extractors
             var e = (EventSurvivalTeammateRespawn)gameEvent;
             if (need.Types[0]) buffer.Add((e.Userid, "survival_teammate_respawn"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventSurvivalTeammateRespawn)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }

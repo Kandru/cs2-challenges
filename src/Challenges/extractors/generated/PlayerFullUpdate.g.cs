@@ -33,5 +33,15 @@ namespace Challenges.Extractors
             var e = (EventPlayerFullUpdate)gameEvent;
             if (need.Types[0]) buffer.Add((e.Userid, "player_full_update"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventPlayerFullUpdate)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }

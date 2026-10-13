@@ -59,5 +59,16 @@ namespace Challenges.Extractors
             if (need.Types[0]) buffer.Add((e.Attacker, "bullet_damage_given"));
             if (need.Types[1]) buffer.Add((e.Victim, "bullet_damage_taken"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventBulletDamage)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Attacker,
+                1 => e.Victim,
+                _ => null,
+            };
+        }
     }
 }

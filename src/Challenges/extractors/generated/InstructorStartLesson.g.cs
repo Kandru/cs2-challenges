@@ -37,5 +37,15 @@ namespace Challenges.Extractors
             var e = (EventInstructorStartLesson)gameEvent;
             if (need.Types[0]) buffer.Add((e.Userid, "instructor_start_lesson"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventInstructorStartLesson)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }

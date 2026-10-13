@@ -34,5 +34,15 @@ namespace Challenges.Extractors
             var e = (EventStartVote)gameEvent;
             if (need.Types[0]) buffer.Add((e.Userid, "start_vote"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventStartVote)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }

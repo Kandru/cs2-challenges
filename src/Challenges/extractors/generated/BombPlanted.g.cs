@@ -36,5 +36,15 @@ namespace Challenges.Extractors
             var e = (EventBombPlanted)gameEvent;
             if (need.Types[0]) buffer.Add((e.Userid, "player_bomb_planted"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventBombPlanted)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }

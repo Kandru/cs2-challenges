@@ -32,5 +32,15 @@ namespace Challenges.Extractors
             var e = (EventParachutePickup)gameEvent;
             if (need.Types[0]) buffer.Add((e.Userid, "parachute_pickup"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventParachutePickup)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }

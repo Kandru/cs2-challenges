@@ -36,5 +36,15 @@ namespace Challenges.Extractors
             var e = (EventBreakProp)gameEvent;
             if (need.Types[0]) buffer.Add((e.Userid, "break_prop"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventBreakProp)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }

@@ -36,5 +36,15 @@ namespace Challenges.Extractors
         {
             if (need.Types[0]) Players.AddAll(buffer, "hostage_rescued");
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventHostageRescued)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }

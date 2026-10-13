@@ -1,3 +1,4 @@
+using Challenges.Attributes;
 using Challenges.Extractors;
 
 namespace Challenges.Utils
@@ -83,7 +84,7 @@ namespace Challenges.Utils
                 }
             }
 
-            Add(lists, SituationMemory.TradeType, SituationMemory.TradeKeys);
+            Add(lists, TradeProvider.TradeType, TradeProvider.TradeKeys);
 
             Dictionary<string, IKeySource[]> index = new(lists.Count, StringComparer.Ordinal);
             foreach ((string type, List<IKeySource> list) in lists)

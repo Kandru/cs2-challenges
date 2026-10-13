@@ -35,5 +35,15 @@ namespace Challenges.Extractors
             var e = (EventEntityVisible)gameEvent;
             if (need.Types[0]) buffer.Add((e.Userid, "entity_visible"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventEntityVisible)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }

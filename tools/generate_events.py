@@ -21,6 +21,8 @@ DOCS_LISTENERS_INDEX = ROOT / "documentation" / "reference" / "listeners.md"
 FILL_DEMAND = ROOT / "src" / "Challenges" / "Utils" / "FillDemand.cs"
 # Rule operators live in ChallengeRules; action type cases in ChallengeEngine.Simulate.
 RULES = ROOT / "src" / "Challenges" / "Utils" / "ChallengeRules.cs"
+# Attribute provider tables (AttributeSuffix / AttributeEventKey); shared with the runtime registry.
+ATTRIBUTES_DIR = ROOT / "src" / "Challenges" / "Attributes"
 ACTIONS = ROOT / "src" / "Challenges" / "ChallengeEngine.Simulate.cs"
 WEAPONS_FILE = ROOT / "tools" / "catalog_weapons.json"
 CATALOG_OUT = ROOT / "builder" / "catalog.json"
@@ -34,6 +36,8 @@ SKIP_EVENT_NAME_PREFIXES = (
 
 RE_SUFFIX = re.compile(r'new\s*\(\s*"([^"]+)"\s*,\s*PlayerFields\.(\w+)\s*,\s*"(\w+)"\s*\)')
 RE_CASE = re.compile(r'case\s+"([^"]+)"')
+RE_ATTR_SUFFIX = re.compile(r'new\s+AttributeSuffix\(\s*"([^"]+)"\s*,\s*"(\w+)"\s*\)')
+RE_ATTR_EVENT_KEY = re.compile(r'new\s+AttributeEventKey\(\s*"(\w+)"\s*,\s*"([^"]+)"\s*,\s*"(\w+)"\s*\)')
 
 KIND_TO_TYPE = {
     "bool": "bool",
@@ -122,6 +126,7 @@ TARGETS_SIGNATURE = (
     "        public void Targets(GameEvent gameEvent, "
     "List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)"
 )
+PREFIX_PLAYER_SIGNATURE = "        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)"
 
 
 def csharp_expr_for_prop(prop: dict, bool_coerce: set[str]) -> str:
@@ -189,24 +194,35 @@ def emit_key_group(
 
 
 def emit_player_fill(
-    expr: str, names: list[str], prefixes: list[str], aliases: dict[str, str], owner: str, indent: str
+    expr: str,
+    names: list[str],
+    prefixes: list[str],
+    exprs: list[str],
+    aliases: dict[str, str],
+    owner: str,
+    indent: str,
 ) -> list[str]:
-    """One FillPlayer call per controller under its canonical prefix; other names are prefix aliases."""
+    """One FillPlayer call per controller under its canonical prefix; other names are prefix aliases.
+
+    exprs[i] is the controller expression of prefixes[i] (GetPrefixPlayer, listener attribute writes).
+    """
     i = register(prefixes, names[0], owner)
+    exprs.append(expr)
     add_aliases(names, aliases, owner)
     return [f"{indent}if (need.Prefixes[{i}] != PlayerFields.None) EventData.FillPlayer(d, {expr}, need, {i});"]
 
 
 def emit_event_fill(
     event: dict, alias: dict
-) -> tuple[list[str], list[str], dict[str, str], dict[str, str], list[str]]:
-    """Return (keys, prefixes, key_aliases, prefix_aliases, fill_lines) for a game event extractor."""
+) -> tuple[list[str], list[str], list[str], dict[str, str], dict[str, str], list[str]]:
+    """Return (keys, prefixes, prefix_exprs, key_aliases, prefix_aliases, fill_lines) for a game event extractor."""
     owner = event["class_name"]
     indent = "            "
     bool_coerce = set(alias.get("bool_coerce", []))
     alias_names: dict[str, list[str]] = alias.get("key_aliases", {})
     keys: list[str] = []
     prefixes: list[str] = []
+    prefix_exprs: list[str] = []
     key_aliases: dict[str, str] = {}
     prefix_aliases: dict[str, str] = {}
     lines: list[str] = []
@@ -223,10 +239,12 @@ def emit_event_fill(
     players = [p for p in props if p["kind"] == "player"]
     for prop in players:
         names = player_prefixes_for(prop["field"], players, alias)
-        lines.extend(emit_player_fill(f"e.{prop['csharp']}", names, prefixes, prefix_aliases, owner, indent))
+        lines.extend(
+            emit_player_fill(f"e.{prop['csharp']}", names, prefixes, prefix_exprs, prefix_aliases, owner, indent)
+        )
     check_aliases(keys, key_aliases, owner)
     check_aliases(prefixes, prefix_aliases, owner)
-    return keys, prefixes, key_aliases, prefix_aliases, lines
+    return keys, prefixes, prefix_exprs, key_aliases, prefix_aliases, lines
 
 
 def emit_targets(event: dict, alias: dict, types: list[str], audience: str) -> list[str]:
@@ -283,7 +301,7 @@ def generate_event_extractor(event: dict, alias: dict) -> str:
     cls = extractor_class_name(event["class_name"])
     types, audience = event_challenge_types(event, alias)
     derived = alias.get("derived")
-    keys, prefixes, key_aliases, prefix_aliases, fill_lines = emit_event_fill(event, alias)
+    keys, prefixes, prefix_exprs, key_aliases, prefix_aliases, fill_lines = emit_event_fill(event, alias)
     derived_keys = [k for k, _ in DERIVED_KEYS.get(derived, [])] if derived else []
     if derived and not derived_keys:
         raise SystemExit(f"unknown derived kind {derived} in {event['class_name']}")
@@ -322,6 +340,23 @@ def generate_event_extractor(event: dict, alias: dict) -> str:
         ]
     )
 
+    if prefix_exprs:
+        body_prefix = "\n".join(
+            [
+                PREFIX_PLAYER_SIGNATURE,
+                "        {",
+                f"            var e = ({event['class_name']})gameEvent;",
+                "            return prefixIndex switch",
+                "            {",
+                *[f"                {i} => {expr}," for i, expr in enumerate(prefix_exprs)],
+                "                _ => null,",
+                "            };",
+                "        }",
+            ]
+        )
+    else:
+        body_prefix = f"{PREFIX_PLAYER_SIGNATURE} => null;"
+
     return "\n".join(
         [
             "// <auto-generated> by tools/generate_events.py - do not edit.",
@@ -344,6 +379,8 @@ def generate_event_extractor(event: dict, alias: dict) -> str:
             body_fill,
             "",
             body_targets,
+            "",
+            body_prefix,
             "    }",
             "}",
             "",
@@ -354,7 +391,7 @@ def generate_event_extractor(event: dict, alias: dict) -> str:
 def generate_listener_extractor(listener: dict, alias: dict, snapshot: dict) -> str:
     name = listener["name"]
     types = listener_challenge_types(listener, alias)
-    keys, prefixes, key_aliases, prefix_aliases, _, _, _ = emit_listener_fill(listener, alias, snapshot)
+    keys, prefixes, _, key_aliases, prefix_aliases, _, _, _ = emit_listener_fill(listener, alias, snapshot)
     cls = name  # OnMapStart etc.
     return "\n".join(
         [
@@ -386,6 +423,8 @@ def generate_listener_extractor(listener: dict, alias: dict, snapshot: dict) -> 
             TARGETS_SIGNATURE,
             "        {",
             "        }",
+            "",
+            f"{PREFIX_PLAYER_SIGNATURE} => null;",
             "    }",
             "}",
             "",
@@ -399,14 +438,15 @@ def listener_player_params(listener: dict) -> list[dict]:
 
 def emit_listener_fill(
     listener: dict, alias: dict, snapshot: dict
-) -> tuple[list[str], list[str], dict[str, str], dict[str, str], list[str], list[str], list[str]]:
-    """Return (keys, prefixes, key_aliases, prefix_aliases, resolve_lines, target_exprs, fill_lines)."""
+) -> tuple[list[str], list[str], list[str], dict[str, str], dict[str, str], list[str], list[str], list[str]]:
+    """Return (keys, prefixes, prefix_exprs, key_aliases, prefix_aliases, resolve_lines, target_exprs, fill_lines)."""
     owner = listener["name"]
     indent = "            "
     alias_names = alias.get("key_aliases", {})
     player_prefixes = alias.get("player_prefixes", {})
     keys: list[str] = []
     prefixes: list[str] = []
+    prefix_exprs: list[str] = []
     key_aliases: dict[str, str] = {}
     prefix_aliases: dict[str, str] = {}
     resolve: list[str] = []
@@ -425,15 +465,19 @@ def emit_listener_fill(
         if kind == "player":
             prefix = player_prefixes.get("player", "player")
             names = [prefix] if name == prefix else [prefix, name]
-            lines.extend(emit_player_fill(name, names, prefixes, prefix_aliases, owner, indent))
+            lines.extend(emit_player_fill(name, names, prefixes, prefix_exprs, prefix_aliases, owner, indent))
             target_exprs.append(name)
         elif kind == "pawn":
             resolve.append(f"{indent}CCSPlayerController? {name}Controller = {name}.OriginalController?.Value;")
-            lines.extend(emit_player_fill(f"{name}Controller", ["player"], prefixes, prefix_aliases, owner, indent))
+            lines.extend(
+                emit_player_fill(f"{name}Controller", ["player"], prefixes, prefix_exprs, prefix_aliases, owner, indent)
+            )
             target_exprs.append(f"{name}Controller")
         elif kind == "slot":
             resolve.append(f"{indent}CCSPlayerController? {name}Player = Utilities.GetPlayerFromSlot({name});")
-            lines.extend(emit_player_fill(f"{name}Player", ["player"], prefixes, prefix_aliases, owner, indent))
+            lines.extend(
+                emit_player_fill(f"{name}Player", ["player"], prefixes, prefix_exprs, prefix_aliases, owner, indent)
+            )
             target_exprs.append(f"{name}Player")
         elif kind == "string":
             group([key, *alias_names.get(key, [])], name)
@@ -472,7 +516,7 @@ def emit_listener_fill(
 
     check_aliases(keys, key_aliases, owner)
     check_aliases(prefixes, prefix_aliases, owner)
-    return keys, prefixes, key_aliases, prefix_aliases, resolve, target_exprs, lines
+    return keys, prefixes, prefix_exprs, key_aliases, prefix_aliases, resolve, target_exprs, lines
 
 
 def generate_listener_method(listener: dict, alias: dict, snapshot: dict) -> str:
@@ -481,13 +525,17 @@ def generate_listener_method(listener: dict, alias: dict, snapshot: dict) -> str
     params = ", ".join(f"{p['type']} {p['name']}" for p in listener["parameters"])
     ret = listener["return"]
     exit_line = "                return HookResult.Continue;" if ret == "HookResult" else "                return;"
-    _, _, _, _, resolve, target_exprs, fill_lines = emit_listener_fill(listener, alias, snapshot)
+    _, _, prefix_exprs, _, _, resolve, target_exprs, fill_lines = emit_listener_fill(listener, alias, snapshot)
 
     preamble: list[str] = []
     if name == "OnPlayerButtonsChanged":
         preamble = [
-            "            Situations.OnButtonsChanged(player, pressed, released);",
+            "            Providers.OnButtonsChanged(player, pressed, released);",
         ]
+
+    attribute_lines = [
+        f"            plan.Attributes?.WritePlayer(d, {i}, {expr});" for i, expr in enumerate(prefix_exprs)
+    ]
 
     begin = [
         f'            if (!BeginListener("{name}", out ExtractorPlan? plan, out GlobalGate closed))',
@@ -527,6 +575,7 @@ def generate_listener_method(listener: dict, alias: dict, snapshot: dict) -> str
         "",
         "            Dictionary<string, string> d = new(need.Capacity);",
         *fill_lines,
+        *attribute_lines,
         f'            HandleListener("{name}", d, valid, closed);',
     ]
     if ret == "HookResult":
@@ -651,6 +700,47 @@ def player_suffixes() -> list[dict]:
     return found
 
 
+def attribute_metadata(snapshot: dict, aliases: dict, suffixes: list[dict]) -> dict:
+    """Provider player suffixes and event keys from src/Challenges/Attributes (runtime source of truth)."""
+    for section in ("events", "listeners"):
+        for name, entry in aliases.get(section, {}).items():
+            if "situation" in entry:
+                raise SystemExit(f"{name}: 'situation' is gone; provider keys live in {ATTRIBUTES_DIR}")
+
+    found_suffixes: list[dict] = []
+    event_keys: list[dict] = []
+    for path in sorted(ATTRIBUTES_DIR.glob("*.cs")):
+        text = path.read_text(encoding="utf-8")
+        for suffix, typ in RE_ATTR_SUFFIX.findall(text):
+            found_suffixes.append({"suffix": suffix, "type": typ})
+        for event, key, typ in RE_ATTR_EVENT_KEY.findall(text):
+            event_keys.append({"event": event, "key": key, "type": typ})
+    if not found_suffixes or not event_keys:
+        raise SystemExit(f"no attribute provider tables in {ATTRIBUTES_DIR}")
+
+    player = {s["suffix"] for s in suffixes}
+    seen: set[str] = set()
+    for attr in found_suffixes:
+        if attr["suffix"] in player:
+            raise SystemExit(f"provider suffix {attr['suffix']} is also a player property suffix")
+        if attr["suffix"] in seen:
+            raise SystemExit(f"provider suffix {attr['suffix']} is owned by two providers")
+        seen.add(attr["suffix"])
+
+    events = {e["class_name"]: e for e in snapshot["events"]}
+    seen_keys: set[tuple[str, str]] = set()
+    for attr in event_keys:
+        event = events.get(attr["event"])
+        if event is None:
+            raise SystemExit(f"provider event key {attr['key']} names unknown event {attr['event']}")
+        if any(p["kind"] != "player" and p["field"] == attr["key"] for p in event["properties"]):
+            raise SystemExit(f"provider event key {attr['key']} shadows a field of {attr['event']}")
+        if (attr["event"], attr["key"]) in seen_keys:
+            raise SystemExit(f"provider event key {attr['key']} listed twice for {attr['event']}")
+        seen_keys.add((attr["event"], attr["key"]))
+    return {"suffixes": found_suffixes, "event_keys": event_keys}
+
+
 def value_type(kind: str) -> str:
     return KIND_TO_TYPE.get(kind, "string")
 
@@ -666,7 +756,7 @@ def player_prefixes_for(prop_field: str, players: list[dict], alias: dict) -> li
     return ordered_unique(names)
 
 
-def catalog_keys_for_event(event: dict, alias: dict, suffixes: list[dict]) -> list[dict]:
+def catalog_keys_for_event(event: dict, alias: dict, suffixes: list[dict], attrs: dict) -> list[dict]:
     keys: list[dict] = []
     seen: set[str] = set()
 
@@ -694,27 +784,21 @@ def catalog_keys_for_event(event: dict, alias: dict, suffixes: list[dict]) -> li
     for key, typ in DERIVED_KEYS.get(alias.get("derived") or "", []):
         add(key, typ)
 
-    situation = alias.get("situation")
-    if situation == "grenade_on_death":
-        for prefix in ("attacker", "victim", "userid"):
-            add(f"{prefix}.grenade", "string")
-            add(f"{prefix}.grenade.holding", "string")
-            add(f"{prefix}.grenade.thrown", "string")
-            add(f"{prefix}.grenade.throwing", "string")
-        add("isace", "bool")
-    elif situation == "smoke_defuse":
-        add("insmoke", "bool")
-        add("smoke.distance", "float")
-        add("smoke.age", "float")
-        for prefix in player_prefixes_for(
-            players[0]["field"], players, alias
-        ) if players else ["player"]:
-            add(f"{prefix}.insmoke", "bool")
+    for prop in players:
+        for prefix in player_prefixes_for(prop["field"], players, alias):
+            for attr in attrs["suffixes"]:
+                add(f"{prefix}.{attr['suffix']}", attr["type"])
+
+    for attr in attrs["event_keys"]:
+        if attr["event"] == event["class_name"]:
+            add(attr["key"], attr["type"])
 
     return keys
 
 
-def catalog_keys_for_listener(listener: dict, alias: dict, suffixes: list[dict], snapshot: dict) -> list[dict]:
+def catalog_keys_for_listener(
+    listener: dict, alias: dict, suffixes: list[dict], attrs: dict, snapshot: dict
+) -> list[dict]:
     keys: list[dict] = []
     seen: set[str] = set()
 
@@ -732,6 +816,8 @@ def catalog_keys_for_listener(listener: dict, alias: dict, suffixes: list[dict],
         if kind in {"player", "pawn", "slot"}:
             for suffix in suffixes:
                 add(f"player.{suffix['suffix']}", suffix["type"])
+            for attr in attrs["suffixes"]:
+                add(f"player.{attr['suffix']}", attr["type"])
         elif kind == "entity":
             add(f"{name}.designername", "string")
             add(f"{name}.index", "int")
@@ -795,7 +881,7 @@ SYNTHETIC_EVENTS = [
     {
         "doc_name": "PlayerTrade",
         "title": "PlayerTrade (player_trade)",
-        "source": "Synthetic task type from situation memory (two `player_death` events).",
+        "source": "Synthetic task type from the trade attribute provider (two `player_death` events).",
         "audience": "players",
         "types": ["player_trade"],
         "prefixes": ["attacker", "victim", "userid"],
@@ -812,7 +898,7 @@ SYNTHETIC_EVENTS = [
         "catalog_event": {
             "type": "player_trade",
             "event_class": "PlayerTrade",
-            "extractor": "SituationMemory",
+            "extractor": "TradeProvider",
             "kind": "synthetic",
         },
     },
@@ -968,7 +1054,7 @@ def write_grouped_index(
     path.write_text("\n".join(out), encoding="utf-8")
 
 
-def write_docs(snapshot: dict, aliases: dict, suffixes: list[dict]) -> None:
+def write_docs(snapshot: dict, aliases: dict, suffixes: list[dict], attrs: dict) -> None:
     if DOCS_EVENTS.exists():
         shutil.rmtree(DOCS_EVENTS)
     DOCS_EVENTS.mkdir(parents=True)
@@ -981,7 +1067,7 @@ def write_docs(snapshot: dict, aliases: dict, suffixes: list[dict]) -> None:
     for event in snapshot["events"]:
         alias = alias_for(aliases, event["class_name"])
         types, audience = event_challenge_types(event, alias)
-        keys = catalog_keys_for_event(event, alias, suffixes)
+        keys = catalog_keys_for_event(event, alias, suffixes, attrs)
         players = player_props(event)
         prefixes = ordered_unique(
             [p for prop in players for p in player_prefixes_for(prop["field"], players, alias)]
@@ -1031,7 +1117,7 @@ def write_docs(snapshot: dict, aliases: dict, suffixes: list[dict]) -> None:
         if not alias and listener.get("listener_name"):
             alias = alias_for(aliases, listener["listener_name"])
         types = listener_challenge_types(listener, alias)
-        keys = catalog_keys_for_listener(listener, alias, suffixes, snapshot)
+        keys = catalog_keys_for_listener(listener, alias, suffixes, attrs, snapshot)
         has_player = any(p["kind"] in {"player", "pawn", "slot"} for p in listener["parameters"])
         prefixes = ["player"] if has_player else []
         doc_name = listener["name"]
@@ -1105,7 +1191,7 @@ def write_docs(snapshot: dict, aliases: dict, suffixes: list[dict]) -> None:
     )
 
 
-def write_catalog(snapshot: dict, aliases: dict, suffixes: list[dict]) -> None:
+def write_catalog(snapshot: dict, aliases: dict, suffixes: list[dict], attrs: dict) -> None:
     operators = RE_CASE.findall(RULES.read_text(encoding="utf-8"))
     action_types: list[str] = []
     seen_actions: set[str] = set()
@@ -1124,7 +1210,7 @@ def write_catalog(snapshot: dict, aliases: dict, suffixes: list[dict]) -> None:
     for event in snapshot["events"]:
         alias = alias_for(aliases, event["class_name"])
         types, _ = event_challenge_types(event, alias)
-        key_sets[event["class_name"]] = catalog_keys_for_event(event, alias, suffixes)
+        key_sets[event["class_name"]] = catalog_keys_for_event(event, alias, suffixes, attrs)
         extractor = extractor_class_name(event["class_name"])
         for challenge_type in types:
             events_out.append(
@@ -1141,7 +1227,7 @@ def write_catalog(snapshot: dict, aliases: dict, suffixes: list[dict]) -> None:
         if not alias and listener.get("listener_name"):
             alias = alias_for(aliases, listener["listener_name"])
         types = listener_challenge_types(listener, alias)
-        key_sets[listener["name"]] = catalog_keys_for_listener(listener, alias, suffixes, snapshot)
+        key_sets[listener["name"]] = catalog_keys_for_listener(listener, alias, suffixes, attrs, snapshot)
         extractor = f"Listener{listener['name']}"
         for challenge_type in types:
             events_out.append(
@@ -1200,13 +1286,15 @@ def main() -> int:
     ]
     skipped = before - len(snapshot["events"])
 
+    attrs = attribute_metadata(snapshot, aliases, suffixes)
+
     clean_old_extractors()
     names = write_generated_extractors(snapshot, aliases)
     write_registry(names)
     write_engine_events(snapshot)
     write_engine_listeners(snapshot, aliases)
-    write_docs(snapshot, aliases, suffixes)
-    write_catalog(snapshot, aliases, suffixes)
+    write_docs(snapshot, aliases, suffixes, attrs)
+    write_catalog(snapshot, aliases, suffixes, attrs)
 
     print(
         f"generated {len(snapshot['events'])} events + {len(snapshot['listeners'])} listeners "

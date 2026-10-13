@@ -34,5 +34,15 @@ namespace Challenges.Extractors
             var e = (EventDroneCargoDetached)gameEvent;
             if (need.Types[0]) buffer.Add((e.Userid, "drone_cargo_detached"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventDroneCargoDetached)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }

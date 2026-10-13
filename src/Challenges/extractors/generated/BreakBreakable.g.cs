@@ -34,5 +34,15 @@ namespace Challenges.Extractors
             var e = (EventBreakBreakable)gameEvent;
             if (need.Types[0]) buffer.Add((e.Userid, "break_breakable"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventBreakBreakable)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }

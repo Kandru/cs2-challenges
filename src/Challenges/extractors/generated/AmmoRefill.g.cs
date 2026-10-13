@@ -33,5 +33,15 @@ namespace Challenges.Extractors
             var e = (EventAmmoRefill)gameEvent;
             if (need.Types[0]) buffer.Add((e.Userid, "ammo_refill"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventAmmoRefill)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }

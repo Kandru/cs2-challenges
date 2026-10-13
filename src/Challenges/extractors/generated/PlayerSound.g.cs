@@ -35,5 +35,15 @@ namespace Challenges.Extractors
             var e = (EventPlayerSound)gameEvent;
             if (need.Types[0]) buffer.Add((e.Userid, "player_sound"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventPlayerSound)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }

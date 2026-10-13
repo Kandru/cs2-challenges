@@ -29,8 +29,7 @@
     },
     "EventBombBegindefuse": {
       "types": { "userid": ["player_bomb_begindefuse"] },
-      "player_prefixes": { "userid": "player" },
-      "situation": "smoke_defuse"
+      "player_prefixes": { "userid": "player" }
     },
     "EventBombBeginplant": {
       "types": { "userid": ["player_bomb_beginplant"] },
@@ -40,8 +39,7 @@
       "types": { "_all": ["bomb_defused"], "userid": ["player_bomb_defused"] },
       "audience": "all",
       "player_prefixes": { "userid": "defuser" },
-      "key_aliases": { "site": ["bomb_site"] },
-      "situation": "smoke_defuse"
+      "key_aliases": { "site": ["bomb_site"] }
     },
     "EventBombDropped": {
       "types": { "userid": ["player_bomb_dropped"] },
@@ -223,8 +221,7 @@
         "weapon_itemid": ["weaponitemid"]
       },
       "bool_coerce": ["dominated", "penetrated", "revenge"],
-      "derived": "team_self_kill",
-      "situation": "grenade_on_death"
+      "derived": "team_self_kill"
     },
     "EventPlayerDecal": {
       "types": { "userid": ["player_decal"] },

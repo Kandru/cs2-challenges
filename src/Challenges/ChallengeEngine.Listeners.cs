@@ -218,6 +218,7 @@ namespace Challenges
             if (need.Keys[11]) d["damage.friendly_fire_damage_reduction_ratio"] = EventData.Num(info.FriendlyFireDamageReductionRatio);
             if (need.Keys[12]) d["damage.stopped_bullet"] = EventData.Bool(info.StoppedBullet);
             if (need.Keys[13]) d["damage.in_take_damage_flow"] = EventData.Bool(info.InTakeDamageFlow);
+            plan.Attributes?.WritePlayer(d, 0, playerController);
             HandleListener("OnPlayerTakeDamagePre", d, valid, closed);
             return HookResult.Continue;
         }
@@ -267,6 +268,7 @@ namespace Challenges
             if (need.Keys[23]) d["result.was_damage_suppressed"] = EventData.Bool(result.WasDamageSuppressed);
             if (need.Keys[24]) d["result.suppress_flinch"] = EventData.Bool(result.SuppressFlinch);
             if (need.Keys[25]) d["result.override_flinch_hit_group"] = result.OverrideFlinchHitGroup.ToString();
+            plan.Attributes?.WritePlayer(d, 0, playerController);
             HandleListener("OnPlayerTakeDamagePost", d, valid, closed);
         }
 
@@ -332,6 +334,7 @@ namespace Challenges
             if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, playerSlotPlayer, need, 0);
             if (need.Keys[0]) d["name"] = name;
             if (need.Keys[1]) d["ipaddress"] = ipAddress;
+            plan.Attributes?.WritePlayer(d, 0, playerSlotPlayer);
             HandleListener("OnClientConnect", d, valid, closed);
         }
 
@@ -354,6 +357,7 @@ namespace Challenges
 
             Dictionary<string, string> d = new(need.Capacity);
             if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, playerSlotPlayer, need, 0);
+            plan.Attributes?.WritePlayer(d, 0, playerSlotPlayer);
             HandleListener("OnClientConnected", d, valid, closed);
         }
 
@@ -376,6 +380,7 @@ namespace Challenges
 
             Dictionary<string, string> d = new(need.Capacity);
             if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, playerSlotPlayer, need, 0);
+            plan.Attributes?.WritePlayer(d, 0, playerSlotPlayer);
             HandleListener("OnClientPutInServer", d, valid, closed);
         }
 
@@ -398,6 +403,7 @@ namespace Challenges
 
             Dictionary<string, string> d = new(need.Capacity);
             if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, playerSlotPlayer, need, 0);
+            plan.Attributes?.WritePlayer(d, 0, playerSlotPlayer);
             HandleListener("OnClientDisconnect", d, valid, closed);
         }
 
@@ -420,6 +426,7 @@ namespace Challenges
 
             Dictionary<string, string> d = new(need.Capacity);
             if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, playerSlotPlayer, need, 0);
+            plan.Attributes?.WritePlayer(d, 0, playerSlotPlayer);
             HandleListener("OnClientDisconnectPost", d, valid, closed);
         }
 
@@ -442,6 +449,7 @@ namespace Challenges
 
             Dictionary<string, string> d = new(need.Capacity);
             if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, playerSlotPlayer, need, 0);
+            plan.Attributes?.WritePlayer(d, 0, playerSlotPlayer);
             HandleListener("OnClientVoice", d, valid, closed);
         }
 
@@ -465,6 +473,7 @@ namespace Challenges
             Dictionary<string, string> d = new(need.Capacity);
             if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, playerSlotPlayer, need, 0);
             if (need.Keys[0]) d["steamid"] = steamId.SteamId64.ToString();
+            plan.Attributes?.WritePlayer(d, 0, playerSlotPlayer);
             HandleListener("OnClientAuthorized", d, valid, closed);
         }
 
@@ -592,7 +601,7 @@ namespace Challenges
 
         public void OnPlayerButtonsChanged(CCSPlayerController player, PlayerButtons pressed, PlayerButtons released)
         {
-            Situations.OnButtonsChanged(player, pressed, released);
+            Providers.OnButtonsChanged(player, pressed, released);
             if (!BeginListener("OnPlayerButtonsChanged", out ExtractorPlan? plan, out GlobalGate closed))
             {
                 return;
@@ -611,6 +620,7 @@ namespace Challenges
             if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, player, need, 0);
             if (need.Keys[0]) d["pressed"] = EventData.Num((ulong)pressed);
             if (need.Keys[1]) d["released"] = EventData.Num((ulong)released);
+            plan.Attributes?.WritePlayer(d, 0, player);
             HandleListener("OnPlayerButtonsChanged", d, valid, closed);
         }
 
@@ -635,6 +645,7 @@ namespace Challenges
             if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, player, need, 0);
             if (need.Keys[0]) d["message"] = message;
             if (need.Keys[1]) d["teamchat"] = EventData.Bool(teamChat);
+            plan.Attributes?.WritePlayer(d, 0, player);
             HandleListener("OnPlayerChat", d, valid, closed);
         }
 
@@ -677,6 +688,7 @@ namespace Challenges
             Dictionary<string, string> d = new(need.Capacity);
             if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, player, need, 0);
             if (need.Keys[0]) d["buttonid"] = buttonId;
+            plan.Attributes?.WritePlayer(d, 0, player);
             HandleListener("OnCustomHudClicked", d, valid, closed);
         }
 

@@ -36,5 +36,15 @@ namespace Challenges.Extractors
             var e = (EventDecoyFiring)gameEvent;
             if (need.Types[0]) buffer.Add((e.Userid, "decoy_firing"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventDecoyFiring)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }

@@ -3,6 +3,7 @@ using System.Numerics;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Events;
+using Challenges.Attributes;
 using Challenges.Extractors;
 using Challenges.Utils;
 using Microsoft.Extensions.Localization;
@@ -25,7 +26,7 @@ namespace Challenges
         private readonly SlotIdentity?[] _slots = new SlotIdentity?[MaxSlots];
         private readonly HashSet<PlayerState> _pruned = [];
         private readonly List<string> _pruneScratch = [];
-        private readonly SituationMemory _situations = new();
+        private readonly AttributeRegistry _attributes;
         private Dictionary<string, TypePlan> _types = new(StringComparer.Ordinal);
         private Dictionary<string, ExtractorPlan[]> _activeExtractorsByEvent = new(StringComparer.Ordinal);
         private Dictionary<string, ExtractorPlan> _activeListeners = new(StringComparer.Ordinal);
@@ -43,11 +44,12 @@ namespace Challenges
         public ChallengeEngine(State state, IStringLocalizer localizer, bool isHotReloaded)
             : base(state, localizer)
         {
+            _attributes = new AttributeRegistry(EnqueueOne);
             RebuildEvents();
         }
 
-        /// <summary>Used by the generated button listener when grenade situation rules are loaded.</summary>
-        internal SituationMemory Situations => _situations;
+        /// <summary>Attribute providers; the generated button listener forwards to them first.</summary>
+        internal AttributeRegistry Providers => _attributes;
 
         public override List<string> Events => _boundEvents;
         public override List<string> Listeners => _boundListeners;
@@ -113,7 +115,7 @@ namespace Challenges
                 ? gateUnion | GlobalGate.WarmupBits
                 : gateUnion;
             _globalKeys = globalKeys;
-            _situations.Configure(allTasks);
+            _attributes.Configure(allTasks);
 
             HashSet<string> bound = new(StringComparer.Ordinal);
             List<string> events = [];
@@ -127,7 +129,8 @@ namespace Challenges
                 bool used = types.Length > 0;
                 if (used && extractor.Kind == ExtractorKind.Listener)
                 {
-                    activeListeners[extractor.EventClassName] = new ExtractorPlan(extractor, types, globalKeyCount);
+                    activeListeners[extractor.EventClassName] =
+                        new ExtractorPlan(extractor, types, _attributes, globalKeyCount);
                 }
                 else if (used)
                 {
@@ -136,11 +139,10 @@ namespace Challenges
                         active[extractor.EventClassName] = list = [];
                     }
 
-                    int extraKeys = globalKeyCount + _situations.EnrichKeyCount(extractor.EventClassName);
-                    list.Add(new ExtractorPlan(extractor, types, extraKeys));
+                    list.Add(new ExtractorPlan(extractor, types, _attributes, globalKeyCount));
                 }
 
-                if ((!used && !_situations.Watches(extractor.EventClassName))
+                if ((!used && !_attributes.Watches(extractor.EventClassName))
                     || !bound.Add(extractor.EventClassName))
                 {
                     continue;
@@ -168,7 +170,7 @@ namespace Challenges
             _boundListeners = listeners;
         }
 
-        /// <summary>Drops per-player engine and situation state when the player leaves.</summary>
+        /// <summary>Drops per-player engine and attribute state when the player leaves.</summary>
         public void ForgetPlayer(CCSPlayerController player, PlayerState state)
         {
             _pruned.Remove(state);
@@ -183,14 +185,14 @@ namespace Challenges
                 _slots[slot] = null;
             }
 
-            _situations.ForgetPlayer(player);
+            _attributes.ForgetSlot(slot);
         }
 
-        /// <summary>Clears round-scoped caches (hostages, situation memory).</summary>
+        /// <summary>Clears round-scoped caches (hostages, attribute providers).</summary>
         public void InvalidateRoundCache()
         {
             _hasHostages = null;
-            _situations.Clear();
+            _attributes.Clear();
         }
 
         public override void Destroy()
@@ -208,7 +210,7 @@ namespace Challenges
             _pruned.Clear();
             Array.Clear(_slots);
             _gameRulesProxy = null;
-            _situations.Clear();
+            _attributes.Clear();
         }
 
         /// <summary>
@@ -296,30 +298,47 @@ namespace Challenges
             }
 
             bool hasTasks = _types.Count > 0;
-            if (!hasTasks && !_situations.AnyEnabled)
+            if (!hasTasks && !_attributes.AnyActive)
             {
                 return HookResult.Continue;
             }
 
-            if (_situations.Watches(eventName))
+            AttributeWatch? watch = _attributes.WatchOf(eventName);
+            if (watch != null)
             {
                 try
                 {
-                    _situations.Observe(eventName, gameEvent, EnqueueOne);
+                    _attributes.Observe(watch, eventName, gameEvent);
                 }
                 catch (Exception ex)
                 {
-                    Log($"situation {eventName} failed: {ex.Message}");
+                    Log($"attributes {eventName} failed: {ex.Message}");
                 }
             }
 
-            if (!hasTasks
-                || !_activeExtractorsByEvent.TryGetValue(eventName, out ExtractorPlan[]? extractors))
+            if (hasTasks && _activeExtractorsByEvent.TryGetValue(eventName, out ExtractorPlan[]? extractors))
             {
-                return HookResult.Continue;
+                HandleExtractors(eventName, gameEvent, extractors);
             }
 
-            bool enrich = _situations.AnyEnabled;
+            if (watch != null)
+            {
+                try
+                {
+                    _attributes.AfterEvent(watch, eventName, gameEvent);
+                }
+                catch (Exception ex)
+                {
+                    Log($"attributes {eventName} failed: {ex.Message}");
+                }
+            }
+
+            return HookResult.Continue;
+        }
+
+        /// <summary>Per active extractor: gates, targets, fill, provider values, enqueue.</summary>
+        private void HandleExtractors(string eventName, GameEvent gameEvent, ExtractorPlan[] extractors)
+        {
             GlobalGate closed = ReadClosedGates();
             foreach (ExtractorPlan plan in extractors)
             {
@@ -351,11 +370,7 @@ namespace Challenges
 
                     Dictionary<string, string> data = new(plan.Demand.Capacity);
                     extractor.Fill(gameEvent, data, plan.Demand);
-                    if (enrich)
-                    {
-                        _situations.Enrich(eventName, gameEvent, data);
-                    }
-
+                    plan.Attributes?.Write(eventName, gameEvent, extractor, data);
                     Enqueue(eventName, data, targets, closed);
                 }
                 catch (Exception ex)
@@ -363,8 +378,6 @@ namespace Challenges
                     Log($"{eventName} failed: {ex.Message}");
                 }
             }
-
-            return HookResult.Continue;
         }
 
         private bool CanHandle() =>

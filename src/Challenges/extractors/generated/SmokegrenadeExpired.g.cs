@@ -36,5 +36,15 @@ namespace Challenges.Extractors
             var e = (EventSmokegrenadeExpired)gameEvent;
             if (need.Types[0]) buffer.Add((e.Userid, "smokegrenade_expired"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventSmokegrenadeExpired)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }

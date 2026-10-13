@@ -32,3 +32,13 @@ Unknown keys never match — see [Rules](../rules.md).
 | [player data](../../rules/GlobalPlayerData.md) | prefixes `userid`, `planter` |
 | `site` | int |
 | `bomb_site` | int |
+| `userid.grenade` | string |
+| `userid.grenade.holding` | string |
+| `userid.grenade.thrown` | string |
+| `userid.grenade.throwing` | string |
+| `userid.insmoke` | bool |
+| `planter.grenade` | string |
+| `planter.grenade.holding` | string |
+| `planter.grenade.thrown` | string |
+| `planter.grenade.throwing` | string |
+| `planter.insmoke` | bool |

@@ -38,5 +38,15 @@ namespace Challenges.Extractors
             var e = (EventPlayerChangename)gameEvent;
             if (need.Types[0]) buffer.Add((e.Userid, "player_changed_name"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventPlayerChangename)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }

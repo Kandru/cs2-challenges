@@ -35,5 +35,15 @@ namespace Challenges.Extractors
             var e = (EventMolotovDetonate)gameEvent;
             if (need.Types[0]) buffer.Add((e.Userid, "molotov_detonate"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventMolotovDetonate)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }

@@ -33,5 +33,15 @@ namespace Challenges.Extractors
             var e = (EventPlayerFalldamage)gameEvent;
             if (need.Types[0]) buffer.Add((e.Userid, "player_falldamage"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventPlayerFalldamage)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }

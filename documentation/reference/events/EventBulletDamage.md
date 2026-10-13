@@ -58,3 +58,13 @@ Unknown keys never match — see [Rules](../rules.md).
 | `type` | int |
 | `isteamdamage` | bool |
 | `isselfdamage` | bool |
+| `attacker.grenade` | string |
+| `attacker.grenade.holding` | string |
+| `attacker.grenade.thrown` | string |
+| `attacker.grenade.throwing` | string |
+| `attacker.insmoke` | bool |
+| `victim.grenade` | string |
+| `victim.grenade.holding` | string |
+| `victim.grenade.thrown` | string |
+| `victim.grenade.throwing` | string |
+| `victim.insmoke` | bool |

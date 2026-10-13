@@ -40,5 +40,15 @@ namespace Challenges.Extractors
             var e = (EventCsWinPanelRound)gameEvent;
             if (need.Types[0]) buffer.Add((e.FunfactPlayer, "cs_win_panel_round"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventCsWinPanelRound)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.FunfactPlayer,
+                _ => null,
+            };
+        }
     }
 }

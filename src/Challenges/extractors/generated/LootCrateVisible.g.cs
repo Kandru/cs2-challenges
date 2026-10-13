@@ -34,5 +34,15 @@ namespace Challenges.Extractors
             var e = (EventLootCrateVisible)gameEvent;
             if (need.Types[0]) buffer.Add((e.Userid, "loot_crate_visible"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventLootCrateVisible)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }

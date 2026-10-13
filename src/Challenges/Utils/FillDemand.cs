@@ -141,7 +141,7 @@ namespace Challenges.Utils
 
         /// <summary>
         /// Sets <see cref="Capacity"/> once every rule is added: requested keys, player fields and derived
-        /// keys, plus <paramref name="extra"/> keys merged in later (globals, situation keys).
+        /// keys, plus <paramref name="extra"/> keys merged in later (globals, provider values).
         /// </summary>
         public void SetCapacity(int derivedKeys, int extra)
         {

@@ -37,5 +37,15 @@ namespace Challenges.Extractors
             var e = (EventRoundMvp)gameEvent;
             if (need.Types[0]) buffer.Add((e.Userid, "round_mvp"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventRoundMvp)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }

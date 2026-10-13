@@ -33,5 +33,15 @@ namespace Challenges.Extractors
             var e = (EventDoorClose)gameEvent;
             if (need.Types[0]) buffer.Add((e.Userid, "door_close"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventDoorClose)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }

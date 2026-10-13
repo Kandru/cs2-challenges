@@ -45,5 +45,10 @@ namespace Challenges.Extractors
             GameEvent gameEvent,
             List<(CCSPlayerController? Player, string ChallengeType)> buffer,
             FillDemand need);
+        /// <summary>
+        /// Controller behind <see cref="IKeySource.PlayerPrefixes"/>[<paramref name="prefixIndex"/>], for attribute
+        /// providers. Always null for listeners; their generated handler passes the controller itself.
+        /// </summary>
+        CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex);
     }
 }

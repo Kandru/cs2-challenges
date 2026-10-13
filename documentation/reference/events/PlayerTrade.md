@@ -1,6 +1,6 @@
 # PlayerTrade (player_trade)
 
-Synthetic task type from situation memory (two `player_death` events).
+Synthetic task type from the trade attribute provider (two `player_death` events).
 
 Who gets credit: the **event player(s)** listed under task types.
 

@@ -36,5 +36,16 @@ namespace Challenges.Extractors
             var e = (EventBotTakeover)gameEvent;
             if (need.Types[0]) buffer.Add((e.Userid, "player_bot_takeover"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventBotTakeover)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Botid,
+                1 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }

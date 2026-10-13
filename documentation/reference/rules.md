@@ -54,21 +54,37 @@ Rules only decide whether an event **counts**. They never hide a challenge from 
 
 ## Situation memory {#situation-memory}
 
-Some keys come from short-lived round memory, not from a single CSS field. They only appear when a loaded task uses them. Memory is cleared on round start and never saved to the player file.
+Some keys come from short-lived round memory, not from a single CSS field. They only appear when a loaded task uses them; memory for keys no task uses is not kept at all. Memory is cleared on round start and never saved to the player file.
 
 | Pattern | Task type / event | Behavior |
 |---------|-------------------|----------|
 | `player_trade` + `seconds`, `same_weapon`, … | [PlayerTrade](events/PlayerTrade.md) | Mutual kill within a window (either order, including same tick). Default window **5** seconds if no `seconds` rule is set. |
-| `{attacker\|victim\|userid}.grenade` | [EventPlayerDeath](events/EventPlayerDeath.md) | `none` / `holding` / `thrown` / `both` |
-| `{prefix}.grenade.holding` / `.thrown` | same | Weapon short name(s); thrown is comma-separated. Thrown names are kept about **8** seconds. |
+| `{prefix}.grenade` | any event with players, see [below](#situation-attributes-for-any-player-prefix) | `none` / `holding` / `thrown` / `both` |
+| `{prefix}.grenade.holding` / `.thrown` | same | Weapon short name(s); thrown is comma-separated. Thrown names are kept about **8** seconds. On `player_death` the victim's holding state is dropped after the event. |
 | `{prefix}.grenade.throwing` | same | Comma-separated short names while a grenade is in hand (active weapon), pin pulled, or thrown within the last **1** second. Empty when none apply. |
-| `insmoke`, `smoke.distance`, `smoke.age` | [EventBombDefused](events/EventBombDefused.md) / begin-defuse | Bomb origin inside a **144**-unit smoke sphere. Smokes are kept about **22** seconds. |
+| `{prefix}.insmoke` | same | Player origin inside a **144**-unit smoke sphere. |
+| `insmoke`, `smoke.distance`, `smoke.age` | [EventBombDefused](events/EventBombDefused.md) / begin-defuse | Bomb origin inside a **144**-unit smoke sphere; distance and age of the covering (or nearest) smoke. Smokes are kept about **22** seconds. |
 | `isace` | EventPlayerDeath (`player_kill` only) | `true` on the kill that completes the enemy team for this attacker. Only **human** players on the victim’s team count (alive or dead) at the time of the kill. Optional rule fields `min_players` (default **2**) and `max_players` (default **5**): team size below min never aces; otherwise the target is `min(team_size, max)`. Team kills, suicides, and bot victims never count. A further kill after the ace does not set `isace` again for that `(min, max)` pair. |
 | Prefer `player_bomb_defused` over `bomb_defused` | same | Credit only the defuser (the all-player type shares one data bag). |
 
 Examples: `examples/blueprints/traded_kills.yaml`, `grenade_and_die.yaml`, `killerqueen.yaml`, `ninja_defuse.yaml`, `swap_hegrenade.yaml`, `solo_hero.yaml`, `flawless_ace.yaml`.
 
 Key names and types for each event stay on that event’s page. This section only describes timing and values the key tables do not state.
+
+## Situation attributes for any player prefix
+
+The player suffixes `grenade`, `grenade.holding`, `grenade.thrown`, `grenade.throwing` and `insmoke` work after **every** player prefix of every event and listener, aliases included, like the [player data](rules/GlobalPlayerData.md) suffixes. For example:
+
+| Challenge type | Rule key | Meaning |
+|----------------|----------|---------|
+| `player_kill` | `attacker.insmoke` | The killer stood in a smoke. |
+| `player_kill` | `victim.grenade.holding` | The victim died with the pin pulled. |
+| `player_hurt_victim` | `victim.grenade.throwing` | Hit while throwing a grenade. |
+| `weapon_fire` | `player.insmoke` | Shot fired from inside a smoke. |
+
+The event pages list these keys for each prefix. Event-scoped situation keys (`isace`, the bomb `insmoke` / `smoke.*` keys) stay limited to the events named in the table above. `player_trade` only offers its own keys and the player data suffixes.
+
+The value is read when the event fires, for the player behind that prefix; a missing player reads like a player without grenades or smoke (`none`, empty, `false`).
 
 ## Example
 

@@ -32,5 +32,15 @@ namespace Challenges.Extractors
             var e = (EventSurvivalNoRespawnsWarning)gameEvent;
             if (need.Types[0]) buffer.Add((e.Userid, "survival_no_respawns_warning"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventSurvivalNoRespawnsWarning)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }

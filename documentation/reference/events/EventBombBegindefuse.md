@@ -31,8 +31,16 @@ Unknown keys never match — see [Rules](../rules.md).
 | [global event data](../../rules/GlobalEventData.md) | see page |
 | [player data](../../rules/GlobalPlayerData.md) | prefixes `userid`, `player` |
 | `haskit` | bool |
+| `userid.grenade` | string |
+| `userid.grenade.holding` | string |
+| `userid.grenade.thrown` | string |
+| `userid.grenade.throwing` | string |
+| `userid.insmoke` | bool |
+| `player.grenade` | string |
+| `player.grenade.holding` | string |
+| `player.grenade.thrown` | string |
+| `player.grenade.throwing` | string |
+| `player.insmoke` | bool |
 | `insmoke` | bool |
 | `smoke.distance` | float |
 | `smoke.age` | float |
-| `userid.insmoke` | bool |
-| `player.insmoke` | bool |

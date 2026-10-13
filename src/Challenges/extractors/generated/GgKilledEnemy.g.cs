@@ -34,5 +34,16 @@ namespace Challenges.Extractors
             if (need.Types[0]) buffer.Add((e.Attackerid, "gg_killed_enemy_attackerid"));
             if (need.Types[1]) buffer.Add((e.Victimid, "gg_killed_enemy_victimid"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventGgKilledEnemy)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Attackerid,
+                1 => e.Victimid,
+                _ => null,
+            };
+        }
     }
 }

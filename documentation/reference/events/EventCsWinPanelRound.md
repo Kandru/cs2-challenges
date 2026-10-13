@@ -38,3 +38,13 @@ Unknown keys never match — see [Rules](../rules.md).
 | `show_timer_attack` | bool |
 | `show_timer_defend` | bool |
 | `timer_time` | int |
+| `funfact_player.grenade` | string |
+| `funfact_player.grenade.holding` | string |
+| `funfact_player.grenade.thrown` | string |
+| `funfact_player.grenade.throwing` | string |
+| `funfact_player.insmoke` | bool |
+| `player.grenade` | string |
+| `player.grenade.holding` | string |
+| `player.grenade.thrown` | string |
+| `player.grenade.throwing` | string |
+| `player.insmoke` | bool |

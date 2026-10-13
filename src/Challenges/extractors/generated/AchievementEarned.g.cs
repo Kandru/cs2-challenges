@@ -30,5 +30,15 @@ namespace Challenges.Extractors
             var e = (EventAchievementEarned)gameEvent;
             if (need.Types[0]) buffer.Add((e.Player, "player_achievement_earned"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventAchievementEarned)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Player,
+                _ => null,
+            };
+        }
     }
 }

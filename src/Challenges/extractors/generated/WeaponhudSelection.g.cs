@@ -34,5 +34,15 @@ namespace Challenges.Extractors
             var e = (EventWeaponhudSelection)gameEvent;
             if (need.Types[0]) buffer.Add((e.Userid, "weaponhud_selection"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventWeaponhudSelection)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }

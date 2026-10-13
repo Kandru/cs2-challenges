@@ -32,5 +32,15 @@ namespace Challenges.Extractors
             var e = (EventSpecModeUpdated)gameEvent;
             if (need.Types[0]) buffer.Add((e.Userid, "spec_mode_updated"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventSpecModeUpdated)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }

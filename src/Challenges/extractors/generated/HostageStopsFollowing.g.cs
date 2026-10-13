@@ -33,5 +33,15 @@ namespace Challenges.Extractors
             var e = (EventHostageStopsFollowing)gameEvent;
             if (need.Types[0]) buffer.Add((e.Userid, "hostage_stops_following"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventHostageStopsFollowing)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }

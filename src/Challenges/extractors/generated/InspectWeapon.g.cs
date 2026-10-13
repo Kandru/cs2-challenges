@@ -32,5 +32,15 @@ namespace Challenges.Extractors
             var e = (EventInspectWeapon)gameEvent;
             if (need.Types[0]) buffer.Add((e.Userid, "inspect_weapon"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventInspectWeapon)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }

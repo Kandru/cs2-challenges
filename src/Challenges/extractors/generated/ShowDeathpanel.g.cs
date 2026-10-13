@@ -36,5 +36,16 @@ namespace Challenges.Extractors
             if (need.Types[0]) buffer.Add((e.KillerController, "show_deathpanel_killer_controller"));
             if (need.Types[1]) buffer.Add((e.Victim, "show_deathpanel_victim"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventShowDeathpanel)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.KillerController,
+                1 => e.Victim,
+                _ => null,
+            };
+        }
     }
 }

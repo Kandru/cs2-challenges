@@ -1,3 +1,4 @@
+using Challenges.Attributes;
 using Challenges.Extractors;
 using Challenges.Utils;
 
@@ -44,15 +45,24 @@ namespace Challenges
             public bool IsClosed(GlobalGate closed) => (Gate & closed) != 0;
         }
 
-        /// <summary>
-        /// An extractor with at least one active type, its active types, and what to fill.
-        /// <paramref name="extraKeys"/> counts keys merged in after the fill (globals, situation keys).
-        /// </summary>
-        private sealed class ExtractorPlan(IExtractor extractor, TypePlan[] types, int extraKeys)
+        /// <summary>An extractor with at least one active type, its active types, and what to fill.</summary>
+        private sealed class ExtractorPlan
         {
-            public IExtractor Extractor { get; } = extractor;
-            public TypePlan[] Types { get; } = types;
-            public FillDemand Demand { get; } = BuildDemand(extractor, types, extraKeys);
+            /// <summary><paramref name="globalKeys"/> counts the <c>global.*</c> keys merged in before enqueue.</summary>
+            public ExtractorPlan(IExtractor extractor, TypePlan[] types, AttributeRegistry attributes, int globalKeys)
+            {
+                Extractor = extractor;
+                Types = types;
+                HashSet<string> keys = RuleKeysOf(types);
+                Attributes = attributes.BuildDemand(extractor, keys);
+                Demand = BuildDemand(extractor, types, keys, globalKeys + (Attributes?.KeyCount ?? 0));
+            }
+
+            public IExtractor Extractor { get; }
+            public TypePlan[] Types { get; }
+            public FillDemand Demand { get; }
+            /// <summary>Provider values to add after <c>Fill</c>; null when no rule of these types reads one.</summary>
+            public AttributeDemand? Attributes { get; }
 
             public bool AllClosed(GlobalGate closed)
             {
@@ -73,12 +83,35 @@ namespace Challenges
             }
         }
 
+        /// <summary>Canonical keys the rules of <paramref name="types"/> read.</summary>
+        private static HashSet<string> RuleKeysOf(TypePlan[] types)
+        {
+            HashSet<string> keys = new(StringComparer.Ordinal);
+            foreach (TypePlan type in types)
+            {
+                foreach ((_, ChallengeTask task) in type.Tasks)
+                {
+                    foreach (CompiledRule rule in task.CompiledRules)
+                    {
+                        keys.Add(rule.Key);
+                    }
+                }
+            }
+
+            return keys;
+        }
+
         /// <summary>
-        /// Union of the canonical keys the rules of <paramref name="types"/> read, mapped onto the extractor's
-        /// keys, player prefixes and derived keys. Keys owned by situations or <c>global.*</c> do not match
-        /// and are ignored.
+        /// <paramref name="keys"/> mapped onto the extractor's keys, player prefixes and derived keys. Keys owned
+        /// by attribute providers (player suffixes such as <c>userid.grenade</c> are not player fields) or
+        /// <c>global.*</c> do not match and are ignored. <paramref name="extraKeys"/> counts keys merged in after the
+        /// fill (globals, provider values).
         /// </summary>
-        private static FillDemand BuildDemand(IExtractor extractor, TypePlan[] types, int extraKeys)
+        private static FillDemand BuildDemand(
+            IExtractor extractor,
+            TypePlan[] types,
+            HashSet<string> keys,
+            int extraKeys)
         {
             IReadOnlyList<string> challengeTypes = extractor.ChallengeTypes;
             FillDemand need = new(challengeTypes.Count, extractor.Keys.Count, extractor.PlayerPrefixes);
@@ -93,15 +126,9 @@ namespace Challenges
                 }
             }
 
-            foreach (TypePlan type in types)
+            foreach (string key in keys)
             {
-                foreach ((_, ChallengeTask task) in type.Tasks)
-                {
-                    foreach (CompiledRule rule in task.CompiledRules)
-                    {
-                        need.Add(rule.Key, extractor.Keys, extractor.PlayerPrefixes, extractor.DerivedKeys);
-                    }
-                }
+                need.Add(key, extractor.Keys, extractor.PlayerPrefixes, extractor.DerivedKeys);
             }
 
             need.SetCapacity(extractor.DerivedKeys.Count, extraKeys);

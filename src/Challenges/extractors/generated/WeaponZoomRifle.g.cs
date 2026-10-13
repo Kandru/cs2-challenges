@@ -32,5 +32,15 @@ namespace Challenges.Extractors
             var e = (EventWeaponZoomRifle)gameEvent;
             if (need.Types[0]) buffer.Add((e.Userid, "weapon_zoom_rifle"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventWeaponZoomRifle)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }

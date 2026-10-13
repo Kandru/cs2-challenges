@@ -32,5 +32,15 @@ namespace Challenges.Extractors
             var e = (EventPlayerDecal)gameEvent;
             if (need.Types[0]) buffer.Add((e.Userid, "player_decal"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventPlayerDecal)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }

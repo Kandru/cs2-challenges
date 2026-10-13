@@ -36,5 +36,15 @@ namespace Challenges.Extractors
             var e = (EventTagrenadeDetonate)gameEvent;
             if (need.Types[0]) buffer.Add((e.Userid, "tagrenade_detonate"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventTagrenadeDetonate)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }

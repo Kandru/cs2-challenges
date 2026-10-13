@@ -33,5 +33,15 @@ namespace Challenges.Extractors
             var e = (EventDefuserPickup)gameEvent;
             if (need.Types[0]) buffer.Add((e.Userid, "player_defuser_pickup"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventDefuserPickup)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }

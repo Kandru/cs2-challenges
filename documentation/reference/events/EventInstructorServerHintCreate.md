@@ -57,3 +57,13 @@ Unknown keys never match — see [Rules](../rules.md).
 | `hint_vr_offset_y` | float |
 | `hint_vr_offset_z` | float |
 | `hint_vr_panel_type` | int |
+| `hint_activator_userid.grenade` | string |
+| `hint_activator_userid.grenade.holding` | string |
+| `hint_activator_userid.grenade.thrown` | string |
+| `hint_activator_userid.grenade.throwing` | string |
+| `hint_activator_userid.insmoke` | bool |
+| `userid.grenade` | string |
+| `userid.grenade.holding` | string |
+| `userid.grenade.thrown` | string |
+| `userid.grenade.throwing` | string |
+| `userid.insmoke` | bool |

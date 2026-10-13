@@ -36,5 +36,16 @@ namespace Challenges.Extractors
             if (need.Types[1]) buffer.Add((e.AvengedPlayerId, "player_got_avenged_teammate"));
             if (need.Types[0]) buffer.Add((e.AvengerId, "player_has_avenged_teammate"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventPlayerAvengedTeammate)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.AvengedPlayerId,
+                1 => e.AvengerId,
+                _ => null,
+            };
+        }
     }
 }

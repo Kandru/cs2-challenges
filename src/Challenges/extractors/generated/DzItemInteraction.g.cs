@@ -34,5 +34,15 @@ namespace Challenges.Extractors
             var e = (EventDzItemInteraction)gameEvent;
             if (need.Types[0]) buffer.Add((e.Userid, "dz_item_interaction"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventDzItemInteraction)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }

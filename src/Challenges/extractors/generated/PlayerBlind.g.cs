@@ -40,5 +40,16 @@ namespace Challenges.Extractors
             if (need.Types[0]) buffer.Add((e.Attacker, "player_has_blinded"));
             if (need.Types[1]) buffer.Add((e.Userid, "player_got_blinded"));
         }
+
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        {
+            var e = (EventPlayerBlind)gameEvent;
+            return prefixIndex switch
+            {
+                0 => e.Attacker,
+                1 => e.Userid,
+                _ => null,
+            };
+        }
     }
 }
