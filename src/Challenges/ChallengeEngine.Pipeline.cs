@@ -1,7 +1,6 @@
 using System.Collections.Concurrent;
 using System.Runtime.InteropServices;
 using System.Threading.Channels;
-using CounterStrikeSharp.API;
 
 namespace Challenges
 {
@@ -33,7 +32,6 @@ namespace Challenges
             new(StringComparer.OrdinalIgnoreCase);
 
         private Task? _workerTask;
-        private int _pumpScheduled;
         private bool _flushed;
 
         private void EnsureWorker() =>
@@ -158,35 +156,21 @@ namespace Challenges
             };
         }
 
-        private void PostPatch(ProgressPatch patch)
-        {
-            _patches.Enqueue(patch);
-            SchedulePump();
-        }
+        /// <summary>Worker side: hands a result to the game thread. Never calls into the game.</summary>
+        private void PostPatch(ProgressPatch patch) => _patches.Enqueue(patch);
 
-        private void SchedulePump()
+        /// <summary>
+        /// Game thread, once per server tick: applies up to <see cref="ApplyBatchSize"/> patches with changes.
+        /// Completion-only patches do not count against the budget.
+        /// </summary>
+        public void OnTick()
         {
-            if (_flushed || _destroyed || Interlocked.CompareExchange(ref _pumpScheduled, 1, 0) != 0)
-            {
-                return;
-            }
-
-            Server.NextWorldUpdate(PumpPatches);
-        }
-
-        private void PumpPatches()
-        {
-            Interlocked.Exchange(ref _pumpScheduled, 0);
-            if (_destroyed || _flushed)
+            if (_patches.IsEmpty || _flushed || _destroyed)
             {
                 return;
             }
 
             DrainPatches(ApplyBatchSize);
-            if (!_patches.IsEmpty)
-            {
-                SchedulePump();
-            }
         }
 
         private void DrainPatches(int max)
@@ -194,6 +178,11 @@ namespace Challenges
             int applied = 0;
             while (applied < max && _patches.TryDequeue(out ProgressPatch? patch))
             {
+                if (patch.HasChanges)
+                {
+                    applied++;
+                }
+
                 try
                 {
                     ApplyPatch(patch);
@@ -203,8 +192,6 @@ namespace Challenges
                     Log($"progress apply failed: {ex.Message}");
                     FinishPending(patch.SteamId);
                 }
-
-                applied++;
             }
         }
 

@@ -9,7 +9,7 @@ namespace Challenges
 {
     /// <summary>
     /// Turns game events into task progress. Native extraction stays on the game thread; rule checks and
-    /// progress simulation run on a single background worker; patches apply on the next world update.
+    /// progress simulation run on a single background worker; patches apply in the plugin's tick.
     /// </summary>
     public partial class ChallengeEngine : Module
     {
