@@ -7,6 +7,12 @@ namespace Challenges
     {
         private void ApplyPatch(ProgressPatch patch)
         {
+            if (!patch.HasChanges)
+            {
+                FinishPending(patch.SteamId);
+                return;
+            }
+
             PlayerState state = Archive.GetOrCreate(patch.SteamId);
             string scheduleKey = patch.ScheduleKey;
 

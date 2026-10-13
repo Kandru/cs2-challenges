@@ -48,6 +48,18 @@ namespace Challenges
             || SolvedAbsolute != null
             || Effects.Count > 0;
 
+        /// <summary>
+        /// Completion-only result: tells the game thread that one in-flight target finished without changes.
+        /// </summary>
+        public static ProgressPatch Done(string steamId, int slot, string scheduleKey, RunningSchedule schedule) =>
+            new()
+            {
+                SteamId = steamId,
+                Slot = slot,
+                ScheduleKey = scheduleKey,
+                Schedule = schedule,
+            };
+
         public void Upsert(string challengeId, string taskId, TaskProgress progress)
         {
             for (int i = 0; i < Upserts.Count; i++)

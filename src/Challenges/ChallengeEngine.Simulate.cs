@@ -20,7 +20,7 @@ namespace Challenges
                 catch (Exception ex)
                 {
                     Log($"progress simulate failed: {ex.Message}");
-                    FinishPending(target.SteamId);
+                    PostDone(item, target);
                 }
             }
         }
@@ -56,7 +56,7 @@ namespace Challenges
 
             if (eligible.Count == 0)
             {
-                FinishPending(target.SteamId);
+                PostDone(item, target);
                 return;
             }
 
@@ -95,15 +95,12 @@ namespace Challenges
                 });
             }
 
-            if (!patch.HasChanges)
-            {
-                FinishPending(target.SteamId);
-                return;
-            }
-
             patch.Touched = touched;
             PostPatch(patch);
         }
+
+        private void PostDone(ProgressWorkItem item, ProgressTarget target) =>
+            PostPatch(ProgressPatch.Done(target.SteamId, target.Slot, item.ScheduleKey, item.Schedule));
 
         private PlayerState GetOrInstallShadow(ProgressTarget target)
         {
