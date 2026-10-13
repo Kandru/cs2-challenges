@@ -41,6 +41,7 @@ namespace Challenges
         private readonly HashSet<(int Slot, int Min, int Max)> _aceCredited = [];
         private readonly HashSet<string> _aceHits = new(StringComparer.Ordinal);
         private readonly StringBuilder _thrownScratch = new(32);
+        private readonly RoundRoster _roster = new();
 
         private float _bombX;
         private float _bombY;
@@ -58,6 +59,10 @@ namespace Challenges
         public bool GrenadeEnabled { get; private set; }
         public bool SmokeEnabled { get; private set; }
         public bool AceEnabled { get; private set; }
+        /// <summary>True while a consumer (today: ace) needs <see cref="Roster"/> kept current.</summary>
+        public bool RosterEnabled { get; private set; }
+        /// <summary>Per-slot team / human / alive state; only maintained while <see cref="RosterEnabled"/>.</summary>
+        public RoundRoster Roster => _roster;
         public bool AnyEnabled => TradeEnabled | GrenadeEnabled | SmokeEnabled | AceEnabled;
 
         public void Configure(IEnumerable<ChallengeTask> tasks)
@@ -152,10 +157,21 @@ namespace Challenges
 
             _tradeRetentionSeconds = trade && maxTrade > 0 ? maxTrade : DefaultTradeSeconds;
 
+            RosterEnabled = ace;
+            _roster.Invalidate();
+
             _watchEvents.Clear();
             if (trade | grenade | ace)
             {
                 _watchEvents.Add("EventPlayerDeath");
+            }
+
+            if (RosterEnabled)
+            {
+                _watchEvents.Add("EventRoundStart");
+                _watchEvents.Add("EventPlayerSpawn");
+                _watchEvents.Add("EventPlayerTeam");
+                _watchEvents.Add("EventPlayerDisconnect");
             }
 
             if (grenade)
@@ -202,6 +218,7 @@ namespace Challenges
             _thrown.RemoveAll(t => t.Slot == slot);
             _aceKills.Remove(slot);
             _aceCredited.RemoveWhere(entry => entry.Slot == slot);
+            _roster.Remove(slot);
             for (int i = _kills.Count - 1; i >= 0; i--)
             {
                 KillRecord k = _kills[i];
@@ -228,6 +245,28 @@ namespace Challenges
                     if (TradeEnabled)
                     {
                         OnPlayerDeath((EventPlayerDeath)gameEvent, enqueueOne);
+                    }
+
+                    if (RosterEnabled)
+                    {
+                        _roster.OnDeath(((EventPlayerDeath)gameEvent).Userid);
+                    }
+
+                    return;
+                case "EventRoundStart":
+                    _roster.Rebuild();
+                    return;
+                case "EventPlayerSpawn":
+                    _roster.OnSpawn(((EventPlayerSpawn)gameEvent).Userid);
+                    return;
+                case "EventPlayerTeam":
+                    EventPlayerTeam team = (EventPlayerTeam)gameEvent;
+                    _roster.OnTeam(team.Userid, team.Team, team.Disconnect);
+                    return;
+                case "EventPlayerDisconnect":
+                    if (((EventPlayerDisconnect)gameEvent).Userid is { IsValid: true } gone)
+                    {
+                        _roster.Remove(gone.Slot);
                     }
 
                     return;
@@ -364,7 +403,7 @@ namespace Challenges
                 return;
             }
 
-            int enemies = CountEnemyHumans(victim, enemyTeam);
+            int enemies = CountEnemyHumans(victim.Slot, enemyTeam);
             foreach (AceBound bound in _aceBounds)
             {
                 if (enemies < bound.Min || kills != Math.Min(enemies, bound.Max))
@@ -381,19 +420,11 @@ namespace Challenges
             }
         }
 
-        private static int CountEnemyHumans(CCSPlayerController victim, int team)
+        /// <summary>Humans in the victim's team, dead or alive; the victim counts exactly once.</summary>
+        private int CountEnemyHumans(int victimSlot, int team)
         {
-            int count = 1;
-            int victimSlot = victim.Slot;
-            foreach (CCSPlayerController player in Players.GetHumans())
-            {
-                if (player.TeamNum == team && player.Slot != victimSlot)
-                {
-                    count++;
-                }
-            }
-
-            return count;
+            int count = _roster.HumansInTeam(team);
+            return _roster.IsHumanInTeam(victimSlot, team) ? count : count + 1;
         }
 
         private void OnPlayerDeath(
