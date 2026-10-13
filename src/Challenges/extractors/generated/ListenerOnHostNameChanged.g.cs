@@ -15,9 +15,8 @@ namespace Challenges.Extractors
         {
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
-            yield break;
         }
     }
 }

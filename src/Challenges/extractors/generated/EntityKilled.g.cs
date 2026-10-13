@@ -22,11 +22,11 @@ namespace Challenges.Extractors
             d["entindex_killed"] = EventData.Num(e.EntindexKilled);
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             foreach (var entry in Utilities.GetPlayers())
             {
-                yield return (entry, "entity_killed");
+                buffer.Add((entry, "entity_killed"));
             }
         }
     }

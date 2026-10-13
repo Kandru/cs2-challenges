@@ -23,10 +23,10 @@ namespace Challenges.Extractors
             EventData.FillPlayer(d, e.Userid, "player");
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             var e = (EventDecoyDetonate)gameEvent;
-            yield return (e.Userid, "decoy_detonate");
+            buffer.Add((e.Userid, "decoy_detonate"));
         }
     }
 }

@@ -30,11 +30,11 @@ namespace Challenges.Extractors
             d["weapon_originalowner_xuid"] = e.WeaponOriginalownerXuid;
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             foreach (var entry in Utilities.GetPlayers())
             {
-                yield return (entry, "other_death");
+                buffer.Add((entry, "other_death"));
             }
         }
     }

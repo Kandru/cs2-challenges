@@ -21,10 +21,10 @@ namespace Challenges.Extractors
             EventData.FillPlayer(d, e.Userid, "player");
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             var e = (EventSeasoncoinLevelup)gameEvent;
-            yield return (e.Userid, "seasoncoin_levelup");
+            buffer.Add((e.Userid, "seasoncoin_levelup"));
         }
     }
 }

@@ -20,11 +20,11 @@ namespace Challenges.Extractors
             d["blocked"] = EventData.Bool(e.Blocked);
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             foreach (var entry in Utilities.GetPlayers())
             {
-                yield return (entry, "nav_blocked");
+                buffer.Add((entry, "nav_blocked"));
             }
         }
     }

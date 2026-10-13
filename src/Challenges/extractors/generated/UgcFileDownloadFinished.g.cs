@@ -19,11 +19,11 @@ namespace Challenges.Extractors
             d["hcontent"] = EventData.Num(e.Hcontent);
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             foreach (var entry in Utilities.GetPlayers())
             {
-                yield return (entry, "ugc_file_download_finished");
+                buffer.Add((entry, "ugc_file_download_finished"));
             }
         }
     }

@@ -19,11 +19,11 @@ namespace Challenges.Extractors
             d["forceupload"] = EventData.Bool(e.Forceupload);
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             foreach (var entry in Utilities.GetPlayers())
             {
-                yield return (entry, "player_stats_updated");
+                buffer.Add((entry, "player_stats_updated"));
             }
         }
     }

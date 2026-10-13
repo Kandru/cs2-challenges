@@ -26,11 +26,11 @@ namespace Challenges.Extractors
             d["yesVotes"] = EventData.Num(e.Yesvotes);
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             foreach (var entry in Utilities.GetPlayers())
             {
-                yield return (entry, "vote_changed");
+                buffer.Add((entry, "vote_changed"));
             }
         }
     }

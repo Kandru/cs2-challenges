@@ -20,10 +20,10 @@ namespace Challenges.Extractors
             EventData.FillPlayer(d, e.Userid, "player");
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             var e = (EventJointeamFailed)gameEvent;
-            yield return (e.Userid, "jointeam_failed");
+            buffer.Add((e.Userid, "jointeam_failed"));
         }
     }
 }

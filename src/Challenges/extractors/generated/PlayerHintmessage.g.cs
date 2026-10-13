@@ -19,11 +19,11 @@ namespace Challenges.Extractors
             d["hintmessage"] = e.Hintmessage;
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             foreach (var entry in Utilities.GetPlayers())
             {
-                yield return (entry, "player_hintmessage");
+                buffer.Add((entry, "player_hintmessage"));
             }
         }
     }

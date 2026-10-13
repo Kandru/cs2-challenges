@@ -19,11 +19,11 @@ namespace Challenges.Extractors
             d["next"] = EventData.Bool(e.Next);
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             foreach (var entry in Utilities.GetPlayers())
             {
-                yield return (entry, "cs_prev_next_spectator");
+                buffer.Add((entry, "cs_prev_next_spectator"));
             }
         }
     }

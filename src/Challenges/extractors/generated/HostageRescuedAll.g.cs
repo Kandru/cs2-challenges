@@ -16,11 +16,11 @@ namespace Challenges.Extractors
         {
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             foreach (var entry in Utilities.GetPlayers())
             {
-                yield return (entry, "hostage_rescued_all");
+                buffer.Add((entry, "hostage_rescued_all"));
             }
         }
     }

@@ -21,11 +21,11 @@ namespace Challenges.Extractors
             d["max_val"] = EventData.Num(e.MaxVal);
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             foreach (var entry in Utilities.GetPlayers())
             {
-                yield return (entry, "achievement_event");
+                buffer.Add((entry, "achievement_event"));
             }
         }
     }

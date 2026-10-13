@@ -30,10 +30,10 @@ namespace Challenges.Extractors
             EventData.FillPlayer(d, e.Userid, "player");
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             var e = (EventAddBulletHitMarker)gameEvent;
-            yield return (e.Userid, "add_bullet_hit_marker");
+            buffer.Add((e.Userid, "add_bullet_hit_marker"));
         }
     }
 }

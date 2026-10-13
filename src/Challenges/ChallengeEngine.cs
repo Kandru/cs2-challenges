@@ -13,12 +13,18 @@ namespace Challenges
     /// </summary>
     public partial class ChallengeEngine : Module
     {
-        private readonly Dictionary<string, List<IExtractor>> _extractorsByEvent;
+        private const int MaxSlots = 65;
+
+        /// <summary>Reused target scratch list. Game thread only, not reentrant.</summary>
+        private readonly List<(CCSPlayerController? Player, string Type)> _targetBuffer = [];
+        /// <summary>Resolved identity per player slot, keyed by user id. Game thread only.</summary>
+        private readonly SlotIdentity?[] _slots = new SlotIdentity?[MaxSlots];
         private readonly HashSet<PlayerState> _pruned = [];
         private readonly List<string> _pruneScratch = [];
         private readonly SituationMemory _situations = new();
         private Dictionary<string, List<(ChallengeDefinition Challenge, ChallengeTask Task)>> _tasksByType =
             new(StringComparer.Ordinal);
+        private Dictionary<string, IExtractor[]> _activeExtractorsByEvent = new(StringComparer.Ordinal);
         private List<string> _boundEvents = [];
         private List<string> _boundListeners = [];
         private bool _usesHostageKey;
@@ -30,9 +36,6 @@ namespace Challenges
         public ChallengeEngine(State state, IStringLocalizer localizer, bool isHotReloaded)
             : base(state, localizer)
         {
-            _extractorsByEvent = Registry.All
-                .GroupBy(e => e.EventClassName, StringComparer.Ordinal)
-                .ToDictionary(g => g.Key, g => g.ToList(), StringComparer.Ordinal);
             RebuildEvents();
         }
 
@@ -103,9 +106,21 @@ namespace Challenges
             HashSet<string> bound = new(StringComparer.Ordinal);
             List<string> events = [];
             List<string> listeners = [];
+            Dictionary<string, List<IExtractor>> active = new(StringComparer.Ordinal);
             foreach (IExtractor extractor in Registry.All)
             {
-                if ((!UsesAnyType(extractor) && !_situations.Watches(extractor.EventClassName))
+                bool used = UsesAnyType(extractor);
+                if (used && extractor.Kind == ExtractorKind.GameEvent)
+                {
+                    if (!active.TryGetValue(extractor.EventClassName, out List<IExtractor>? list))
+                    {
+                        active[extractor.EventClassName] = list = [];
+                    }
+
+                    list.Add(extractor);
+                }
+
+                if ((!used && !_situations.Watches(extractor.EventClassName))
                     || !bound.Add(extractor.EventClassName))
                 {
                     continue;
@@ -121,6 +136,13 @@ namespace Challenges
                 }
             }
 
+            Dictionary<string, IExtractor[]> activeByEvent = new(active.Count, StringComparer.Ordinal);
+            foreach ((string eventName, List<IExtractor> list) in active)
+            {
+                activeByEvent[eventName] = [.. list];
+            }
+
+            _activeExtractorsByEvent = activeByEvent;
             _boundEvents = events;
             _boundListeners = listeners;
         }
@@ -129,6 +151,12 @@ namespace Challenges
         public void ForgetPlayer(CCSPlayerController player, PlayerState state)
         {
             _pruned.Remove(state);
+            int slot = player.Slot;
+            if ((uint)slot < MaxSlots)
+            {
+                _slots[slot] = null;
+            }
+
             _situations.ForgetPlayer(player);
         }
 
@@ -143,9 +171,11 @@ namespace Challenges
         {
             _destroyed = true;
             _tasksByType = new(StringComparer.Ordinal);
+            _activeExtractorsByEvent = new(StringComparer.Ordinal);
             _boundEvents = [];
             _boundListeners = [];
             _pruned.Clear();
+            Array.Clear(_slots);
             _gameRulesProxy = null;
             _situations.Clear();
             EventData.IncludeIsBot = false;
@@ -209,7 +239,7 @@ namespace Challenges
             }
 
             if (!hasTasks
-                || !_extractorsByEvent.TryGetValue(eventName, out List<IExtractor>? extractors))
+                || !_activeExtractorsByEvent.TryGetValue(eventName, out IExtractor[]? extractors))
             {
                 return HookResult.Continue;
             }
@@ -217,14 +247,11 @@ namespace Challenges
             bool enrich = _situations.AnyEnabled;
             foreach (IExtractor extractor in extractors)
             {
-                if (!UsesAnyType(extractor))
-                {
-                    continue;
-                }
-
                 try
                 {
-                    List<ProgressTarget>? targets = FilterTargets(extractor.Targets(gameEvent));
+                    _targetBuffer.Clear();
+                    extractor.Targets(gameEvent, _targetBuffer);
+                    List<ProgressTarget>? targets = FilterTargets(_targetBuffer);
                     if (targets == null)
                     {
                         if (GlobalConfig.Debug.Enable)
@@ -256,43 +283,67 @@ namespace Challenges
         private bool CanHandle() =>
             !_destroyed && !_flushed && _tasksByType.Count > 0 && GlobalConfig.Enabled;
 
-        private List<ProgressTarget>? FilterTargets(
-            IEnumerable<(CCSPlayerController? Player, string Type)> targets)
+        private List<ProgressTarget>? FilterTargets(List<(CCSPlayerController? Player, string Type)> targets)
         {
             List<ProgressTarget>? valid = null;
-            foreach ((CCSPlayerController? player, string type) in targets)
+            for (int i = 0; i < targets.Count; i++)
             {
-                if (player is not { IsValid: true }
-                    || !_tasksByType.TryGetValue(type, out List<(ChallengeDefinition Challenge, ChallengeTask Task)>? candidates))
+                (CCSPlayerController? player, string type) = targets[i];
+                if (!_tasksByType.TryGetValue(type, out List<(ChallengeDefinition Challenge, ChallengeTask Task)>? candidates)
+                    || player is not { IsValid: true }
+                    || ResolveIdentity(player) is not { } identity)
                 {
                     continue;
-                }
-
-                string? steamId = player.NetworkIDString;
-                if (!SteamIds.IsCreditable(steamId))
-                {
-                    continue;
-                }
-
-                if (!PlayerStates.TryGetValue(player, out PlayerState? state)
-                    || state.SteamId.Length == 0
-                    || !state.SteamId.Equals(steamId, StringComparison.OrdinalIgnoreCase))
-                {
-                    BindPlayer(player, steamId);
                 }
 
                 (valid ??= []).Add(new ProgressTarget
                 {
-                    SteamId = steamId,
-                    Slot = player.Slot,
-                    UserId = player.UserId,
-                    Name = player.PlayerName ?? string.Empty,
-                    Index = player.Index,
+                    SteamId = identity.SteamId,
+                    Slot = identity.Slot,
+                    UserId = identity.UserId,
+                    Name = GlobalConfig.Debug.Enable ? player.PlayerName ?? string.Empty : string.Empty,
+                    Index = (uint)(identity.Slot + 1),
                     Candidates = candidates,
                 });
             }
 
             return valid;
+        }
+
+        /// <summary>
+        /// Steam id and bound state for a valid controller. A cached slot entry is reused while the
+        /// user id matches, so the steam id string and the session dictionary are not read again.
+        /// </summary>
+        private SlotIdentity? ResolveIdentity(CCSPlayerController player)
+        {
+            int slot = player.Slot;
+            int? userId = player.UserId;
+            bool cacheable = userId != null && (uint)slot < MaxSlots;
+            if (cacheable && _slots[slot] is { } cached && cached.UserId == userId)
+            {
+                return cached;
+            }
+
+            string? steamId = player.NetworkIDString;
+            if (!SteamIds.IsCreditable(steamId))
+            {
+                return null;
+            }
+
+            if (!PlayerStates.TryGetValue(player, out PlayerState? state)
+                || state.SteamId.Length == 0
+                || !state.SteamId.Equals(steamId, StringComparison.OrdinalIgnoreCase))
+            {
+                state = BindPlayer(player, steamId);
+            }
+
+            SlotIdentity identity = new(slot, userId, steamId, state);
+            if (cacheable)
+            {
+                _slots[slot] = identity;
+            }
+
+            return identity;
         }
 
         private void Enqueue(string source, Dictionary<string, string> data, List<ProgressTarget> targets)
@@ -319,7 +370,9 @@ namespace Challenges
         /// <summary>Enqueue progress for a single player (e.g. synthetic <c>player_trade</c>).</summary>
         private void EnqueueOne(CCSPlayerController player, string type, Dictionary<string, string> data)
         {
-            if (FilterTargets([(player, type)]) is { } targets)
+            _targetBuffer.Clear();
+            _targetBuffer.Add((player, type));
+            if (FilterTargets(_targetBuffer) is { } targets)
             {
                 Enqueue(type, data, targets);
             }
@@ -395,6 +448,14 @@ namespace Challenges
             }
 
             state.Dirty = true;
+        }
+
+        private sealed class SlotIdentity(int slot, int? userId, string steamId, PlayerState state)
+        {
+            public int Slot { get; } = slot;
+            public int? UserId { get; } = userId;
+            public string SteamId { get; } = steamId;
+            public PlayerState State { get; } = state;
         }
     }
 }

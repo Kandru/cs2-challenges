@@ -24,11 +24,11 @@ namespace Challenges.Extractors
             EventData.FillPlayer(d, e.Victim, "victim");
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             var e = (EventShowDeathpanel)gameEvent;
-            yield return (e.KillerController, "show_deathpanel_killer_controller");
-            yield return (e.Victim, "show_deathpanel_victim");
+            buffer.Add((e.KillerController, "show_deathpanel_killer_controller"));
+            buffer.Add((e.Victim, "show_deathpanel_victim"));
         }
     }
 }

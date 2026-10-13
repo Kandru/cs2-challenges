@@ -21,10 +21,10 @@ namespace Challenges.Extractors
             EventData.FillPlayer(d, e.Userid, "planter");
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             var e = (EventBombPlanted)gameEvent;
-            yield return (e.Userid, "player_bomb_planted");
+            buffer.Add((e.Userid, "player_bomb_planted"));
         }
     }
 }

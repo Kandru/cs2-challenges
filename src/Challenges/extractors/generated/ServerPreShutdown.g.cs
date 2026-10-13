@@ -19,11 +19,11 @@ namespace Challenges.Extractors
             d["reason"] = e.Reason;
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             foreach (var entry in Utilities.GetPlayers())
             {
-                yield return (entry, "server_pre_shutdown");
+                buffer.Add((entry, "server_pre_shutdown"));
             }
         }
     }

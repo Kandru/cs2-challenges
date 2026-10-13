@@ -22,11 +22,11 @@ namespace Challenges.Extractors
             DerivedKeys.Apply("self_avenged", gameEvent, d);
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             var e = (EventPlayerAvengedTeammate)gameEvent;
-            yield return (e.AvengedPlayerId, "player_got_avenged_teammate");
-            yield return (e.AvengerId, "player_has_avenged_teammate");
+            buffer.Add((e.AvengedPlayerId, "player_got_avenged_teammate"));
+            buffer.Add((e.AvengerId, "player_has_avenged_teammate"));
         }
     }
 }

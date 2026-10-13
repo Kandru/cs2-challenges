@@ -19,11 +19,11 @@ namespace Challenges.Extractors
             d["full_reset"] = EventData.Bool(e.FullReset);
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             foreach (var entry in Utilities.GetPlayers())
             {
-                yield return (entry, "teamplay_round_start");
+                buffer.Add((entry, "teamplay_round_start"));
             }
         }
     }

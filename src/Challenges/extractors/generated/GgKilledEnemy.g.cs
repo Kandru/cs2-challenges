@@ -22,11 +22,11 @@ namespace Challenges.Extractors
             EventData.FillPlayer(d, e.Victimid, "victimid");
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             var e = (EventGgKilledEnemy)gameEvent;
-            yield return (e.Attackerid, "gg_killed_enemy_attackerid");
-            yield return (e.Victimid, "gg_killed_enemy_victimid");
+            buffer.Add((e.Attackerid, "gg_killed_enemy_attackerid"));
+            buffer.Add((e.Victimid, "gg_killed_enemy_victimid"));
         }
     }
 }

@@ -18,7 +18,7 @@ namespace Challenges.Extractors
         IReadOnlyList<string> ChallengeTypes { get; }
         /// <summary>Fill challengeData from the game event. No-op for listeners.</summary>
         void Fill(GameEvent gameEvent, Dictionary<string, string> challengeData);
-        /// <summary>Players to check for each challenge type. Empty for listeners.</summary>
-        IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent);
+        /// <summary>Appends the players to check for each challenge type. No-op for listeners.</summary>
+        void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer);
     }
 }

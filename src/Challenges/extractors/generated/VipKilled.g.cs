@@ -19,11 +19,11 @@ namespace Challenges.Extractors
             EventData.FillPlayer(d, e.Userid, "userid");
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             var e = (EventVipKilled)gameEvent;
-            yield return (e.Attacker, "vip_killed_attacker");
-            yield return (e.Userid, "vip_killed_userid");
+            buffer.Add((e.Attacker, "vip_killed_attacker"));
+            buffer.Add((e.Userid, "vip_killed_userid"));
         }
     }
 }

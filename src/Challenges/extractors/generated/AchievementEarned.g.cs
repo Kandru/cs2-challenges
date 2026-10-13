@@ -19,10 +19,10 @@ namespace Challenges.Extractors
             EventData.FillPlayer(d, e.Player, "player");
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             var e = (EventAchievementEarned)gameEvent;
-            yield return (e.Player, "player_achievement_earned");
+            buffer.Add((e.Player, "player_achievement_earned"));
         }
     }
 }

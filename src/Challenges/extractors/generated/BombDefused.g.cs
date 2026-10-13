@@ -22,14 +22,14 @@ namespace Challenges.Extractors
             EventData.FillPlayer(d, e.Userid, "defuser");
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             var e = (EventBombDefused)gameEvent;
             foreach (var entry in Utilities.GetPlayers())
             {
-                yield return (entry, "bomb_defused");
+                buffer.Add((entry, "bomb_defused"));
             }
-            yield return (e.Userid, "player_bomb_defused");
+            buffer.Add((e.Userid, "player_bomb_defused"));
         }
     }
 }

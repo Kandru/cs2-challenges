@@ -19,11 +19,11 @@ namespace Challenges.Extractors
             d["entityid"] = EventData.Num(e.Entityid);
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             foreach (var entry in Utilities.GetPlayers())
             {
-                yield return (entry, "player_ping_stop");
+                buffer.Add((entry, "player_ping_stop"));
             }
         }
     }

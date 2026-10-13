@@ -23,11 +23,11 @@ namespace Challenges.Extractors
             d["user_message_list"] = EventData.Num(e.UserMessageList);
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             foreach (var entry in Utilities.GetPlayers())
             {
-                yield return (entry, "demo_skip");
+                buffer.Add((entry, "demo_skip"));
             }
         }
     }

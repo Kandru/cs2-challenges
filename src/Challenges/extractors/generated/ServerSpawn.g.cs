@@ -28,11 +28,11 @@ namespace Challenges.Extractors
             d["port"] = EventData.Num(e.Port);
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             foreach (var entry in Utilities.GetPlayers())
             {
-                yield return (entry, "server_spawn");
+                buffer.Add((entry, "server_spawn"));
             }
         }
     }

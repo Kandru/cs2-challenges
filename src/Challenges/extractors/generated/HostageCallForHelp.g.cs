@@ -19,11 +19,11 @@ namespace Challenges.Extractors
             d["hostage"] = EventData.Num(e.Hostage);
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             foreach (var entry in Utilities.GetPlayers())
             {
-                yield return (entry, "hostage_call_for_help");
+                buffer.Add((entry, "hostage_call_for_help"));
             }
         }
     }

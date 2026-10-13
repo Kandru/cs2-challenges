@@ -20,11 +20,11 @@ namespace Challenges.Extractors
             d["time"] = EventData.Num(e.Time);
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             foreach (var entry in Utilities.GetPlayers())
             {
-                yield return (entry, "dm_bonus_weapon_start");
+                buffer.Add((entry, "dm_bonus_weapon_start"));
             }
         }
     }

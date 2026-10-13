@@ -22,11 +22,11 @@ namespace Challenges.Extractors
             d["z"] = EventData.Num(e.Z);
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             foreach (var entry in Utilities.GetPlayers())
             {
-                yield return (entry, "inferno_startburn");
+                buffer.Add((entry, "inferno_startburn"));
             }
         }
     }

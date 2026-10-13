@@ -24,11 +24,11 @@ namespace Challenges.Extractors
             d["option5"] = e.Option5;
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             foreach (var entry in Utilities.GetPlayers())
             {
-                yield return (entry, "vote_options");
+                buffer.Add((entry, "vote_options"));
             }
         }
     }

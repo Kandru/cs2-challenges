@@ -45,11 +45,11 @@ namespace Challenges.Extractors
             EventData.FillPlayer(d, e.Userid, "userid");
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             var e = (EventInstructorServerHintCreate)gameEvent;
-            yield return (e.HintActivatorUserid, "instructor_server_hint_create_hint_activator_userid");
-            yield return (e.Userid, "instructor_server_hint_create_userid");
+            buffer.Add((e.HintActivatorUserid, "instructor_server_hint_create_hint_activator_userid"));
+            buffer.Add((e.Userid, "instructor_server_hint_create_userid"));
         }
     }
 }

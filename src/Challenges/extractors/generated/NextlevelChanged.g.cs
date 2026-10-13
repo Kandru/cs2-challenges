@@ -21,11 +21,11 @@ namespace Challenges.Extractors
             d["skirmishmode"] = e.Skirmishmode;
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             foreach (var entry in Utilities.GetPlayers())
             {
-                yield return (entry, "nextlevel_changed");
+                buffer.Add((entry, "nextlevel_changed"));
             }
         }
     }

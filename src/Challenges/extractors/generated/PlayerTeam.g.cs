@@ -26,10 +26,10 @@ namespace Challenges.Extractors
             DerivedKeys.Apply("player_team_names", gameEvent, d);
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             var e = (EventPlayerTeam)gameEvent;
-            yield return (e.Userid, "player_team");
+            buffer.Add((e.Userid, "player_team"));
         }
     }
 }

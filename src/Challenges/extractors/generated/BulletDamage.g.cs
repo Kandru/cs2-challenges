@@ -45,11 +45,11 @@ namespace Challenges.Extractors
             DerivedKeys.Apply("team_self_damage", gameEvent, d);
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             var e = (EventBulletDamage)gameEvent;
-            yield return (e.Attacker, "bullet_damage_given");
-            yield return (e.Victim, "bullet_damage_taken");
+            buffer.Add((e.Attacker, "bullet_damage_given"));
+            buffer.Add((e.Victim, "bullet_damage_taken"));
         }
     }
 }

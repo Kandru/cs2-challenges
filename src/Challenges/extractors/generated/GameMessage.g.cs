@@ -20,11 +20,11 @@ namespace Challenges.Extractors
             d["text"] = e.Text;
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             foreach (var entry in Utilities.GetPlayers())
             {
-                yield return (entry, "game_message");
+                buffer.Add((entry, "game_message"));
             }
         }
     }

@@ -19,11 +19,11 @@ namespace Challenges.Extractors
             d["phase"] = EventData.Num(e.Phase);
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             foreach (var entry in Utilities.GetPlayers())
             {
-                yield return (entry, "survival_announce_phase");
+                buffer.Add((entry, "survival_announce_phase"));
             }
         }
     }

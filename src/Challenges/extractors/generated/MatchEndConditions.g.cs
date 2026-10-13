@@ -22,11 +22,11 @@ namespace Challenges.Extractors
             d["win_rounds"] = EventData.Num(e.WinRounds);
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             foreach (var entry in Utilities.GetPlayers())
             {
-                yield return (entry, "match_end_conditions");
+                buffer.Add((entry, "match_end_conditions"));
             }
         }
     }

@@ -173,21 +173,21 @@ def emit_targets(event: dict, alias: dict, types: list[str], audience: str) -> l
             lines.append("            foreach (var entry in Utilities.GetPlayers())")
             lines.append("            {")
             for t in broadcast:
-                lines.append(f'                yield return (entry, "{t}");')
+                lines.append(f'                buffer.Add((entry, "{t}"));')
             lines.append("            }")
         for prop in players:
             for t in player_specific.get(prop["field"], []):
-                lines.append(f'            yield return (e.{prop["csharp"]}, "{t}");')
+                lines.append(f'            buffer.Add((e.{prop["csharp"]}, "{t}"));')
     elif extra:
         for prop in players:
             for t in extra.get(prop["field"], []):
-                lines.append(f'            yield return (e.{prop["csharp"]}, "{t}");')
+                lines.append(f'            buffer.Add((e.{prop["csharp"]}, "{t}"));')
     elif len(players) == 1:
         prop = players[0]
-        lines.append(f'            yield return (e.{prop["csharp"]}, "{types[0]}");')
+        lines.append(f'            buffer.Add((e.{prop["csharp"]}, "{types[0]}"));')
     else:
         for prop, t in zip(players, types, strict=True):
-            lines.append(f'            yield return (e.{prop["csharp"]}, "{t}");')
+            lines.append(f'            buffer.Add((e.{prop["csharp"]}, "{t}"));')
 
     lines.append("        }")
     return lines
@@ -232,7 +232,7 @@ def generate_event_extractor(event: dict, alias: dict) -> str:
 
     body_targets = "\n".join(
         [
-            "        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)",
+            "        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)",
             *emit_targets(event, alias, types, audience),
         ]
     )
@@ -285,9 +285,8 @@ def generate_listener_extractor(listener: dict, alias: dict) -> str:
             "        {",
             "        }",
             "",
-            "        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)",
+            "        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)",
             "        {",
-            "            yield break;",
             "        }",
             "    }",
             "}",

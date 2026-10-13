@@ -29,11 +29,11 @@ namespace Challenges.Extractors
             d["slot9"] = EventData.Num(e.Slot9);
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             foreach (var entry in Utilities.GetPlayers())
             {
-                yield return (entry, "endmatch_mapvote_selecting_map");
+                buffer.Add((entry, "endmatch_mapvote_selecting_map"));
             }
         }
     }

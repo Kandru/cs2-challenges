@@ -20,11 +20,11 @@ namespace Challenges.Extractors
             d["hint_name"] = e.HintName;
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             foreach (var entry in Utilities.GetPlayers())
             {
-                yield return (entry, "instructor_server_hint_stop");
+                buffer.Add((entry, "instructor_server_hint_stop"));
             }
         }
     }

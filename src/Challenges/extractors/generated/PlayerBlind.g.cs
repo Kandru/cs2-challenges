@@ -24,11 +24,11 @@ namespace Challenges.Extractors
             DerivedKeys.Apply("team_self_flash", gameEvent, d);
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             var e = (EventPlayerBlind)gameEvent;
-            yield return (e.Attacker, "player_has_blinded");
-            yield return (e.Userid, "player_got_blinded");
+            buffer.Add((e.Attacker, "player_has_blinded"));
+            buffer.Add((e.Userid, "player_got_blinded"));
         }
     }
 }

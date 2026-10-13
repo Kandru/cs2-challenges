@@ -44,12 +44,12 @@ namespace Challenges.Extractors
             DerivedKeys.Apply("team_self_kill", gameEvent, d);
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             var e = (EventPlayerDeath)gameEvent;
-            yield return (e.Assister, "player_kill_assist");
-            yield return (e.Attacker, "player_kill");
-            yield return (e.Userid, "player_death");
+            buffer.Add((e.Assister, "player_kill_assist"));
+            buffer.Add((e.Attacker, "player_kill"));
+            buffer.Add((e.Userid, "player_death"));
         }
     }
 }

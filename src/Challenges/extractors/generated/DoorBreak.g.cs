@@ -20,11 +20,11 @@ namespace Challenges.Extractors
             d["entindex"] = EventData.Num(e.Entindex);
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             foreach (var entry in Utilities.GetPlayers())
             {
-                yield return (entry, "door_break");
+                buffer.Add((entry, "door_break"));
             }
         }
     }

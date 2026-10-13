@@ -19,11 +19,11 @@ namespace Challenges.Extractors
             d["lesson_name"] = e.LessonName;
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             foreach (var entry in Utilities.GetPlayers())
             {
-                yield return (entry, "clientside_lesson_closed");
+                buffer.Add((entry, "clientside_lesson_closed"));
             }
         }
     }

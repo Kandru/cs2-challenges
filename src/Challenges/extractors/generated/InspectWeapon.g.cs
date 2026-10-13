@@ -19,10 +19,10 @@ namespace Challenges.Extractors
             EventData.FillPlayer(d, e.Userid, "player");
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             var e = (EventInspectWeapon)gameEvent;
-            yield return (e.Userid, "inspect_weapon");
+            buffer.Add((e.Userid, "inspect_weapon"));
         }
     }
 }

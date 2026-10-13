@@ -27,10 +27,10 @@ namespace Challenges.Extractors
             EventData.FillPlayer(d, e.FunfactPlayer, "player");
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer)
         {
             var e = (EventCsWinPanelRound)gameEvent;
-            yield return (e.FunfactPlayer, "cs_win_panel_round");
+            buffer.Add((e.FunfactPlayer, "cs_win_panel_round"));
         }
     }
 }
