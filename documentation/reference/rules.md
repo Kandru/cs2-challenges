@@ -25,6 +25,10 @@ rules:
 !!! warning
     If you use an unknown key, the task will not progress: the key is missing from the event data, so the rule fails. Use only keys listed on that event’s page (plus the global keys below).
 
+    When a challenge file loads, the server console warns about every unknown task `type`, every key the task type cannot deliver (with the closest known key when one is at most 3 edits away, e.g. `did you mean victim.isbot?`) and every unknown operator, for example `[Challenges] Faulty configuration …/blueprints/my_challenge.yaml: blueprint my_challenge, task easy: unknown key victim.isbto for type player_kill; did you mean victim.isbot?`. The blueprint still loads; the warning only points at the rule that can never pass. `isace` on a type other than `player_kill` is reported the same way.
+
+    Marker tasks are exempt from the type check: a task whose `type` no event delivers (for example `type: marker`) is fine when a `task.*` action of another task in the same file sets or resets it.
+
 ## Operators {#operators}
 
 | Operator | Use for |
@@ -35,7 +39,7 @@ rules:
 | `bool==` `bool!=` | Bools (`true` / `false`) |
 | `contains` `!contains` | Substring (case-insensitive) |
 
-An unknown operator never matches; the server console reports it once when the challenge file loads.
+An unknown operator never matches; the server console reports it once when the challenge file loads (see the warning above).
 
 ## Global keys {#global-keys}
 

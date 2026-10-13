@@ -11,6 +11,22 @@ namespace Challenges.Utils
     {
         private static readonly Dictionary<string, IKeySource[]> SourcesByType = BuildIndex();
 
+        /// <summary>Every known challenge type (extractor and synthetic types).</summary>
+        public static IEnumerable<string> Types => SourcesByType.Keys;
+
+        /// <summary>Data sources that feed <paramref name="type"/>; false for an unknown type.</summary>
+        public static bool TryGetSources(string type, out IKeySource[] sources)
+        {
+            if (SourcesByType.TryGetValue(type, out IKeySource[]? found))
+            {
+                sources = found;
+                return true;
+            }
+
+            sources = [];
+            return false;
+        }
+
         /// <summary>
         /// Canonical spelling of <paramref name="key"/> for <paramref name="type"/>: a key alias maps to its
         /// key, an alias prefix to the canonical prefix of the same controller (any suffix, so situation keys

@@ -276,7 +276,7 @@ namespace Challenges
                     }
 
                     NormalizeDefinition(def);
-                    LogUnknownOperators(file, def);
+                    LogRuleProblems(file, def);
                     map[id] = def;
                 }
                 catch (Exception ex)
@@ -321,19 +321,12 @@ namespace Challenges
             def.BuildTaskIndex();
         }
 
-        private void LogUnknownOperators(string file, ChallengeDefinition def)
+        /// <summary>Warns about unknown types, keys and operators; the blueprint still loads.</summary>
+        private void LogRuleProblems(string file, ChallengeDefinition def)
         {
-            foreach (ChallengeTask task in def.Tasks)
+            foreach (string problem in RuleValidation.Check(def))
             {
-                foreach (CompiledRule rule in task.CompiledRules)
-                {
-                    if (rule.Op == RuleOperator.Invalid)
-                    {
-                        LogBadConfig(
-                            file,
-                            $"task {task.Id}: unknown operator {rule.Source.Operator} for key {rule.Source.Key}");
-                    }
-                }
+                LogBadConfig(file, problem);
             }
         }
 

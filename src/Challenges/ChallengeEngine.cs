@@ -527,23 +527,23 @@ namespace Challenges
 
             if ((keys & GlobalKeyFlags.IsWarmup) != 0)
             {
-                data["global.iswarmup"] = EventData.Bool((closed & GlobalGate.NoWarmup) != 0);
+                data[GlobalKeys.IsWarmup] = EventData.Bool((closed & GlobalGate.NoWarmup) != 0);
             }
 
             if ((keys & GlobalKeyFlags.IsDuringRound) != 0)
             {
-                data["global.isduringround"] = EventData.Bool(State.DuringRound);
+                data[GlobalKeys.IsDuringRound] = EventData.Bool(State.DuringRound);
             }
 
             if ((keys & GlobalKeyFlags.MapName) != 0)
             {
-                data["global.mapname"] = _mapName ??= Server.MapName;
+                data[GlobalKeys.MapName] = _mapName ??= Server.MapName;
             }
 
             if ((keys & GlobalKeyFlags.HasHostages) != 0)
             {
                 _hasHostages ??= Utilities.FindAllEntitiesByDesignerName<CBaseEntity>("hostage_entity").Any();
-                data["global.hashostages"] = EventData.Bool(_hasHostages.Value);
+                data[GlobalKeys.HasHostages] = EventData.Bool(_hasHostages.Value);
             }
         }
 

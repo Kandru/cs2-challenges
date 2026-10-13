@@ -226,10 +226,10 @@ namespace Challenges
         private static GlobalKeyFlags GlobalKey(string key) =>
             key switch
             {
-                "global.iswarmup" => GlobalKeyFlags.IsWarmup,
-                "global.isduringround" => GlobalKeyFlags.IsDuringRound,
-                "global.mapname" => GlobalKeyFlags.MapName,
-                "global.hashostages" => GlobalKeyFlags.HasHostages,
+                GlobalKeys.IsWarmup => GlobalKeyFlags.IsWarmup,
+                GlobalKeys.IsDuringRound => GlobalKeyFlags.IsDuringRound,
+                GlobalKeys.MapName => GlobalKeyFlags.MapName,
+                GlobalKeys.HasHostages => GlobalKeyFlags.HasHostages,
                 _ => GlobalKeyFlags.None,
             };
 
@@ -241,10 +241,10 @@ namespace Challenges
             {
                 switch (rule.Key)
                 {
-                    case "global.iswarmup" when RequiredBool(rule) is bool warmup:
+                    case GlobalKeys.IsWarmup when RequiredBool(rule) is bool warmup:
                         gate |= warmup ? GlobalGate.Warmup : GlobalGate.NoWarmup;
                         break;
-                    case "global.isduringround" when RequiredBool(rule) is bool duringRound:
+                    case GlobalKeys.IsDuringRound when RequiredBool(rule) is bool duringRound:
                         gate |= duringRound ? GlobalGate.DuringRound : GlobalGate.NotDuringRound;
                         break;
                 }
