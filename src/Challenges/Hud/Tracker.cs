@@ -18,13 +18,19 @@ namespace Challenges
         private const string VarTasksHead = "tr_tasks_h";
         private const string VarHint = "tr_hint";
 
+        private static readonly string[] RowIds = ChallengeCardPaint.Ids("ch-trow-", MaxRows);
+        private static readonly string[] FillIds = ChallengeCardPaint.Ids("ch-tfill-", MaxRows);
+        private static readonly string[] RowTitleVars = ChallengeCardPaint.Ids("tr_t", MaxRows);
+        private static readonly string[] RowValueVars = ChallengeCardPaint.Ids("tr_v", MaxRows);
+        private static readonly string[][] TaskIds = RowTable("ch-ttask-", "-");
+        private static readonly string[][] TaskVars = RowTable("tr_", "_t");
         private static readonly ChallengeCardPaint.Slots[] RowSlots = CreateRowSlots();
 
-        public static string RowId(int index) => $"ch-trow-{index}";
-        public static string FillId(int index) => $"ch-tfill-{index}";
-        public static string TaskId(int row, int task) => $"ch-ttask-{row}-{task}";
-        private static string VarRowTitle(int index) => $"tr_t{index}";
-        private static string VarRowValue(int index) => $"tr_v{index}";
+        public static string RowId(int index) => RowIds[index];
+        public static string FillId(int index) => FillIds[index];
+        public static string TaskId(int row, int task) => TaskIds[row][task];
+        private static string VarRowTitle(int index) => RowTitleVars[index];
+        private static string VarRowValue(int index) => RowValueVars[index];
 
         public static int ConfiguredRows => Math.Clamp(Context.Config.Gui.TrackerRows, 1, MaxRows);
 
@@ -32,16 +38,29 @@ namespace Challenges
         public static int FreezeTimeSeconds =>
             ConVar.Find("mp_freezetime")?.GetPrimitiveValue<int>() ?? 0;
 
+        /// <summary>Per row: <c>{prefix}{row}{infix}{task}</c> for every task slot.</summary>
+        private static string[][] RowTable(string prefix, string infix)
+        {
+            string[][] table = new string[MaxRows][];
+            for (int row = 0; row < MaxRows; row++)
+            {
+                table[row] = ChallengeCardPaint.Ids(prefix + row + infix, ChallengeCardPaint.TaskSlots);
+            }
+
+            return table;
+        }
+
         private static ChallengeCardPaint.Slots[] CreateRowSlots()
         {
             ChallengeCardPaint.Slots[] slots = new ChallengeCardPaint.Slots[MaxRows];
             for (int row = 0; row < MaxRows; row++)
             {
-                int r = row;
-                slots[r] = new ChallengeCardPaint.Slots(
+                string[] taskIds = TaskIds[row];
+                string[] taskVars = TaskVars[row];
+                slots[row] = new ChallengeCardPaint.Slots(
                     Panel,
-                    t => TaskId(r, t),
-                    t => $"tr_{r}_t{t}");
+                    t => taskIds[t],
+                    t => taskVars[t]);
             }
 
             return slots;
@@ -67,7 +86,7 @@ namespace Challenges
             state.TrackerFreezeVisible = true;
             state.TrackerFreezeDuration = freezeSec;
             state.TrackerFreezeUntil = DateTime.UtcNow.AddSeconds(freezeSec);
-            state.TrackerFingerprint = null;
+            state.InvalidateTracker();
             Paint(player, state);
             PaintTimer(player, state);
         }
@@ -117,6 +136,7 @@ namespace Challenges
                 TaskId = taskId,
                 Kind = TrackerProgressKind.RuleBroken,
             });
+            state.TrackerContentDirty = true;
 
             if (!state.TrackerFreezeVisible && !IsShowingRuleBroken(state))
             {
@@ -151,7 +171,7 @@ namespace Challenges
             state.TrackerUpNextPending = false;
             state.TrackerFadeUntil = null;
             state.TrackerProgressUntil = DateTime.UtcNow.AddSeconds(ProgressSeconds);
-            state.TrackerFingerprint = null;
+            state.InvalidateTracker();
             Paint(player, state);
             PaintTimer(player, state);
         }
@@ -180,7 +200,7 @@ namespace Challenges
                     state.TrackerShowingUpNext = true;
                     state.TrackerProgressItems.Clear();
                     state.TrackerProgressUntil = now.AddSeconds(ProgressSeconds);
-                    state.TrackerFingerprint = null;
+                    state.InvalidateTracker();
                     Paint(player, state);
                     PaintTimer(player, state);
                     CustomHud.PulseFadeIn(player, Panel);
@@ -190,12 +210,12 @@ namespace Challenges
                 if (!state.TrackerFreezeVisible)
                 {
                     CustomHud.FinishFadeOut(player, Panel);
-                    state.TrackerFingerprint = null;
+                    state.InvalidateTracker();
                     return;
                 }
 
                 ClearProgressState(state);
-                state.TrackerFingerprint = null;
+                state.InvalidateTracker();
                 Paint(player, state);
                 PaintTimer(player, state);
                 return;
@@ -234,7 +254,7 @@ namespace Challenges
                     return;
                 }
 
-                state.TrackerFingerprint = null;
+                state.InvalidateTracker();
             }
 
             if (!state.TrackerFreezeVisible && state.TrackerProgressUntil == null)
@@ -245,7 +265,7 @@ namespace Challenges
                 }
 
                 HideTimer(player);
-                state.TrackerFingerprint = null;
+                state.InvalidateTracker();
                 return;
             }
 
@@ -368,9 +388,13 @@ namespace Challenges
             return best;
         }
 
+        /// <summary>
+        /// Rebuilds rows, texts and the fingerprint only while <see cref="PlayerState.TrackerContentDirty"/> is set
+        /// or the panel is hidden; otherwise returns after a few flag checks.
+        /// </summary>
         private static void Paint(CCSPlayerController player, PlayerState state)
         {
-            if (!Players.IsHumanViewer(player) || !CustomHud.EnsureSpawned(player))
+            if (!CustomHud.EnsureSpawned(player))
             {
                 return;
             }
@@ -383,10 +407,25 @@ namespace Challenges
                     CustomHud.HidePanel(player, Panel);
                 }
 
-                state.TrackerFingerprint = null;
+                state.InvalidateTracker();
                 return;
             }
 
+            if (!ReferenceEquals(state.TrackerSchedule, schedule)
+                || state.TrackerProgressVersion != state.ProgressVersion)
+            {
+                state.TrackerSchedule = schedule;
+                state.TrackerProgressVersion = state.ProgressVersion;
+                state.TrackerContentDirty = true;
+            }
+
+            bool visible = CustomHud.IsPanelVisible(player, Panel);
+            if (!state.TrackerContentDirty && visible)
+            {
+                return;
+            }
+
+            state.TrackerContentDirty = false;
             bool progressMode = state.TrackerProgressUntil is { } until && DateTime.UtcNow < until;
             bool upNext = state.TrackerShowingUpNext;
             List<RowPaint> rows = progressMode
@@ -436,7 +475,7 @@ namespace Challenges
             }
 
             string key = fingerprint.ToString();
-            if (key == state.TrackerFingerprint && CustomHud.IsPanelVisible(player, Panel))
+            if (key == state.TrackerFingerprint && visible)
             {
                 return;
             }

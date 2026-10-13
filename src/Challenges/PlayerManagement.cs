@@ -145,11 +145,12 @@ namespace Challenges
             TrySetLanguage(player.NetworkIDString, language);
             Server.NextFrame(() =>
             {
-                if (!player.IsValid || !PlayerStates.ContainsKey(player))
+                if (!player.IsValid || !PlayerStates.TryGetValue(player, out PlayerState? live))
                 {
                     return;
                 }
 
+                live.TrackerContentDirty = true;
                 Tracker.Refresh(player);
                 if (HudMenu.IsOpen(player))
                 {

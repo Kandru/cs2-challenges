@@ -57,6 +57,11 @@ namespace Challenges
                 state.Dirty = true;
             }
 
+            if (patch.Upserts != null || patch.Removals != null || patch.SolvedAbsolute != null)
+            {
+                state.TrackerContentDirty = true;
+            }
+
             if (patch.DebugLines is { Count: > 0 })
             {
                 foreach (string line in patch.DebugLines)

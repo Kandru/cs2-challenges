@@ -53,6 +53,14 @@ namespace Challenges
         [JsonIgnore] public List<TrackerProgressItem> TrackerProgressItems = [];
         [JsonIgnore] public List<TrackerProgressItem> TrackerRuleBrokenQueue = [];
         [JsonIgnore] public string? TrackerFingerprint;
+        /// <summary>
+        /// Tracker rows, heading and hint must be rebuilt on the next paint (progress, language, mode or schedule changed).
+        /// Game thread only.
+        /// </summary>
+        [JsonIgnore] public bool TrackerContentDirty = true;
+        /// <summary>Schedule and <see cref="ProgressVersion"/> the tracker content was last built for.</summary>
+        [JsonIgnore] public RunningSchedule? TrackerSchedule;
+        [JsonIgnore] public int TrackerProgressVersion;
 
         /// <summary>Clears tracker session fields without touching menu state.</summary>
         public void ClearTrackerUi()
@@ -66,7 +74,14 @@ namespace Challenges
             TrackerShowingUpNext = false;
             TrackerProgressItems.Clear();
             TrackerRuleBrokenQueue.Clear();
+            InvalidateTracker();
+        }
+
+        /// <summary>Forces the next tracker paint to rebuild its content.</summary>
+        public void InvalidateTracker()
+        {
             TrackerFingerprint = null;
+            TrackerContentDirty = true;
         }
 
         /// <summary>Clears menu/tracker session fields so a later connect does not inherit UI state.</summary>

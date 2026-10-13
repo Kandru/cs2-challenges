@@ -90,40 +90,29 @@ namespace Challenges
 
         public const string PinnedRowId = "ch-spin";
 
-        private static readonly string[] ListRowIds = Ids("ch-mrow-", ListSlots);
-        private static readonly string[] ListFillIds = Ids("ch-mfill-", ListSlots);
-        private static readonly string[] ListTitleVars = Ids("m", ListSlots, "_title");
-        private static readonly string[] ListWhenVars = Ids("m", ListSlots, "_when");
-        private static readonly string[] ListMetaVars = Ids("m", ListSlots, "_meta");
-        private static readonly string[] ScoreRowIds = Ids("ch-srow-", ScoreSlots);
-        private static readonly string[] ScoreRankVars = Ids("s", ScoreSlots, "_rank");
-        private static readonly string[] ScoreNameVars = Ids("s", ScoreSlots, "_name");
-        private static readonly string[] ScoreCurVars = Ids("s", ScoreSlots, "_cur");
-        private static readonly string[] ScoreTotVars = Ids("s", ScoreSlots, "_tot");
+        private static readonly string[] ListRowIds = ChallengeCardPaint.Ids("ch-mrow-", ListSlots);
+        private static readonly string[] ListFillIds = ChallengeCardPaint.Ids("ch-mfill-", ListSlots);
+        private static readonly string[] ListTitleVars = ChallengeCardPaint.Ids("m", ListSlots, "_title");
+        private static readonly string[] ListWhenVars = ChallengeCardPaint.Ids("m", ListSlots, "_when");
+        private static readonly string[] ListMetaVars = ChallengeCardPaint.Ids("m", ListSlots, "_meta");
+        private static readonly string[] ScoreRowIds = ChallengeCardPaint.Ids("ch-srow-", ScoreSlots);
+        private static readonly string[] ScoreRankVars = ChallengeCardPaint.Ids("s", ScoreSlots, "_rank");
+        private static readonly string[] ScoreNameVars = ChallengeCardPaint.Ids("s", ScoreSlots, "_name");
+        private static readonly string[] ScoreCurVars = ChallengeCardPaint.Ids("s", ScoreSlots, "_cur");
+        private static readonly string[] ScoreTotVars = ChallengeCardPaint.Ids("s", ScoreSlots, "_tot");
         private static readonly ChallengeCardPaint.Slots[] ListCardSlots = CreateListCardSlots();
 
         public static bool IsMenuLayout(CCSCustomHudLayout layout) => CustomHud.IsLayout(layout, Panel);
-
-        private static string[] Ids(string prefix, int count, string suffix = "")
-        {
-            string[] ids = new string[count];
-            for (int i = 0; i < count; i++)
-            {
-                ids[i] = prefix + i + suffix;
-            }
-
-            return ids;
-        }
 
         private static ChallengeCardPaint.Slots[] CreateListCardSlots()
         {
             ChallengeCardPaint.Slots[] slots = new ChallengeCardPaint.Slots[ListSlots];
             for (int row = 0; row < ListSlots; row++)
             {
-                string[] taskIds = Ids($"ch-mtask-{row}-", ChallengeCardPaint.TaskSlots);
-                string[] taskVars = Ids($"m{row}_t", ChallengeCardPaint.TaskSlots);
-                string[] byIds = Ids($"ch-mby-{row}-", ChallengeCardPaint.CompleterSlots);
-                string[] byVars = Ids($"m{row}_by", ChallengeCardPaint.CompleterSlots);
+                string[] taskIds = ChallengeCardPaint.Ids($"ch-mtask-{row}-", ChallengeCardPaint.TaskSlots);
+                string[] taskVars = ChallengeCardPaint.Ids($"m{row}_t", ChallengeCardPaint.TaskSlots);
+                string[] byIds = ChallengeCardPaint.Ids($"ch-mby-{row}-", ChallengeCardPaint.CompleterSlots);
+                string[] byVars = ChallengeCardPaint.Ids($"m{row}_by", ChallengeCardPaint.CompleterSlots);
                 slots[row] = new ChallengeCardPaint.Slots(
                     Panel,
                     t => taskIds[t],
