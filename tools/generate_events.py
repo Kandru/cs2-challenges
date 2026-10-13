@@ -403,7 +403,7 @@ def generate_listener_method(listener: dict, alias: dict, snapshot: dict) -> str
     if name == "OnPlayerButtonsChanged":
         preamble = [
             "            Situations.OnButtonsChanged(player, pressed, released);",
-            '            if (!_tasksByType.ContainsKey("on_player_buttons_changed"))',
+            '            if (!_types.ContainsKey("on_player_buttons_changed"))',
             "            {",
             "                return;",
             "            }",

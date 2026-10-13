@@ -368,7 +368,7 @@ namespace Challenges
         public void OnPlayerButtonsChanged(CCSPlayerController player, PlayerButtons pressed, PlayerButtons released)
         {
             Situations.OnButtonsChanged(player, pressed, released);
-            if (!_tasksByType.ContainsKey("on_player_buttons_changed"))
+            if (!_types.ContainsKey("on_player_buttons_changed"))
             {
                 return;
             }
