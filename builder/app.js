@@ -1,6 +1,6 @@
 "use strict";
 
-const WIKI = "https://github.com/Kandru/cs2-challenges/wiki/";
+const DOCS = "../docs/";
 const GLOBAL_KEYS = [
   { key: "global.iswarmup", type: "bool" },
   { key: "global.isduringround", type: "bool" },
@@ -43,8 +43,9 @@ function h(tag, attrs = {}, ...children) {
   return el;
 }
 
+/** @param {string} path docs-relative path, e.g. "reference/challenges/#id" or "reference/events/EventPlayerDeath/" */
 function helpLink(path, title = "Open documentation") {
-  return h("a", { class: "helplink", href: WIKI + path, target: "_blank", rel: "noopener", title }, "?");
+  return h("a", { class: "helplink", href: DOCS + path, target: "_blank", rel: "noopener", title }, "?");
 }
 
 function labelHelp(text, path) {
@@ -683,7 +684,7 @@ function actionBlock(task, action, index) {
         },
         ...options(types, action.type),
       ),
-      helpLink(`actions#${action.type.replace(/\./g, "-")}`, "Open action documentation"),
+      helpLink(`reference/actions/#${action.type.replace(/\./g, "-")}`, "Open action documentation"),
       iconBtn("Remove action", () => {
         task.actions.splice(index, 1);
         renderAll();
@@ -745,7 +746,7 @@ function renderEditor() {
         { class: "grid-2" },
         field(
           "Task id",
-          "blueprints#task-id",
+          "reference/challenges/#task-id",
           h("input", {
             type: "text",
             spellcheck: "false",
@@ -765,9 +766,12 @@ function renderEditor() {
             "span",
             { class: "label-row" },
             "Event type ",
-            helpLink("events"),
+            helpLink("reference/events/"),
             " ",
-            helpLink(event ? `events/${event.event_class}` : "events", event ? `Open ${event.event_class} keys` : "Open events"),
+            helpLink(
+              event ? `reference/events/${event.event_class}/` : "reference/events/",
+              event ? `Open ${event.event_class} keys` : "Open events",
+            ),
           ),
           h(
             "select",
@@ -787,11 +791,11 @@ function renderEditor() {
       h(
         "div",
         { class: "grid-2" },
-        numberField("Amount", "blueprints#amount", task.amount, 1, (v) => {
+        numberField("Amount", "reference/challenges/#amount", task.amount, 1, (v) => {
           task.amount = v;
           refresh();
         }, "How many matching events are needed."),
-        numberField("Cooldown (seconds)", "blueprints#cooldown", task.cooldown, 0, (v) => {
+        numberField("Cooldown (seconds)", "reference/challenges/#cooldown", task.cooldown, 0, (v) => {
           task.cooldown = v;
           refresh();
         }, "Wait this many seconds before counting again."),
@@ -802,21 +806,21 @@ function renderEditor() {
         checkbox("Visible on HUD", task.visible, (v) => {
           task.visible = v;
           refresh();
-        }, "blueprints#visible"),
+        }, "reference/challenges/#visible"),
         checkbox("Announce progress", task.announce_progress, (v) => {
           task.announce_progress = v;
           refresh();
-        }, "blueprints#announce"),
+        }, "reference/challenges/#announce"),
         checkbox("Announce completion", task.announce_completion, (v) => {
           task.announce_completion = v;
           refresh();
-        }, "blueprints#announce"),
+        }, "reference/challenges/#announce"),
       ),
       h("p", { class: "hint" }, "Hidden tasks stay off the HUD and do not count toward solved. A challenge is done when every visible task is done."),
 
       section(
         "Task title (optional)",
-        "blueprints#task-title",
+        "reference/challenges/#task-title",
         () => {
           addLang(task.title);
           renderAll();
@@ -826,14 +830,14 @@ function renderEditor() {
       ),
       section(
         "Unlock after",
-        "blueprints#requires",
+        "reference/challenges/#requires",
         null,
         requiresEditor(task, otherIds),
         h("small", {}, "Empty = available immediately (can run in parallel). Several checked = all must be done (AND)."),
       ),
       section(
         "Rules (all must pass)",
-        "rules",
+        "reference/rules/",
         () => {
           const first = keys.entries[0] || { key: "", type: "string" };
           task.rules.push({
@@ -853,15 +857,15 @@ function renderEditor() {
             title: "Add warmup/round and common kill filters when available",
             onclick: () => addLiveFilters(task),
           }, "Add live filters"),
-          helpLink("rules#global-keys", "Global keys documentation"),
+          helpLink("reference/rules/#global-keys", "Global keys documentation"),
           h("small", {}, "Only adds filters this event supports."),
         ),
         task.rules.length ? task.rules.map((r, i) => ruleRow(task, r, i, keys)) : empty("No rules: every matching event counts."),
-        h("p", { class: "hint" }, "Every rule must pass (AND). There is no OR. Unknown keys never match. ", helpLink("rules#operators"), " operators."),
+        h("p", { class: "hint" }, "Every rule must pass (AND). There is no OR. Unknown keys never match. ", helpLink("reference/rules/#operators"), " operators."),
       ),
       section(
         "Actions (when this task finishes)",
-        "actions",
+        "reference/actions/",
         () => {
           task.actions.push({ type: catalog.action_types[0] ?? "", values: [] });
           renderAll();
@@ -875,7 +879,7 @@ function renderEditor() {
             disabled: !task.type || !task.id,
             onclick: () => addRuleBreaker(task),
           }, "Add rule breaker"),
-          helpLink("actions#streak-broken", "Streak / rule-breaker pattern"),
+          helpLink("reference/actions/#streak-broken", "Streak / rule-breaker pattern"),
           h("small", {}, "Creates a hidden task below this one. Set the “bad” rules on that task."),
         ),
         task.actions.length ? task.actions.map((a, i) => actionBlock(task, a, i)) : empty("No actions."),
@@ -883,7 +887,7 @@ function renderEditor() {
       ),
       section(
         "Task data (other plugins)",
-        "plugin-integration#challenge-data",
+        "howto/rewards/#task-data",
         () => {
           task.data.push({ plugin: "", key: "", value: "" });
           renderAll();

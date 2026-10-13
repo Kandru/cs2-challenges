@@ -14,8 +14,9 @@ SNAPSHOT = ROOT / "tools" / "css" / "snapshot.json"
 ALIASES = ROOT / "tools" / "event_aliases.json"
 EXTRACTORS_DIR = ROOT / "src" / "Challenges" / "extractors"
 ENGINE_DIR = ROOT / "src" / "Challenges"
-DOCS_EVENTS = ROOT / "documentation" / "events"
-DOCS_INDEX = ROOT / "documentation" / "events.md"
+DOCS_EVENTS = ROOT / "documentation" / "reference" / "events"
+DOCS_EVENTS_INDEX = ROOT / "documentation" / "reference" / "events.md"
+DOCS_LISTENERS_INDEX = ROOT / "documentation" / "reference" / "listeners.md"
 EVENT_DATA = ROOT / "src" / "Challenges" / "Utils" / "EventData.cs"
 # Rule operators live in ChallengeRules; action type cases in ChallengeEngine.Simulate.
 RULES = ROOT / "src" / "Challenges" / "Utils" / "ChallengeRules.cs"
@@ -702,7 +703,7 @@ SYNTHETIC_EVENTS = [
     {
         "doc_name": "PlayerTrade",
         "title": "PlayerTrade (player_trade)",
-        "source": "Synthetic challenge type from situation memory (two `player_death` events).",
+        "source": "Synthetic task type from situation memory (two `player_death` events).",
         "audience": "players",
         "types": ["player_trade"],
         "prefixes": ["attacker", "victim", "userid"],
@@ -730,12 +731,12 @@ def format_key_docs(keys: list[dict], prefixes: list[str], suffixes: list[dict] 
     lines: list[str] = [
         "| Key | Type |",
         "|-----|------|",
-        "| [global event data](../rules/GlobalEventData.md) | see page |",
+        "| [global event data](../../rules/GlobalEventData.md) | see page |",
     ]
     if prefixes:
         joined = ", ".join(f"`{p}`" for p in prefixes)
         lines.append(
-            f"| [player data](../rules/GlobalPlayerData.md) | prefixes {joined} |"
+            f"| [player data](../../rules/GlobalPlayerData.md) | prefixes {joined} |"
         )
     standard = {s["suffix"] for s in (suffixes or [])}
     for entry in keys:
@@ -755,7 +756,7 @@ def format_key_docs(keys: list[dict], prefixes: list[str], suffixes: list[dict] 
 def audience_line(audience: str) -> str:
     if audience == "all":
         return "Who gets credit: **all connected players**."
-    return "Who gets credit: the **event player(s)** listed under challenge types."
+    return "Who gets credit: the **event player(s)** listed under task types."
 
 
 def write_event_page(
@@ -768,6 +769,7 @@ def write_event_page(
     prefixes: list[str],
     suffixes: list[dict] | None = None,
 ) -> None:
+    first_type = types[0] if types else "example"
     lines = [
         f"# {title}",
         "",
@@ -775,15 +777,27 @@ def write_event_page(
         "",
         audience_line(audience),
         "",
-        "## Challenge types",
+        "## Task types",
         "",
         "Put one of these in your task `type:` field:",
         "",
         *[f"- `{t}`" for t in types],
         "",
-        "## Rule keys",
+        "## Minimal YAML",
         "",
-        "Unknown keys never match - see [Rules](../rules.md).",
+        "Save under `blueprints/`. Add rules from the table below — see [Rules](../rules.md).",
+        "",
+        "```yaml",
+        "tasks:",
+        "  - id: example",
+        f"    type: {first_type}",
+        "    amount: 1",
+        "    rules: []",
+        "```",
+        "",
+        "## Attributes (rule keys)",
+        "",
+        "Unknown keys never match — see [Rules](../rules.md).",
         "",
         *format_key_docs(keys, prefixes, suffixes),
         "",
@@ -803,8 +817,8 @@ def classify_event_group(label: str, *, is_listener: bool) -> str:
 
 def render_index_table(rows: list[tuple[str, str]]) -> list[str]:
     lines = [
-        "| Challenge type | Page |",
-        "|----------------|------|",
+        "| Task type | Page |",
+        "|-----------|------|",
     ]
     for label, href in rows:
         page = Path(href).stem
@@ -812,13 +826,64 @@ def render_index_table(rows: list[tuple[str, str]]) -> list[str]:
     return lines
 
 
+def write_grouped_index(
+    path: Path,
+    title: str,
+    intro: str,
+    source_note: str,
+    index_rows: list[tuple[str, str, str]],
+    group_order: list[str],
+    *,
+    common_rows: list[tuple[str, str]] | None = None,
+) -> None:
+    by_group: dict[str, list[tuple[str, str]]] = {g: [] for g in group_order}
+    for label, href, group in index_rows:
+        by_group.setdefault(group, []).append((label, href))
+
+    out: list[str] = [
+        f"# {title}",
+        "",
+        intro,
+        "",
+        source_note,
+        "",
+    ]
+
+    if common_rows:
+        out.extend(
+            [
+                "## Common types",
+                "",
+                "| Task type | Typical use |",
+                "|-----------|-------------|",
+                *[f"| `{t}` | {blurb} |" for t, blurb in common_rows],
+                "",
+            ]
+        )
+
+    out.extend(["## All types", ""])
+    for group in group_order:
+        rows = by_group.get(group) or []
+        if not rows:
+            continue
+        out.append(f'<details markdown="1"><summary><b>{group}</b> ({len(rows)})</summary>')
+        out.append("")
+        out.extend(render_index_table(rows))
+        out.append("")
+        out.append("</details>")
+        out.append("")
+
+    path.write_text("\n".join(out), encoding="utf-8")
+
+
 def write_docs(snapshot: dict, aliases: dict, suffixes: list[dict]) -> None:
     if DOCS_EVENTS.exists():
         shutil.rmtree(DOCS_EVENTS)
     DOCS_EVENTS.mkdir(parents=True)
 
-    # (label, href, group) - one row per challenge type that points at its page
-    index_rows: list[tuple[str, str, str]] = []
+    # (label, href, group) - one row per task type that points at its page
+    event_rows: list[tuple[str, str, str]] = []
+    listener_rows: list[tuple[str, str, str]] = []
     emitted_types: set[str] = set()
 
     for event in snapshot["events"]:
@@ -843,7 +908,7 @@ def write_docs(snapshot: dict, aliases: dict, suffixes: list[dict]) -> None:
         href = f"events/{doc_name}.md"
         for t in types:
             emitted_types.add(t)
-            index_rows.append((t, href, classify_event_group(t, is_listener=False)))
+            event_rows.append((t, href, classify_event_group(t, is_listener=False)))
 
     for synth in SYNTHETIC_EVENTS:
         synth_keys = list(synth["keys"])
@@ -867,7 +932,7 @@ def write_docs(snapshot: dict, aliases: dict, suffixes: list[dict]) -> None:
             if t in emitted_types:
                 continue
             emitted_types.add(t)
-            index_rows.append((t, href, classify_event_group(t, is_listener=False)))
+            event_rows.append((t, href, classify_event_group(t, is_listener=False)))
 
     for listener in snapshot["listeners"]:
         alias = alias_for(aliases, listener["name"])
@@ -891,18 +956,28 @@ def write_docs(snapshot: dict, aliases: dict, suffixes: list[dict]) -> None:
         href = f"events/{doc_name}.md"
         for t in types:
             emitted_types.add(t)
-            index_rows.append((t, href, classify_event_group(t, is_listener=True)))
+            listener_rows.append((t, href, "Listeners"))
 
-    index_rows.sort(key=lambda x: (x[0], x[1]))
+    event_rows.sort(key=lambda x: (x[0], x[1]))
+    listener_rows.sort(key=lambda x: (x[0], x[1]))
 
+    event_types = {label for label, _, _ in event_rows}
     common_rows = [
         (t, COMMON_TYPE_BLURBS[t])
         for t in COMMON_CHALLENGE_TYPES
-        if t in emitted_types and t in COMMON_TYPE_BLURBS
+        if t in event_types and t in COMMON_TYPE_BLURBS
     ]
+    listener_common = [
+        (t, COMMON_TYPE_BLURBS[t])
+        for t in COMMON_CHALLENGE_TYPES
+        if t in {label for label, _, _ in listener_rows} and t in COMMON_TYPE_BLURBS
+    ]
+    ref = snapshot.get("ref", "main")
+    commit = snapshot.get("commit") or ""
+    commit_note = f" (synced tip `{commit[:12]}`)" if commit else ""
+    source_note = f"Source: CounterStrikeSharp `{ref}`{commit_note}."
 
-    # Display order for the index (classification order is EVENT_DOC_GROUPS).
-    group_order = [
+    event_group_order = [
         "Players",
         "Round",
         "Bomb",
@@ -911,52 +986,31 @@ def write_docs(snapshot: dict, aliases: dict, suffixes: list[dict]) -> None:
         "Hostage",
         "Vote",
         "Server",
-        "Listeners",
         "Other",
     ]
-    by_group: dict[str, list[tuple[str, str]]] = {g: [] for g in group_order}
-    for label, href, group in index_rows:
-        by_group.setdefault(group, []).append((label, href))
-
-    ref = snapshot.get("ref", "main")
-    commit = snapshot.get("commit") or ""
-    commit_note = f" (synced tip `{commit[:12]}`)" if commit else ""
-
-    out: list[str] = [
-        "# Events",
-        "",
-        "Use a **challenge type** as the task `type:` in your blueprint. "
-        "Open an event page for the rule keys you can check.",
-        "",
-        f"Source: CounterStrikeSharp `{ref}`{commit_note}.",
-        "",
-    ]
-
-    if common_rows:
-        out.extend(
-            [
-                "## Common types",
-                "",
-                "| Challenge type | Typical use |",
-                "|----------------|-------------|",
-                *[f"| `{t}` | {blurb} |" for t, blurb in common_rows],
-                "",
-            ]
-        )
-
-    out.extend(["## All types", ""])
-    for group in group_order:
-        rows = by_group.get(group) or []
-        if not rows:
-            continue
-        out.append(f"<details><summary><b>{group}</b> ({len(rows)})</summary>")
-        out.append("")
-        out.extend(render_index_table(rows))
-        out.append("")
-        out.append("</details>")
-        out.append("")
-
-    DOCS_INDEX.write_text("\n".join(out), encoding="utf-8")
+    write_grouped_index(
+        DOCS_EVENTS_INDEX,
+        "Events",
+        "Use a **task type** as the task `type:` in your challenge file. "
+        "Open an event page for the attributes (rule keys) you can check. "
+        "For CounterStrikeSharp listeners, see [Listeners](listeners.md).",
+        source_note,
+        event_rows,
+        event_group_order,
+        common_rows=common_rows,
+    )
+    write_grouped_index(
+        DOCS_LISTENERS_INDEX,
+        "Listeners",
+        "Use a **task type** as the task `type:` in your challenge file. "
+        "Listeners are CounterStrikeSharp hooks (not game events). "
+        "Open a listener page for the attributes (rule keys) you can check. "
+        "For game events, see [Events](events.md).",
+        source_note,
+        listener_rows,
+        ["Listeners"],
+        common_rows=listener_common or None,
+    )
 
 
 def write_catalog(snapshot: dict, aliases: dict, suffixes: list[dict]) -> None:

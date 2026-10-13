@@ -1,27 +1,28 @@
 ---
 name: create-challenge
 description: >-
-  Author CS2 Challenges plugin blueprints and schedules from a plain-language
-  description. Use when the user asks to create, add, design, edit, or schedule
-  a challenge, challenge blueprint, task streak, or schedules.yaml entry.
+  Author CS2 Challenges plugin challenge YAML files and schedules from a
+  plain-language description. Use when the user asks to create, add, design,
+  edit, or schedule a challenge, challenge file, task streak, or schedules.yaml
+  entry.
 ---
 
 # Create a CS2 challenge
 
-Turn a user’s goal into valid blueprint YAML and a schedule entry. Docs in this repo are the source of truth - read them before inventing keys.
+Turn a user’s goal into valid challenge YAML and a schedule entry. Docs in this repo are the source of truth - read them before inventing keys. Public site: https://kandru.github.io/cs2-challenges/
 
 ## Steps
 
 1. Restate: event `type`, counts, stages (`requires`), filters, streak/reset, optional `data`.
-2. Read only what you need (in order): [blueprints.md](../../../documentation/blueprints.md), [schedules.md](../../../documentation/schedules.md), [rules.md](../../../documentation/rules.md), [actions.md](../../../documentation/actions.md), [events.md](../../../documentation/events.md) + the linked event page, [GlobalEventData.md](../../../documentation/rules/GlobalEventData.md) / [GlobalPlayerData.md](../../../documentation/rules/GlobalPlayerData.md), [CsTeam.md](../../../documentation/enums/CsTeam.md), [plugin-integration.md](../../../documentation/plugin-integration.md) only for `data`.
-3. Copy the closest example from [examples/blueprints/](../../../examples/blueprints/) (streaks, weapons, knife/taser/scout, utility, trade/grenade/smoke/killerqueen/swap - see [situation memory](../../../documentation/rules.md#situation-memory)). Weapons: [catalog_weapons.json](../../../tools/catalog_weapons.json); prefer `contains` with short names (`ak47`, `knife`, `awp`).
+2. Read only what you need (in order): [challenges.md](../../../documentation/reference/challenges.md), [schedules.md](../../../documentation/howto/schedules.md), [rules.md](../../../documentation/reference/rules.md), [actions.md](../../../documentation/reference/actions.md), [events.md](../../../documentation/reference/events.md) / [listeners.md](../../../documentation/reference/listeners.md) + the linked event page, [GlobalEventData.md](../../../documentation/rules/GlobalEventData.md) / [GlobalPlayerData.md](../../../documentation/rules/GlobalPlayerData.md), [CsTeam.md](../../../documentation/enums/CsTeam.md), [rewards.md](../../../documentation/howto/rewards.md) only for `data`.
+3. Copy the closest example from [examples/blueprints/](../../../examples/blueprints/) (streaks, weapons, knife/taser/scout, utility, trade/grenade/smoke/killerqueen/swap - see [situation memory](../../../documentation/reference/rules.md#situation-memory)). Weapons: [catalog_weapons.json](../../../tools/catalog_weapons.json); prefer `contains` with short names (`ak47`, `knife`, `awp`).
 4. Write YAML → wire schedule → self-check → tell user how to reload.
 
 Ask only if the goal is ambiguous (missing event, counts, or whether a streak resets).
 
-## Blueprint
+## Challenge file
 
-- Default path: `examples/blueprints/<challenge_id>.yaml` (or `<server>/blueprints/…`). Id = filename without `.yaml` (snake_case).
+- Default path: `examples/blueprints/<challenge_id>.yaml` (or `<server>/blueprints/…`). Id = filename without `.yaml` (snake_case). The folder name is `blueprints/`; the content is a **challenge** with **tasks**.
 - `title` (and optional task titles) need at least one language; missing player language → first map entry. Task titles may use `{count}` / `{total}`.
 - Rule keys only from the event page + globals. Unknown keys never match. Every `value` is a **string**. All rules AND; no OR.
 - Operators: `==` `!=` `<` `>` `<=` `>=` `bool==` `bool!=` `contains` `!contains`.
@@ -78,7 +79,7 @@ Actions: `task.reset_progress`, `task.reset_completed`, `task.mark_completed`, `
 
 Filename matches schedule entry; every `requires` / action id exists; every rule key is documented; bools use `bool==`/`bool!=` with `"true"`/`"false"`; streak breakers `visible: false`; schedule window includes now if expected live.
 
-Reload: copy into `/addons/counterstrikesharp/configs/plugins/Challenges/` if needed, then change map or `challenges reload`. Debug: `"development": { "enable": true }` in `Challenges.json` - [howto.md](../../../documentation/howto.md), [settings.md](../../../documentation/settings.md).
+Reload: copy into `/addons/counterstrikesharp/configs/plugins/Challenges/` if needed, then change map or `challenges reload`. Debug: `"development": { "enable": true }` in `Challenges.json` - [tutorial](../../../documentation/tutorial/index.md), [settings.md](../../../documentation/reference/settings.md).
 
 ## Skeleton
 

@@ -1,5 +1,5 @@
 > [!WARNING]  
-> You need to configure challenges! This plug-in comes with examples. READ THE WIKI before asking!
+> You need to configure challenges! This plug-in comes with examples. READ THE [DOCS](https://kandru.github.io/cs2-challenges/docs/tutorial/) before asking!
 
 # CounterstrikeSharp - Challenges
 
@@ -11,7 +11,7 @@
 
 ![Challenges menu](media/challenges_menu.png)
 
-Create time-limited challenges for players. Each challenge is a YAML file with tasks that listen for game events (for example three headshots in a row). This plugin tracks progress. It does not grant rewards on its own - wire another plugin via server commands or `ChallengesShared` ([Plugin integration](./documentation/plugin-integration.md)).
+Create time-limited challenges for players. Each challenge is a YAML file with tasks that listen for game events (for example three headshots in a row). This plugin tracks progress. It does not grant rewards on its own - wire another plugin via server commands or `ChallengesShared` ([Plugin API](https://kandru.github.io/cs2-challenges/docs/reference/integration/)).
 
 > [!TIP]
 > Please consider a [donation](https://www.paypal.com/donate/?hosted_button_id=C2AVYKGVP9TRG) when you're using this plugin - it took a long time to build and improve - it only costs you a few dollars and would help me very much!
@@ -21,26 +21,25 @@ Create time-limited challenges for players. Each challenge is a YAML file with t
 > [!IMPORTANT]
 > Create a GitHub Issue for bugs, features, and improvements. Use Discord for everything else.
 
-Read in this order:
+| | |
+|---|---|
+| [Tutorial](https://kandru.github.io/cs2-challenges/docs/tutorial/) | Install, examples, first challenge |
+| [Challenge builder](https://kandru.github.io/cs2-challenges/builder/) | Visual editor for challenge YAML |
+| [Challenges and tasks](https://kandru.github.io/cs2-challenges/docs/reference/challenges/) | Challenge / task fields |
+| [Events](https://kandru.github.io/cs2-challenges/docs/reference/events/) / [Listeners](https://kandru.github.io/cs2-challenges/docs/reference/listeners/) | Task `type` values and attributes |
+| [Rules](https://kandru.github.io/cs2-challenges/docs/reference/rules/) / [Actions](https://kandru.github.io/cs2-challenges/docs/reference/actions/) | When events count / completion side effects |
+| [Schedules](https://kandru.github.io/cs2-challenges/docs/howto/schedules/) / [Settings](https://kandru.github.io/cs2-challenges/docs/reference/settings/) | Active windows and `Challenges.json` |
 
-1. [How to start](./documentation/howto.md)
-2. [In game](./documentation/ingame.md)
-3. [Schedules](./documentation/schedules.md)
-4. [Blueprints](./documentation/blueprints.md)
-5. [Rules](./documentation/rules.md)
-6. [Actions](./documentation/actions.md)
-7. [Events](./documentation/events.md)
-8. [Settings](./documentation/settings.md)
-9. [Plugin integration](./documentation/plugin-integration.md) - server commands and C# events
+Source markdown lives in [`documentation/`](./documentation/).
 
 ## Features
 
-- One YAML file per challenge, with ordered tasks and `requires` dependencies inside the file.
+- One YAML file per challenge (stored under `blueprints/`), with ordered tasks and `requires` dependencies inside the file.
 - Track progress; notify other plugins via `ChallengesShared`, or run server console commands on task completion.
 - Panorama HUD: round-start tracker and fullscreen `!c` / `!challenges` menu ([Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3814533794)).
 - Player language from `!lang` is stored and restored on reconnect.
 - Build with Docker (`make debug` / `make release`) - no local .NET install required.
-- Challenge builder for GitHub Pages under [`builder/`](./builder/) ([live site](https://kandru.github.io/cs2-challenges/)).
+- Challenge builder and documentation on GitHub Pages ([live site](https://kandru.github.io/cs2-challenges/)).
 
 ## Test servers
 
@@ -50,6 +49,7 @@ Read in this order:
 ## Road map
 
 - [X] Web builder to create challenges ([builder/](./builder/))
+- [X] Documentation site with search ([docs](https://kandru.github.io/cs2-challenges/docs/))
 - [ ] Spawn custom props on the map as a challenge
 - [ ] Link possible values for all rules in documentation
 - [ ] Discord integration

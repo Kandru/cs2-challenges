@@ -1,0 +1,70 @@
+site_name: CS2 Challenges
+site_description: Time-limited challenges for Counter-Strike 2 — tutorial, how-to guides, and full reference.
+site_url: https://kandru.github.io/cs2-challenges/docs/
+repo_url: https://github.com/Kandru/cs2-challenges
+repo_name: Kandru/cs2-challenges
+edit_uri: edit/main/documentation/
+docs_dir: documentation
+site_dir: _site/docs
+use_directory_urls: true
+
+theme:
+  name: material
+  palette:
+    scheme: slate
+    primary: amber
+    accent: amber
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.indexes
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - toc.follow
+  icon:
+    repo: fontawesome/brands/github
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight
+
+validation:
+  # Event/listener pages are linked from indexes and searchable, but not listed in nav.
+  omitted_files: ignore
+  absolute_links: info
+  unrecognized_links: warn
+  anchors: warn
+
+nav:
+  - Home: index.md
+  - Tutorial:
+      - Install and run: tutorial/index.md
+      - First challenge: tutorial/first-challenge.md
+      - Challenge builder: tutorial/builder.md
+      - In game: tutorial/in-game.md
+  - How-to:
+      - Schedules: howto/schedules.md
+      - Rewards: howto/rewards.md
+  - Reference:
+      - Challenges and tasks: reference/challenges.md
+      - Rules: reference/rules.md
+      - Actions: reference/actions.md
+      - Events: reference/events.md
+      - Listeners: reference/listeners.md
+      - Settings: reference/settings.md
+      - Plugin API: reference/integration.md
+      - Global event data: rules/GlobalEventData.md
+      - Global player data: rules/GlobalPlayerData.md
+      - Teams (CsTeam): enums/CsTeam.md

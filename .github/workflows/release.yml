@@ -99,16 +99,8 @@ jobs:
           name: release-artifacts
           path: release-artifacts/
 
-  publish-wiki:
-    needs: prepare
-    if: needs.prepare.outputs.new_version == 'true'
-    uses: ./.github/workflows/wiki.yml
-    with:
-      version: ${{ needs.prepare.outputs.version }}
-    secrets: inherit
-
   create-release:
-    needs: [prepare, build, publish-wiki]
+    needs: [prepare, build]
     if: needs.prepare.outputs.new_version == 'true'
     runs-on: ubuntu-latest
     env:

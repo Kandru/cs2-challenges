@@ -1,51 +1,18 @@
-name: Publish Wiki
+name: Wiki redirect
+
+# One-shot: replace wiki content with a Home page that points at GitHub Pages.
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'documentation/**'
   workflow_dispatch:
-    inputs:
-      version:
-        description: Version label for the sync commit message (defaults to Version.cs)
-        type: string
-        required: false
-        default: ''
-  workflow_call:
-    inputs:
-      version:
-        description: Version label for the sync commit message
-        type: string
-        required: false
-        default: ''
 
 permissions:
   contents: write
 
 jobs:
-  publish-wiki:
+  publish-wiki-redirect:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Resolve Version Label
-        run: |
-          if [ -n "${{ inputs.version }}" ]; then
-            echo "VERSION=${{ inputs.version }}" >> "$GITHUB_ENV"
-          else
-            version=$(grep -oP '(?<=ModuleVersion => ")[^"]*' src/Challenges/Version.cs)
-            if [ -z "$version" ]; then
-              echo "::error::Could not read ModuleVersion from src/Challenges/Version.cs"
-              exit 1
-            fi
-            echo "VERSION=$version" >> "$GITHUB_ENV"
-          fi
-
-      - name: Publish Documentation To Wiki
+      - name: Publish wiki Home redirect
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -54,39 +21,27 @@ jobs:
           wiki_url="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.wiki.git"
 
           if ! git clone --depth 1 "$wiki_url" "$wiki_dir"; then
-            echo "::error::Could not clone the wiki repository. Enable the wiki and create at least one page in the GitHub UI, then re-run this workflow."
+            echo "::error::Could not clone the wiki. Enable it and create one page in the GitHub UI, then re-run."
             exit 1
           fi
 
-          # Replace wiki content with documentation/ while keeping .git
           find "$wiki_dir" -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
-          cp -a documentation/. "$wiki_dir/"
-          # GitHub wiki serves targets that end in .md as raw files
-          # (raw.githubusercontent.com/wiki/...). Drop the extension so
-          # links open the rendered page. Anchors and relative paths stay.
-          python3 tools/rewrite_wiki_links.py "$wiki_dir"
 
           cat > "$wiki_dir/Home.md" <<'EOF'
           # Challenges Documentation
 
-          - [How to Start](howto)
-          - [Third-Party Plugin Integration](plugin-integration)
-          - [Blueprints](blueprints)
-          - [Events](events)
-          - [Rules](rules)
-          - [Actions](actions)
-          - [Schedules](schedules)
+          Documentation has moved to:
+
+          **[https://kandru.github.io/cs2-challenges/](https://kandru.github.io/cs2-challenges/)**
+
+          - [Tutorial](https://kandru.github.io/cs2-challenges/docs/tutorial/)
+          - [Challenge builder](https://kandru.github.io/cs2-challenges/builder/)
+          - [Reference](https://kandru.github.io/cs2-challenges/docs/reference/challenges/)
           EOF
 
           cat > "$wiki_dir/_Sidebar.md" <<'EOF'
           - [Home](Home)
-          - [How to Start](howto)
-          - [Third-Party Plugin Integration](plugin-integration)
-          - [Blueprints](blueprints)
-          - [Events](events)
-          - [Rules](rules)
-          - [Actions](actions)
-          - [Schedules](schedules)
+          - [Documentation site](https://kandru.github.io/cs2-challenges/)
           EOF
 
           cd "$wiki_dir"
@@ -94,8 +49,8 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
           if git diff --cached --quiet; then
-            echo "Wiki already up to date; nothing to commit."
+            echo "Wiki already up to date."
             exit 0
           fi
-          git commit -m "Sync documentation for ${VERSION}"
+          git commit -m "Point wiki at documentation site"
           git push origin HEAD:master

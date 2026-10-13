@@ -1,9 +1,25 @@
-name: Deploy Challenge Builder
+name: Deploy GitHub Pages
 
 on:
   release:
     types: [published]
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'documentation/**'
+      - 'site/**'
+      - 'builder/**'
+      - 'media/challenges_menu.png'
+      - 'mkdocs.yml'
+      - 'requirements-docs.txt'
+      - 'tools/generate_events.py'
+      - 'tools/check_builder_docs_links.py'
+      - 'tools/event_aliases.json'
+      - 'tools/catalog_weapons.json'
+      - 'tools/css/snapshot.json'
+      - '.github/workflows/pages.yml'
 
 permissions:
   contents: read
@@ -24,16 +40,38 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Generate catalog
-        run: make catalog
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install docs dependencies
+        run: pip install -r requirements-docs.txt
+
+      - name: Generate catalog and event docs
+        run: python3 tools/generate_events.py
+
+      - name: Assemble site
+        run: |
+          set -euo pipefail
+          rm -rf _site
+          mkdir -p _site/builder _site/media
+          cp -a site/. _site/
+          cp -a builder/. _site/builder/
+          cp media/challenges_menu.png _site/media/
+          mkdocs build --strict -d _site/docs
+          touch _site/.nojekyll
+
+      - name: Verify builder help links
+        run: python3 tools/check_builder_docs_links.py _site
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
-      - name: Upload builder artifact
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: builder
+          path: _site
 
       - name: Deploy to GitHub Pages
         id: deployment
