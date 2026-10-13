@@ -18,18 +18,18 @@ namespace Challenges.Extractors
         public IReadOnlyDictionary<string, string> KeyAliases { get; } = ReadOnlyDictionary<string, string>.Empty;
         public IReadOnlyDictionary<string, string> PrefixAliases { get; } = ReadOnlyDictionary<string, string>.Empty;
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need)
+        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need, EventPlayers players)
         {
             var e = (EventServerCvar)gameEvent;
             if (need.Keys[0]) d["cvarname"] = EventValue.Of(e.Cvarname);
             if (need.Keys[1]) d["cvarvalue"] = EventValue.Of(e.Cvarvalue);
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need, EventPlayers players)
         {
             if (need.Types[0]) Players.AddAll(buffer, "server_cvar");
         }
 
-        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex) => null;
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex, EventPlayers players) => null;
     }
 }

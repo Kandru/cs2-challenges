@@ -38,17 +38,29 @@ namespace Challenges.Extractors
         IReadOnlyList<string> ChallengeTypes { get; }
         /// <summary>Keys written by <see cref="Extractors.DerivedKeys.Apply"/>; any of them sets <see cref="FillDemand.Derived"/>.</summary>
         IReadOnlyList<string> DerivedKeys { get; }
-        /// <summary>Writes the keys <paramref name="need"/> asks for. No-op for listeners.</summary>
-        void Fill(GameEvent gameEvent, Dictionary<string, EventValue> challengeData, FillDemand need);
-        /// <summary>Appends the players to check for each type <paramref name="need"/> marks active. No-op for listeners.</summary>
+        /// <summary>
+        /// Writes the keys <paramref name="need"/> asks for; controllers come through <paramref name="players"/>.
+        /// No-op for listeners.
+        /// </summary>
+        void Fill(
+            GameEvent gameEvent,
+            Dictionary<string, EventValue> challengeData,
+            FillDemand need,
+            EventPlayers players);
+        /// <summary>
+        /// Appends the players to check for each type <paramref name="need"/> marks active, read through
+        /// <paramref name="players"/>. No-op for listeners.
+        /// </summary>
         void Targets(
             GameEvent gameEvent,
             List<(CCSPlayerController? Player, string ChallengeType)> buffer,
-            FillDemand need);
+            FillDemand need,
+            EventPlayers players);
         /// <summary>
         /// Controller behind <see cref="IKeySource.PlayerPrefixes"/>[<paramref name="prefixIndex"/>], for attribute
-        /// providers. Always null for listeners; their generated handler passes the controller itself.
+        /// providers; reuses the read of <see cref="Targets"/> or <see cref="Fill"/> in <paramref name="players"/>.
+        /// Always null for listeners; their generated handler passes the controller itself.
         /// </summary>
-        CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex);
+        CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex, EventPlayers players);
     }
 }

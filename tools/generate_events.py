@@ -27,7 +27,7 @@ ACTIONS = ROOT / "src" / "Challenges" / "ChallengeEngine.Simulate.cs"
 WEAPONS_FILE = ROOT / "tools" / "catalog_weapons.json"
 CATALOG_OUT = ROOT / "builder" / "catalog.json"
 
-KEEP_EXTRACTOR_FILES = {"IExtractor.cs", "DerivedKeys.cs", "Registry.cs"}
+KEEP_EXTRACTOR_FILES = {"IExtractor.cs", "DerivedKeys.cs", "Registry.cs", "EventPlayers.cs"}
 
 # Keep in sync with tools/sync_css_api.py SKIP_EVENT_NAME_PREFIXES.
 SKIP_EVENT_NAME_PREFIXES = (
@@ -121,12 +121,17 @@ DERIVED_KEYS: dict[str, list[tuple[str, str]]] = {
     "player_team_names": [("old_team", "string"), ("new_team", "string")],
 }
 
-FILL_SIGNATURE = "        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need)"
+FILL_SIGNATURE = (
+    "        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need, "
+    "EventPlayers players)"
+)
 TARGETS_SIGNATURE = (
     "        public void Targets(GameEvent gameEvent, "
-    "List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)"
+    "List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need, EventPlayers players)"
 )
-PREFIX_PLAYER_SIGNATURE = "        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)"
+PREFIX_PLAYER_SIGNATURE = (
+    "        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex, EventPlayers players)"
+)
 
 
 def csharp_expr_for_prop(prop: dict, bool_coerce: set[str]) -> str:
@@ -197,15 +202,18 @@ def emit_player_fill(
     aliases: dict[str, str],
     owner: str,
     indent: str,
+    cached: bool = False,
 ) -> list[str]:
     """One FillPlayer call per controller under its canonical prefix; other names are prefix aliases.
 
-    exprs[i] is the controller expression of prefixes[i] (GetPrefixPlayer, listener attribute writes).
+    exprs[i] is the controller expression of prefixes[i] (ReadPlayer, listener attribute writes). With cached,
+    Fill reads it through ReadPlayer so Targets, Fill and attribute writes share one native read.
     """
     i = register(prefixes, names[0], owner)
     exprs.append(expr)
     add_aliases(names, aliases, owner)
-    return [f"{indent}if (need.Prefixes[{i}] != PlayerFields.None) EventData.FillPlayer(d, {expr}, need, {i});"]
+    read = f"ReadPlayer(e, {i}, players)" if cached else expr
+    return [f"{indent}if (need.Prefixes[{i}] != PlayerFields.None) EventData.FillPlayer(d, {read}, need, {i});"]
 
 
 def emit_event_fill(
@@ -236,7 +244,9 @@ def emit_event_fill(
     for prop in players:
         names = player_prefixes_for(prop["field"], players, alias)
         lines.extend(
-            emit_player_fill(f"e.{prop['csharp']}", names, prefixes, prefix_exprs, prefix_aliases, owner, indent)
+            emit_player_fill(
+                f"e.{prop['csharp']}", names, prefixes, prefix_exprs, prefix_aliases, owner, indent, cached=True
+            )
         )
     check_aliases(keys, key_aliases, owner)
     check_aliases(prefixes, prefix_aliases, owner)
@@ -247,6 +257,8 @@ def emit_targets(event: dict, alias: dict, types: list[str], audience: str) -> l
     players = player_props(event)
     extra = alias.get("types", {})
     index = {t: i for i, t in enumerate(types)}
+    # Player props register their prefixes in property order (emit_event_fill), so the index is the prefix index.
+    prefix_index = {p["csharp"]: i for i, p in enumerate(players)}
     lines: list[str] = ["        {"]
     player_specific = {
         field: ts
@@ -258,7 +270,9 @@ def emit_targets(event: dict, alias: dict, types: list[str], audience: str) -> l
         lines.append(f"            var e = ({event['class_name']})gameEvent;")
 
     def add_player(csharp: str, t: str) -> None:
-        lines.append(f'            if (need.Types[{index[t]}]) buffer.Add((e.{csharp}, "{t}"));')
+        lines.append(
+            f'            if (need.Types[{index[t]}]) buffer.Add((ReadPlayer(e, {prefix_index[csharp]}, players), "{t}"));'
+        )
 
     if audience == "all":
         broadcast = list(extra.get("_all", [])) if extra else list(types)
@@ -339,14 +353,24 @@ def generate_event_extractor(event: dict, alias: dict) -> str:
     if prefix_exprs:
         body_prefix = "\n".join(
             [
-                PREFIX_PLAYER_SIGNATURE,
+                f"{PREFIX_PLAYER_SIGNATURE} =>",
+                f"            ReadPlayer(({event['class_name']})gameEvent, prefixIndex, players);",
+                "",
+                "        /// <summary>Controller of one prefix: one native read per extractor call, cached in players.</summary>",
+                f"        private static CCSPlayerController? ReadPlayer({event['class_name']} e, int prefixIndex, EventPlayers players)",
                 "        {",
-                f"            var e = ({event['class_name']})gameEvent;",
-                "            return prefixIndex switch",
+                "            if (players.TryGet(prefixIndex, out CCSPlayerController? player))",
+                "            {",
+                "                return player;",
+                "            }",
+                "",
+                "            player = prefixIndex switch",
                 "            {",
                 *[f"                {i} => {expr}," for i, expr in enumerate(prefix_exprs)],
                 "                _ => null,",
                 "            };",
+                "            players.Set(prefixIndex, player);",
+                "            return player;",
                 "        }",
             ]
         )

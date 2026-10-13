@@ -52,7 +52,7 @@ namespace Challenges
 
         /// <summary>
         /// <see cref="Rules"/> prepared at load by <see cref="ChallengeRules.Compile"/>, same order. The per-event
-        /// rule check reads only these.
+        /// rule check reads only these and fails closed when their count differs from <see cref="Rules"/>.
         /// </summary>
         [JsonIgnore]
         [YamlIgnore]

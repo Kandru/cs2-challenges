@@ -22,6 +22,8 @@ namespace Challenges
         private readonly List<(CCSPlayerController? Player, string Type)> _targetBuffer = [];
         /// <summary>Same for generated listener handlers, so a listener can never clobber an event's list.</summary>
         private readonly List<(CCSPlayerController? Player, string Type)> _listenerTargets = [];
+        /// <summary>Controllers of the event in <see cref="HandleExtractors"/>, one native read each. Game thread only.</summary>
+        private readonly EventPlayers _eventPlayers = new(Registry.All);
         /// <summary>Resolved identity per player slot, keyed by user id. Game thread only.</summary>
         private readonly SlotIdentity?[] _slots = new SlotIdentity?[MaxSlots];
         private readonly HashSet<PlayerState> _pruned = [];
@@ -74,6 +76,12 @@ namespace Challenges
                 {
                     foreach (ChallengeTask task in challenge.Tasks)
                     {
+                        // Tasks built without Challenges.NormalizeDefinition; RulesPass fails closed on these.
+                        if (task.CompiledRules.Length != task.Rules.Count)
+                        {
+                            task.CompiledRules = ChallengeRules.Compile(task);
+                        }
+
                         GlobalGate gate = TaskGate(task);
                         if (!byType.TryGetValue(task.Type, out TypePlan? plan))
                         {
@@ -356,7 +364,7 @@ namespace Challenges
                 try
                 {
                     _targetBuffer.Clear();
-                    extractor.Targets(gameEvent, _targetBuffer, plan.Demand);
+                    extractor.Targets(gameEvent, _targetBuffer, plan.Demand, _eventPlayers);
                     List<ProgressTarget>? targets = FilterTargets(_targetBuffer, closed);
                     if (targets == null)
                     {
@@ -369,13 +377,17 @@ namespace Challenges
                     }
 
                     Dictionary<string, EventValue> data = new(plan.Demand.Capacity);
-                    extractor.Fill(gameEvent, data, plan.Demand);
-                    plan.Attributes?.Write(eventName, gameEvent, extractor, data);
+                    extractor.Fill(gameEvent, data, plan.Demand, _eventPlayers);
+                    plan.Attributes?.Write(eventName, gameEvent, extractor, _eventPlayers, data);
                     Enqueue(eventName, data, targets, closed);
                 }
                 catch (Exception ex)
                 {
                     Log($"{eventName} failed: {ex.Message}");
+                }
+                finally
+                {
+                    _eventPlayers.Clear();
                 }
             }
         }

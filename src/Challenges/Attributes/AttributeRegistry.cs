@@ -278,14 +278,22 @@ namespace Challenges.Attributes
             }
         }
 
-        /// <summary>Game event path: reads each wanted controller once, then writes event keys.</summary>
-        public void Write(string eventName, GameEvent gameEvent, IExtractor extractor, Dictionary<string, EventValue> d)
+        /// <summary>
+        /// Game event path: writes each wanted controller's values, reusing the reads of <c>Targets</c> and
+        /// <c>Fill</c> in <paramref name="players"/>, then writes event keys.
+        /// </summary>
+        public void Write(
+            string eventName,
+            GameEvent gameEvent,
+            IExtractor extractor,
+            EventPlayers players,
+            Dictionary<string, EventValue> d)
         {
             for (int i = 0; i < _prefixes.Length; i++)
             {
                 if (_prefixes[i])
                 {
-                    WritePlayer(d, i, extractor.GetPrefixPlayer(gameEvent, i));
+                    WritePlayer(d, i, extractor.GetPrefixPlayer(gameEvent, i, players));
                 }
             }
 

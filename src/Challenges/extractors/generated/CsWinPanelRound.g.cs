@@ -21,7 +21,7 @@ namespace Challenges.Extractors
             ["player"] = "funfact_player",
         };
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need)
+        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need, EventPlayers players)
         {
             var e = (EventCsWinPanelRound)gameEvent;
             if (need.Keys[0]) d["final_event"] = EventValue.Of(e.FinalEvent);
@@ -32,23 +32,33 @@ namespace Challenges.Extractors
             if (need.Keys[5]) d["show_timer_attack"] = EventValue.Of(e.ShowTimerAttack);
             if (need.Keys[6]) d["show_timer_defend"] = EventValue.Of(e.ShowTimerDefend);
             if (need.Keys[7]) d["timer_time"] = EventValue.Of(e.TimerTime);
-            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, e.FunfactPlayer, need, 0);
+            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, ReadPlayer(e, 0, players), need, 0);
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need, EventPlayers players)
         {
             var e = (EventCsWinPanelRound)gameEvent;
-            if (need.Types[0]) buffer.Add((e.FunfactPlayer, "cs_win_panel_round"));
+            if (need.Types[0]) buffer.Add((ReadPlayer(e, 0, players), "cs_win_panel_round"));
         }
 
-        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex, EventPlayers players) =>
+            ReadPlayer((EventCsWinPanelRound)gameEvent, prefixIndex, players);
+
+        /// <summary>Controller of one prefix: one native read per extractor call, cached in players.</summary>
+        private static CCSPlayerController? ReadPlayer(EventCsWinPanelRound e, int prefixIndex, EventPlayers players)
         {
-            var e = (EventCsWinPanelRound)gameEvent;
-            return prefixIndex switch
+            if (players.TryGet(prefixIndex, out CCSPlayerController? player))
+            {
+                return player;
+            }
+
+            player = prefixIndex switch
             {
                 0 => e.FunfactPlayer,
                 _ => null,
             };
+            players.Set(prefixIndex, player);
+            return player;
         }
     }
 }

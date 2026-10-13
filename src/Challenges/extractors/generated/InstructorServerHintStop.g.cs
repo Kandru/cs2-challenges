@@ -18,18 +18,18 @@ namespace Challenges.Extractors
         public IReadOnlyDictionary<string, string> KeyAliases { get; } = ReadOnlyDictionary<string, string>.Empty;
         public IReadOnlyDictionary<string, string> PrefixAliases { get; } = ReadOnlyDictionary<string, string>.Empty;
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need)
+        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need, EventPlayers players)
         {
             var e = (EventInstructorServerHintStop)gameEvent;
             if (need.Keys[0]) d["hint_entindex"] = EventValue.Of(e.HintEntindex);
             if (need.Keys[1]) d["hint_name"] = EventValue.Of(e.HintName);
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need, EventPlayers players)
         {
             if (need.Types[0]) Players.AddAll(buffer, "instructor_server_hint_stop");
         }
 
-        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex) => null;
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex, EventPlayers players) => null;
     }
 }

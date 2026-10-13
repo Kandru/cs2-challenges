@@ -21,28 +21,38 @@ namespace Challenges.Extractors
             ["player"] = "userid",
         };
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need)
+        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need, EventPlayers players)
         {
             var e = (EventSeasoncoinLevelup)gameEvent;
             if (need.Keys[0]) d["category"] = EventValue.Of(e.Category);
             if (need.Keys[1]) d["rank"] = EventValue.Of(e.Rank);
-            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, e.Userid, need, 0);
+            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, ReadPlayer(e, 0, players), need, 0);
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need, EventPlayers players)
         {
             var e = (EventSeasoncoinLevelup)gameEvent;
-            if (need.Types[0]) buffer.Add((e.Userid, "seasoncoin_levelup"));
+            if (need.Types[0]) buffer.Add((ReadPlayer(e, 0, players), "seasoncoin_levelup"));
         }
 
-        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex, EventPlayers players) =>
+            ReadPlayer((EventSeasoncoinLevelup)gameEvent, prefixIndex, players);
+
+        /// <summary>Controller of one prefix: one native read per extractor call, cached in players.</summary>
+        private static CCSPlayerController? ReadPlayer(EventSeasoncoinLevelup e, int prefixIndex, EventPlayers players)
         {
-            var e = (EventSeasoncoinLevelup)gameEvent;
-            return prefixIndex switch
+            if (players.TryGet(prefixIndex, out CCSPlayerController? player))
+            {
+                return player;
+            }
+
+            player = prefixIndex switch
             {
                 0 => e.Userid,
                 _ => null,
             };
+            players.Set(prefixIndex, player);
+            return player;
         }
     }
 }

@@ -21,30 +21,40 @@ namespace Challenges.Extractors
             ["player"] = "userid",
         };
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need)
+        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need, EventPlayers players)
         {
             var e = (EventDecoyStarted)gameEvent;
             if (need.Keys[0]) d["entityid"] = EventValue.Of(e.Entityid);
             if (need.Keys[1]) d["x"] = EventValue.Of(e.X);
             if (need.Keys[2]) d["y"] = EventValue.Of(e.Y);
             if (need.Keys[3]) d["z"] = EventValue.Of(e.Z);
-            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, e.Userid, need, 0);
+            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, ReadPlayer(e, 0, players), need, 0);
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need, EventPlayers players)
         {
             var e = (EventDecoyStarted)gameEvent;
-            if (need.Types[0]) buffer.Add((e.Userid, "decoy_started"));
+            if (need.Types[0]) buffer.Add((ReadPlayer(e, 0, players), "decoy_started"));
         }
 
-        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex, EventPlayers players) =>
+            ReadPlayer((EventDecoyStarted)gameEvent, prefixIndex, players);
+
+        /// <summary>Controller of one prefix: one native read per extractor call, cached in players.</summary>
+        private static CCSPlayerController? ReadPlayer(EventDecoyStarted e, int prefixIndex, EventPlayers players)
         {
-            var e = (EventDecoyStarted)gameEvent;
-            return prefixIndex switch
+            if (players.TryGet(prefixIndex, out CCSPlayerController? player))
+            {
+                return player;
+            }
+
+            player = prefixIndex switch
             {
                 0 => e.Userid,
                 _ => null,
             };
+            players.Set(prefixIndex, player);
+            return player;
         }
     }
 }

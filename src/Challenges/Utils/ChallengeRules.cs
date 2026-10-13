@@ -58,7 +58,10 @@ namespace Challenges
             return !RulesPass(task, data, allowBots, explain, out reason);
         }
 
-        /// <summary>False when a rule fails; <paramref name="reason"/> set only when <paramref name="explain"/>.</summary>
+        /// <summary>
+        /// False when a rule fails, or when the task's rules were never compiled (fail closed);
+        /// <paramref name="reason"/> set only when <paramref name="explain"/>.
+        /// </summary>
         public static bool RulesPass(
             ChallengeTask task,
             Dictionary<string, EventValue> data,
@@ -67,7 +70,18 @@ namespace Challenges
             out string? reason)
         {
             reason = null;
-            foreach (CompiledRule rule in task.CompiledRules)
+            CompiledRule[] rules = task.CompiledRules;
+            if (rules.Length != task.Rules.Count)
+            {
+                if (explain)
+                {
+                    reason = "rules not compiled";
+                }
+
+                return false;
+            }
+
+            foreach (CompiledRule rule in rules)
             {
                 if (allowBots && rule.SkipWhenBotsAllowed)
                 {

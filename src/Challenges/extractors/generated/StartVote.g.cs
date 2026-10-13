@@ -21,28 +21,38 @@ namespace Challenges.Extractors
             ["player"] = "userid",
         };
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need)
+        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need, EventPlayers players)
         {
             var e = (EventStartVote)gameEvent;
             if (need.Keys[0]) d["type"] = EventValue.Of(e.Type);
             if (need.Keys[1]) d["vote_parameter"] = EventValue.Of(e.VoteParameter);
-            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, e.Userid, need, 0);
+            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, ReadPlayer(e, 0, players), need, 0);
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need, EventPlayers players)
         {
             var e = (EventStartVote)gameEvent;
-            if (need.Types[0]) buffer.Add((e.Userid, "start_vote"));
+            if (need.Types[0]) buffer.Add((ReadPlayer(e, 0, players), "start_vote"));
         }
 
-        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex, EventPlayers players) =>
+            ReadPlayer((EventStartVote)gameEvent, prefixIndex, players);
+
+        /// <summary>Controller of one prefix: one native read per extractor call, cached in players.</summary>
+        private static CCSPlayerController? ReadPlayer(EventStartVote e, int prefixIndex, EventPlayers players)
         {
-            var e = (EventStartVote)gameEvent;
-            return prefixIndex switch
+            if (players.TryGet(prefixIndex, out CCSPlayerController? player))
+            {
+                return player;
+            }
+
+            player = prefixIndex switch
             {
                 0 => e.Userid,
                 _ => null,
             };
+            players.Set(prefixIndex, player);
+            return player;
         }
     }
 }

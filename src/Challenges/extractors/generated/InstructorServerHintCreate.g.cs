@@ -18,7 +18,7 @@ namespace Challenges.Extractors
         public IReadOnlyDictionary<string, string> KeyAliases { get; } = ReadOnlyDictionary<string, string>.Empty;
         public IReadOnlyDictionary<string, string> PrefixAliases { get; } = ReadOnlyDictionary<string, string>.Empty;
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need)
+        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need, EventPlayers players)
         {
             var e = (EventInstructorServerHintCreate)gameEvent;
             if (need.Keys[0]) d["hint_activator_caption"] = EventValue.Of(e.HintActivatorCaption);
@@ -47,26 +47,36 @@ namespace Challenges.Extractors
             if (need.Keys[23]) d["hint_vr_offset_y"] = EventValue.Of(e.HintVrOffsetY);
             if (need.Keys[24]) d["hint_vr_offset_z"] = EventValue.Of(e.HintVrOffsetZ);
             if (need.Keys[25]) d["hint_vr_panel_type"] = EventValue.Of(e.HintVrPanelType);
-            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, e.HintActivatorUserid, need, 0);
-            if (need.Prefixes[1] != PlayerFields.None) EventData.FillPlayer(d, e.Userid, need, 1);
+            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, ReadPlayer(e, 0, players), need, 0);
+            if (need.Prefixes[1] != PlayerFields.None) EventData.FillPlayer(d, ReadPlayer(e, 1, players), need, 1);
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need, EventPlayers players)
         {
             var e = (EventInstructorServerHintCreate)gameEvent;
-            if (need.Types[0]) buffer.Add((e.HintActivatorUserid, "instructor_server_hint_create_hint_activator_userid"));
-            if (need.Types[1]) buffer.Add((e.Userid, "instructor_server_hint_create_userid"));
+            if (need.Types[0]) buffer.Add((ReadPlayer(e, 0, players), "instructor_server_hint_create_hint_activator_userid"));
+            if (need.Types[1]) buffer.Add((ReadPlayer(e, 1, players), "instructor_server_hint_create_userid"));
         }
 
-        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex, EventPlayers players) =>
+            ReadPlayer((EventInstructorServerHintCreate)gameEvent, prefixIndex, players);
+
+        /// <summary>Controller of one prefix: one native read per extractor call, cached in players.</summary>
+        private static CCSPlayerController? ReadPlayer(EventInstructorServerHintCreate e, int prefixIndex, EventPlayers players)
         {
-            var e = (EventInstructorServerHintCreate)gameEvent;
-            return prefixIndex switch
+            if (players.TryGet(prefixIndex, out CCSPlayerController? player))
+            {
+                return player;
+            }
+
+            player = prefixIndex switch
             {
                 0 => e.HintActivatorUserid,
                 1 => e.Userid,
                 _ => null,
             };
+            players.Set(prefixIndex, player);
+            return player;
         }
     }
 }

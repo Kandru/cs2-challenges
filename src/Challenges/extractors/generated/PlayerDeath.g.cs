@@ -26,7 +26,7 @@ namespace Challenges.Extractors
             ["victim"] = "userid",
         };
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need)
+        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need, EventPlayers players)
         {
             var e = (EventPlayerDeath)gameEvent;
             if (need.Keys[0]) d["assistedflash"] = EventValue.Of(e.Assistedflash);
@@ -48,30 +48,40 @@ namespace Challenges.Extractors
             if (need.Keys[16]) d["weapon_itemid"] = EventValue.Of(e.WeaponItemid);
             if (need.Keys[17]) d["weapon_originalowner_xuid"] = EventValue.Of(e.WeaponOriginalownerXuid);
             if (need.Keys[18]) d["wipe"] = EventValue.Of(e.Wipe);
-            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, e.Assister, need, 0);
-            if (need.Prefixes[1] != PlayerFields.None) EventData.FillPlayer(d, e.Attacker, need, 1);
-            if (need.Prefixes[2] != PlayerFields.None) EventData.FillPlayer(d, e.Userid, need, 2);
+            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, ReadPlayer(e, 0, players), need, 0);
+            if (need.Prefixes[1] != PlayerFields.None) EventData.FillPlayer(d, ReadPlayer(e, 1, players), need, 1);
+            if (need.Prefixes[2] != PlayerFields.None) EventData.FillPlayer(d, ReadPlayer(e, 2, players), need, 2);
             if (need.Derived) global::Challenges.Extractors.DerivedKeys.Apply("team_self_kill", gameEvent, d);
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need, EventPlayers players)
         {
             var e = (EventPlayerDeath)gameEvent;
-            if (need.Types[1]) buffer.Add((e.Assister, "player_kill_assist"));
-            if (need.Types[0]) buffer.Add((e.Attacker, "player_kill"));
-            if (need.Types[2]) buffer.Add((e.Userid, "player_death"));
+            if (need.Types[1]) buffer.Add((ReadPlayer(e, 0, players), "player_kill_assist"));
+            if (need.Types[0]) buffer.Add((ReadPlayer(e, 1, players), "player_kill"));
+            if (need.Types[2]) buffer.Add((ReadPlayer(e, 2, players), "player_death"));
         }
 
-        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex, EventPlayers players) =>
+            ReadPlayer((EventPlayerDeath)gameEvent, prefixIndex, players);
+
+        /// <summary>Controller of one prefix: one native read per extractor call, cached in players.</summary>
+        private static CCSPlayerController? ReadPlayer(EventPlayerDeath e, int prefixIndex, EventPlayers players)
         {
-            var e = (EventPlayerDeath)gameEvent;
-            return prefixIndex switch
+            if (players.TryGet(prefixIndex, out CCSPlayerController? player))
+            {
+                return player;
+            }
+
+            player = prefixIndex switch
             {
                 0 => e.Assister,
                 1 => e.Attacker,
                 2 => e.Userid,
                 _ => null,
             };
+            players.Set(prefixIndex, player);
+            return player;
         }
     }
 }

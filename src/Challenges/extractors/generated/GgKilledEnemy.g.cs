@@ -18,32 +18,42 @@ namespace Challenges.Extractors
         public IReadOnlyDictionary<string, string> KeyAliases { get; } = ReadOnlyDictionary<string, string>.Empty;
         public IReadOnlyDictionary<string, string> PrefixAliases { get; } = ReadOnlyDictionary<string, string>.Empty;
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need)
+        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need, EventPlayers players)
         {
             var e = (EventGgKilledEnemy)gameEvent;
             if (need.Keys[0]) d["bonus"] = EventValue.Of(e.Bonus);
             if (need.Keys[1]) d["dominated"] = EventValue.Of(e.Dominated);
             if (need.Keys[2]) d["revenge"] = EventValue.Of(e.Revenge);
-            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, e.Attackerid, need, 0);
-            if (need.Prefixes[1] != PlayerFields.None) EventData.FillPlayer(d, e.Victimid, need, 1);
+            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, ReadPlayer(e, 0, players), need, 0);
+            if (need.Prefixes[1] != PlayerFields.None) EventData.FillPlayer(d, ReadPlayer(e, 1, players), need, 1);
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need, EventPlayers players)
         {
             var e = (EventGgKilledEnemy)gameEvent;
-            if (need.Types[0]) buffer.Add((e.Attackerid, "gg_killed_enemy_attackerid"));
-            if (need.Types[1]) buffer.Add((e.Victimid, "gg_killed_enemy_victimid"));
+            if (need.Types[0]) buffer.Add((ReadPlayer(e, 0, players), "gg_killed_enemy_attackerid"));
+            if (need.Types[1]) buffer.Add((ReadPlayer(e, 1, players), "gg_killed_enemy_victimid"));
         }
 
-        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex, EventPlayers players) =>
+            ReadPlayer((EventGgKilledEnemy)gameEvent, prefixIndex, players);
+
+        /// <summary>Controller of one prefix: one native read per extractor call, cached in players.</summary>
+        private static CCSPlayerController? ReadPlayer(EventGgKilledEnemy e, int prefixIndex, EventPlayers players)
         {
-            var e = (EventGgKilledEnemy)gameEvent;
-            return prefixIndex switch
+            if (players.TryGet(prefixIndex, out CCSPlayerController? player))
+            {
+                return player;
+            }
+
+            player = prefixIndex switch
             {
                 0 => e.Attackerid,
                 1 => e.Victimid,
                 _ => null,
             };
+            players.Set(prefixIndex, player);
+            return player;
         }
     }
 }

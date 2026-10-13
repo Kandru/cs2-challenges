@@ -24,32 +24,42 @@ namespace Challenges.Extractors
             ["victim"] = "userid",
         };
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need)
+        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need, EventPlayers players)
         {
             var e = (EventPlayerBlind)gameEvent;
             if (need.Keys[0]) d["blind_duration"] = EventValue.Of(e.BlindDuration);
             if (need.Keys[1]) d["entityid"] = EventValue.Of(e.Entityid);
-            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, e.Attacker, need, 0);
-            if (need.Prefixes[1] != PlayerFields.None) EventData.FillPlayer(d, e.Userid, need, 1);
+            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, ReadPlayer(e, 0, players), need, 0);
+            if (need.Prefixes[1] != PlayerFields.None) EventData.FillPlayer(d, ReadPlayer(e, 1, players), need, 1);
             if (need.Derived) global::Challenges.Extractors.DerivedKeys.Apply("team_self_flash", gameEvent, d);
         }
 
-        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need, EventPlayers players)
         {
             var e = (EventPlayerBlind)gameEvent;
-            if (need.Types[0]) buffer.Add((e.Attacker, "player_has_blinded"));
-            if (need.Types[1]) buffer.Add((e.Userid, "player_got_blinded"));
+            if (need.Types[0]) buffer.Add((ReadPlayer(e, 0, players), "player_has_blinded"));
+            if (need.Types[1]) buffer.Add((ReadPlayer(e, 1, players), "player_got_blinded"));
         }
 
-        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex)
+        public CCSPlayerController? GetPrefixPlayer(GameEvent gameEvent, int prefixIndex, EventPlayers players) =>
+            ReadPlayer((EventPlayerBlind)gameEvent, prefixIndex, players);
+
+        /// <summary>Controller of one prefix: one native read per extractor call, cached in players.</summary>
+        private static CCSPlayerController? ReadPlayer(EventPlayerBlind e, int prefixIndex, EventPlayers players)
         {
-            var e = (EventPlayerBlind)gameEvent;
-            return prefixIndex switch
+            if (players.TryGet(prefixIndex, out CCSPlayerController? player))
+            {
+                return player;
+            }
+
+            player = prefixIndex switch
             {
                 0 => e.Attacker,
                 1 => e.Userid,
                 _ => null,
             };
+            players.Set(prefixIndex, player);
+            return player;
         }
     }
 }
