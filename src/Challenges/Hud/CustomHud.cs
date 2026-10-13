@@ -46,6 +46,15 @@ namespace Challenges
         private const byte ViewerOther = 2;
 
         private static readonly CCSCustomHudLayout?[] _layouts = new CCSCustomHudLayout?[2];
+
+        /// <summary>Per layout: the cached entity was matched against its resource while its handle stays valid.</summary>
+        private static readonly bool[] _layoutVerified = new bool[2];
+
+        /// <summary>Per layout: entity index of the verified layout, or -1.</summary>
+        private static readonly int[] _layoutEntityIndex = [-1, -1];
+
+        /// <summary>Per layout: <c>PlayerLayoutStates.Count</c> at validation, refreshed when a slot falls outside.</summary>
+        private static readonly int[] _layoutSlotCount = new int[2];
         private static readonly Dictionary<int, HashSet<string>> _visibleBySlot = [];
 
         /// <summary>Per root layout and slot: the root panel is shown. Mirrors the root ids in <see cref="_visibleBySlot"/>.</summary>
@@ -465,7 +474,7 @@ namespace Challenges
             bool anyLive = false;
             for (int i = 0; i < _frameEntityIndex.Length; i++)
             {
-                int index = _layouts[i] is { IsValid: true } layout ? (int)layout.Index : -1;
+                int index = _layouts[i] is { IsValid: true } ? _layoutEntityIndex[i] : -1;
                 _frameEntityIndex[i] = index;
                 anyLive |= index >= 0;
             }
@@ -574,7 +583,7 @@ namespace Challenges
                 {
                     layout.AcceptInput("Kill");
                 }
-                _layouts[i] = null;
+                ForgetLayout(i);
             }
         }
 
@@ -743,20 +752,29 @@ namespace Challenges
             _nextClosingExpiry = Math.Min(_nextClosingExpiry, next);
         }
 
+        /// <summary>
+        /// Validated once per entity: <c>StrLayout</c> is only read again after the cached handle stops being valid.
+        /// </summary>
         private static bool EnsureOne(int index)
         {
+            if (_layouts[index] is { IsValid: true } existing)
+            {
+                if (_layoutVerified[index])
+                {
+                    return true;
+                }
+
+                if (LayoutPath(existing) == LayoutResources[index])
+                {
+                    Adopt(index, existing);
+                    return true;
+                }
+
+                existing.AcceptInput("Kill");
+            }
+
+            ForgetLayout(index);
             string resource = LayoutResources[index];
-            if (_layouts[index] is { IsValid: true } existing && LayoutPath(existing) == resource)
-            {
-                return true;
-            }
-
-            if (_layouts[index] is { IsValid: true } stale)
-            {
-                stale.AcceptInput("Kill");
-                _layouts[index] = null;
-            }
-
             foreach (CCSCustomHudLayout found in
                      Utilities.FindAllEntitiesByDesignerName<CCSCustomHudLayout>("custom_hud_layout"))
             {
@@ -768,12 +786,40 @@ namespace Challenges
                 string? path = LayoutPath(found);
                 if (path == resource)
                 {
-                    _layouts[index] = found;
+                    Adopt(index, found);
                     return true;
                 }
             }
 
             return Create(index);
+        }
+
+        private static void Adopt(int index, CCSCustomHudLayout layout)
+        {
+            _layouts[index] = layout;
+            _layoutVerified[index] = true;
+            _layoutEntityIndex[index] = (int)layout.Index;
+            _layoutSlotCount[index] = ReadSlotCount(layout);
+        }
+
+        private static void ForgetLayout(int index)
+        {
+            _layouts[index] = null;
+            _layoutVerified[index] = false;
+            _layoutEntityIndex[index] = -1;
+            _layoutSlotCount[index] = 0;
+        }
+
+        private static int ReadSlotCount(CCSCustomHudLayout layout)
+        {
+            try
+            {
+                return layout.PlayerLayoutStates.Count;
+            }
+            catch
+            {
+                return 0;
+            }
         }
 
         private static bool Create(int index)
@@ -802,7 +848,7 @@ namespace Challenges
                     return false;
                 }
 
-                _layouts[index] = hud;
+                Adopt(index, hud);
                 Console.WriteLine($"[Challenges][CustomHud] Spawned #{hud.Index} → {resource}");
                 return true;
             }
@@ -822,20 +868,26 @@ namespace Challenges
                 return false;
             }
 
-            if (!EnsureSpawned(player) || _layouts[index] is not { IsValid: true } layout)
+            if (!Players.IsHumanViewer(player) || !EnsureOne(index) || _layouts[index] is not { } layout)
             {
                 return false;
             }
 
             hud = layout;
-            try
-            {
-                return player.Slot >= 0 && player.Slot < hud.PlayerLayoutStates.Count;
-            }
-            catch
+            int slot = player.Slot;
+            if (slot < 0)
             {
                 return false;
             }
+
+            if (slot < _layoutSlotCount[index])
+            {
+                return true;
+            }
+
+            // Re-read only when the cached count does not cover the slot (e.g. sized after spawn).
+            _layoutSlotCount[index] = ReadSlotCount(layout);
+            return slot < _layoutSlotCount[index];
         }
 
         private static int LayoutIndexForPanel(string panelId)
