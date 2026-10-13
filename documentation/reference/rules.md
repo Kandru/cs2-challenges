@@ -35,6 +35,8 @@ rules:
 | `bool==` `bool!=` | Bools (`true` / `false`) |
 | `contains` `!contains` | Substring (case-insensitive) |
 
+An unknown operator never matches; the server console reports it once when the challenge file loads.
+
 ## Global keys {#global-keys}
 
 Available on almost every event:

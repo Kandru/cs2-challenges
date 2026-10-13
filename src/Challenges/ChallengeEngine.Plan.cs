@@ -210,7 +210,7 @@ namespace Challenges
         private static GlobalGate TaskGate(ChallengeTask task)
         {
             GlobalGate gate = GlobalGate.None;
-            foreach (ChallengeRule rule in task.Rules)
+            foreach (CompiledRule rule in task.CompiledRules)
             {
                 switch (rule.Key)
                 {
@@ -230,22 +230,22 @@ namespace Challenges
         /// The only value of a <c>true</c>/<c>false</c> key that passes <paramref name="rule"/>, or null when
         /// the rule does not pin one down. Mirrors <see cref="ChallengeRules"/> operator semantics.
         /// </summary>
-        private static bool? RequiredBool(ChallengeRule rule)
+        private static bool? RequiredBool(CompiledRule rule)
         {
-            switch (rule.Operator)
+            switch (rule.Op)
             {
-                case "bool==" when bool.TryParse(rule.Value, out bool value):
-                    return value;
-                case "bool!=" when bool.TryParse(rule.Value, out bool value):
-                    return !value;
-                case "==" or "!=":
-                    bool equals = rule.Operator == "==";
-                    if (string.Equals(rule.Value, "true", StringComparison.OrdinalIgnoreCase))
+                case RuleOperator.BoolEqual:
+                    return rule.Bool;
+                case RuleOperator.BoolNotEqual:
+                    return !rule.Bool;
+                case RuleOperator.Equal or RuleOperator.NotEqual:
+                    bool equals = rule.Op == RuleOperator.Equal;
+                    if (string.Equals(rule.Text, "true", StringComparison.OrdinalIgnoreCase))
                     {
                         return equals;
                     }
 
-                    if (string.Equals(rule.Value, "false", StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(rule.Text, "false", StringComparison.OrdinalIgnoreCase))
                     {
                         return !equals;
                     }

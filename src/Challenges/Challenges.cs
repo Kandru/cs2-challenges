@@ -5,6 +5,7 @@ using CounterStrikeSharp.API.Core.Translations;
 using CounterStrikeSharp.API.Modules.Extensions;
 using ChallengesShared;
 using ChallengesShared.Events;
+using Challenges.Utils;
 using System.Text.Json;
 using YamlDotNet.Serialization;
 
@@ -275,6 +276,7 @@ namespace Challenges
                     }
 
                     NormalizeDefinition(def);
+                    LogUnknownOperators(file, def);
                     map[id] = def;
                 }
                 catch (Exception ex)
@@ -303,6 +305,8 @@ namespace Challenges
                     rule.Operator = rule.Operator.Trim();
                 }
 
+                task.CompiledRules = ChallengeRules.Compile(task);
+
                 foreach (ChallengeAction action in task.Actions)
                 {
                     action.Type = action.Type.Trim().ToLowerInvariant();
@@ -315,6 +319,22 @@ namespace Challenges
             }
 
             def.BuildTaskIndex();
+        }
+
+        private void LogUnknownOperators(string file, ChallengeDefinition def)
+        {
+            foreach (ChallengeTask task in def.Tasks)
+            {
+                foreach (CompiledRule rule in task.CompiledRules)
+                {
+                    if (rule.Op == RuleOperator.Invalid)
+                    {
+                        LogBadConfig(
+                            file,
+                            $"task {task.Id}: unknown operator {rule.Source.Operator} for key {rule.Source.Key}");
+                    }
+                }
+            }
         }
 
         private Dictionary<string, ChallengeSchedule> ReadSchedules()

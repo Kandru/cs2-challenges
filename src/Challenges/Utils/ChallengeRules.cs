@@ -68,53 +68,49 @@ namespace Challenges
             out string? reason)
         {
             reason = null;
-            foreach (ChallengeRule rule in task.Rules)
+            foreach (CompiledRule rule in task.CompiledRules)
             {
-                if (allowBots
-                    && rule.Operator == "bool=="
-                    && rule.Key.EndsWith(".isbot", StringComparison.Ordinal)
-                    && rule.Value.Equals("false", StringComparison.OrdinalIgnoreCase))
+                if (allowBots && rule.SkipWhenBotsAllowed)
                 {
                     continue;
                 }
 
-                if (string.Equals(rule.Key, "isace", StringComparison.Ordinal)
-                    && !string.Equals(task.Type, "player_kill", StringComparison.Ordinal))
+                if (rule.RequiredType is { } requiredType
+                    && !string.Equals(task.Type, requiredType, StringComparison.Ordinal))
                 {
                     if (explain)
                     {
-                        reason = "isace requires player_kill";
+                        reason = $"{rule.Source.Key} requires {requiredType}";
                     }
 
                     return false;
                 }
 
-                string lookupKey = DataLookupKey(rule);
-                if (!data.TryGetValue(lookupKey, out string? current))
+                if (!data.TryGetValue(rule.LookupKey, out string? current))
                 {
                     if (explain)
                     {
-                        reason = $"{rule.Key} {rule.Operator} {rule.Value} (missing)";
+                        reason = $"{rule.Source.Key} {rule.Source.Operator} {rule.Text} (missing)";
                     }
 
                     return false;
                 }
 
-                if (!TryEvaluate(rule, current, out bool matched))
+                if (rule.Op == RuleOperator.Invalid)
                 {
                     if (explain)
                     {
-                        reason = $"{rule.Key} unknown operator {rule.Operator}";
+                        reason = $"{rule.Source.Key} unknown operator {rule.Source.Operator}";
                     }
 
                     return false;
                 }
 
-                if (!matched)
+                if (!Matches(rule, current))
                 {
                     if (explain)
                     {
-                        reason = $"{rule.Key} {rule.Operator} {rule.Value} ({current})";
+                        reason = $"{rule.Source.Key} {rule.Source.Operator} {rule.Text} ({current})";
                     }
 
                     return false;
@@ -124,87 +120,111 @@ namespace Challenges
             return true;
         }
 
+        /// <summary>Debug text <c>key=value</c> per rule; keys as written in the blueprint.</summary>
         public static string FormatParams(ChallengeTask task, Dictionary<string, string> data)
         {
-            int count = task.Rules.Count;
-            if (count == 0)
+            CompiledRule[] rules = task.CompiledRules;
+            if (rules.Length == 0)
             {
                 return string.Empty;
             }
 
             StringBuilder sb = new();
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < rules.Length; i++)
             {
-                ChallengeRule rule = task.Rules[i];
+                CompiledRule rule = rules[i];
                 if (i > 0)
                 {
                     sb.Append(' ');
                 }
 
-                sb.Append(rule.Key);
+                sb.Append(rule.Source.Key);
                 sb.Append('=');
-                sb.Append(data.TryGetValue(DataLookupKey(rule), out string? value) ? value : "?");
+                sb.Append(data.TryGetValue(rule.LookupKey, out string? value) ? value : "?");
             }
 
             return sb.ToString();
         }
 
-        private static string DataLookupKey(ChallengeRule rule) =>
-            string.Equals(rule.Key, "isace", StringComparison.Ordinal)
-                ? AceBounds.DataKey(rule)
-                : rule.Key;
-
-        private static bool TryEvaluate(ChallengeRule rule, string current, out bool matched)
+        /// <summary>Prepares every rule of <paramref name="task"/>; call after the task is normalized.</summary>
+        public static CompiledRule[] Compile(ChallengeTask task)
         {
-            string target = rule.Value;
-            switch (rule.Operator)
+            List<ChallengeRule> rules = task.Rules;
+            if (rules.Count == 0)
+            {
+                return [];
+            }
+
+            CompiledRule[] compiled = new CompiledRule[rules.Count];
+            for (int i = 0; i < compiled.Length; i++)
+            {
+                ChallengeRule rule = rules[i];
+                compiled[i] = new CompiledRule(rule, rule.Key, ParseOperator(rule.Operator));
+            }
+
+            return compiled;
+        }
+
+        /// <summary>
+        /// Operator for its YAML spelling; <see cref="RuleOperator.Invalid"/> when unknown.
+        /// The case labels are also the catalog's operator list (<c>tools/generate_events.py</c>).
+        /// </summary>
+        public static RuleOperator ParseOperator(string op)
+        {
+            switch (op)
             {
                 case "==":
-                    matched = string.Equals(current, target, StringComparison.OrdinalIgnoreCase);
-                    return true;
+                    return RuleOperator.Equal;
                 case "!=":
-                    matched = !string.Equals(current, target, StringComparison.OrdinalIgnoreCase);
-                    return true;
+                    return RuleOperator.NotEqual;
                 case ">":
-                    matched = TryCompare(current, target, out int gt) && gt > 0;
-                    return true;
+                    return RuleOperator.Greater;
                 case "<":
-                    matched = TryCompare(current, target, out int lt) && lt < 0;
-                    return true;
+                    return RuleOperator.Less;
                 case ">=":
-                    matched = TryCompare(current, target, out int ge) && ge >= 0;
-                    return true;
+                    return RuleOperator.GreaterOrEqual;
                 case "<=":
-                    matched = TryCompare(current, target, out int le) && le <= 0;
-                    return true;
+                    return RuleOperator.LessOrEqual;
                 case "bool==":
-                    matched = bool.TryParse(current, out bool a) && bool.TryParse(target, out bool b) && a == b;
-                    return true;
+                    return RuleOperator.BoolEqual;
                 case "bool!=":
-                    matched = bool.TryParse(current, out bool c) && bool.TryParse(target, out bool d) && c != d;
-                    return true;
+                    return RuleOperator.BoolNotEqual;
                 case "contains":
-                    matched = current.Contains(target, StringComparison.OrdinalIgnoreCase);
-                    return true;
+                    return RuleOperator.Contains;
                 case "!contains":
-                    matched = !current.Contains(target, StringComparison.OrdinalIgnoreCase);
-                    return true;
+                    return RuleOperator.NotContains;
                 default:
-                    matched = false;
-                    return false;
+                    return RuleOperator.Invalid;
             }
         }
 
-        private static bool TryCompare(string current, string target, out int result)
+        private static bool Matches(CompiledRule rule, string current) =>
+            rule.Op switch
+            {
+                RuleOperator.Equal => string.Equals(current, rule.Text, StringComparison.OrdinalIgnoreCase),
+                RuleOperator.NotEqual => !string.Equals(current, rule.Text, StringComparison.OrdinalIgnoreCase),
+                RuleOperator.Greater => TryCompare(rule, current, out int gt) && gt > 0,
+                RuleOperator.Less => TryCompare(rule, current, out int lt) && lt < 0,
+                RuleOperator.GreaterOrEqual => TryCompare(rule, current, out int ge) && ge >= 0,
+                RuleOperator.LessOrEqual => TryCompare(rule, current, out int le) && le <= 0,
+                RuleOperator.BoolEqual => rule.Bool is bool b && bool.TryParse(current, out bool a) && a == b,
+                RuleOperator.BoolNotEqual => rule.Bool is bool d && bool.TryParse(current, out bool c) && c != d,
+                RuleOperator.Contains => current.Contains(rule.Text, StringComparison.OrdinalIgnoreCase),
+                RuleOperator.NotContains => !current.Contains(rule.Text, StringComparison.OrdinalIgnoreCase),
+                _ => false,
+            };
+
+        /// <summary>Compares <paramref name="current"/> with the pre-parsed rule number in single precision.</summary>
+        private static bool TryCompare(CompiledRule rule, string current, out int result)
         {
-            if (!float.TryParse(current, NumberStyles.Float, CultureInfo.InvariantCulture, out float left)
-                || !float.TryParse(target, NumberStyles.Float, CultureInfo.InvariantCulture, out float right))
+            if (rule.Number is not double right
+                || !float.TryParse(current, NumberStyles.Float, CultureInfo.InvariantCulture, out float left))
             {
                 result = 0;
                 return false;
             }
 
-            result = left.CompareTo(right);
+            result = ((double)left).CompareTo(right);
             return true;
         }
     }
