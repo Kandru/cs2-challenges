@@ -104,7 +104,16 @@ namespace Challenges
                 gateUnion |= plan.Gate;
             }
 
+            TypePlan[] typeList = new TypePlan[byType.Count];
+            foreach (TypePlan plan in byType.Values)
+            {
+                typeList[plan.Id] = plan;
+            }
+
             _types = byType;
+            _typeList = typeList;
+            _typeLayout = Interlocked.Increment(ref _nextTypeLayout);
+            _scheduleKey = CurrentSchedule?.Key ?? string.Empty;
             _gateUnion = gateUnion;
             _usesHostageKey = hostageKey;
             _situations.Configure(allTasks);
@@ -190,6 +199,7 @@ namespace Challenges
             _destroyed = true;
             _types = new(StringComparer.Ordinal);
             _gateUnion = GlobalGate.None;
+            _typeList = [];
             _activeExtractorsByEvent = new(StringComparer.Ordinal);
             _activeListeners = new(StringComparer.Ordinal);
             _boundEvents = [];
@@ -371,6 +381,12 @@ namespace Challenges
                     || plan.IsClosed(closed)
                     || player is not { IsValid: true }
                     || ResolveIdentity(player) is not { } identity)
+                {
+                    continue;
+                }
+
+                // Nothing left to earn for this type; in-flight work may still reset tasks, so never skip then.
+                if (!IsTypeOpen(identity.State, plan) && !HasPending(identity.SteamId))
                 {
                     continue;
                 }

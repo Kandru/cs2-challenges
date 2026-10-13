@@ -93,8 +93,61 @@ namespace Challenges
             return need;
         }
 
+        /// <summary>Source of <see cref="_typeLayout"/>; unique across engine instances.</summary>
+        private static int _nextTypeLayout;
+
         /// <summary>Union of all type gates; selects which global values must be read per event.</summary>
         private GlobalGate _gateUnion;
+        /// <summary>Type plans by <see cref="TypePlan.Id"/>.</summary>
+        private TypePlan[] _typeList = [];
+        /// <summary>Identifies the current type id assignment for <see cref="PlayerState.OpenTypes"/>.</summary>
+        private int _typeLayout;
+        private string _scheduleKey = string.Empty;
+
+        /// <summary>
+        /// False when every task of <paramref name="type"/> is complete for <paramref name="state"/>.
+        /// Locked or cooling-down tasks count as open. Recomputed lazily after progress changed.
+        /// </summary>
+        private bool IsTypeOpen(PlayerState state, TypePlan type)
+        {
+            bool[]? open = state.OpenTypes;
+            if (open == null
+                || state.OpenTypesDirty
+                || state.OpenTypesLayout != _typeLayout
+                || state.OpenTypesVersion != state.ProgressVersion)
+            {
+                open = RecomputeOpenTypes(state);
+            }
+
+            return open[type.Id];
+        }
+
+        private bool[] RecomputeOpenTypes(PlayerState state)
+        {
+            bool[] open = state.OpenTypes is { } existing && existing.Length == _typeList.Length
+                ? existing
+                : new bool[_typeList.Length];
+            foreach (TypePlan type in _typeList)
+            {
+                bool any = false;
+                foreach ((ChallengeDefinition challenge, ChallengeTask task) in type.Tasks)
+                {
+                    if (!ChallengeProgress.IsTaskComplete(state, _scheduleKey, challenge.Id, task))
+                    {
+                        any = true;
+                        break;
+                    }
+                }
+
+                open[type.Id] = any;
+            }
+
+            state.OpenTypes = open;
+            state.OpenTypesLayout = _typeLayout;
+            state.OpenTypesVersion = state.ProgressVersion;
+            state.OpenTypesDirty = false;
+            return open;
+        }
 
         /// <summary>
         /// Gate bits the current game state violates. Reads warmup / round state only when a loaded type

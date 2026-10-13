@@ -20,6 +20,10 @@ namespace Challenges
 
             PlayerState state = Archive.GetOrCreate(patch.SteamId);
             string scheduleKey = patch.ScheduleKey;
+            if (patch.Upserts != null || patch.Removals != null)
+            {
+                state.OpenTypesDirty = true;
+            }
 
             if (patch.Removals != null)
             {
