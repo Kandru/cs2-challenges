@@ -6,7 +6,7 @@ tasks:
     title:
       en: 'Clean round'
       de: 'Saubere Runde'
-    type: round_end
+    type: marker
     amount: 1
     cooldown: 0
     visible: false

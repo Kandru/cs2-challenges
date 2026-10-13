@@ -777,7 +777,7 @@ namespace Challenges
 
             string? selfSteam = player.NetworkIDString;
             int selfIndex = board.FindIndex(x =>
-                x.Player == player || SameSteam(x.SteamId, selfSteam));
+                Players.Same(x.Player, player) || SameSteam(x.SteamId, selfSteam));
             if (selfIndex >= 0)
             {
                 ScoreEntry self = board[selfIndex];
@@ -825,7 +825,7 @@ namespace Challenges
                     player,
                     rowId,
                     "is-self",
-                    entry.Player == player || SameSteam(entry.SteamId, selfSteam));
+                    Players.Same(entry.Player, player) || SameSteam(entry.SteamId, selfSteam));
                 CustomHud.SetHasClass(player, rowId, "is-viewing", SameSteam(entry.SteamId, viewingSteam));
                 CustomHud.SetHasClass(player, rowId, "alt", (index & 1) == 1);
             }

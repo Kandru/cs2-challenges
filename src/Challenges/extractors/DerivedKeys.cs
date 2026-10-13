@@ -57,7 +57,7 @@ namespace Challenges.Extractors
             d[teamKey] = attacker != null && victim != null
                 ? EventData.Bool(attacker.TeamNum == victim.TeamNum)
                 : "false";
-            d[selfKey] = EventData.Bool(attacker == victim);
+            d[selfKey] = EventData.Bool(Players.Same(attacker, victim));
         }
     }
 }

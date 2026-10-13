@@ -62,7 +62,7 @@ namespace Challenges
 
             foreach (CCSPlayerController entry in Players.GetHumans())
             {
-                bool self = entry == player;
+                bool self = Players.Same(entry, player);
                 if ((self && !GlobalConfig.Notifications.NotifyPlayerOnChallengeComplete)
                     || (!self && !GlobalConfig.Notifications.NotifyOtherOnChallengeComplete))
                 {

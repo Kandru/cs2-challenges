@@ -44,6 +44,7 @@ namespace Challenges
         private bool _hasBombOrigin;
         private bool _thrownFlushScheduled;
         private double _tradeRetentionSeconds = DefaultTradeSeconds;
+        private int _aceMinKills;
 
         public bool TradeEnabled { get; private set; }
         public bool GrenadeEnabled { get; private set; }
@@ -119,6 +120,15 @@ namespace Challenges
             GrenadeEnabled = grenade;
             SmokeEnabled = smoke;
             AceEnabled = ace;
+            _aceMinKills = 0;
+            foreach (AceBound bound in _aceBounds)
+            {
+                if (_aceMinKills == 0 || bound.Min < _aceMinKills)
+                {
+                    _aceMinKills = bound.Min;
+                }
+            }
+
             _tradeRetentionSeconds = trade && maxTrade > 0 ? maxTrade : DefaultTradeSeconds;
 
             _watchEvents.Clear();
@@ -303,7 +313,7 @@ namespace Challenges
             CCSPlayerController? victim = e.Userid;
             if (!Players.IsHumanViewer(attacker)
                 || !Players.IsHumanViewer(victim)
-                || ReferenceEquals(attacker, victim))
+                || Players.Same(attacker, victim))
             {
                 return;
             }
@@ -319,6 +329,11 @@ namespace Challenges
             _aceKills.TryGetValue(slot, out int kills);
             kills++;
             _aceKills[slot] = kills;
+
+            if (kills < _aceMinKills)
+            {
+                return;
+            }
 
             int enemies = CountEnemyHumans(victim, enemyTeam);
             foreach (AceBound bound in _aceBounds)
@@ -339,23 +354,17 @@ namespace Challenges
 
         private static int CountEnemyHumans(CCSPlayerController victim, int team)
         {
-            int count = 0;
-            bool sawVictim = false;
+            int count = 1;
+            int victimSlot = victim.Slot;
             foreach (CCSPlayerController player in Players.GetHumans())
             {
-                if (player.TeamNum != team)
+                if (player.TeamNum == team && player.Slot != victimSlot)
                 {
-                    continue;
-                }
-
-                count++;
-                if (ReferenceEquals(player, victim))
-                {
-                    sawVictim = true;
+                    count++;
                 }
             }
 
-            return sawVictim ? count : count + 1;
+            return count;
         }
 
         private void OnPlayerDeath(
@@ -366,7 +375,7 @@ namespace Challenges
             CCSPlayerController? attacker = e.Attacker;
             if (victim is not { IsValid: true }
                 || attacker is not { IsValid: true }
-                || ReferenceEquals(attacker, victim))
+                || Players.Same(attacker, victim))
             {
                 return;
             }

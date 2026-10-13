@@ -85,7 +85,7 @@ namespace Challenges
             CCSPlayerController? stale = null;
             foreach ((CCSPlayerController other, PlayerState otherState) in PlayerStates)
             {
-                if (other == player || !ReferenceEquals(otherState, archived) || other.IsValid)
+                if (Players.Same(other, player) || !ReferenceEquals(otherState, archived) || other.IsValid)
                 {
                     continue;
                 }
