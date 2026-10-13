@@ -82,6 +82,9 @@ namespace Challenges
         private static int _refreshGap = MinRefreshGapTicks;
         private static uint _tick;
 
+        /// <summary>Slots in the last roster; a change invalidates the cached scoreboards.</summary>
+        private static ulong _rosterMask;
+
         public static bool IsPanelVisible(CCSPlayerController player, string panelId)
         {
             if (player is not { IsValid: true })
@@ -439,12 +442,14 @@ namespace Challenges
                 if (Players.IsHumanViewer(player))
                 {
                     Tracker.Refresh(player);
+                    Menu.PaintIfDirty(player);
                 }
             }
         }
 
         private static void RebuildHumanRoster()
         {
+            ulong mask = 0;
             _humanRoster.Clear();
             Array.Clear(_viewerKind);
             foreach (CCSPlayerController player in Players.GetHumans())
@@ -455,6 +460,17 @@ namespace Challenges
                 {
                     _viewerKind[slot] = ViewerHuman;
                 }
+
+                if ((uint)slot < 64)
+                {
+                    mask |= 1UL << slot;
+                }
+            }
+
+            if (mask != _rosterMask)
+            {
+                _rosterMask = mask;
+                Menu.InvalidateScoreboard();
             }
 
             int count = _humanRoster.Count;
@@ -576,6 +592,7 @@ namespace Challenges
         public static void Shutdown()
         {
             HudMenu.Shutdown();
+            Menu.ResetCaches();
             ClearAllSlotState();
             for (int i = 0; i < _layouts.Length; i++)
             {
@@ -709,6 +726,7 @@ namespace Challenges
             _humanRoster.Clear();
             _refreshGap = MinRefreshGapTicks;
             _tick = 0;
+            _rosterMask = 0;
         }
 
         /// <summary>One comparison while nothing is due; otherwise an allocation-free sweep of the closing table.</summary>

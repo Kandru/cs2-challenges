@@ -43,6 +43,10 @@ namespace Challenges
         [JsonIgnore] public readonly string?[] MenuScoreRowSteamIds = new string?[Menu.ScoreSlots];
         /// <summary>How many list slots the last paint filled (unused clears stop here).</summary>
         [JsonIgnore] public int MenuListPainted;
+        /// <summary>Applied progress changed what the open menu shows; repainted from the roster tick.</summary>
+        [JsonIgnore] public bool MenuDirty;
+        /// <summary><see cref="Environment.TickCount64"/> of the last menu paint.</summary>
+        [JsonIgnore] public long MenuPaintedAt;
         [JsonIgnore] public bool TrackerFreezeVisible;
         [JsonIgnore] public DateTime? TrackerFreezeUntil;
         [JsonIgnore] public float TrackerFreezeDuration;
@@ -95,6 +99,8 @@ namespace Challenges
             ScoreboardFilter = ScoreboardFilter.Online;
             MenuSubjectSteamId = null;
             MenuListPainted = 0;
+            MenuDirty = false;
+            MenuPaintedAt = 0;
             Array.Clear(MenuScoreRowSteamIds);
             ClearTrackerUi();
         }

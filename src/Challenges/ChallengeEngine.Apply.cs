@@ -60,6 +60,7 @@ namespace Challenges
             if (patch.Upserts != null || patch.Removals != null || patch.SolvedAbsolute != null)
             {
                 state.TrackerContentDirty = true;
+                Menu.InvalidateScoreboard();
             }
 
             if (patch.DebugLines is { Count: > 0 })
@@ -78,9 +79,10 @@ namespace Challenges
                     Tracker.ShowProgress(player, touched);
                 }
 
+                // Repainted from the roster tick, at most 4 times per second.
                 if (HudMenu.IsOpen(player))
                 {
-                    Menu.Paint(player);
+                    state.MenuDirty = true;
                 }
             }
 

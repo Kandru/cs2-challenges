@@ -74,12 +74,15 @@ namespace Challenges
 
         private sealed record MenuSubject(PlayerState Progress, string? Name);
 
+        /// <summary><paramref name="Order"/> is the build position: final tie-break, keeps sorting stable.</summary>
         private sealed record Entry(
             ChallengeDefinition Challenge,
             int Percent,
             string When,
             bool IsActive,
-            DateTime SortTime);
+            DateTime SortTime,
+            string SortKey,
+            int Order);
 
         private sealed record ScoreEntry(
             string Name,
@@ -87,6 +90,56 @@ namespace Challenges
             int Current,
             int Total,
             CCSPlayerController? Player);
+
+        /// <summary>Sorted scoreboard for one (filter, sort) pair, valid for <see cref="Version"/> and <see cref="Schedule"/>.</summary>
+        private sealed class ScoreCache
+        {
+            public readonly List<ScoreEntry> Board = [];
+            public int Version = -1;
+            public RunningSchedule? Schedule;
+        }
+
+        /// <summary>Minimum gap between patch-driven repaints of an open menu (at most 4 per second).</summary>
+        private const long DirtyRepaintGapMs = 250;
+
+        private static readonly ScoreCache[] ScoreCaches = [new(), new(), new(), new()];
+        private static int _scoreVersion;
+
+        private static readonly Comparison<Entry> ByPercentTitle = static (a, b) =>
+        {
+            int c = b.Percent.CompareTo(a.Percent);
+            return c != 0 ? c : CompareTitle(a, b);
+        };
+
+        private static readonly Comparison<Entry> ByPercentTimingTitle = static (a, b) =>
+        {
+            int c = b.Percent.CompareTo(a.Percent);
+            if (c == 0)
+            {
+                c = b.IsActive.CompareTo(a.IsActive);
+            }
+
+            if (c == 0)
+            {
+                c = a.SortTime.CompareTo(b.SortTime);
+            }
+
+            return c != 0 ? c : CompareTitle(a, b);
+        };
+
+        private static readonly Comparison<Entry> ByPercentTimeTitle = static (a, b) =>
+        {
+            int c = b.Percent.CompareTo(a.Percent);
+            if (c == 0)
+            {
+                c = a.SortTime.CompareTo(b.SortTime);
+            }
+
+            return c != 0 ? c : CompareTitle(a, b);
+        };
+
+        private static readonly Comparison<ScoreEntry> BySolved = static (a, b) => CompareScore(a, b, byLifetime: false);
+        private static readonly Comparison<ScoreEntry> ByLifetime = static (a, b) => CompareScore(a, b, byLifetime: true);
 
         public const string PinnedRowId = "ch-spin";
 
@@ -305,6 +358,40 @@ namespace Challenges
             CustomHud.SetHasClass(player, ScoreHeadTotId, "sort-active", false);
         }
 
+        /// <summary>
+        /// Roster tick: repaints a menu marked <see cref="PlayerState.MenuDirty"/> by applied progress,
+        /// at most once per <see cref="DirtyRepaintGapMs"/>.
+        /// </summary>
+        public static void PaintIfDirty(CCSPlayerController player)
+        {
+            if (Context.GetState(player) is not { MenuDirty: true } state
+                || Environment.TickCount64 - state.MenuPaintedAt < DirtyRepaintGapMs)
+            {
+                return;
+            }
+
+            if (!HudMenu.IsOpen(player))
+            {
+                state.MenuDirty = false;
+                return;
+            }
+
+            Paint(player);
+        }
+
+        /// <summary>Drops cached scoreboards; call when any player's progress, presence or identity changes.</summary>
+        public static void InvalidateScoreboard() => _scoreVersion = unchecked(_scoreVersion + 1);
+
+        public static void ResetCaches()
+        {
+            foreach (ScoreCache cache in ScoreCaches)
+            {
+                cache.Board.Clear();
+                cache.Version = -1;
+                cache.Schedule = null;
+            }
+        }
+
         public static void Paint(CCSPlayerController player)
         {
             if (!Players.IsHumanViewer(player)
@@ -314,6 +401,8 @@ namespace Challenges
                 return;
             }
 
+            state.MenuDirty = false;
+            state.MenuPaintedAt = Environment.TickCount64;
             RunningSchedule? schedule = Context.Schedule;
             MenuSubject subject = ResolveSubject(player, state);
             EnsureFilterAvailable(player, state, subject.Progress, schedule);
@@ -613,6 +702,7 @@ namespace Challenges
         {
             DateTime now = DateTime.UtcNow;
             string activeKey = schedule?.Key ?? string.Empty;
+            int order = 0;
             int Percent(ChallengeDefinition c) =>
                 schedule != null && schedule.Challenges.Contains(c)
                     ? ChallengeProgress.GetChallengePercent(progress, activeKey, c)
@@ -625,86 +715,86 @@ namespace Challenges
                     Percent(c),
                     Context.FormatWhen(player, timing, now),
                     timing.IsActive,
-                    timing.Target ?? DateTime.MaxValue);
+                    timing.Target ?? DateTime.MaxValue,
+                    SortTitle(c),
+                    order++);
             }
 
+            List<Entry> entries = [];
             switch (session.MenuFilter)
             {
                 case FilterAll:
-                    return OrderEntries(Context.ChallengeMap.Values.Select(Make), byTiming: true);
-                case FilterSolved:
-                    if (schedule == null)
+                    foreach (ChallengeDefinition challenge in Context.ChallengeMap.Values)
                     {
-                        return [];
+                        entries.Add(Make(challenge));
                     }
 
-                    return OrderEntries(
-                        schedule.Challenges
-                            .Where(c => ChallengeProgress.IsChallengeSolved(progress, activeKey, c))
-                            .Select(Make),
-                        byTiming: false);
+                    entries.Sort(ByPercentTimingTitle);
+                    return entries;
                 case FilterEnding:
-                    return ScheduleEntries(s => ParseDate(s.EndDate), Make, now, EndingSoonWindow);
+                    return ScheduleEntries(entries, s => ParseDate(s.EndDate), Make, now, EndingSoonWindow);
                 case FilterStarting:
-                    return ScheduleEntries(s => ParseDate(s.StartDate), Make, now, maxAhead: null);
+                    return ScheduleEntries(entries, s => ParseDate(s.StartDate), Make, now, maxAhead: null);
                 default:
                     if (schedule == null)
                     {
-                        return [];
+                        return entries;
                     }
 
-                    return OrderEntries(
-                        schedule.Challenges
-                            .Where(c => !ChallengeProgress.IsChallengeSolved(progress, activeKey, c))
-                            .Select(Make),
-                        byTiming: false);
+                    bool wantSolved = session.MenuFilter == FilterSolved;
+                    foreach (ChallengeDefinition challenge in schedule.Challenges)
+                    {
+                        if (ChallengeProgress.IsChallengeSolved(progress, activeKey, challenge) == wantSolved)
+                        {
+                            entries.Add(Make(challenge));
+                        }
+                    }
+
+                    entries.Sort(ByPercentTitle);
+                    return entries;
             }
         }
 
-        private static List<Entry> OrderEntries(IEnumerable<Entry> entries, bool byTiming)
+        private static int CompareTitle(Entry a, Entry b)
         {
-            IOrderedEnumerable<Entry> ordered = entries.OrderByDescending(e => e.Percent);
-            if (byTiming)
-            {
-                ordered = ordered
-                    .ThenByDescending(e => e.IsActive)
-                    .ThenBy(e => e.SortTime);
-            }
-
-            return ordered
-                .ThenBy(SortTitle, StringComparer.OrdinalIgnoreCase)
-                .ToList();
+            int c = StringComparer.OrdinalIgnoreCase.Compare(a.SortKey, b.SortKey);
+            return c != 0 ? c : a.Order.CompareTo(b.Order);
         }
 
-        private static string SortTitle(Entry entry)
+        private static string SortTitle(ChallengeDefinition challenge)
         {
-            Dictionary<string, string> titles = entry.Challenge.Title;
+            Dictionary<string, string> titles = challenge.Title;
             if (titles.TryGetValue("en", out string? en) && !string.IsNullOrEmpty(en))
             {
                 return en;
             }
 
-            return titles.Values.FirstOrDefault(v => !string.IsNullOrEmpty(v)) ?? entry.Challenge.Id;
+            foreach (string value in titles.Values)
+            {
+                if (!string.IsNullOrEmpty(value))
+                {
+                    return value;
+                }
+            }
+
+            return challenge.Id;
         }
 
         private static List<Entry> ScheduleEntries(
+            List<Entry> entries,
             Func<ChallengeSchedule, DateTime?> dateOf,
             Func<ChallengeDefinition, Entry> make,
             DateTime now,
             TimeSpan? maxAhead)
         {
-            List<Entry> entries = [];
             VisitScheduleWindow(dateOf, now, maxAhead, (challenge, date) =>
             {
                 entries.Add(make(challenge) with { SortTime = date });
             });
 
             // Percent desc, then schedule time, then title A–Z.
-            return entries
-                .OrderByDescending(e => e.Percent)
-                .ThenBy(e => e.SortTime)
-                .ThenBy(SortTitle, StringComparer.OrdinalIgnoreCase)
-                .ToList();
+            entries.Sort(ByPercentTimeTitle);
+            return entries;
         }
 
         private static DateTime? ParseDate(string value) =>
@@ -737,22 +827,7 @@ namespace Challenges
         private static void PaintScoreboard(CCSPlayerController player, PlayerState state, RunningSchedule? schedule)
         {
             int available = schedule?.Challenges.Count ?? 0;
-            List<ScoreEntry> board = BuildScoreboard(state, schedule);
-
-            bool byLifetime = state.ScoreboardSort == ScoreboardSort.Lifetime;
-            board.Sort((a, b) =>
-            {
-                int primary = byLifetime ? b.Total.CompareTo(a.Total) : b.Current.CompareTo(a.Current);
-                if (primary != 0)
-                {
-                    return primary;
-                }
-
-                int secondary = byLifetime ? b.Current.CompareTo(a.Current) : b.Total.CompareTo(a.Total);
-                return secondary != 0
-                    ? secondary
-                    : string.Compare(a.Name, b.Name, StringComparison.OrdinalIgnoreCase);
-            });
+            List<ScoreEntry> board = SortedScoreboard(state.ScoreboardFilter, state.ScoreboardSort, schedule);
 
             int pages = Math.Max(1, (board.Count + ScoreSlots - 1) / ScoreSlots);
             state.ScoreboardPage = Math.Clamp(state.ScoreboardPage, 0, pages - 1);
@@ -805,7 +880,11 @@ namespace Challenges
                 string rowId = ScoreRowIds[i];
                 state.MenuScoreRowSteamIds[i] = entry.SteamId;
                 CustomHud.SetText(player, Panel, ScoreRankVars[i], Context.FormatRank(player, index + 1));
-                CustomHud.SetText(player, Panel, ScoreNameVars[i], entry.Name);
+                CustomHud.SetText(
+                    player,
+                    Panel,
+                    ScoreNameVars[i],
+                    entry.Player is { IsValid: true } online ? online.PlayerName : entry.Name);
                 CustomHud.SetText(player, Panel, ScoreCurVars[i], Context.FormatCount(player, entry.Current, available));
                 CustomHud.SetText(player, Panel, ScoreTotVars[i], Context.FormatNumber(player, entry.Total));
                 CustomHud.SetHasClass(player, rowId, "empty", false);
@@ -820,9 +899,49 @@ namespace Challenges
             }
         }
 
-        private static List<ScoreEntry> BuildScoreboard(
-            PlayerState viewerState,
+        private static int CompareScore(ScoreEntry a, ScoreEntry b, bool byLifetime)
+        {
+            int primary = byLifetime ? b.Total.CompareTo(a.Total) : b.Current.CompareTo(a.Current);
+            if (primary != 0)
+            {
+                return primary;
+            }
+
+            int secondary = byLifetime ? b.Current.CompareTo(a.Current) : b.Total.CompareTo(a.Total);
+            return secondary != 0
+                ? secondary
+                : string.Compare(a.Name, b.Name, StringComparison.OrdinalIgnoreCase);
+        }
+
+        /// <summary>
+        /// Shared across viewers: rebuilt and re-sorted only after <see cref="InvalidateScoreboard"/> or a schedule change.
+        /// Callers must not modify the returned list.
+        /// </summary>
+        private static List<ScoreEntry> SortedScoreboard(
+            ScoreboardFilter filter,
+            ScoreboardSort sort,
             RunningSchedule? schedule)
+        {
+            bool all = filter == ScoreboardFilter.All;
+            bool byLifetime = sort == ScoreboardSort.Lifetime;
+            ScoreCache cache = ScoreCaches[(all ? 2 : 0) + (byLifetime ? 1 : 0)];
+            if (cache.Version == _scoreVersion && ReferenceEquals(cache.Schedule, schedule))
+            {
+                return cache.Board;
+            }
+
+            cache.Board.Clear();
+            BuildScoreboard(all, schedule, cache.Board);
+            cache.Board.Sort(byLifetime ? ByLifetime : BySolved);
+            cache.Version = _scoreVersion;
+            cache.Schedule = schedule;
+            return cache.Board;
+        }
+
+        private static void BuildScoreboard(
+            bool includeOffline,
+            RunningSchedule? schedule,
+            List<ScoreEntry> board)
         {
             Dictionary<string, ScoreEntry> bySteam = new(StringComparer.OrdinalIgnoreCase);
 
@@ -842,10 +961,10 @@ namespace Challenges
                 bySteam[steam] = new ScoreEntry(human.PlayerName, steam, current, total, human);
             }
 
-            if (viewerState.ScoreboardFilter != ScoreboardFilter.All
-                || Context.Archive is not { } archive)
+            if (!includeOffline || Context.Archive is not { } archive)
             {
-                return bySteam.Values.ToList();
+                board.AddRange(bySteam.Values);
+                return;
             }
 
             archive.EnsureOfflineScores(schedule?.Key, schedule);
@@ -859,7 +978,7 @@ namespace Challenges
                 bySteam[saved.SteamId] = new ScoreEntry(saved.Name, saved.SteamId, saved.Current, saved.Total, null);
             }
 
-            return bySteam.Values.ToList();
+            board.AddRange(bySteam.Values);
         }
 
         private static void ClearScoreSlot(CCSPlayerController player, int index)
