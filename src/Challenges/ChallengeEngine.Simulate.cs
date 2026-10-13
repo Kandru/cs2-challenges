@@ -20,14 +20,20 @@ namespace Challenges
                 catch (Exception ex)
                 {
                     Log($"progress simulate failed: {ex.Message}");
-                    PostDone(item, target);
+                    PostDone(item, target, failed: true);
                 }
             }
         }
 
         private void SimulateTarget(ProgressWorkItem item, ProgressTarget target)
         {
-            PlayerState shadow = GetOrInstallShadow(target);
+            if (GetOrInstallShadow(target) is not { } shadow)
+            {
+                Log($"progress shadow missing for {target.SteamId}; skipping one event");
+                PostDone(item, target, failed: true);
+                return;
+            }
+
             string scheduleKey = item.ScheduleKey;
 
             List<(ChallengeDefinition Challenge, ChallengeTask Task)> eligible = [];
@@ -99,10 +105,14 @@ namespace Challenges
             PostPatch(patch);
         }
 
-        private void PostDone(ProgressWorkItem item, ProgressTarget target) =>
-            PostPatch(ProgressPatch.Done(target.SteamId, target.Slot, item.ScheduleKey, item.Schedule));
+        private void PostDone(ProgressWorkItem item, ProgressTarget target, bool failed = false) =>
+            PostPatch(ProgressPatch.Done(target.SteamId, target.Slot, item.ScheduleKey, item.Schedule, failed));
 
-        private PlayerState GetOrInstallShadow(ProgressTarget target)
+        /// <summary>
+        /// Installs the seed when the item carries one, else returns the kept shadow. Null when neither
+        /// exists (must not happen; simulating on an empty shadow would overwrite real progress).
+        /// </summary>
+        private PlayerState? GetOrInstallShadow(ProgressTarget target)
         {
             if (target.Seed is { } seed)
             {
@@ -116,14 +126,7 @@ namespace Challenges
                 return fresh;
             }
 
-            if (_shadows.TryGetValue(target.SteamId, out PlayerState? existing))
-            {
-                return existing;
-            }
-
-            PlayerState empty = new() { SteamId = target.SteamId };
-            _shadows[target.SteamId] = empty;
-            return empty;
+            return _shadows.TryGetValue(target.SteamId, out PlayerState? existing) ? existing : null;
         }
 
         private TrackerProgressKind SimulateProgress(

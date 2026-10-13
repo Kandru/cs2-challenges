@@ -14,6 +14,11 @@ namespace Challenges
         [JsonPropertyName("statistics")] public PlayerStatistics Statistics { get; set; } = new();
 
         [JsonIgnore] public bool Dirty;
+        /// <summary>
+        /// Bumped by every progress change outside the pipeline's own patches (prune, placeholder adoption).
+        /// The engine reseeds its worker shadow when this differs from the seeded version. Game thread only.
+        /// </summary>
+        [JsonIgnore] public int ProgressVersion;
         /// <summary>Cheap progress probe for placeholder adoption (not a full weight walk).</summary>
         [JsonIgnore]
         public bool HasProgress =>

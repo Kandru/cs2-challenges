@@ -164,6 +164,11 @@ namespace Challenges
         public void ForgetPlayer(CCSPlayerController player, PlayerState state)
         {
             _pruned.Remove(state);
+            if (SteamIds.IsCreditable(state.SteamId))
+            {
+                DiscardShadow(state.SteamId);
+            }
+
             int slot = player.Slot;
             if ((uint)slot < MaxSlots)
             {
@@ -523,6 +528,7 @@ namespace Challenges
             }
 
             state.Dirty = true;
+            state.ProgressVersion++;
         }
 
         private sealed class SlotIdentity(int slot, int? userId, string steamId, PlayerState state)

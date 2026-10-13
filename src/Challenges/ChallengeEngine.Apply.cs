@@ -9,6 +9,11 @@ namespace Challenges
         {
             if (!patch.HasChanges)
             {
+                if (patch.Failed)
+                {
+                    DiscardShadow(patch.SteamId);
+                }
+
                 FinishPending(patch.SteamId);
                 return;
             }

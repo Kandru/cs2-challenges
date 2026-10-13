@@ -68,6 +68,7 @@ namespace Challenges
                 archived.Challenges = placeholder.Challenges;
                 archived.Statistics = placeholder.Statistics;
                 archived.Dirty = true;
+                archived.ProgressVersion++;
             }
 
             DropStaleControllers(player, archived);
