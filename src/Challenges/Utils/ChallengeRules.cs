@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Text;
 using Challenges.Utils;
 
@@ -16,7 +15,7 @@ namespace Challenges
             string scheduleKey,
             ChallengeDefinition challenge,
             ChallengeTask task,
-            Dictionary<string, string> data,
+            Dictionary<string, EventValue> data,
             long now,
             bool allowBots,
             bool explain,
@@ -62,7 +61,7 @@ namespace Challenges
         /// <summary>False when a rule fails; <paramref name="reason"/> set only when <paramref name="explain"/>.</summary>
         public static bool RulesPass(
             ChallengeTask task,
-            Dictionary<string, string> data,
+            Dictionary<string, EventValue> data,
             bool allowBots,
             bool explain,
             out string? reason)
@@ -86,7 +85,7 @@ namespace Challenges
                     return false;
                 }
 
-                if (!data.TryGetValue(rule.LookupKey, out string? current))
+                if (!data.TryGetValue(rule.LookupKey, out EventValue current))
                 {
                     if (explain)
                     {
@@ -121,7 +120,7 @@ namespace Challenges
         }
 
         /// <summary>Debug text <c>key=value</c> per rule; keys as written in the blueprint.</summary>
-        public static string FormatParams(ChallengeTask task, Dictionary<string, string> data)
+        public static string FormatParams(ChallengeTask task, Dictionary<string, EventValue> data)
         {
             CompiledRule[] rules = task.CompiledRules;
             if (rules.Length == 0)
@@ -140,7 +139,7 @@ namespace Challenges
 
                 sb.Append(rule.Source.Key);
                 sb.Append('=');
-                sb.Append(data.TryGetValue(rule.LookupKey, out string? value) ? value : "?");
+                sb.Append(data.TryGetValue(rule.LookupKey, out EventValue value) ? value.ToString() : "?");
             }
 
             return sb.ToString();
@@ -204,27 +203,30 @@ namespace Challenges
             }
         }
 
-        private static bool Matches(CompiledRule rule, string current) =>
+        /// <summary>
+        /// Text operators compare the value's invariant text (<see cref="EventValue.ToString"/>) ignoring case;
+        /// numeric operators read it in single precision; bool operators read it as a bool.
+        /// </summary>
+        private static bool Matches(CompiledRule rule, in EventValue current) =>
             rule.Op switch
             {
-                RuleOperator.Equal => string.Equals(current, rule.Text, StringComparison.OrdinalIgnoreCase),
-                RuleOperator.NotEqual => !string.Equals(current, rule.Text, StringComparison.OrdinalIgnoreCase),
+                RuleOperator.Equal => current.TextEquals(rule.Text),
+                RuleOperator.NotEqual => !current.TextEquals(rule.Text),
                 RuleOperator.Greater => TryCompare(rule, current, out int gt) && gt > 0,
                 RuleOperator.Less => TryCompare(rule, current, out int lt) && lt < 0,
                 RuleOperator.GreaterOrEqual => TryCompare(rule, current, out int ge) && ge >= 0,
                 RuleOperator.LessOrEqual => TryCompare(rule, current, out int le) && le <= 0,
-                RuleOperator.BoolEqual => rule.Bool is bool b && bool.TryParse(current, out bool a) && a == b,
-                RuleOperator.BoolNotEqual => rule.Bool is bool d && bool.TryParse(current, out bool c) && c != d,
-                RuleOperator.Contains => current.Contains(rule.Text, StringComparison.OrdinalIgnoreCase),
-                RuleOperator.NotContains => !current.Contains(rule.Text, StringComparison.OrdinalIgnoreCase),
+                RuleOperator.BoolEqual => rule.Bool is bool b && current.TryGetBool(out bool a) && a == b,
+                RuleOperator.BoolNotEqual => rule.Bool is bool d && current.TryGetBool(out bool c) && c != d,
+                RuleOperator.Contains => current.TryTextContains(rule.Text, out bool e) && e,
+                RuleOperator.NotContains => current.TryTextContains(rule.Text, out bool f) && !f,
                 _ => false,
             };
 
         /// <summary>Compares <paramref name="current"/> with the pre-parsed rule number in single precision.</summary>
-        private static bool TryCompare(CompiledRule rule, string current, out int result)
+        private static bool TryCompare(CompiledRule rule, in EventValue current, out int result)
         {
-            if (rule.Number is not double right
-                || !float.TryParse(current, NumberStyles.Float, CultureInfo.InvariantCulture, out float left))
+            if (rule.Number is not double right || !current.TryGetSingle(out float left))
             {
                 result = 0;
                 return false;

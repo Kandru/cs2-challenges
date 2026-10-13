@@ -24,10 +24,10 @@ namespace Challenges.Extractors
             ["defuser"] = "userid",
         };
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
+        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need)
         {
             var e = (EventBombDefused)gameEvent;
-            if (need.Keys[0]) d["site"] = EventData.Num(e.Site);
+            if (need.Keys[0]) d["site"] = EventValue.Of(e.Site);
             if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, e.Userid, need, 0);
         }
 

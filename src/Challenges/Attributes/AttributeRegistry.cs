@@ -3,6 +3,7 @@ using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Events;
 using Challenges.Extractors;
+using Challenges.Utils;
 
 namespace Challenges.Attributes
 {
@@ -34,7 +35,7 @@ namespace Challenges.Attributes
         private Dictionary<string, AttributeWatch> _watches = new(StringComparer.Ordinal);
         private bool _buttons;
 
-        public AttributeRegistry(Action<CCSPlayerController, string, Dictionary<string, string>> enqueueOne)
+        public AttributeRegistry(Action<CCSPlayerController, string, Dictionary<string, EventValue>> enqueueOne)
         {
             _providers = [new AceProvider(), new TradeProvider(), _grenade, new SmokeProvider()];
             _context = new ProviderContext(enqueueOne, _roster);
@@ -278,7 +279,7 @@ namespace Challenges.Attributes
         }
 
         /// <summary>Game event path: reads each wanted controller once, then writes event keys.</summary>
-        public void Write(string eventName, GameEvent gameEvent, IExtractor extractor, Dictionary<string, string> d)
+        public void Write(string eventName, GameEvent gameEvent, IExtractor extractor, Dictionary<string, EventValue> d)
         {
             for (int i = 0; i < _prefixes.Length; i++)
             {
@@ -298,7 +299,7 @@ namespace Challenges.Attributes
         }
 
         /// <summary>Player values for prefix <paramref name="prefixIndex"/>; generated listener handlers pass the controller.</summary>
-        public void WritePlayer(Dictionary<string, string> d, int prefixIndex, CCSPlayerController? player)
+        public void WritePlayer(Dictionary<string, EventValue> d, int prefixIndex, CCSPlayerController? player)
         {
             foreach (ProviderDemand demand in _demands)
             {

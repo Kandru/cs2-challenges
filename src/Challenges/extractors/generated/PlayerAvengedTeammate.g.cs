@@ -22,7 +22,7 @@ namespace Challenges.Extractors
             ["avenger"] = "avenger_id",
         };
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
+        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need)
         {
             var e = (EventPlayerAvengedTeammate)gameEvent;
             if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, e.AvengedPlayerId, need, 0);

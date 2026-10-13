@@ -111,7 +111,7 @@ namespace Challenges.Attributes
             }
         }
 
-        public void WritePlayer(Dictionary<string, string> d, string[] keys, uint suffixes, CCSPlayerController? player)
+        public void WritePlayer(Dictionary<string, EventValue> d, string[] keys, uint suffixes, CCSPlayerController? player)
         {
             if (player is not { IsValid: true })
             {
@@ -128,24 +128,24 @@ namespace Challenges.Attributes
             string thrown = (suffixes & (StateBit | ThrownBit)) != 0 ? BuildThrownList(slot) : "";
             if ((suffixes & StateBit) != 0)
             {
-                d[keys[0]] = (holding, thrown.Length > 0) switch
+                d[keys[0]] = EventValue.Of((holding, thrown.Length > 0) switch
                 {
                     (true, true) => "both",
                     (true, false) => "holding",
                     (false, true) => "thrown",
                     _ => "none",
-                };
+                });
             }
 
             WriteIf(d, keys, suffixes, HoldingBit, 1, holdWeapon ?? "");
             WriteIf(d, keys, suffixes, ThrownBit, 2, thrown);
             if ((suffixes & ThrowingBit) != 0)
             {
-                d[keys[3]] = BuildThrowingList(player, slot, holding, holdWeapon);
+                d[keys[3]] = EventValue.Of(BuildThrowingList(player, slot, holding, holdWeapon));
             }
         }
 
-        public void WriteEvent(string eventName, GameEvent gameEvent, Dictionary<string, string> d, uint keys)
+        public void WriteEvent(string eventName, GameEvent gameEvent, Dictionary<string, EventValue> d, uint keys)
         {
         }
 
@@ -202,11 +202,11 @@ namespace Challenges.Attributes
             }
         }
 
-        private static void WriteIf(Dictionary<string, string> d, string[] keys, uint suffixes, uint bit, int index, string value)
+        private static void WriteIf(Dictionary<string, EventValue> d, string[] keys, uint suffixes, uint bit, int index, string value)
         {
             if ((suffixes & bit) != 0)
             {
-                d[keys[index]] = value;
+                d[keys[index]] = EventValue.Of(value);
             }
         }
 

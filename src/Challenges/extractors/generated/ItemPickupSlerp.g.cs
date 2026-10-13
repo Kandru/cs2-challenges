@@ -21,11 +21,11 @@ namespace Challenges.Extractors
             ["player"] = "userid",
         };
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
+        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need)
         {
             var e = (EventItemPickupSlerp)gameEvent;
-            if (need.Keys[0]) d["behavior"] = EventData.Num(e.Behavior);
-            if (need.Keys[1]) d["index"] = EventData.Num(e.Index);
+            if (need.Keys[0]) d["behavior"] = EventValue.Of(e.Behavior);
+            if (need.Keys[1]) d["index"] = EventValue.Of(e.Index);
             if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, e.Userid, need, 0);
         }
 

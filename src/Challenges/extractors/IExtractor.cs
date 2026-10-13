@@ -39,7 +39,7 @@ namespace Challenges.Extractors
         /// <summary>Keys written by <see cref="Extractors.DerivedKeys.Apply"/>; any of them sets <see cref="FillDemand.Derived"/>.</summary>
         IReadOnlyList<string> DerivedKeys { get; }
         /// <summary>Writes the keys <paramref name="need"/> asks for. No-op for listeners.</summary>
-        void Fill(GameEvent gameEvent, Dictionary<string, string> challengeData, FillDemand need);
+        void Fill(GameEvent gameEvent, Dictionary<string, EventValue> challengeData, FillDemand need);
         /// <summary>Appends the players to check for each type <paramref name="need"/> marks active. No-op for listeners.</summary>
         void Targets(
             GameEvent gameEvent,

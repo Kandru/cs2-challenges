@@ -18,13 +18,13 @@ namespace Challenges.Extractors
         public IReadOnlyDictionary<string, string> KeyAliases { get; } = ReadOnlyDictionary<string, string>.Empty;
         public IReadOnlyDictionary<string, string> PrefixAliases { get; } = ReadOnlyDictionary<string, string>.Empty;
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
+        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need)
         {
             var e = (EventDemoStart)gameEvent;
-            if (need.Keys[0]) d["dota_combatlog_list"] = EventData.Num(e.DotaCombatlogList);
-            if (need.Keys[1]) d["dota_hero_chase_list"] = EventData.Num(e.DotaHeroChaseList);
-            if (need.Keys[2]) d["dota_pick_hero_list"] = EventData.Num(e.DotaPickHeroList);
-            if (need.Keys[3]) d["local"] = EventData.Num(e.Local);
+            if (need.Keys[0]) d["dota_combatlog_list"] = EventValue.Of(e.DotaCombatlogList);
+            if (need.Keys[1]) d["dota_hero_chase_list"] = EventValue.Of(e.DotaHeroChaseList);
+            if (need.Keys[2]) d["dota_pick_hero_list"] = EventValue.Of(e.DotaPickHeroList);
+            if (need.Keys[3]) d["local"] = EventValue.Of(e.Local);
         }
 
         public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)

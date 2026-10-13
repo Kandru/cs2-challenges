@@ -18,20 +18,20 @@ namespace Challenges.Extractors
         public IReadOnlyDictionary<string, string> KeyAliases { get; } = ReadOnlyDictionary<string, string>.Empty;
         public IReadOnlyDictionary<string, string> PrefixAliases { get; } = ReadOnlyDictionary<string, string>.Empty;
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
+        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need)
         {
             var e = (EventEndmatchMapvoteSelectingMap)gameEvent;
-            if (need.Keys[0]) d["count"] = EventData.Num(e.Count);
-            if (need.Keys[1]) d["slot1"] = EventData.Num(e.Slot1);
-            if (need.Keys[2]) d["slot10"] = EventData.Num(e.Slot10);
-            if (need.Keys[3]) d["slot2"] = EventData.Num(e.Slot2);
-            if (need.Keys[4]) d["slot3"] = EventData.Num(e.Slot3);
-            if (need.Keys[5]) d["slot4"] = EventData.Num(e.Slot4);
-            if (need.Keys[6]) d["slot5"] = EventData.Num(e.Slot5);
-            if (need.Keys[7]) d["slot6"] = EventData.Num(e.Slot6);
-            if (need.Keys[8]) d["slot7"] = EventData.Num(e.Slot7);
-            if (need.Keys[9]) d["slot8"] = EventData.Num(e.Slot8);
-            if (need.Keys[10]) d["slot9"] = EventData.Num(e.Slot9);
+            if (need.Keys[0]) d["count"] = EventValue.Of(e.Count);
+            if (need.Keys[1]) d["slot1"] = EventValue.Of(e.Slot1);
+            if (need.Keys[2]) d["slot10"] = EventValue.Of(e.Slot10);
+            if (need.Keys[3]) d["slot2"] = EventValue.Of(e.Slot2);
+            if (need.Keys[4]) d["slot3"] = EventValue.Of(e.Slot3);
+            if (need.Keys[5]) d["slot4"] = EventValue.Of(e.Slot4);
+            if (need.Keys[6]) d["slot5"] = EventValue.Of(e.Slot5);
+            if (need.Keys[7]) d["slot6"] = EventValue.Of(e.Slot6);
+            if (need.Keys[8]) d["slot7"] = EventValue.Of(e.Slot7);
+            if (need.Keys[9]) d["slot8"] = EventValue.Of(e.Slot8);
+            if (need.Keys[10]) d["slot9"] = EventValue.Of(e.Slot9);
         }
 
         public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)

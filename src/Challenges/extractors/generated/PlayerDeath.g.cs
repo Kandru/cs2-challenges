@@ -26,28 +26,28 @@ namespace Challenges.Extractors
             ["victim"] = "userid",
         };
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
+        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need)
         {
             var e = (EventPlayerDeath)gameEvent;
-            if (need.Keys[0]) d["assistedflash"] = EventData.Bool(e.Assistedflash);
-            if (need.Keys[1]) d["attackerblind"] = EventData.Bool(e.Attackerblind);
-            if (need.Keys[2]) d["attackerinair"] = EventData.Bool(e.Attackerinair);
-            if (need.Keys[3]) d["distance"] = EventData.Num(e.Distance);
-            if (need.Keys[4]) d["dmg_armor"] = EventData.Num(e.DmgArmor);
-            if (need.Keys[5]) d["dmg_health"] = EventData.Num(e.DmgHealth);
-            if (need.Keys[6]) d["dominated"] = EventData.Bool(e.Dominated > 0);
-            if (need.Keys[7]) d["headshot"] = EventData.Bool(e.Headshot);
-            if (need.Keys[8]) d["hitgroup"] = EventData.Num(e.Hitgroup);
-            if (need.Keys[9]) d["noreplay"] = EventData.Bool(e.Noreplay);
-            if (need.Keys[10]) d["noscope"] = EventData.Bool(e.Noscope);
-            if (need.Keys[11]) d["penetrated"] = EventData.Bool(e.Penetrated > 0);
-            if (need.Keys[12]) d["revenge"] = EventData.Bool(e.Revenge > 0);
-            if (need.Keys[13]) d["thrusmoke"] = EventData.Bool(e.Thrusmoke);
-            if (need.Keys[14]) d["weapon"] = e.Weapon;
-            if (need.Keys[15]) d["weapon_fauxitemid"] = e.WeaponFauxitemid;
-            if (need.Keys[16]) d["weapon_itemid"] = e.WeaponItemid;
-            if (need.Keys[17]) d["weapon_originalowner_xuid"] = e.WeaponOriginalownerXuid;
-            if (need.Keys[18]) d["wipe"] = EventData.Num(e.Wipe);
+            if (need.Keys[0]) d["assistedflash"] = EventValue.Of(e.Assistedflash);
+            if (need.Keys[1]) d["attackerblind"] = EventValue.Of(e.Attackerblind);
+            if (need.Keys[2]) d["attackerinair"] = EventValue.Of(e.Attackerinair);
+            if (need.Keys[3]) d["distance"] = EventValue.Of(e.Distance);
+            if (need.Keys[4]) d["dmg_armor"] = EventValue.Of(e.DmgArmor);
+            if (need.Keys[5]) d["dmg_health"] = EventValue.Of(e.DmgHealth);
+            if (need.Keys[6]) d["dominated"] = EventValue.Of(e.Dominated > 0);
+            if (need.Keys[7]) d["headshot"] = EventValue.Of(e.Headshot);
+            if (need.Keys[8]) d["hitgroup"] = EventValue.Of(e.Hitgroup);
+            if (need.Keys[9]) d["noreplay"] = EventValue.Of(e.Noreplay);
+            if (need.Keys[10]) d["noscope"] = EventValue.Of(e.Noscope);
+            if (need.Keys[11]) d["penetrated"] = EventValue.Of(e.Penetrated > 0);
+            if (need.Keys[12]) d["revenge"] = EventValue.Of(e.Revenge > 0);
+            if (need.Keys[13]) d["thrusmoke"] = EventValue.Of(e.Thrusmoke);
+            if (need.Keys[14]) d["weapon"] = EventValue.Of(e.Weapon);
+            if (need.Keys[15]) d["weapon_fauxitemid"] = EventValue.Of(e.WeaponFauxitemid);
+            if (need.Keys[16]) d["weapon_itemid"] = EventValue.Of(e.WeaponItemid);
+            if (need.Keys[17]) d["weapon_originalowner_xuid"] = EventValue.Of(e.WeaponOriginalownerXuid);
+            if (need.Keys[18]) d["wipe"] = EventValue.Of(e.Wipe);
             if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, e.Assister, need, 0);
             if (need.Prefixes[1] != PlayerFields.None) EventData.FillPlayer(d, e.Attacker, need, 1);
             if (need.Prefixes[2] != PlayerFields.None) EventData.FillPlayer(d, e.Userid, need, 2);

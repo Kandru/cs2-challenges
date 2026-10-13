@@ -24,11 +24,11 @@ namespace Challenges.Extractors
             ["victim"] = "userid",
         };
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
+        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need)
         {
             var e = (EventPlayerBlind)gameEvent;
-            if (need.Keys[0]) d["blind_duration"] = EventData.Num(e.BlindDuration);
-            if (need.Keys[1]) d["entityid"] = EventData.Num(e.Entityid);
+            if (need.Keys[0]) d["blind_duration"] = EventValue.Of(e.BlindDuration);
+            if (need.Keys[1]) d["entityid"] = EventValue.Of(e.Entityid);
             if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, e.Attacker, need, 0);
             if (need.Prefixes[1] != PlayerFields.None) EventData.FillPlayer(d, e.Userid, need, 1);
             if (need.Derived) global::Challenges.Extractors.DerivedKeys.Apply("team_self_flash", gameEvent, d);

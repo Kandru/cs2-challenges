@@ -18,11 +18,11 @@ namespace Challenges.Extractors
         public IReadOnlyDictionary<string, string> KeyAliases { get; } = ReadOnlyDictionary<string, string>.Empty;
         public IReadOnlyDictionary<string, string> PrefixAliases { get; } = ReadOnlyDictionary<string, string>.Empty;
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
+        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need)
         {
             var e = (EventAchievementEarnedLocal)gameEvent;
-            if (need.Keys[0]) d["achievement"] = EventData.Num(e.Achievement);
-            if (need.Keys[1]) d["splitscreenplayer"] = EventData.Num(e.Splitscreenplayer);
+            if (need.Keys[0]) d["achievement"] = EventValue.Of(e.Achievement);
+            if (need.Keys[1]) d["splitscreenplayer"] = EventValue.Of(e.Splitscreenplayer);
         }
 
         public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)

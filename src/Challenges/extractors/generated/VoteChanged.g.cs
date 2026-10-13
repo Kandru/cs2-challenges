@@ -18,17 +18,17 @@ namespace Challenges.Extractors
         public IReadOnlyDictionary<string, string> KeyAliases { get; } = ReadOnlyDictionary<string, string>.Empty;
         public IReadOnlyDictionary<string, string> PrefixAliases { get; } = ReadOnlyDictionary<string, string>.Empty;
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
+        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need)
         {
             var e = (EventVoteChanged)gameEvent;
-            if (need.Keys[0]) d["noVotes"] = EventData.Num(e.Novotes);
-            if (need.Keys[1]) d["potentialVotes"] = EventData.Num(e.Potentialvotes);
-            if (need.Keys[2]) d["vote_option1"] = EventData.Num(e.VoteOption1);
-            if (need.Keys[3]) d["vote_option2"] = EventData.Num(e.VoteOption2);
-            if (need.Keys[4]) d["vote_option3"] = EventData.Num(e.VoteOption3);
-            if (need.Keys[5]) d["vote_option4"] = EventData.Num(e.VoteOption4);
-            if (need.Keys[6]) d["vote_option5"] = EventData.Num(e.VoteOption5);
-            if (need.Keys[7]) d["yesVotes"] = EventData.Num(e.Yesvotes);
+            if (need.Keys[0]) d["noVotes"] = EventValue.Of(e.Novotes);
+            if (need.Keys[1]) d["potentialVotes"] = EventValue.Of(e.Potentialvotes);
+            if (need.Keys[2]) d["vote_option1"] = EventValue.Of(e.VoteOption1);
+            if (need.Keys[3]) d["vote_option2"] = EventValue.Of(e.VoteOption2);
+            if (need.Keys[4]) d["vote_option3"] = EventValue.Of(e.VoteOption3);
+            if (need.Keys[5]) d["vote_option4"] = EventValue.Of(e.VoteOption4);
+            if (need.Keys[6]) d["vote_option5"] = EventValue.Of(e.VoteOption5);
+            if (need.Keys[7]) d["yesVotes"] = EventValue.Of(e.Yesvotes);
         }
 
         public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)

@@ -96,14 +96,14 @@ namespace Challenges.Attributes
         {
         }
 
-        public void WritePlayer(Dictionary<string, string> d, string[] keys, uint suffixes, CCSPlayerController? player)
+        public void WritePlayer(Dictionary<string, EventValue> d, string[] keys, uint suffixes, CCSPlayerController? player)
         {
             PruneSmokes(RoundClock.NowSeconds());
             ProbePlayer(player, out bool inside);
-            d[keys[0]] = EventData.Bool(inside);
+            d[keys[0]] = EventValue.Of(inside);
         }
 
-        public void WriteEvent(string eventName, GameEvent gameEvent, Dictionary<string, string> d, uint keys)
+        public void WriteEvent(string eventName, GameEvent gameEvent, Dictionary<string, EventValue> d, uint keys)
         {
             PruneSmokes(RoundClock.NowSeconds());
             TryCacheBombOrigin();
@@ -118,9 +118,9 @@ namespace Challenges.Attributes
                 string key = Keys[i].Key;
                 d[key] = key switch
                 {
-                    InSmokeKey => EventData.Bool(inside),
-                    DistanceKey => EventData.Num(distance),
-                    _ => EventData.Num(age),
+                    InSmokeKey => EventValue.Of(inside),
+                    DistanceKey => EventValue.Of(distance),
+                    _ => EventValue.Of(age),
                 };
             }
         }

@@ -18,12 +18,12 @@ namespace Challenges.Extractors
         public IReadOnlyDictionary<string, string> KeyAliases { get; } = ReadOnlyDictionary<string, string>.Empty;
         public IReadOnlyDictionary<string, string> PrefixAliases { get; } = ReadOnlyDictionary<string, string>.Empty;
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
+        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need)
         {
             var e = (EventNextlevelChanged)gameEvent;
-            if (need.Keys[0]) d["mapgroup"] = e.Mapgroup;
-            if (need.Keys[1]) d["nextlevel"] = e.Nextlevel;
-            if (need.Keys[2]) d["skirmishmode"] = e.Skirmishmode;
+            if (need.Keys[0]) d["mapgroup"] = EventValue.Of(e.Mapgroup);
+            if (need.Keys[1]) d["nextlevel"] = EventValue.Of(e.Nextlevel);
+            if (need.Keys[2]) d["skirmishmode"] = EventValue.Of(e.Skirmishmode);
         }
 
         public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)

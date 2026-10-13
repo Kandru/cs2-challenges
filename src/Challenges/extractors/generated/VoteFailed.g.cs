@@ -18,11 +18,11 @@ namespace Challenges.Extractors
         public IReadOnlyDictionary<string, string> KeyAliases { get; } = ReadOnlyDictionary<string, string>.Empty;
         public IReadOnlyDictionary<string, string> PrefixAliases { get; } = ReadOnlyDictionary<string, string>.Empty;
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
+        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need)
         {
             var e = (EventVoteFailed)gameEvent;
-            if (need.Keys[0]) d["reliable"] = EventData.Num(e.Reliable);
-            if (need.Keys[1]) d["team"] = EventData.Num(e.Team);
+            if (need.Keys[0]) d["reliable"] = EventValue.Of(e.Reliable);
+            if (need.Keys[1]) d["team"] = EventValue.Of(e.Team);
         }
 
         public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)

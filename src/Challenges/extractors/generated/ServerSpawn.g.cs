@@ -18,19 +18,19 @@ namespace Challenges.Extractors
         public IReadOnlyDictionary<string, string> KeyAliases { get; } = ReadOnlyDictionary<string, string>.Empty;
         public IReadOnlyDictionary<string, string> PrefixAliases { get; } = ReadOnlyDictionary<string, string>.Empty;
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
+        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need)
         {
             var e = (EventServerSpawn)gameEvent;
-            if (need.Keys[0]) d["addonname"] = e.Addonname;
-            if (need.Keys[1]) d["address"] = e.Address;
-            if (need.Keys[2]) d["dedicated"] = EventData.Bool(e.Dedicated);
-            if (need.Keys[3]) d["game"] = e.Game;
-            if (need.Keys[4]) d["hostname"] = e.Hostname;
-            if (need.Keys[5]) d["mapname"] = e.Mapname;
-            if (need.Keys[6]) d["maxplayers"] = EventData.Num(e.Maxplayers);
-            if (need.Keys[7]) d["os"] = e.Os;
-            if (need.Keys[8]) d["password"] = EventData.Bool(e.Password);
-            if (need.Keys[9]) d["port"] = EventData.Num(e.Port);
+            if (need.Keys[0]) d["addonname"] = EventValue.Of(e.Addonname);
+            if (need.Keys[1]) d["address"] = EventValue.Of(e.Address);
+            if (need.Keys[2]) d["dedicated"] = EventValue.Of(e.Dedicated);
+            if (need.Keys[3]) d["game"] = EventValue.Of(e.Game);
+            if (need.Keys[4]) d["hostname"] = EventValue.Of(e.Hostname);
+            if (need.Keys[5]) d["mapname"] = EventValue.Of(e.Mapname);
+            if (need.Keys[6]) d["maxplayers"] = EventValue.Of(e.Maxplayers);
+            if (need.Keys[7]) d["os"] = EventValue.Of(e.Os);
+            if (need.Keys[8]) d["password"] = EventValue.Of(e.Password);
+            if (need.Keys[9]) d["port"] = EventValue.Of(e.Port);
         }
 
         public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)

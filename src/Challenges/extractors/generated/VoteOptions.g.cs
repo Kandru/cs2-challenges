@@ -18,15 +18,15 @@ namespace Challenges.Extractors
         public IReadOnlyDictionary<string, string> KeyAliases { get; } = ReadOnlyDictionary<string, string>.Empty;
         public IReadOnlyDictionary<string, string> PrefixAliases { get; } = ReadOnlyDictionary<string, string>.Empty;
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
+        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need)
         {
             var e = (EventVoteOptions)gameEvent;
-            if (need.Keys[0]) d["count"] = EventData.Num(e.Count);
-            if (need.Keys[1]) d["option1"] = e.Option1;
-            if (need.Keys[2]) d["option2"] = e.Option2;
-            if (need.Keys[3]) d["option3"] = e.Option3;
-            if (need.Keys[4]) d["option4"] = e.Option4;
-            if (need.Keys[5]) d["option5"] = e.Option5;
+            if (need.Keys[0]) d["count"] = EventValue.Of(e.Count);
+            if (need.Keys[1]) d["option1"] = EventValue.Of(e.Option1);
+            if (need.Keys[2]) d["option2"] = EventValue.Of(e.Option2);
+            if (need.Keys[3]) d["option3"] = EventValue.Of(e.Option3);
+            if (need.Keys[4]) d["option4"] = EventValue.Of(e.Option4);
+            if (need.Keys[5]) d["option5"] = EventValue.Of(e.Option5);
         }
 
         public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)

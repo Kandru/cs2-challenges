@@ -18,16 +18,16 @@ namespace Challenges.Extractors
         public IReadOnlyDictionary<string, string> KeyAliases { get; } = ReadOnlyDictionary<string, string>.Empty;
         public IReadOnlyDictionary<string, string> PrefixAliases { get; } = ReadOnlyDictionary<string, string>.Empty;
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
+        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need)
         {
             var e = (EventRoundEnd)gameEvent;
-            if (need.Keys[0]) d["legacy"] = EventData.Num(e.Legacy);
-            if (need.Keys[1]) d["message"] = e.Message;
-            if (need.Keys[2]) d["nomusic"] = EventData.Num(e.Nomusic);
-            if (need.Keys[3]) d["player_count"] = EventData.Num(e.PlayerCount);
-            if (need.Keys[4]) d["reason"] = EventData.Num(e.Reason);
-            if (need.Keys[5]) d["time"] = EventData.Num(e.Time);
-            if (need.Keys[6]) d["winner"] = EventData.Num(e.Winner);
+            if (need.Keys[0]) d["legacy"] = EventValue.Of(e.Legacy);
+            if (need.Keys[1]) d["message"] = EventValue.Of(e.Message);
+            if (need.Keys[2]) d["nomusic"] = EventValue.Of(e.Nomusic);
+            if (need.Keys[3]) d["player_count"] = EventValue.Of(e.PlayerCount);
+            if (need.Keys[4]) d["reason"] = EventValue.Of(e.Reason);
+            if (need.Keys[5]) d["time"] = EventValue.Of(e.Time);
+            if (need.Keys[6]) d["winner"] = EventValue.Of(e.Winner);
         }
 
         public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)

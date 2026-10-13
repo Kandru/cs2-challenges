@@ -21,17 +21,17 @@ namespace Challenges.Extractors
             ["player"] = "userid",
         };
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
+        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need)
         {
             var e = (EventItemEquip)gameEvent;
-            if (need.Keys[0]) d["canzoom"] = EventData.Bool(e.Canzoom);
-            if (need.Keys[1]) d["defindex"] = EventData.Num(e.Defindex);
-            if (need.Keys[2]) d["hassilencer"] = EventData.Bool(e.Hassilencer);
-            if (need.Keys[3]) d["hastracers"] = EventData.Bool(e.Hastracers);
-            if (need.Keys[4]) d["ispainted"] = EventData.Bool(e.Ispainted);
-            if (need.Keys[5]) d["issilenced"] = EventData.Bool(e.Issilenced);
-            if (need.Keys[6]) d["item"] = e.Item;
-            if (need.Keys[7]) d["weptype"] = EventData.Num(e.Weptype);
+            if (need.Keys[0]) d["canzoom"] = EventValue.Of(e.Canzoom);
+            if (need.Keys[1]) d["defindex"] = EventValue.Of(e.Defindex);
+            if (need.Keys[2]) d["hassilencer"] = EventValue.Of(e.Hassilencer);
+            if (need.Keys[3]) d["hastracers"] = EventValue.Of(e.Hastracers);
+            if (need.Keys[4]) d["ispainted"] = EventValue.Of(e.Ispainted);
+            if (need.Keys[5]) d["issilenced"] = EventValue.Of(e.Issilenced);
+            if (need.Keys[6]) d["item"] = EventValue.Of(e.Item);
+            if (need.Keys[7]) d["weptype"] = EventValue.Of(e.Weptype);
             if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, e.Userid, need, 0);
         }
 

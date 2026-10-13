@@ -21,15 +21,15 @@ namespace Challenges.Extractors
             ["player"] = "userid",
         };
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
+        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need)
         {
             var e = (EventPlayerTeam)gameEvent;
-            if (need.Keys[0]) d["disconnect"] = EventData.Bool(e.Disconnect);
-            if (need.Keys[1]) d["isbot"] = EventData.Bool(e.Isbot);
-            if (need.Keys[2]) d["name"] = e.Name;
-            if (need.Keys[3]) d["oldteam"] = EventData.Num(e.Oldteam);
-            if (need.Keys[4]) d["silent"] = EventData.Bool(e.Silent);
-            if (need.Keys[5]) d["team"] = EventData.Num(e.Team);
+            if (need.Keys[0]) d["disconnect"] = EventValue.Of(e.Disconnect);
+            if (need.Keys[1]) d["isbot"] = EventValue.Of(e.Isbot);
+            if (need.Keys[2]) d["name"] = EventValue.Of(e.Name);
+            if (need.Keys[3]) d["oldteam"] = EventValue.Of(e.Oldteam);
+            if (need.Keys[4]) d["silent"] = EventValue.Of(e.Silent);
+            if (need.Keys[5]) d["team"] = EventValue.Of(e.Team);
             if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, e.Userid, need, 0);
             if (need.Derived) global::Challenges.Extractors.DerivedKeys.Apply("player_team_names", gameEvent, d);
         }

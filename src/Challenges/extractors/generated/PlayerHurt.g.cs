@@ -25,15 +25,15 @@ namespace Challenges.Extractors
             ["victim"] = "userid",
         };
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
+        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need)
         {
             var e = (EventPlayerHurt)gameEvent;
-            if (need.Keys[0]) d["armor"] = EventData.Num(e.Armor);
-            if (need.Keys[1]) d["dmg_armor"] = EventData.Num(e.DmgArmor);
-            if (need.Keys[2]) d["dmg_health"] = EventData.Num(e.DmgHealth);
-            if (need.Keys[3]) d["health"] = EventData.Num(e.Health);
-            if (need.Keys[4]) d["hitgroup"] = EventData.Num(e.Hitgroup);
-            if (need.Keys[5]) d["weapon"] = e.Weapon;
+            if (need.Keys[0]) d["armor"] = EventValue.Of(e.Armor);
+            if (need.Keys[1]) d["dmg_armor"] = EventValue.Of(e.DmgArmor);
+            if (need.Keys[2]) d["dmg_health"] = EventValue.Of(e.DmgHealth);
+            if (need.Keys[3]) d["health"] = EventValue.Of(e.Health);
+            if (need.Keys[4]) d["hitgroup"] = EventValue.Of(e.Hitgroup);
+            if (need.Keys[5]) d["weapon"] = EventValue.Of(e.Weapon);
             if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, e.Attacker, need, 0);
             if (need.Prefixes[1] != PlayerFields.None) EventData.FillPlayer(d, e.Userid, need, 1);
             if (need.Derived) global::Challenges.Extractors.DerivedKeys.Apply("team_self_damage", gameEvent, d);

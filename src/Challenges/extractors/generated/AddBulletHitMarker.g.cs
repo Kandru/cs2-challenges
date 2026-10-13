@@ -21,20 +21,20 @@ namespace Challenges.Extractors
             ["player"] = "userid",
         };
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
+        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need)
         {
             var e = (EventAddBulletHitMarker)gameEvent;
-            if (need.Keys[0]) d["ang_x"] = EventData.Num(e.AngX);
-            if (need.Keys[1]) d["ang_y"] = EventData.Num(e.AngY);
-            if (need.Keys[2]) d["ang_z"] = EventData.Num(e.AngZ);
-            if (need.Keys[3]) d["bone"] = EventData.Num(e.Bone);
-            if (need.Keys[4]) d["hit"] = EventData.Bool(e.Hit);
-            if (need.Keys[5]) d["pos_x"] = EventData.Num(e.PosX);
-            if (need.Keys[6]) d["pos_y"] = EventData.Num(e.PosY);
-            if (need.Keys[7]) d["pos_z"] = EventData.Num(e.PosZ);
-            if (need.Keys[8]) d["start_x"] = EventData.Num(e.StartX);
-            if (need.Keys[9]) d["start_y"] = EventData.Num(e.StartY);
-            if (need.Keys[10]) d["start_z"] = EventData.Num(e.StartZ);
+            if (need.Keys[0]) d["ang_x"] = EventValue.Of(e.AngX);
+            if (need.Keys[1]) d["ang_y"] = EventValue.Of(e.AngY);
+            if (need.Keys[2]) d["ang_z"] = EventValue.Of(e.AngZ);
+            if (need.Keys[3]) d["bone"] = EventValue.Of(e.Bone);
+            if (need.Keys[4]) d["hit"] = EventValue.Of(e.Hit);
+            if (need.Keys[5]) d["pos_x"] = EventValue.Of(e.PosX);
+            if (need.Keys[6]) d["pos_y"] = EventValue.Of(e.PosY);
+            if (need.Keys[7]) d["pos_z"] = EventValue.Of(e.PosZ);
+            if (need.Keys[8]) d["start_x"] = EventValue.Of(e.StartX);
+            if (need.Keys[9]) d["start_y"] = EventValue.Of(e.StartY);
+            if (need.Keys[10]) d["start_z"] = EventValue.Of(e.StartZ);
             if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, e.Userid, need, 0);
         }
 

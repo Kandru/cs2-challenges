@@ -46,10 +46,10 @@ namespace Challenges.Attributes
         /// Writes the suffixes in <paramref name="suffixes"/> for one controller. <paramref name="keys"/> holds the
         /// full key per <see cref="PlayerSuffixes"/> entry for the controller's canonical prefix.
         /// </summary>
-        void WritePlayer(Dictionary<string, string> d, string[] keys, uint suffixes, CCSPlayerController? player);
+        void WritePlayer(Dictionary<string, EventValue> d, string[] keys, uint suffixes, CCSPlayerController? player);
 
         /// <summary>Writes the <see cref="EventKeys"/> entries in <paramref name="keys"/>; all belong to <paramref name="eventName"/>.</summary>
-        void WriteEvent(string eventName, GameEvent gameEvent, Dictionary<string, string> d, uint keys);
+        void WriteEvent(string eventName, GameEvent gameEvent, Dictionary<string, EventValue> d, uint keys);
 
         /// <summary>Round start, map end and unload.</summary>
         void Clear();
@@ -59,14 +59,14 @@ namespace Challenges.Attributes
 
     /// <summary>Engine services a provider may use while observing.</summary>
     internal sealed class ProviderContext(
-        Action<CCSPlayerController, string, Dictionary<string, string>> enqueueOne,
+        Action<CCSPlayerController, string, Dictionary<string, EventValue>> enqueueOne,
         RoundRoster roster)
     {
         /// <summary>Per-slot team and human state; current while a provider with <see cref="IAttributeProvider.UsesRoster"/> is active.</summary>
         public RoundRoster Roster { get; } = roster;
 
         /// <summary>Enqueues progress of a synthetic type for one player.</summary>
-        public void EnqueueOne(CCSPlayerController player, string type, Dictionary<string, string> data) =>
+        public void EnqueueOne(CCSPlayerController player, string type, Dictionary<string, EventValue> data) =>
             enqueueOne(player, type, data);
     }
 

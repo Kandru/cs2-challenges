@@ -23,31 +23,31 @@ namespace Challenges.Extractors
         };
         public IReadOnlyDictionary<string, string> PrefixAliases { get; } = ReadOnlyDictionary<string, string>.Empty;
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
+        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need)
         {
             var e = (EventBulletDamage)gameEvent;
-            if (need.Keys[0]) d["aim_punch_x"] = EventData.Num(e.AimPunchX);
-            if (need.Keys[1]) d["aim_punch_y"] = EventData.Num(e.AimPunchY);
-            if (need.Keys[2]) d["aim_punch_z"] = EventData.Num(e.AimPunchZ);
-            if (need.Keys[3]) d["attack_tick_count"] = EventData.Num(e.AttackTickCount);
-            if (need.Keys[4]) d["attack_tick_frac"] = EventData.Num(e.AttackTickFrac);
-            if (need.Keys[5]) d["damage_dir_x"] = EventData.Num(e.DamageDirX);
-            if (need.Keys[6]) d["damage_dir_y"] = EventData.Num(e.DamageDirY);
-            if (need.Keys[7]) d["damage_dir_z"] = EventData.Num(e.DamageDirZ);
-            if (need.Keys[8]) d["distance"] = EventData.Num(e.Distance);
-            if (need.Keys[9]) d["inaccuracy_air"] = EventData.Num(e.InaccuracyAir);
-            if (need.Keys[10]) d["inaccuracy_move"] = EventData.Num(e.InaccuracyMove);
-            if (need.Keys[11]) d["inaccuracy_total"] = EventData.Num(e.InaccuracyTotal);
-            if (need.Keys[12]) d["in_air"] = EventData.Bool(e.InAir);
-            if (need.Keys[13]) d["no_scope"] = EventData.Bool(e.NoScope);
-            if (need.Keys[14]) d["num_penetrations"] = EventData.Num(e.NumPenetrations);
-            if (need.Keys[15]) d["recoil_index"] = EventData.Num(e.RecoilIndex);
-            if (need.Keys[16]) d["render_tick_count"] = EventData.Num(e.RenderTickCount);
-            if (need.Keys[17]) d["render_tick_frac"] = EventData.Num(e.RenderTickFrac);
-            if (need.Keys[18]) d["shoot_ang_x"] = EventData.Num(e.ShootAngX);
-            if (need.Keys[19]) d["shoot_ang_y"] = EventData.Num(e.ShootAngY);
-            if (need.Keys[20]) d["shoot_ang_z"] = EventData.Num(e.ShootAngZ);
-            if (need.Keys[21]) d["type"] = EventData.Num(e.Type);
+            if (need.Keys[0]) d["aim_punch_x"] = EventValue.Of(e.AimPunchX);
+            if (need.Keys[1]) d["aim_punch_y"] = EventValue.Of(e.AimPunchY);
+            if (need.Keys[2]) d["aim_punch_z"] = EventValue.Of(e.AimPunchZ);
+            if (need.Keys[3]) d["attack_tick_count"] = EventValue.Of(e.AttackTickCount);
+            if (need.Keys[4]) d["attack_tick_frac"] = EventValue.Of(e.AttackTickFrac);
+            if (need.Keys[5]) d["damage_dir_x"] = EventValue.Of(e.DamageDirX);
+            if (need.Keys[6]) d["damage_dir_y"] = EventValue.Of(e.DamageDirY);
+            if (need.Keys[7]) d["damage_dir_z"] = EventValue.Of(e.DamageDirZ);
+            if (need.Keys[8]) d["distance"] = EventValue.Of(e.Distance);
+            if (need.Keys[9]) d["inaccuracy_air"] = EventValue.Of(e.InaccuracyAir);
+            if (need.Keys[10]) d["inaccuracy_move"] = EventValue.Of(e.InaccuracyMove);
+            if (need.Keys[11]) d["inaccuracy_total"] = EventValue.Of(e.InaccuracyTotal);
+            if (need.Keys[12]) d["in_air"] = EventValue.Of(e.InAir);
+            if (need.Keys[13]) d["no_scope"] = EventValue.Of(e.NoScope);
+            if (need.Keys[14]) d["num_penetrations"] = EventValue.Of(e.NumPenetrations);
+            if (need.Keys[15]) d["recoil_index"] = EventValue.Of(e.RecoilIndex);
+            if (need.Keys[16]) d["render_tick_count"] = EventValue.Of(e.RenderTickCount);
+            if (need.Keys[17]) d["render_tick_frac"] = EventValue.Of(e.RenderTickFrac);
+            if (need.Keys[18]) d["shoot_ang_x"] = EventValue.Of(e.ShootAngX);
+            if (need.Keys[19]) d["shoot_ang_y"] = EventValue.Of(e.ShootAngY);
+            if (need.Keys[20]) d["shoot_ang_z"] = EventValue.Of(e.ShootAngZ);
+            if (need.Keys[21]) d["type"] = EventValue.Of(e.Type);
             if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, e.Attacker, need, 0);
             if (need.Prefixes[1] != PlayerFields.None) EventData.FillPlayer(d, e.Victim, need, 1);
             if (need.Derived) global::Challenges.Extractors.DerivedKeys.Apply("team_self_damage", gameEvent, d);

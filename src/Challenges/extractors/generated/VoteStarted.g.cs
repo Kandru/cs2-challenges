@@ -18,15 +18,15 @@ namespace Challenges.Extractors
         public IReadOnlyDictionary<string, string> KeyAliases { get; } = ReadOnlyDictionary<string, string>.Empty;
         public IReadOnlyDictionary<string, string> PrefixAliases { get; } = ReadOnlyDictionary<string, string>.Empty;
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
+        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need)
         {
             var e = (EventVoteStarted)gameEvent;
-            if (need.Keys[0]) d["initiator"] = EventData.Num(e.Initiator);
-            if (need.Keys[1]) d["issue"] = e.Issue;
-            if (need.Keys[2]) d["param1"] = e.Param1;
-            if (need.Keys[3]) d["reliable"] = EventData.Num(e.Reliable);
-            if (need.Keys[4]) d["team"] = EventData.Num(e.Team);
-            if (need.Keys[5]) d["votedata"] = e.Votedata;
+            if (need.Keys[0]) d["initiator"] = EventValue.Of(e.Initiator);
+            if (need.Keys[1]) d["issue"] = EventValue.Of(e.Issue);
+            if (need.Keys[2]) d["param1"] = EventValue.Of(e.Param1);
+            if (need.Keys[3]) d["reliable"] = EventValue.Of(e.Reliable);
+            if (need.Keys[4]) d["team"] = EventValue.Of(e.Team);
+            if (need.Keys[5]) d["votedata"] = EventValue.Of(e.Votedata);
         }
 
         public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)

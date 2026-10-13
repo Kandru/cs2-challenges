@@ -121,7 +121,7 @@ DERIVED_KEYS: dict[str, list[tuple[str, str]]] = {
     "player_team_names": [("old_team", "string"), ("new_team", "string")],
 }
 
-FILL_SIGNATURE = "        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)"
+FILL_SIGNATURE = "        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need)"
 TARGETS_SIGNATURE = (
     "        public void Targets(GameEvent gameEvent, "
     "List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)"
@@ -136,15 +136,11 @@ def csharp_expr_for_prop(prop: dict, bool_coerce: set[str]) -> str:
     if kind == "player":
         return ""  # handled via FillPlayer
     if field in bool_coerce:
-        return f'EventData.Bool(e.{csharp} > 0)'
-    if kind == "bool":
-        return f"EventData.Bool(e.{csharp})"
-    if kind in {"int", "float"}:
-        return f"EventData.Num(e.{csharp})"
-    if kind == "string":
-        return f"e.{csharp}"
+        return f"EventValue.Of(e.{csharp} > 0)"
+    if kind in {"bool", "int", "float", "string"}:
+        return f"EventValue.Of(e.{csharp})"
     if kind == "tostring":
-        return f"e.{csharp}.ToString()"
+        return f"EventValue.Of(e.{csharp}.ToString())"
     raise SystemExit(f"unsupported property kind {kind} for {field}")
 
 
@@ -479,19 +475,17 @@ def emit_listener_fill(
                 emit_player_fill(f"{name}Player", ["player"], prefixes, prefix_exprs, prefix_aliases, owner, indent)
             )
             target_exprs.append(f"{name}Player")
-        elif kind == "string":
-            group([key, *alias_names.get(key, [])], name)
-        elif kind == "bool":
-            group([key, *alias_names.get(key, [])], f"EventData.Bool({name})")
+        elif kind in {"string", "bool"}:
+            group([key, *alias_names.get(key, [])], f"EventValue.Of({name})")
         elif kind in {"int", "float"}:
-            group([key], f"EventData.Num({name})")
+            group([key], f"EventValue.Of({name})")
         elif kind == "steamid":
-            group([key], f"{name}.SteamId64.ToString()")
+            group([key], f"EventValue.Of({name}.SteamId64)")
         elif kind == "entity":
-            group([f"{name}.designername"], f"{name}.DesignerName")
-            group([f"{name}.index"], f"EventData.Num({name}.Index)")
+            group([f"{name}.designername"], f"EventValue.Of({name}.DesignerName)")
+            group([f"{name}.index"], f"EventValue.Of({name}.Index)")
         elif kind == "buttons":
-            group([key], f"EventData.Num((ulong){name})")
+            group([key], f"EventValue.Of((ulong){name})")
         elif kind in {"damage_info", "damage_result"}:
             prefix, fields = (
                 ("damage", snapshot["damage_info_fields"])
@@ -502,15 +496,13 @@ def emit_listener_fill(
                 fk = field["field"]
                 cs = field["csharp"]
                 k = field["kind"]
-                if k == "bool":
-                    expr = f"EventData.Bool({name}.{cs})"
-                elif k in {"int", "float"}:
-                    expr = f"EventData.Num({name}.{cs})"
+                if k in {"bool", "int", "float"}:
+                    expr = f"EventValue.Of({name}.{cs})"
                 else:
-                    expr = f"{name}.{cs}.ToString()"
+                    expr = f"EventValue.Of({name}.{cs}.ToString())"
                 group([f"{prefix}.{fk}"], expr)
         elif kind == "tostring":
-            group([key], f"{name}.ToString()")
+            group([key], f"EventValue.Of({name}.ToString())")
         else:
             raise SystemExit(f"unsupported listener param kind {kind} in {listener['name']}")
 
@@ -573,7 +565,7 @@ def generate_listener_method(listener: dict, alias: dict, snapshot: dict) -> str
         exit_line,
         "            }",
         "",
-        "            Dictionary<string, string> d = new(need.Capacity);",
+        "            Dictionary<string, EventValue> d = new(need.Capacity);",
         *fill_lines,
         *attribute_lines,
         f'            HandleListener("{name}", d, valid, closed);',

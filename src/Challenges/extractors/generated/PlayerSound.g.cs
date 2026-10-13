@@ -21,12 +21,12 @@ namespace Challenges.Extractors
             ["player"] = "userid",
         };
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
+        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need)
         {
             var e = (EventPlayerSound)gameEvent;
-            if (need.Keys[0]) d["duration"] = EventData.Num(e.Duration);
-            if (need.Keys[1]) d["radius"] = EventData.Num(e.Radius);
-            if (need.Keys[2]) d["step"] = EventData.Bool(e.Step);
+            if (need.Keys[0]) d["duration"] = EventValue.Of(e.Duration);
+            if (need.Keys[1]) d["radius"] = EventValue.Of(e.Radius);
+            if (need.Keys[2]) d["step"] = EventValue.Of(e.Step);
             if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, e.Userid, need, 0);
         }
 

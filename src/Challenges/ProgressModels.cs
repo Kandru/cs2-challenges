@@ -1,9 +1,11 @@
+using Challenges.Utils;
+
 namespace Challenges
 {
     internal sealed class ProgressWorkItem
     {
         public required string Source { get; init; }
-        public required Dictionary<string, string> Data { get; init; }
+        public required Dictionary<string, EventValue> Data { get; init; }
         public required string ScheduleKey { get; init; }
         public required RunningSchedule Schedule { get; init; }
         public required bool Debug { get; init; }

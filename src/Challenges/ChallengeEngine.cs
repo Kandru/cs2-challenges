@@ -276,7 +276,7 @@ namespace Challenges
         /// <summary>Last step of a generated listener handler.</summary>
         private void HandleListener(
             string listenerName,
-            Dictionary<string, string> data,
+            Dictionary<string, EventValue> data,
             List<ProgressTarget> targets,
             GlobalGate closed)
         {
@@ -368,7 +368,7 @@ namespace Challenges
                         continue;
                     }
 
-                    Dictionary<string, string> data = new(plan.Demand.Capacity);
+                    Dictionary<string, EventValue> data = new(plan.Demand.Capacity);
                     extractor.Fill(gameEvent, data, plan.Demand);
                     plan.Attributes?.Write(eventName, gameEvent, extractor, data);
                     Enqueue(eventName, data, targets, closed);
@@ -464,7 +464,7 @@ namespace Challenges
         /// <summary><paramref name="closed"/> is the event's <see cref="ReadClosedGates"/> result.</summary>
         private void Enqueue(
             string source,
-            Dictionary<string, string> data,
+            Dictionary<string, EventValue> data,
             List<ProgressTarget> targets,
             GlobalGate closed)
         {
@@ -488,7 +488,7 @@ namespace Challenges
         }
 
         /// <summary>Enqueue progress for a single player (e.g. synthetic <c>player_trade</c>).</summary>
-        private void EnqueueOne(CCSPlayerController player, string type, Dictionary<string, string> data)
+        private void EnqueueOne(CCSPlayerController player, string type, Dictionary<string, EventValue> data)
         {
             _targetBuffer.Clear();
             _targetBuffer.Add((player, type));
@@ -517,7 +517,7 @@ namespace Challenges
         /// Writes the <c>global.*</c> keys loaded rules read. The warmup value comes from
         /// <paramref name="closed"/>, which <see cref="ReadClosedGates"/> fills whenever that key is read.
         /// </summary>
-        private void MergeGlobalData(Dictionary<string, string> data, GlobalGate closed)
+        private void MergeGlobalData(Dictionary<string, EventValue> data, GlobalGate closed)
         {
             GlobalKeyFlags keys = _globalKeys;
             if (keys == GlobalKeyFlags.None)
@@ -527,23 +527,23 @@ namespace Challenges
 
             if ((keys & GlobalKeyFlags.IsWarmup) != 0)
             {
-                data[GlobalKeys.IsWarmup] = EventData.Bool((closed & GlobalGate.NoWarmup) != 0);
+                data[GlobalKeys.IsWarmup] = EventValue.Of((closed & GlobalGate.NoWarmup) != 0);
             }
 
             if ((keys & GlobalKeyFlags.IsDuringRound) != 0)
             {
-                data[GlobalKeys.IsDuringRound] = EventData.Bool(State.DuringRound);
+                data[GlobalKeys.IsDuringRound] = EventValue.Of(State.DuringRound);
             }
 
             if ((keys & GlobalKeyFlags.MapName) != 0)
             {
-                data[GlobalKeys.MapName] = _mapName ??= Server.MapName;
+                data[GlobalKeys.MapName] = EventValue.Of(_mapName ??= Server.MapName);
             }
 
             if ((keys & GlobalKeyFlags.HasHostages) != 0)
             {
                 _hasHostages ??= Utilities.FindAllEntitiesByDesignerName<CBaseEntity>("hostage_entity").Any();
-                data[GlobalKeys.HasHostages] = EventData.Bool(_hasHostages.Value);
+                data[GlobalKeys.HasHostages] = EventValue.Of(_hasHostages.Value);
             }
         }
 

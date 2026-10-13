@@ -18,14 +18,14 @@ namespace Challenges.Extractors
         public IReadOnlyDictionary<string, string> KeyAliases { get; } = ReadOnlyDictionary<string, string>.Empty;
         public IReadOnlyDictionary<string, string> PrefixAliases { get; } = ReadOnlyDictionary<string, string>.Empty;
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
+        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need)
         {
             var e = (EventShowDeathpanel)gameEvent;
-            if (need.Keys[0]) d["damage_given"] = EventData.Num(e.DamageGiven);
-            if (need.Keys[1]) d["damage_taken"] = EventData.Num(e.DamageTaken);
-            if (need.Keys[2]) d["hits_given"] = EventData.Num(e.HitsGiven);
-            if (need.Keys[3]) d["hits_taken"] = EventData.Num(e.HitsTaken);
-            if (need.Keys[4]) d["killer"] = e.Killer.ToString();
+            if (need.Keys[0]) d["damage_given"] = EventValue.Of(e.DamageGiven);
+            if (need.Keys[1]) d["damage_taken"] = EventValue.Of(e.DamageTaken);
+            if (need.Keys[2]) d["hits_given"] = EventValue.Of(e.HitsGiven);
+            if (need.Keys[3]) d["hits_taken"] = EventValue.Of(e.HitsTaken);
+            if (need.Keys[4]) d["killer"] = EventValue.Of(e.Killer.ToString());
             if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, e.KillerController, need, 0);
             if (need.Prefixes[1] != PlayerFields.None) EventData.FillPlayer(d, e.Victim, need, 1);
         }

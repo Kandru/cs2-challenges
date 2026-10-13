@@ -18,12 +18,12 @@ namespace Challenges.Extractors
         public IReadOnlyDictionary<string, string> KeyAliases { get; } = ReadOnlyDictionary<string, string>.Empty;
         public IReadOnlyDictionary<string, string> PrefixAliases { get; } = ReadOnlyDictionary<string, string>.Empty;
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
+        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need)
         {
             var e = (EventGgKilledEnemy)gameEvent;
-            if (need.Keys[0]) d["bonus"] = EventData.Bool(e.Bonus);
-            if (need.Keys[1]) d["dominated"] = EventData.Num(e.Dominated);
-            if (need.Keys[2]) d["revenge"] = EventData.Num(e.Revenge);
+            if (need.Keys[0]) d["bonus"] = EventValue.Of(e.Bonus);
+            if (need.Keys[1]) d["dominated"] = EventValue.Of(e.Dominated);
+            if (need.Keys[2]) d["revenge"] = EventValue.Of(e.Revenge);
             if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, e.Attackerid, need, 0);
             if (need.Prefixes[1] != PlayerFields.None) EventData.FillPlayer(d, e.Victimid, need, 1);
         }

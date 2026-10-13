@@ -101,11 +101,11 @@ namespace Challenges.Attributes
         {
         }
 
-        public void WritePlayer(Dictionary<string, string> d, string[] keys, uint suffixes, CCSPlayerController? player)
+        public void WritePlayer(Dictionary<string, EventValue> d, string[] keys, uint suffixes, CCSPlayerController? player)
         {
         }
 
-        public void WriteEvent(string eventName, GameEvent gameEvent, Dictionary<string, string> d, uint keys)
+        public void WriteEvent(string eventName, GameEvent gameEvent, Dictionary<string, EventValue> d, uint keys)
         {
         }
 
@@ -184,16 +184,16 @@ namespace Challenges.Attributes
 
             string myWeapon = Weapons.Short(mine.Weapon);
             string theirWeapon = Weapons.Short(theirs.Weapon);
-            Dictionary<string, string> d = new(16)
+            Dictionary<string, EventValue> d = new(16)
             {
-                ["seconds"] = EventData.Num((float)seconds),
-                ["weapon"] = myWeapon,
-                ["other_weapon"] = theirWeapon,
-                ["same_weapon"] = EventData.Bool(Weapons.Same(myWeapon, theirWeapon)),
-                ["headshot"] = EventData.Bool(mine.Headshot),
-                ["other_headshot"] = EventData.Bool(theirs.Headshot),
-                ["isteamkill"] = EventData.Bool(mine.TeamKill | theirs.TeamKill),
-                ["isselfkill"] = "false",
+                ["seconds"] = EventValue.Of((float)seconds),
+                ["weapon"] = EventValue.Of(myWeapon),
+                ["other_weapon"] = EventValue.Of(theirWeapon),
+                ["same_weapon"] = EventValue.Of(Weapons.Same(myWeapon, theirWeapon)),
+                ["headshot"] = EventValue.Of(mine.Headshot),
+                ["other_headshot"] = EventValue.Of(theirs.Headshot),
+                ["isteamkill"] = EventValue.Of(mine.TeamKill | theirs.TeamKill),
+                ["isselfkill"] = EventValue.Of(false),
             };
             EventData.FillPlayer(d, player, TradeAttackerKeys, _attackerFields);
             EventData.FillPlayer(d, other, TradeVictimKeys, _victimFields);

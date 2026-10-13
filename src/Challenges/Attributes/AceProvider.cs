@@ -78,15 +78,15 @@ namespace Challenges.Attributes
         {
         }
 
-        public void WritePlayer(Dictionary<string, string> d, string[] keys, uint suffixes, CCSPlayerController? player)
+        public void WritePlayer(Dictionary<string, EventValue> d, string[] keys, uint suffixes, CCSPlayerController? player)
         {
         }
 
-        public void WriteEvent(string eventName, GameEvent gameEvent, Dictionary<string, string> d, uint keys)
+        public void WriteEvent(string eventName, GameEvent gameEvent, Dictionary<string, EventValue> d, uint keys)
         {
             for (int i = 0; i < _bounds.Count; i++)
             {
-                d[_bounds[i].Key] = EventData.Bool(_hits[i]);
+                d[_bounds[i].Key] = EventValue.Of(_hits[i]);
             }
         }
 

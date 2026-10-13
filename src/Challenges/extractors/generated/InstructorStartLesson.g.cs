@@ -21,14 +21,14 @@ namespace Challenges.Extractors
             ["player"] = "userid",
         };
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
+        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need)
         {
             var e = (EventInstructorStartLesson)gameEvent;
-            if (need.Keys[0]) d["hint_name"] = e.HintName;
-            if (need.Keys[1]) d["hint_target"] = EventData.Num(e.HintTarget);
-            if (need.Keys[2]) d["vr_controller_type"] = EventData.Num(e.VrControllerType);
-            if (need.Keys[3]) d["vr_movement_type"] = EventData.Num(e.VrMovementType);
-            if (need.Keys[4]) d["vr_single_controller"] = EventData.Bool(e.VrSingleController);
+            if (need.Keys[0]) d["hint_name"] = EventValue.Of(e.HintName);
+            if (need.Keys[1]) d["hint_target"] = EventValue.Of(e.HintTarget);
+            if (need.Keys[2]) d["vr_controller_type"] = EventValue.Of(e.VrControllerType);
+            if (need.Keys[3]) d["vr_movement_type"] = EventValue.Of(e.VrMovementType);
+            if (need.Keys[4]) d["vr_single_controller"] = EventValue.Of(e.VrSingleController);
             if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, e.Userid, need, 0);
         }
 

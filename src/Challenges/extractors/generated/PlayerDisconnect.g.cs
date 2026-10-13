@@ -21,15 +21,15 @@ namespace Challenges.Extractors
             ["player"] = "userid",
         };
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
+        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need)
         {
             var e = (EventPlayerDisconnect)gameEvent;
-            if (need.Keys[0]) d["ever_fully_connected"] = EventData.Bool(e.EverFullyConnected);
-            if (need.Keys[1]) d["name"] = e.Name;
-            if (need.Keys[2]) d["networkid"] = e.Networkid;
-            if (need.Keys[3]) d["PlayerID"] = EventData.Num(e.Playerid);
-            if (need.Keys[4]) d["reason"] = EventData.Num(e.Reason);
-            if (need.Keys[5]) d["xuid"] = EventData.Num(e.Xuid);
+            if (need.Keys[0]) d["ever_fully_connected"] = EventValue.Of(e.EverFullyConnected);
+            if (need.Keys[1]) d["name"] = EventValue.Of(e.Name);
+            if (need.Keys[2]) d["networkid"] = EventValue.Of(e.Networkid);
+            if (need.Keys[3]) d["PlayerID"] = EventValue.Of(e.Playerid);
+            if (need.Keys[4]) d["reason"] = EventValue.Of(e.Reason);
+            if (need.Keys[5]) d["xuid"] = EventValue.Of(e.Xuid);
             if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, e.Userid, need, 0);
         }
 

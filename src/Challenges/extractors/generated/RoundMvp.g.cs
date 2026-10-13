@@ -21,14 +21,14 @@ namespace Challenges.Extractors
             ["player"] = "userid",
         };
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
+        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need)
         {
             var e = (EventRoundMvp)gameEvent;
-            if (need.Keys[0]) d["musickitid"] = EventData.Num(e.Musickitid);
-            if (need.Keys[1]) d["musickitmvps"] = EventData.Num(e.Musickitmvps);
-            if (need.Keys[2]) d["nomusic"] = EventData.Num(e.Nomusic);
-            if (need.Keys[3]) d["reason"] = EventData.Num(e.Reason);
-            if (need.Keys[4]) d["value"] = EventData.Num(e.Value);
+            if (need.Keys[0]) d["musickitid"] = EventValue.Of(e.Musickitid);
+            if (need.Keys[1]) d["musickitmvps"] = EventValue.Of(e.Musickitmvps);
+            if (need.Keys[2]) d["nomusic"] = EventValue.Of(e.Nomusic);
+            if (need.Keys[3]) d["reason"] = EventValue.Of(e.Reason);
+            if (need.Keys[4]) d["value"] = EventValue.Of(e.Value);
             if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, e.Userid, need, 0);
         }
 

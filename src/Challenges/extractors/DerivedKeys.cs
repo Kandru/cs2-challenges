@@ -8,7 +8,7 @@ namespace Challenges.Extractors
     /// <summary>Derived rule keys that are not 1:1 CSS fields (team/self flags, enum names).</summary>
     public static class DerivedKeys
     {
-        public static void Apply(string kind, GameEvent gameEvent, Dictionary<string, string> d)
+        public static void Apply(string kind, GameEvent gameEvent, Dictionary<string, EventValue> d)
         {
             switch (kind)
             {
@@ -31,14 +31,14 @@ namespace Challenges.Extractors
                 case "self_avenged":
                 {
                     var e = (EventPlayerAvengedTeammate)gameEvent;
-                    d["isselfavenged"] = EventData.Bool(e.AvengerId == e.AvengedPlayerId);
+                    d["isselfavenged"] = EventValue.Of(e.AvengerId == e.AvengedPlayerId);
                     break;
                 }
                 case "player_team_names":
                 {
                     var e = (EventPlayerTeam)gameEvent;
-                    d["old_team"] = Enum.GetName(typeof(CsTeam), e.Oldteam) ?? "Unknown";
-                    d["new_team"] = Enum.GetName(typeof(CsTeam), e.Team) ?? "Unknown";
+                    d["old_team"] = EventValue.Of(Enum.GetName(typeof(CsTeam), e.Oldteam) ?? "Unknown");
+                    d["new_team"] = EventValue.Of(Enum.GetName(typeof(CsTeam), e.Team) ?? "Unknown");
                     break;
                 }
             }
@@ -46,7 +46,7 @@ namespace Challenges.Extractors
 
         private static void WriteTeamSelf<T>(
             T gameEvent,
-            Dictionary<string, string> d,
+            Dictionary<string, EventValue> d,
             string teamKey,
             string selfKey,
             Func<T, CCSPlayerController?> attackerOf,
@@ -54,10 +54,8 @@ namespace Challenges.Extractors
         {
             CCSPlayerController? attacker = attackerOf(gameEvent);
             CCSPlayerController? victim = victimOf(gameEvent);
-            d[teamKey] = attacker != null && victim != null
-                ? EventData.Bool(attacker.TeamNum == victim.TeamNum)
-                : "false";
-            d[selfKey] = EventData.Bool(Players.Same(attacker, victim));
+            d[teamKey] = EventValue.Of(attacker != null && victim != null && attacker.TeamNum == victim.TeamNum);
+            d[selfKey] = EventValue.Of(Players.Same(attacker, victim));
         }
     }
 }
