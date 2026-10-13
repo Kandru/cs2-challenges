@@ -73,7 +73,16 @@ namespace Challenges
 
             if (SteamIds.GetPlayerIfSteam(patch.Slot, patch.SteamId) is { } player)
             {
-                PlayEffects(player, state, patch);
+                try
+                {
+                    PlayEffects(player, state, patch);
+                }
+                finally
+                {
+                    // Other players get one message for all completions of this patch.
+                    Notes.FlushCompletions(player);
+                }
+
                 if (patch.Touched is { Count: > 0 } touched && GlobalConfig.Gui.ShowOnProgress)
                 {
                     Tracker.ShowProgress(player, touched);

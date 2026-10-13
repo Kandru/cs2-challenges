@@ -62,10 +62,10 @@ Created on first start. Example:
 | `gui.progress_duration` | Seconds the progress tracker stays up (minimum 1). |
 | `gui.tracker_rows` | Rows on the tracker (clamped 1–5). |
 | `gui.theme` | Accent color: `red`, `coral`, `orange`, `copper`, `gold`, `t`, `lime`, `green`, `teal`, `cyan`, `blue`, `ct`, `purple`, `magenta`, `pink`, `silver`. Unknown names become `gold`. |
-| `notifications.*` | Chat and sound on progress / complete / rule broken. Empty sound string = no sound. A value starting with `sounds/` is a client-only `play`. Any other value is a sound event (`EmitSound`). |
+| `notifications.*` | Chat and sound on progress / complete / rule broken. Empty sound string = no sound. A value starting with `sounds/` is a client-only `play`. Any other value is a sound event (`EmitSound`). With `notify_other_on_challenge_complete`, several completions from one progress update reach the other players as a single message. |
 | `discord.language` | Language for Discord embed titles, field labels, and dates (`en`, `de`, …). Challenge/task names use the matching title from the challenge file. |
 | `discord.timezone` | Timezone for schedule start/end (IANA/Windows id, e.g. `Europe/Berlin`). Empty = server local. |
-| `discord.webhook_url` | Discord webhook URL. Empty disables all Discord posts. |
+| `discord.webhook_url` | Discord webhook URL. Empty disables all Discord posts. Posts are sent one at a time from a queue (up to 100 pending; the oldest is dropped when full). Rate limits (HTTP 429) are retried after Discord's `retry_after`, up to 3 tries. On map change or unload the queue gets 2 seconds to drain. |
 | `discord.on_task_completed` | Post when a visible task is completed (default `false`). Skipped when a challenge-complete post is sent for the same finish. Challenges with only one visible task never get a task card — only the challenge embed. Task posts also require the task’s `announce_completion`. |
 | `discord.on_challenge_completed` | Post when every visible task of a challenge is completed (default `true`). |
 | `discord.on_new_schedule` | Post when a new schedule becomes active (default `true`). |
