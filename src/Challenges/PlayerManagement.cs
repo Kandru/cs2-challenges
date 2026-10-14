@@ -288,14 +288,10 @@ namespace Challenges
                 Saves.Enqueue(state);
             }
 
-            if (SteamIds.IsCreditable(steamId) && engine.HasPending(steamId))
+            if (engine.WhenIdle(steamId, Save))
             {
                 DebugPrint($"disconnect {label}: deferring save until progress queue drains");
-                engine.WhenIdle(steamId, Save);
-                return;
             }
-
-            Save();
         }
 
         private static void ApplyIdentity(CCSPlayerController player, PlayerState state)

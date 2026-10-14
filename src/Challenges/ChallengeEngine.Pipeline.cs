@@ -102,16 +102,18 @@ namespace Challenges
 
         /// <summary>
         /// Runs <paramref name="save"/> now when idle, otherwise after the last patch for this steam id.
+        /// Returns true when the save was deferred.
         /// </summary>
-        public void WhenIdle(string steamId, Action save)
+        public bool WhenIdle(string steamId, Action save)
         {
-            if (!SteamIds.IsCreditable(steamId) || !HasPending(steamId))
+            if (!HasPending(steamId))
             {
                 save();
-                return;
+                return false;
             }
 
             _saveWhenIdle[steamId] = save;
+            return true;
         }
 
         private bool TryEnqueueWork(ProgressWorkItem item)
@@ -132,17 +134,9 @@ namespace Challenges
                 }
             }
 
-            if (_work.Writer.TryWrite(item))
-            {
-                return true;
-            }
-
-            foreach (ProgressTarget target in item.Targets)
-            {
-                FinishPending(target.SteamId);
-            }
-
-            return false;
+            // Cannot fail: the channel is unbounded and only Flush completes it, after setting _flushed.
+            _work.Writer.TryWrite(item);
+            return true;
         }
 
         private ProgressSeed CloneSeed(string steamId, string scheduleKey)
