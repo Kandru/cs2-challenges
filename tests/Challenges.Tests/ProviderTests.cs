@@ -150,6 +150,66 @@ namespace Challenges.Tests
         }
 
         [Fact]
+        public void Ace_credits_each_bound_once_per_round_and_slot()
+        {
+            RoundRoster roster = Roster(2, 2);
+            AceProvider ace = Ace(roster);
+            Assert.False(IsAce(Kill(ace, roster, 0, 2)));
+            Assert.True(IsAce(Kill(ace, roster, 0, 3)));
+            Assert.False(IsAce(Kill(ace, roster, 1, 2)));
+            Assert.True(IsAce(Kill(ace, roster, 1, 3)));
+
+            // A late joiner makes the kill count match the enemy count again; both slots were credited already.
+            roster.Set(4, CT, human: true);
+            Assert.False(IsAce(Kill(ace, roster, 0, 4)));
+            Assert.False(IsAce(Kill(ace, roster, 1, 4)));
+
+            // A new player in slot 0 starts without kills and credits; slot 1 keeps its credit.
+            ace.ForgetSlot(0);
+            Assert.False(IsAce(Kill(ace, roster, 0, 2)));
+            Assert.False(IsAce(Kill(ace, roster, 0, 3)));
+            Assert.True(IsAce(Kill(ace, roster, 0, 4)));
+            roster.Set(5, CT, human: true);
+            Assert.False(IsAce(Kill(ace, roster, 1, 5)));
+
+            // A new round clears every credit.
+            ace.Clear();
+            Fill(roster, 2, 2);
+            Assert.False(IsAce(Kill(ace, roster, 1, 2)));
+            Assert.True(IsAce(Kill(ace, roster, 1, 3)));
+        }
+
+        [Fact]
+        public void Ace_credit_bits_cover_every_bound_up_to_the_limit()
+        {
+            // 65 distinct bound pairs: only the first 64 get a credit bit and a key.
+            ChallengeTask[] tasks = new ChallengeTask[65];
+            for (int i = 0; i < tasks.Length; i++)
+            {
+                tasks[i] = TestData.Task($"t{i}", "player_kill", rules: [TestData.Rule("isace", "bool==", "true", min: 1, max: i + 1)]);
+            }
+
+            RoundRoster roster = Roster(1, 1);
+            AceProvider ace = new(roster);
+            Assert.True(ace.Configure(Tasks(tasks)));
+
+            Dictionary<string, EventValue> first = Kill(ace, roster, 0, 1);
+            Assert.Equal(64, first.Count);
+            Assert.DoesNotContain("isace.1.65", first.Keys);
+            Assert.All(first.Values, value => Assert.True(Bool(value)));
+
+            // Kill 2 against 2 enemies matches every bound with max >= 2 again, but all are credited.
+            roster.Set(2, CT, human: true);
+            Dictionary<string, EventValue> second = Kill(ace, roster, 0, 2);
+            Assert.All(second.Values, value => Assert.False(Bool(value)));
+
+            // Forgotten slot: the highest bit is clear again.
+            ace.ForgetSlot(0);
+            Assert.False(Bool(Kill(ace, roster, 0, 1)["isace.1.64"]));
+            Assert.True(Bool(Kill(ace, roster, 0, 2)["isace.1.64"]));
+        }
+
+        [Fact]
         public void Roster_counts_teams_and_moves()
         {
             RoundRoster roster = Roster(2, 3, ctBots: 1);
@@ -234,6 +294,40 @@ namespace Challenges.Tests
             Assert.Null(Record(trade, Death(6, 5, at: 21)));
             trade.Clear();
             Assert.Null(Record(trade, Death(5, 6, at: 21.5)));
+        }
+
+        [Fact]
+        public void Kill_record_is_a_value_without_controllers()
+        {
+            Type record = typeof(TradeProvider.KillRecord);
+            Assert.True(record.IsValueType);
+            foreach (System.Reflection.FieldInfo field in record.GetFields(
+                         System.Reflection.BindingFlags.Instance
+                         | System.Reflection.BindingFlags.Public
+                         | System.Reflection.BindingFlags.NonPublic))
+            {
+                Assert.True(field.FieldType.IsValueType || field.FieldType == typeof(string), field.Name);
+            }
+        }
+
+        [Fact]
+        public void Trade_keeps_the_earlier_kill_until_the_window_ends_and_returns_it_whole()
+        {
+            TradeProvider trade = Trade();
+            Assert.Null(Record(trade, new TradeProvider.KillRecord(1, 2, "weapon_awp", Headshot: true, TeamKill: true, At: 100)));
+            // Same direction again is no trade, only a second record.
+            Assert.Null(Record(trade, Death(1, 2, at: 101)));
+
+            // Exactly 5 s after the first kill it is still inside the window.
+            TradeProvider.KillRecord? latest = Record(trade, Death(2, 1, at: 105));
+            Assert.Equal(101.0, latest!.Value.At);
+            TradeProvider.KillRecord first = Record(trade, Death(2, 1, at: 105))!.Value;
+            Assert.Equal(new TradeProvider.KillRecord(1, 2, "weapon_awp", true, true, 100), first);
+
+            Assert.Null(Record(trade, Death(3, 4, at: 200)));
+            Assert.Null(Record(trade, Death(4, 3, at: 205.001)));
+            // The late kill was remembered instead; the window now runs from it.
+            Assert.NotNull(Record(trade, Death(3, 4, at: 210)));
         }
 
         [Fact]

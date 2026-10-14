@@ -330,6 +330,104 @@ namespace Challenges.Tests
             Assert.Equal(200, h.Amount(TestData.SteamId(0), "c", "t"));
         }
 
+        [Fact]
+        public void Open_types_turn_dirty_only_when_a_patch_completes_or_removes_a_task()
+        {
+            const string player = "76561198000000007";
+            ChallengeDefinition c = TestData.Challenge("c",
+                TestData.Task("kill", "player_kill", amount: 3),
+                TestData.Task("death", "player_death", amount: 1,
+                    actions: [TestData.Action("task.reset_completed", "kill")]));
+            using PipelineHarness h = new(TestData.Schedule(c));
+            OpenTypeIndex open = h.OpenTypes();
+            int kill = h.Type("player_kill").Id;
+            PlayerState state = h.Archive.GetOrCreate(player);
+            Assert.True(open.IsOpen(state, kill));
+            bool[] cache = state.OpenTypes!;
+
+            // Progress below the goal keeps the cache valid.
+            for (int i = 0; i < 2; i++)
+            {
+                h.Enqueue(AnyEvent, (player, "player_kill"));
+                h.Settle();
+                Assert.False(h.Applied[^1].CompletesTask);
+                Assert.False(state.OpenTypesDirty);
+            }
+
+            Assert.True(open.IsOpen(state, kill));
+            Assert.Same(cache, state.OpenTypes);
+
+            h.Enqueue(AnyEvent, (player, "player_kill"));
+            h.Settle();
+            Assert.True(h.Applied[^1].CompletesTask);
+            Assert.True(state.OpenTypesDirty);
+            Assert.False(open.IsOpen(state, kill));
+            Assert.False(state.OpenTypesDirty);
+
+            // A further event for the closed type changes nothing and leaves the cache alone.
+            int applied = h.Applied.Count;
+            h.Enqueue(AnyEvent, (player, "player_kill"));
+            h.Settle();
+            Assert.Equal(applied, h.Applied.Count);
+            Assert.False(state.OpenTypesDirty);
+
+            // The death completes its task and resets the kill task: dirty, and the kill type reopens.
+            h.Enqueue(AnyEvent, (player, "player_death"));
+            h.Settle();
+            Assert.NotNull(h.Applied[^1].Removals);
+            Assert.True(state.OpenTypesDirty);
+            Assert.True(open.IsOpen(state, kill));
+            Assert.Same(cache, state.OpenTypes);
+        }
+
+        [Fact]
+        public void Completion_only_patch_allocates_no_lists()
+        {
+            RunningSchedule schedule = TestData.Schedule();
+            ProgressPatch done = ProgressPatch.Done("s", 3, TestData.ScheduleKey, schedule);
+            Assert.Null(done.Upserts);
+            Assert.Null(done.Removals);
+            Assert.Null(done.Effects);
+            Assert.Null(done.Touched);
+            Assert.Null(done.DebugLines);
+            Assert.False(done.HasChanges);
+            Assert.False(done.Failed);
+            Assert.Equal((3, TestData.ScheduleKey), (done.Slot, done.ScheduleKey));
+
+            ProgressPatch failed = ProgressPatch.Done("s", 3, TestData.ScheduleKey, schedule, failed: true);
+            Assert.True(failed.Failed);
+            Assert.False(failed.HasChanges);
+
+            // Debug lines and touched rows alone are no change; every other list or value is.
+            ProgressPatch quiet = ProgressPatch.Done("s", 3, TestData.ScheduleKey, schedule);
+            quiet.AddDebug("line");
+            quiet.Touched = [];
+            Assert.False(quiet.HasChanges);
+            Assert.Null(quiet.Upserts);
+
+            ChallengeDefinition c = TestData.Challenge("c", TestData.Task("t", "player_kill"));
+            Assert.True(Changed(p => p.AddRemoval("c", "t"), p => p.Removals));
+            Assert.True(Changed(p => p.AddEffect(ProgressEffectKind.NotifyProgress, c), p => p.Effects));
+            Assert.True(Changed(p => p.SolvedAbsolute = 1, _ => null));
+            Assert.True(Changed(p => p.Upsert("c", "t", new TaskProgress { Amount = 1 }), p => p.Upserts));
+
+            // Upserts keep one entry per task, with the newest amount.
+            ProgressPatch patch = ProgressPatch.Done("s", 3, TestData.ScheduleKey, schedule);
+            patch.Upsert("c", "t", new TaskProgress { Amount = 1, LastUpdate = 10 });
+            patch.Upsert("c", "u", new TaskProgress { Amount = 1 });
+            patch.Upsert("c", "t", new TaskProgress { Amount = 2, LastUpdate = 11 });
+            ProgressUpsert[] expected = [new("c", "t", 2, 11), new("c", "u", 1, 0)];
+            Assert.Equal(expected, patch.Upserts!);
+
+            bool Changed(Action<ProgressPatch> change, Func<ProgressPatch, System.Collections.ICollection?> list)
+            {
+                ProgressPatch p = ProgressPatch.Done("s", 3, TestData.ScheduleKey, schedule);
+                change(p);
+                Assert.True(list(p) is null or { Count: 1 });
+                return p.HasChanges;
+            }
+        }
+
         private static ProgressSeed? Seed(ProgressWorkItem item) => Assert.Single(item.Targets).Seed;
     }
 }
