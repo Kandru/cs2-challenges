@@ -11,7 +11,7 @@ namespace Challenges
         /// <see cref="ReadClosedGates"/> returns the bits the current game state violates.
         /// </summary>
         [Flags]
-        private enum GlobalGate : byte
+        internal enum GlobalGate : byte
         {
             None = 0,
             NoWarmup = 1,
@@ -24,7 +24,7 @@ namespace Challenges
 
         /// <summary>One bit per <c>global.*</c> key the engine writes into event data.</summary>
         [Flags]
-        private enum GlobalKeyFlags : byte
+        internal enum GlobalKeyFlags : byte
         {
             None = 0,
             IsWarmup = 1,
@@ -34,7 +34,7 @@ namespace Challenges
         }
 
         /// <summary>Tasks of one challenge type in the current schedule, compiled at load.</summary>
-        private sealed class TypePlan(int id, string type)
+        internal sealed class TypePlan(int id, string type)
         {
             public int Id { get; } = id;
             public string Type { get; } = type;
@@ -87,7 +87,7 @@ namespace Challenges
         }
 
         /// <summary>Canonical keys the rules of <paramref name="types"/> read.</summary>
-        private static HashSet<string> RuleKeysOf(TypePlan[] types)
+        internal static HashSet<string> RuleKeysOf(TypePlan[] types)
         {
             HashSet<string> keys = new(StringComparer.Ordinal);
             foreach (TypePlan type in types)
@@ -110,7 +110,7 @@ namespace Challenges
         /// <c>global.*</c> do not match and are ignored. <paramref name="extraKeys"/> counts keys merged in after the
         /// fill (globals, provider values).
         /// </summary>
-        private static FillDemand BuildDemand(
+        internal static FillDemand BuildDemand(
             IExtractor extractor,
             TypePlan[] types,
             HashSet<string> keys,
@@ -138,9 +138,6 @@ namespace Challenges
             return need;
         }
 
-        /// <summary>Source of <see cref="_typeLayout"/>; unique across engine instances.</summary>
-        private static int _nextTypeLayout;
-
         /// <summary>Union of all type gates.</summary>
         private GlobalGate _gateUnion;
         /// <summary>
@@ -148,56 +145,8 @@ namespace Challenges
         /// global values <see cref="ReadClosedGates"/> reads per event.
         /// </summary>
         private GlobalGate _gateReads;
-        /// <summary>Type plans by <see cref="TypePlan.Id"/>.</summary>
-        private TypePlan[] _typeList = [];
-        /// <summary>Identifies the current type id assignment for <see cref="PlayerState.OpenTypes"/>.</summary>
-        private int _typeLayout;
-        private string _scheduleKey = string.Empty;
-
-        /// <summary>
-        /// False when every task of <paramref name="type"/> is complete for <paramref name="state"/>.
-        /// Locked or cooling-down tasks count as open. Recomputed lazily after progress changed.
-        /// </summary>
-        private bool IsTypeOpen(PlayerState state, TypePlan type)
-        {
-            bool[]? open = state.OpenTypes;
-            if (open == null
-                || state.OpenTypesDirty
-                || state.OpenTypesLayout != _typeLayout
-                || state.OpenTypesVersion != state.ProgressVersion)
-            {
-                open = RecomputeOpenTypes(state);
-            }
-
-            return open[type.Id];
-        }
-
-        private bool[] RecomputeOpenTypes(PlayerState state)
-        {
-            bool[] open = state.OpenTypes is { } existing && existing.Length == _typeList.Length
-                ? existing
-                : new bool[_typeList.Length];
-            foreach (TypePlan type in _typeList)
-            {
-                bool any = false;
-                foreach ((ChallengeDefinition challenge, ChallengeTask task) in type.Tasks)
-                {
-                    if (!ChallengeProgress.IsTaskComplete(state, _scheduleKey, challenge.Id, task))
-                    {
-                        any = true;
-                        break;
-                    }
-                }
-
-                open[type.Id] = any;
-            }
-
-            state.OpenTypes = open;
-            state.OpenTypesLayout = _typeLayout;
-            state.OpenTypesVersion = state.ProgressVersion;
-            state.OpenTypesDirty = false;
-            return open;
-        }
+        /// <summary>Per player open types, indexed by <see cref="TypePlan.Id"/>.</summary>
+        private readonly OpenTypeIndex _openTypes = new();
 
         /// <summary>
         /// Gate bits the current game state violates. Reads warmup / round state only when a loaded type
@@ -237,7 +186,7 @@ namespace Challenges
             };
 
         /// <summary>Preconditions one task's rules pin down; every such rule must pass for progress.</summary>
-        private static GlobalGate TaskGate(ChallengeTask task)
+        internal static GlobalGate TaskGate(ChallengeTask task)
         {
             GlobalGate gate = GlobalGate.None;
             foreach (CompiledRule rule in task.CompiledRules)

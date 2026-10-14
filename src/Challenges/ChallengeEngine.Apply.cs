@@ -5,58 +5,12 @@ namespace Challenges
 {
     public partial class ChallengeEngine
     {
-        private void ApplyPatch(ProgressPatch patch)
+        /// <summary>
+        /// Game-side part of a patch with changes, after <see cref="ProgressPipeline"/> wrote its progress into
+        /// <paramref name="state"/>: tracker and menu invalidation, debug lines and the player's effects.
+        /// </summary>
+        private void OnPatchApplied(ProgressPatch patch, PlayerState state)
         {
-            if (!patch.HasChanges)
-            {
-                if (patch.Failed)
-                {
-                    DiscardShadow(patch.SteamId);
-                }
-
-                FinishPending(patch.SteamId);
-                return;
-            }
-
-            PlayerState state = Archive.GetOrCreate(patch.SteamId);
-            string scheduleKey = patch.ScheduleKey;
-            // Progress below the goal never closes or reopens a type, so the open-type cache stays valid then.
-            if (patch.CompletesTask || patch.Removals != null)
-            {
-                state.OpenTypesDirty = true;
-            }
-
-            if (patch.Removals != null)
-            {
-                foreach ((string challengeId, string taskId) in patch.Removals)
-                {
-                    if (state.Challenges.TryGetValue(scheduleKey, out var challenges)
-                        && challenges.TryGetValue(challengeId, out var tasks)
-                        && tasks.Remove(taskId))
-                    {
-                        state.Dirty = true;
-                    }
-                }
-            }
-
-            if (patch.Upserts != null)
-            {
-                foreach (ProgressUpsert upsert in patch.Upserts)
-                {
-                    TaskProgress progress = ChallengeProgress.GetOrCreate(
-                        state, scheduleKey, upsert.ChallengeId, upsert.TaskId);
-                    progress.Amount = upsert.Amount;
-                    progress.LastUpdate = upsert.LastUpdate;
-                    state.Dirty = true;
-                }
-            }
-
-            if (patch.SolvedAbsolute is int solved)
-            {
-                state.Statistics.AmountChallengesSolved = solved;
-                state.Dirty = true;
-            }
-
             if (patch.Upserts != null || patch.Removals != null || patch.SolvedAbsolute != null)
             {
                 state.TrackerContentDirty = true;
@@ -99,8 +53,6 @@ namespace Challenges
                     state.MenuDirty = true;
                 }
             }
-
-            FinishPending(patch.SteamId);
         }
 
         private void PlayEffects(CCSPlayerController player, PlayerState state, ProgressPatch patch)

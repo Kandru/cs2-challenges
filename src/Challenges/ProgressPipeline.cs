@@ -4,9 +4,18 @@ using System.Threading.Channels;
 
 namespace Challenges
 {
-    public partial class ChallengeEngine
+    /// <summary>
+    /// Progress work between the game thread and a single background worker: in-flight counts, worker shadows
+    /// and their seeds, the patch queue and saves deferred until a steam id is idle. Never calls into the game;
+    /// the owner prunes archive states before a seed (<paramref name="prune"/>) and plays the game-side part of
+    /// every applied patch (<paramref name="onApplied"/>). Everything except the worker runs on the game thread.
+    /// </summary>
+    internal sealed partial class ProgressPipeline(
+        PlayerArchive archive,
+        Action<PlayerState, string> prune,
+        Action<ProgressPatch, PlayerState> onApplied)
     {
-        private const int ApplyBatchSize = 32;
+        public const int ApplyBatchSize = 32;
         private static readonly TimeSpan WorkerJoinTimeout = TimeSpan.FromSeconds(5);
 
         private readonly Channel<ProgressWorkItem> _work =
@@ -44,6 +53,9 @@ namespace Challenges
         private Task? _workerTask;
         private bool _flushed;
 
+        /// <summary>True after <see cref="Flush"/>; no work is accepted any more.</summary>
+        public bool IsFlushed => _flushed;
+
         private void EnsureWorker() =>
             _workerTask ??= Task.Factory.StartNew(
                 WorkerLoop,
@@ -75,7 +87,7 @@ namespace Challenges
 
         /// <summary>
         /// Completes the work channel, joins the worker, and applies remaining patches on the caller
-        /// (main thread). Must run before <see cref="Destroy"/> and before player saves on unload.
+        /// (main thread). Must run before the owner is destroyed and before player saves on unload.
         /// </summary>
         public void Flush()
         {
@@ -128,9 +140,10 @@ namespace Challenges
             return true;
         }
 
-        private bool TryEnqueueWork(ProgressWorkItem item)
+        /// <summary>Counts every target as in flight, seeds idle steam ids when stale, and hands the item to the worker.</summary>
+        public bool TryEnqueue(ProgressWorkItem item)
         {
-            if (_flushed || _destroyed)
+            if (_flushed)
             {
                 return false;
             }
@@ -157,8 +170,8 @@ namespace Challenges
         /// </summary>
         private ProgressSeed? SeedIfStale(string steamId, string scheduleKey)
         {
-            PlayerState state = Archive.GetOrCreate(steamId);
-            PruneOutdated(state, scheduleKey);
+            PlayerState state = archive.GetOrCreate(steamId);
+            prune(state, scheduleKey);
             if (_seeds.TryGetValue(steamId, out int version) && version == state.ProgressVersion)
             {
                 return null;
@@ -181,7 +194,7 @@ namespace Challenges
         /// </summary>
         public void OnTick()
         {
-            if (_patches.IsEmpty || _flushed || _destroyed)
+            if (_patches.IsEmpty || _flushed)
             {
                 return;
             }
@@ -212,6 +225,67 @@ namespace Challenges
             }
         }
 
+        private void ApplyPatch(ProgressPatch patch)
+        {
+            if (!patch.HasChanges)
+            {
+                if (patch.Failed)
+                {
+                    DiscardShadow(patch.SteamId);
+                }
+
+                FinishPending(patch.SteamId);
+                return;
+            }
+
+            PlayerState state = archive.GetOrCreate(patch.SteamId);
+            ApplyProgress(state, patch);
+            onApplied(patch, state);
+            FinishPending(patch.SteamId);
+        }
+
+        /// <summary>Writes the patch's absolute amounts, removals and solved count into the archive state.</summary>
+        private static void ApplyProgress(PlayerState state, ProgressPatch patch)
+        {
+            string scheduleKey = patch.ScheduleKey;
+            // Progress below the goal never closes or reopens a type, so the open-type cache stays valid then.
+            if (patch.CompletesTask || patch.Removals != null)
+            {
+                state.OpenTypesDirty = true;
+            }
+
+            if (patch.Removals != null)
+            {
+                foreach ((string challengeId, string taskId) in patch.Removals)
+                {
+                    if (state.Challenges.TryGetValue(scheduleKey, out var challenges)
+                        && challenges.TryGetValue(challengeId, out var tasks)
+                        && tasks.Remove(taskId))
+                    {
+                        state.Dirty = true;
+                    }
+                }
+            }
+
+            if (patch.Upserts != null)
+            {
+                foreach (ProgressUpsert upsert in patch.Upserts)
+                {
+                    TaskProgress progress = ChallengeProgress.GetOrCreate(
+                        state, scheduleKey, upsert.ChallengeId, upsert.TaskId);
+                    progress.Amount = upsert.Amount;
+                    progress.LastUpdate = upsert.LastUpdate;
+                    state.Dirty = true;
+                }
+            }
+
+            if (patch.SolvedAbsolute is int solved)
+            {
+                state.Statistics.AmountChallengesSolved = solved;
+                state.Dirty = true;
+            }
+        }
+
         /// <summary>Game thread only: one call per finished target of a work item.</summary>
         private void FinishPending(string steamId)
         {
@@ -239,7 +313,7 @@ namespace Challenges
         /// Game thread: drops the worker shadow for <paramref name="steamId"/> now when idle, otherwise once
         /// its last in-flight target finished. The next enqueue reseeds from the archive.
         /// </summary>
-        private void DiscardShadow(string steamId)
+        public void DiscardShadow(string steamId)
         {
             if (HasPending(steamId))
             {

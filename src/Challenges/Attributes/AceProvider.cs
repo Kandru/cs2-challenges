@@ -110,24 +110,27 @@ namespace Challenges.Attributes
 
         private void OnDeath(EventPlayerDeath e)
         {
-            Array.Clear(_hits);
-
             CCSPlayerController? attacker = e.Attacker;
             CCSPlayerController? victim = e.Userid;
             if (!Players.IsHumanViewer(attacker) || !Players.IsHumanViewer(victim))
             {
+                Array.Clear(_hits);
                 return;
             }
 
-            int slot = attacker.Slot;
-            int victimSlot = victim.Slot;
+            OnHumanKill(attacker.Slot, attacker.TeamNum, victim.Slot, victim.TeamNum);
+        }
+
+        /// <summary>A human killed a human; sets the bounds this kill completes for the next <see cref="WriteEvent"/>.</summary>
+        internal void OnHumanKill(int slot, int attackerTeam, int victimSlot, int enemyTeam)
+        {
+            Array.Clear(_hits);
             if (slot == victimSlot || (uint)slot >= (uint)_kills.Length)
             {
                 return;
             }
 
-            int enemyTeam = victim.TeamNum;
-            if (attacker.TeamNum == enemyTeam
+            if (attackerTeam == enemyTeam
                 || enemyTeam is not ((int)CsTeam.Terrorist or (int)CsTeam.CounterTerrorist))
             {
                 return;

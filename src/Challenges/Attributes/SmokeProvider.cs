@@ -133,7 +133,11 @@ namespace Challenges.Attributes
             Probe(x, y, z, now, out inside, out _, out _);
         }
 
-        private void Probe(float x, float y, float z, double now, out bool inside, out float distance, out float age)
+        /// <summary>
+        /// Whether a live smoke covers the point, with distance and age of the closest covering smoke; otherwise
+        /// those of the closest smoke, or 9999 and 0 without smokes.
+        /// </summary>
+        internal void Probe(float x, float y, float z, double now, out bool inside, out float distance, out float age)
         {
             if (_smokes.Count == 0)
             {
@@ -224,13 +228,13 @@ namespace Challenges.Attributes
         }
 
         /// <summary>Prunes first, so smokes do not pile up while no rule reads them.</summary>
-        private void AddSmoke(int entityId, float x, float y, float z, double at)
+        internal void AddSmoke(int entityId, float x, float y, float z, double at)
         {
             PruneSmokes(at);
             _smokes.Add(new LiveSmoke(entityId, x, y, z, at));
         }
 
-        private void RemoveSmoke(int entityId)
+        internal void RemoveSmoke(int entityId)
         {
             for (int i = _smokes.Count - 1; i >= 0; i--)
             {
@@ -241,7 +245,7 @@ namespace Challenges.Attributes
             }
         }
 
-        private void PruneSmokes(double now)
+        internal void PruneSmokes(double now)
         {
             for (int i = _smokes.Count - 1; i >= 0; i--)
             {

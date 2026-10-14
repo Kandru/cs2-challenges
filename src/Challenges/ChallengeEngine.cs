@@ -29,6 +29,7 @@ namespace Challenges
         private readonly HashSet<PlayerState> _pruned = [];
         private readonly List<string> _pruneScratch = [];
         private readonly AttributeRegistry _attributes;
+        private readonly ProgressPipeline _pipeline;
         private Dictionary<string, TypePlan> _types = new(StringComparer.Ordinal);
         private Dictionary<string, ExtractorPlan[]> _activeExtractorsByEvent = new(StringComparer.Ordinal);
         private Dictionary<string, ExtractorPlan> _activeListeners = new(StringComparer.Ordinal);
@@ -47,6 +48,7 @@ namespace Challenges
             : base(state, localizer)
         {
             _attributes = new AttributeRegistry(TargetOne, EnqueueOne);
+            _pipeline = new ProgressPipeline(Archive, PruneOutdated, OnPatchApplied);
             RebuildEvents();
         }
 
@@ -66,41 +68,9 @@ namespace Challenges
         /// </summary>
         public void RebuildEvents()
         {
-            Dictionary<string, TypePlan> byType = new(StringComparer.Ordinal);
+            RunningSchedule? schedule = CurrentSchedule;
             List<ChallengeTask> allTasks = [];
-            GlobalKeyFlags globalKeys = GlobalKeyFlags.None;
-
-            if (CurrentSchedule is { } schedule)
-            {
-                foreach (ChallengeDefinition challenge in schedule.Challenges)
-                {
-                    foreach (ChallengeTask task in challenge.Tasks)
-                    {
-                        // Tasks built without Challenges.NormalizeDefinition; RulesPass fails closed on these.
-                        if (task.CompiledRules.Length != task.Rules.Count)
-                        {
-                            task.CompiledRules = ChallengeRules.Compile(task);
-                        }
-
-                        GlobalGate gate = TaskGate(task);
-                        if (!byType.TryGetValue(task.Type, out TypePlan? plan))
-                        {
-                            byType[task.Type] = plan = new TypePlan(byType.Count, task.Type) { Gate = gate };
-                        }
-                        else
-                        {
-                            plan.Gate &= gate;
-                        }
-
-                        plan.Tasks.Add((challenge, task));
-                        allTasks.Add(task);
-                        foreach (CompiledRule rule in task.CompiledRules)
-                        {
-                            globalKeys |= GlobalKey(rule.Key);
-                        }
-                    }
-                }
-            }
+            Dictionary<string, TypePlan> byType = BuildTypePlans(schedule, allTasks, out GlobalKeyFlags globalKeys);
 
             GlobalGate gateUnion = GlobalGate.None;
             foreach (TypePlan plan in byType.Values)
@@ -108,16 +78,14 @@ namespace Challenges
                 gateUnion |= plan.Gate;
             }
 
-            TypePlan[] typeList = new TypePlan[byType.Count];
+            var tasksById = new List<(ChallengeDefinition Challenge, ChallengeTask Task)>[byType.Count];
             foreach (TypePlan plan in byType.Values)
             {
-                typeList[plan.Id] = plan;
+                tasksById[plan.Id] = plan.Tasks;
             }
 
             _types = byType;
-            _typeList = typeList;
-            _typeLayout = Interlocked.Increment(ref _nextTypeLayout);
-            _scheduleKey = CurrentSchedule?.Key ?? string.Empty;
+            _openTypes.Rebuild(tasksById, schedule?.Key ?? string.Empty);
             _gateUnion = gateUnion;
             _gateReads = (globalKeys & GlobalKeyFlags.IsWarmup) != 0
                 ? gateUnion | GlobalGate.WarmupBits
@@ -178,13 +146,88 @@ namespace Challenges
             _boundListeners = listeners;
         }
 
+        /// <summary>
+        /// One plan per task type of <paramref name="schedule"/>, ids in order of first use; a type's gate keeps
+        /// only the preconditions every one of its tasks has. Adds every task to <paramref name="allTasks"/> and
+        /// returns the <c>global.*</c> keys their rules read in <paramref name="globalKeys"/>.
+        /// </summary>
+        internal static Dictionary<string, TypePlan> BuildTypePlans(
+            RunningSchedule? schedule,
+            List<ChallengeTask> allTasks,
+            out GlobalKeyFlags globalKeys)
+        {
+            Dictionary<string, TypePlan> byType = new(StringComparer.Ordinal);
+            globalKeys = GlobalKeyFlags.None;
+            if (schedule == null)
+            {
+                return byType;
+            }
+
+            foreach (ChallengeDefinition challenge in schedule.Challenges)
+            {
+                foreach (ChallengeTask task in challenge.Tasks)
+                {
+                    // Tasks built without Challenges.NormalizeDefinition; RulesPass fails closed on these.
+                    if (task.CompiledRules.Length != task.Rules.Count)
+                    {
+                        task.CompiledRules = ChallengeRules.Compile(task);
+                    }
+
+                    GlobalGate gate = TaskGate(task);
+                    if (!byType.TryGetValue(task.Type, out TypePlan? plan))
+                    {
+                        byType[task.Type] = plan = new TypePlan(byType.Count, task.Type) { Gate = gate };
+                    }
+                    else
+                    {
+                        plan.Gate &= gate;
+                    }
+
+                    plan.Tasks.Add((challenge, task));
+                    allTasks.Add(task);
+                    foreach (CompiledRule rule in task.CompiledRules)
+                    {
+                        globalKeys |= GlobalKey(rule.Key);
+                    }
+                }
+            }
+
+            return byType;
+        }
+
+        /// <summary>
+        /// Completes the progress worker and applies remaining patches on the caller (main thread).
+        /// Must run before <see cref="Destroy"/> and before player saves on unload.
+        /// </summary>
+        public void Flush() => _pipeline.Flush();
+
+        /// <summary>True when this steam id still has unapplied progress work.</summary>
+        public bool HasPending(string steamId) => _pipeline.HasPending(steamId);
+
+        /// <summary>
+        /// Runs <paramref name="save"/> now when idle, otherwise after the last patch for this steam id.
+        /// Returns true when the save was deferred.
+        /// </summary>
+        public bool WhenIdle(string steamId, Action save) => _pipeline.WhenIdle(steamId, save);
+
+        /// <summary>Game thread, once per server tick: applies a budget of finished progress patches.</summary>
+        public void OnTick()
+        {
+            if (_destroyed)
+            {
+                return;
+            }
+
+            _pipeline.OnTick();
+        }
+
         /// <summary>Drops per-player engine and attribute state when the player leaves.</summary>
         public void ForgetPlayer(CCSPlayerController player, PlayerState state)
         {
             _pruned.Remove(state);
             if (SteamIds.IsCreditable(state.SteamId))
             {
-                DiscardShadow(state.SteamId);
+                _pipeline.DiscardShadow(state.SteamId);
             }
 
             int slot = player.Slot;
@@ -210,7 +253,7 @@ namespace Challenges
             _gateUnion = GlobalGate.None;
             _gateReads = GlobalGate.None;
             _globalKeys = GlobalKeyFlags.None;
-            _typeList = [];
+            _openTypes.Clear();
             _activeExtractorsByEvent = new(StringComparer.Ordinal);
             _activeListeners = new(StringComparer.Ordinal);
             _boundEvents = [];
@@ -394,7 +437,7 @@ namespace Challenges
         }
 
         private bool CanHandle() =>
-            !_destroyed && !_flushed && _types.Count > 0 && GlobalConfig.Enabled;
+            !_destroyed && !_pipeline.IsFlushed && _types.Count > 0 && GlobalConfig.Enabled;
 
         /// <summary>
         /// Valid, creditable targets whose type is loaded and not closed by <paramref name="closed"/>.
@@ -417,7 +460,7 @@ namespace Challenges
                 }
 
                 // Nothing left to earn for this type; in-flight work may still reset tasks, so never skip then.
-                if (!IsTypeOpen(identity.State, plan) && !HasPending(identity.SteamId))
+                if (!_openTypes.IsOpen(identity.State, plan.Id) && !_pipeline.HasPending(identity.SteamId))
                 {
                     continue;
                 }
@@ -481,13 +524,13 @@ namespace Challenges
             List<ProgressTarget> targets,
             GlobalGate closed)
         {
-            if (CurrentSchedule is not { } schedule || targets.Count == 0)
+            if (_destroyed || CurrentSchedule is not { } schedule || targets.Count == 0)
             {
                 return;
             }
 
             MergeGlobalData(data, closed);
-            _ = TryEnqueueWork(new ProgressWorkItem
+            _ = _pipeline.TryEnqueue(new ProgressWorkItem
             {
                 Source = source,
                 Data = data,
@@ -608,6 +651,8 @@ namespace Challenges
             state.Dirty = true;
             state.ProgressVersion++;
         }
+
+        private static void Log(string message) => Console.WriteLine($"[Challenges] {message}");
 
         private sealed class SlotIdentity(int slot, int? userId, string steamId, PlayerState state)
         {

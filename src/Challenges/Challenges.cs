@@ -288,7 +288,7 @@ namespace Challenges
             return map;
         }
 
-        private static void NormalizeDefinition(ChallengeDefinition def)
+        internal static void NormalizeDefinition(ChallengeDefinition def)
         {
             foreach (ChallengeTask task in def.Tasks)
             {
