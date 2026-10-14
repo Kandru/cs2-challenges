@@ -7,7 +7,7 @@ using Challenges.Utils;
 
 namespace Challenges.Extractors
 {
-    public sealed class SpecTargetUpdated : IExtractor
+    public sealed class SpecTargetUpdated : IGameEventExtractor
     {
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventSpecTargetUpdated";

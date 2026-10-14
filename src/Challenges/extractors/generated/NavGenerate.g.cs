@@ -7,7 +7,7 @@ using Challenges.Utils;
 
 namespace Challenges.Extractors
 {
-    public sealed class NavGenerate : IExtractor
+    public sealed class NavGenerate : IGameEventExtractor
     {
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventNavGenerate";

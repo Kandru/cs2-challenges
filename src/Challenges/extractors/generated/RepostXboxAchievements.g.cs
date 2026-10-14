@@ -7,7 +7,7 @@ using Challenges.Utils;
 
 namespace Challenges.Extractors
 {
-    public sealed class RepostXboxAchievements : IExtractor
+    public sealed class RepostXboxAchievements : IGameEventExtractor
     {
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventRepostXboxAchievements";

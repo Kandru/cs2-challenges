@@ -7,7 +7,7 @@ using Challenges.Utils;
 
 namespace Challenges.Extractors
 {
-    public sealed class ParachuteDeploy : IExtractor
+    public sealed class ParachuteDeploy : IGameEventExtractor
     {
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventParachuteDeploy";

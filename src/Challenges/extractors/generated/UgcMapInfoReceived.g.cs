@@ -7,7 +7,7 @@ using Challenges.Utils;
 
 namespace Challenges.Extractors
 {
-    public sealed class UgcMapInfoReceived : IExtractor
+    public sealed class UgcMapInfoReceived : IGameEventExtractor
     {
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventUgcMapInfoReceived";

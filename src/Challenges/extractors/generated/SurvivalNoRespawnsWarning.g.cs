@@ -7,7 +7,7 @@ using Challenges.Utils;
 
 namespace Challenges.Extractors
 {
-    public sealed class SurvivalNoRespawnsWarning : IExtractor
+    public sealed class SurvivalNoRespawnsWarning : IGameEventExtractor
     {
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventSurvivalNoRespawnsWarning";

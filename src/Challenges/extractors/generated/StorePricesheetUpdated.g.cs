@@ -7,7 +7,7 @@ using Challenges.Utils;
 
 namespace Challenges.Extractors
 {
-    public sealed class StorePricesheetUpdated : IExtractor
+    public sealed class StorePricesheetUpdated : IGameEventExtractor
     {
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventStorePricesheetUpdated";

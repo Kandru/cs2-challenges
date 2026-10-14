@@ -7,7 +7,7 @@ using Challenges.Utils;
 
 namespace Challenges.Extractors
 {
-    public sealed class AddPlayerSonarIcon : IExtractor
+    public sealed class AddPlayerSonarIcon : IGameEventExtractor
     {
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventAddPlayerSonarIcon";

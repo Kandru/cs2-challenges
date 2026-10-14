@@ -7,7 +7,7 @@ using Challenges.Utils;
 
 namespace Challenges.Extractors
 {
-    public sealed class ClientLoadoutChanged : IExtractor
+    public sealed class ClientLoadoutChanged : IGameEventExtractor
     {
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventClientLoadoutChanged";

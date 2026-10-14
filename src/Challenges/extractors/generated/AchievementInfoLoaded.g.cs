@@ -7,7 +7,7 @@ using Challenges.Utils;
 
 namespace Challenges.Extractors
 {
-    public sealed class AchievementInfoLoaded : IExtractor
+    public sealed class AchievementInfoLoaded : IGameEventExtractor
     {
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventAchievementInfoLoaded";

@@ -3,8 +3,8 @@ using CounterStrikeSharp.API.Core;
 namespace Challenges.Extractors
 {
     /// <summary>
-    /// Controllers of the current game event by player prefix index, so <see cref="IExtractor.Targets"/>,
-    /// <see cref="IExtractor.Fill"/> and attribute writes share one native read each. Reused by the engine,
+    /// Controllers of the current game event by player prefix index, so <see cref="IGameEventExtractor.Targets"/>,
+    /// <see cref="IGameEventExtractor.Fill"/> and attribute writes share one native read each. Reused by the engine,
     /// cleared after every extractor call. Game thread only, not reentrant.
     /// </summary>
     public sealed class EventPlayers

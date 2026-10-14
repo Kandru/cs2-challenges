@@ -46,24 +46,6 @@ namespace Challenges.Utils
             Double,
         }
 
-        public EventValueKind Kind => _kind;
-
-        /// <summary>The number as double (exact except integers beyond 2^53); 0 unless <see cref="Kind"/> is <see cref="EventValueKind.Number"/>.</summary>
-        public double Number =>
-            _format switch
-            {
-                NumberFormat.Int64 => _bits,
-                NumberFormat.UInt64 => (ulong)_bits,
-                NumberFormat.Single or NumberFormat.Double => BitConverter.Int64BitsToDouble(_bits),
-                _ => 0,
-            };
-
-        /// <summary>The flag; false unless <see cref="Kind"/> is <see cref="EventValueKind.Bool"/>.</summary>
-        public bool Bool => _kind == EventValueKind.Bool && _bits != 0;
-
-        /// <summary>The text; null unless <see cref="Kind"/> is <see cref="EventValueKind.Text"/>.</summary>
-        public string? Text => _text;
-
         public static EventValue Of(bool value) => new(EventValueKind.Bool, NumberFormat.None, value ? 1 : 0, null);
 
         public static EventValue Of(int value) => new(EventValueKind.Number, NumberFormat.Int64, value, null);

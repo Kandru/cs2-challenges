@@ -52,6 +52,7 @@ namespace Challenges
             public ExtractorPlan(IExtractor extractor, TypePlan[] types, AttributeRegistry attributes, int globalKeys)
             {
                 Extractor = extractor;
+                GameEvent = extractor as IGameEventExtractor;
                 Types = types;
                 HashSet<string> keys = RuleKeysOf(types);
                 Attributes = attributes.BuildDemand(extractor, keys);
@@ -59,6 +60,8 @@ namespace Challenges
             }
 
             public IExtractor Extractor { get; }
+            /// <summary><see cref="Extractor"/> of a game event; null for listeners, whose handlers fill the data.</summary>
+            public IGameEventExtractor? GameEvent { get; }
             public TypePlan[] Types { get; }
             public FillDemand Demand { get; }
             /// <summary>Provider values to add after <c>Fill</c>; null when no rule of these types reads one.</summary>

@@ -7,7 +7,7 @@ using Challenges.Utils;
 
 namespace Challenges.Extractors
 {
-    public sealed class InstructorServerHintCreate : IExtractor
+    public sealed class InstructorServerHintCreate : IGameEventExtractor
     {
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventInstructorServerHintCreate";

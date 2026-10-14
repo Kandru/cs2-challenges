@@ -7,7 +7,7 @@ using Challenges.Utils;
 
 namespace Challenges.Extractors
 {
-    public sealed class UgcFileDownloadStart : IExtractor
+    public sealed class UgcFileDownloadStart : IGameEventExtractor
     {
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventUgcFileDownloadStart";

@@ -7,7 +7,7 @@ using Challenges.Utils;
 
 namespace Challenges.Extractors
 {
-    public sealed class UpdateMatchmakingStats : IExtractor
+    public sealed class UpdateMatchmakingStats : IGameEventExtractor
     {
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventUpdateMatchmakingStats";

@@ -7,7 +7,7 @@ using Challenges.Utils;
 
 namespace Challenges.Extractors
 {
-    public sealed class LocalPlayerPawnChanged : IExtractor
+    public sealed class LocalPlayerPawnChanged : IGameEventExtractor
     {
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventLocalPlayerPawnChanged";

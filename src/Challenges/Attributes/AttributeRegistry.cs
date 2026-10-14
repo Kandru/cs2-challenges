@@ -308,7 +308,7 @@ namespace Challenges.Attributes
         public void Write(
             string eventName,
             GameEvent gameEvent,
-            IExtractor extractor,
+            IGameEventExtractor extractor,
             EventPlayers players,
             Dictionary<string, EventValue> d)
         {

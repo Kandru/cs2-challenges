@@ -7,7 +7,7 @@ using Challenges.Utils;
 
 namespace Challenges.Extractors
 {
-    public sealed class LocalPlayerControllerTeam : IExtractor
+    public sealed class LocalPlayerControllerTeam : IGameEventExtractor
     {
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventLocalPlayerControllerTeam";

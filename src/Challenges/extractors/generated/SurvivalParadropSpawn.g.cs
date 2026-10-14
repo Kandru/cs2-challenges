@@ -7,7 +7,7 @@ using Challenges.Utils;
 
 namespace Challenges.Extractors
 {
-    public sealed class SurvivalParadropSpawn : IExtractor
+    public sealed class SurvivalParadropSpawn : IGameEventExtractor
     {
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventSurvivalParadropSpawn";

@@ -7,7 +7,7 @@ using Challenges.Utils;
 
 namespace Challenges.Extractors
 {
-    public sealed class HelicopterGrenadePuntMiss : IExtractor
+    public sealed class HelicopterGrenadePuntMiss : IGameEventExtractor
     {
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventHelicopterGrenadePuntMiss";

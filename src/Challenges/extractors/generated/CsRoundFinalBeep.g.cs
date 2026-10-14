@@ -7,7 +7,7 @@ using Challenges.Utils;
 
 namespace Challenges.Extractors
 {
-    public sealed class CsRoundFinalBeep : IExtractor
+    public sealed class CsRoundFinalBeep : IGameEventExtractor
     {
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventCsRoundFinalBeep";

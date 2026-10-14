@@ -7,7 +7,7 @@ using Challenges.Utils;
 
 namespace Challenges.Extractors
 {
-    public sealed class SmokegrenadeDetonate : IExtractor
+    public sealed class SmokegrenadeDetonate : IGameEventExtractor
     {
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventSmokegrenadeDetonate";

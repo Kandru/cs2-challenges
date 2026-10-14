@@ -7,7 +7,7 @@ using Challenges.Utils;
 
 namespace Challenges.Extractors
 {
-    public sealed class EndmatchCmmStartRevealItems : IExtractor
+    public sealed class EndmatchCmmStartRevealItems : IGameEventExtractor
     {
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventEndmatchCmmStartRevealItems";

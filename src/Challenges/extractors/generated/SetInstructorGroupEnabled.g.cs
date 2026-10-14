@@ -7,7 +7,7 @@ using Challenges.Utils;
 
 namespace Challenges.Extractors
 {
-    public sealed class SetInstructorGroupEnabled : IExtractor
+    public sealed class SetInstructorGroupEnabled : IGameEventExtractor
     {
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventSetInstructorGroupEnabled";

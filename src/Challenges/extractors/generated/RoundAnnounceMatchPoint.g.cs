@@ -7,7 +7,7 @@ using Challenges.Utils;
 
 namespace Challenges.Extractors
 {
-    public sealed class RoundAnnounceMatchPoint : IExtractor
+    public sealed class RoundAnnounceMatchPoint : IGameEventExtractor
     {
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventRoundAnnounceMatchPoint";

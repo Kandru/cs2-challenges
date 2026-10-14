@@ -7,7 +7,7 @@ using Challenges.Utils;
 
 namespace Challenges.Extractors
 {
-    public sealed class TeamplayBroadcastAudio : IExtractor
+    public sealed class TeamplayBroadcastAudio : IGameEventExtractor
     {
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventTeamplayBroadcastAudio";

@@ -7,7 +7,7 @@ using Challenges.Utils;
 
 namespace Challenges.Extractors
 {
-    public sealed class CsPrevNextSpectator : IExtractor
+    public sealed class CsPrevNextSpectator : IGameEventExtractor
     {
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventCsPrevNextSpectator";

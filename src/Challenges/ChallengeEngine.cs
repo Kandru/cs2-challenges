@@ -360,7 +360,8 @@ namespace Challenges
                     continue;
                 }
 
-                IExtractor extractor = plan.Extractor;
+                // Only game event plans are listed by event.
+                IGameEventExtractor extractor = plan.GameEvent!;
                 try
                 {
                     _targetBuffer.Clear();

@@ -7,7 +7,7 @@ using Challenges.Utils;
 
 namespace Challenges.Extractors
 {
-    public sealed class FirstbombsIncomingWarning : IExtractor
+    public sealed class FirstbombsIncomingWarning : IGameEventExtractor
     {
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventFirstbombsIncomingWarning";

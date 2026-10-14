@@ -7,7 +7,7 @@ using Challenges.Utils;
 
 namespace Challenges.Extractors
 {
-    public sealed class ClientsideLessonClosed : IExtractor
+    public sealed class ClientsideLessonClosed : IGameEventExtractor
     {
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventClientsideLessonClosed";

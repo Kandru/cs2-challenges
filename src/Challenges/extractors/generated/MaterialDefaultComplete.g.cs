@@ -7,7 +7,7 @@ using Challenges.Utils;
 
 namespace Challenges.Extractors
 {
-    public sealed class MaterialDefaultComplete : IExtractor
+    public sealed class MaterialDefaultComplete : IGameEventExtractor
     {
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventMaterialDefaultComplete";

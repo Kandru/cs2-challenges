@@ -7,7 +7,7 @@ using Challenges.Utils;
 
 namespace Challenges.Extractors
 {
-    public sealed class ClientsideReloadCustomEcon : IExtractor
+    public sealed class ClientsideReloadCustomEcon : IGameEventExtractor
     {
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventClientsideReloadCustomEcon";
