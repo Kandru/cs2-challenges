@@ -4,10 +4,9 @@ using CounterStrikeSharp.API.Core;
 namespace Challenges
 {
     /// <summary>
-    /// Team membership, human flag and alive state per player slot, with per-team counters.
+    /// Team membership and human flag per player slot, with per-team human counters.
     /// Built with one player scan per round (or lazily on first read) and kept current from
-    /// <c>player_spawn</c>, <c>player_death</c>, <c>player_team</c> and <c>player_disconnect</c>.
-    /// Game thread only.
+    /// <c>player_team</c> and <c>player_disconnect</c>. Game thread only.
     /// </summary>
     internal sealed class RoundRoster
     {
@@ -16,10 +15,8 @@ namespace Challenges
 
         private readonly byte[] _team = new byte[MaxSlots];
         private readonly bool[] _human = new bool[MaxSlots];
-        private readonly bool[] _alive = new bool[MaxSlots];
         private readonly bool[] _present = new bool[MaxSlots];
         private readonly int[] _humans = new int[TeamCount];
-        private readonly int[] _aliveCount = new int[TeamCount];
 
         public bool IsBuilt { get; private set; }
 
@@ -31,7 +28,7 @@ namespace Challenges
             {
                 if (player.IsValid)
                 {
-                    Set(player.Slot, player.TeamNum, IsHuman(player), player.PawnIsAlive);
+                    Set(player.Slot, player.TeamNum, IsHuman(player));
                 }
             }
 
@@ -43,30 +40,6 @@ namespace Challenges
         {
             Reset();
             IsBuilt = false;
-        }
-
-        public void OnSpawn(CCSPlayerController? player)
-        {
-            if (!IsBuilt || player is not { IsValid: true })
-            {
-                return;
-            }
-
-            Set(player.Slot, player.TeamNum, IsHuman(player), alive: true);
-        }
-
-        public void OnDeath(CCSPlayerController? player)
-        {
-            if (!IsBuilt || player is not { IsValid: true })
-            {
-                return;
-            }
-
-            int slot = player.Slot;
-            if ((uint)slot < MaxSlots && _present[slot])
-            {
-                Set(slot, _team[slot], _human[slot], alive: false);
-            }
         }
 
         /// <summary><paramref name="team"/> is the new team from the event (the controller may lag).</summary>
@@ -83,7 +56,7 @@ namespace Challenges
                 return;
             }
 
-            Set(player.Slot, team, IsHuman(player), alive: false);
+            Set(player.Slot, team, IsHuman(player));
         }
 
         public void Remove(int slot)
@@ -93,20 +66,13 @@ namespace Challenges
                 return;
             }
 
-            int team = _team[slot];
             if (_human[slot])
             {
-                _humans[team]--;
-            }
-
-            if (_alive[slot])
-            {
-                _aliveCount[team]--;
+                _humans[_team[slot]]--;
             }
 
             _present[slot] = false;
             _human[slot] = false;
-            _alive[slot] = false;
             _team[slot] = 0;
         }
 
@@ -117,23 +83,10 @@ namespace Challenges
             return (uint)team < TeamCount ? _humans[team] : 0;
         }
 
-        /// <summary>Living players (humans and bots) in <paramref name="team"/>.</summary>
-        public int AliveInTeam(int team)
-        {
-            EnsureBuilt();
-            return (uint)team < TeamCount ? _aliveCount[team] : 0;
-        }
-
         public bool IsHumanInTeam(int slot, int team)
         {
             EnsureBuilt();
             return (uint)slot < MaxSlots && _present[slot] && _human[slot] && _team[slot] == team;
-        }
-
-        public bool IsAlive(int slot)
-        {
-            EnsureBuilt();
-            return (uint)slot < MaxSlots && _present[slot] && _alive[slot];
         }
 
         /// <summary>Team number of the slot, or 0 when the slot is empty.</summary>
@@ -151,7 +104,7 @@ namespace Challenges
             }
         }
 
-        private void Set(int slot, int team, bool human, bool alive)
+        private void Set(int slot, int team, bool human)
         {
             if ((uint)slot >= MaxSlots)
             {
@@ -167,15 +120,9 @@ namespace Challenges
             _present[slot] = true;
             _team[slot] = (byte)team;
             _human[slot] = human;
-            _alive[slot] = alive;
             if (human)
             {
                 _humans[team]++;
-            }
-
-            if (alive)
-            {
-                _aliveCount[team]++;
             }
         }
 
@@ -183,10 +130,8 @@ namespace Challenges
         {
             Array.Clear(_team);
             Array.Clear(_human);
-            Array.Clear(_alive);
             Array.Clear(_present);
             Array.Clear(_humans);
-            Array.Clear(_aliveCount);
         }
 
         private static bool IsHuman(CCSPlayerController player) => !player.IsBot && !player.IsHLTV;

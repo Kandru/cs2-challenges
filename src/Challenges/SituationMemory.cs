@@ -65,7 +65,7 @@ namespace Challenges
         public bool AceEnabled { get; private set; }
         /// <summary>True while a consumer (today: ace) needs <see cref="Roster"/> kept current.</summary>
         public bool RosterEnabled { get; private set; }
-        /// <summary>Per-slot team / human / alive state; only maintained while <see cref="RosterEnabled"/>.</summary>
+        /// <summary>Per-slot team and human state; only maintained while <see cref="RosterEnabled"/>.</summary>
         public RoundRoster Roster => _roster;
         public bool AnyEnabled => TradeEnabled | GrenadeEnabled | SmokeEnabled | AceEnabled;
 
@@ -173,7 +173,6 @@ namespace Challenges
             if (RosterEnabled)
             {
                 _watchEvents.Add("EventRoundStart");
-                _watchEvents.Add("EventPlayerSpawn");
                 _watchEvents.Add("EventPlayerTeam");
                 _watchEvents.Add("EventPlayerDisconnect");
             }
@@ -260,17 +259,9 @@ namespace Challenges
                         OnPlayerDeath((EventPlayerDeath)gameEvent, enqueueOne);
                     }
 
-                    if (RosterEnabled)
-                    {
-                        _roster.OnDeath(((EventPlayerDeath)gameEvent).Userid);
-                    }
-
                     return;
                 case "EventRoundStart":
                     _roster.Rebuild();
-                    return;
-                case "EventPlayerSpawn":
-                    _roster.OnSpawn(((EventPlayerSpawn)gameEvent).Userid);
                     return;
                 case "EventPlayerTeam":
                     EventPlayerTeam team = (EventPlayerTeam)gameEvent;
