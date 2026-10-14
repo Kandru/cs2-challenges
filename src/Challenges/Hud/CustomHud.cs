@@ -55,9 +55,8 @@ namespace Challenges
 
         /// <summary>Per layout: <c>PlayerLayoutStates.Count</c> at validation, refreshed when a slot falls outside.</summary>
         private static readonly int[] _layoutSlotCount = new int[2];
-        private static readonly Dictionary<int, HashSet<string>> _visibleBySlot = [];
 
-        /// <summary>Per root layout and slot: the root panel is shown. Mirrors the root ids in <see cref="_visibleBySlot"/>.</summary>
+        /// <summary>Per root layout and slot: the root panel is shown. The only visibility record; panels are shown by root id.</summary>
         private static readonly bool[][] _rootVisible = SlotTable<bool>();
 
         /// <summary>
@@ -92,14 +91,7 @@ namespace Challenges
                 return false;
             }
 
-            int slot = player.Slot;
-            int root = RootIndex(panelId);
-            if (root >= 0)
-            {
-                return (uint)slot < MaxSlots && _rootVisible[root][slot];
-            }
-
-            return _visibleBySlot.TryGetValue(slot, out HashSet<string>? set) && set.Contains(panelId);
+            return IsRootVisible(player.Slot, RootIndex(panelId));
         }
 
         private static T[][] SlotTable<T>()
@@ -175,13 +167,7 @@ namespace Challenges
                 return;
             }
 
-            if (!_visibleBySlot.TryGetValue(player.Slot, out HashSet<string>? set))
-            {
-                _visibleBySlot[player.Slot] = set = [];
-            }
-
-            bool wasVisible = set.Contains(panelId);
-            set.Add(panelId);
+            bool wasVisible = IsRootVisible(player.Slot, RootIndex(panelId));
             SetRootVisible(player.Slot, panelId, true);
             ClearClosingRoot(player.Slot, LayoutIndexForPanel(panelId));
             SetHasClass(player, panelId, "ph-off", false);
@@ -233,7 +219,7 @@ namespace Challenges
 
             SetHasClass(player, panelId, "ph-off", true);
             SetHasClass(player, panelId, "ph-fading", false);
-            ForgetVisible(player.Slot, panelId);
+            SetRootVisible(player.Slot, panelId, false);
         }
 
         public static void HidePanel(CCSPlayerController player, string panelId)
@@ -244,7 +230,7 @@ namespace Challenges
             }
 
             BeginFadeOut(player, panelId, collapseAfter: true);
-            ForgetVisible(player.Slot, panelId);
+            SetRootVisible(player.Slot, panelId, false);
         }
 
         private static void ScheduleFadeIn(CCSPlayerController player, string panelId)
@@ -260,21 +246,6 @@ namespace Challenges
                     SetHasClass(live, id, "ph-fading", false);
                 }
             });
-        }
-
-        private static void ForgetVisible(int slot, string panelId)
-        {
-            SetRootVisible(slot, panelId, false);
-            if (!_visibleBySlot.TryGetValue(slot, out HashSet<string>? set))
-            {
-                return;
-            }
-
-            set.Remove(panelId);
-            if (set.Count == 0)
-            {
-                _visibleBySlot.Remove(slot);
-            }
         }
 
         public static void SetText(CCSPlayerController player, string panelId, string name, string value)
@@ -621,7 +592,6 @@ namespace Challenges
             bool dirty = _classBySlot.ContainsKey(slot)
                 || _textBySlot.ContainsKey(slot)
                 || _stepBySlot.ContainsKey(slot)
-                || _visibleBySlot.ContainsKey(slot)
                 || IsRootLive(slot);
             if (!dirty)
             {
@@ -670,7 +640,6 @@ namespace Challenges
 
         private static void ClearVisibility(int slot)
         {
-            _visibleBySlot.Remove(slot);
             if ((uint)slot < MaxSlots)
             {
                 for (int i = 0; i < _rootVisible.Length; i++)
@@ -690,7 +659,6 @@ namespace Challenges
                 }
             }
 
-            Purge(_visibleBySlot);
             Purge(_classBySlot);
             Purge(_textBySlot);
             Purge(_stepBySlot);
@@ -718,7 +686,6 @@ namespace Challenges
 
         private static void ClearAllSlotState()
         {
-            _visibleBySlot.Clear();
             ClearWriteCaches();
             for (int i = 0; i < _rootVisible.Length; i++)
             {
@@ -939,6 +906,9 @@ namespace Challenges
 
             return -1;
         }
+
+        private static bool IsRootVisible(int slot, int root) =>
+            root >= 0 && (uint)slot < MaxSlots && _rootVisible[root][slot];
 
         private static void SetRootVisible(int slot, string panelId, bool visible)
         {
