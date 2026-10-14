@@ -27,10 +27,14 @@ namespace Challenges
         /// </summary>
         private readonly ConcurrentDictionary<string, PlayerState> _shadows =
             new(StringComparer.OrdinalIgnoreCase);
-        /// <summary>Archive state and version each shadow was seeded from. Game thread only.</summary>
-        private readonly Dictionary<string, SeedMark> _seeds =
+        /// <summary>
+        /// Archive <see cref="PlayerState.ProgressVersion"/> each shadow was seeded from. The archive keeps one
+        /// state object per steam id for the plugin's life, so the version alone identifies the seed.
+        /// Game thread only.
+        /// </summary>
+        private readonly Dictionary<string, int> _seeds =
             new(StringComparer.OrdinalIgnoreCase);
-        /// <summary>Shadows to drop (with their seed mark) once their steam id goes idle. Game thread only.</summary>
+        /// <summary>Shadows to drop (with their seed version) once their steam id goes idle. Game thread only.</summary>
         private readonly HashSet<string> _discardWhenIdle =
             new(StringComparer.OrdinalIgnoreCase);
         /// <summary>Saves deferred until the steam id has no pending work. Game thread only.</summary>
@@ -155,14 +159,12 @@ namespace Challenges
         {
             PlayerState state = Archive.GetOrCreate(steamId);
             PruneOutdated(state, scheduleKey);
-            if (_seeds.TryGetValue(steamId, out SeedMark mark)
-                && ReferenceEquals(mark.State, state)
-                && mark.Version == state.ProgressVersion)
+            if (_seeds.TryGetValue(steamId, out int version) && version == state.ProgressVersion)
             {
                 return null;
             }
 
-            _seeds[steamId] = new SeedMark(state, state.ProgressVersion);
+            _seeds[steamId] = state.ProgressVersion;
             return new ProgressSeed
             {
                 Challenges = ChallengeProgress.CloneChallenges(state.Challenges),
@@ -282,7 +284,5 @@ namespace Challenges
         }
 
         private static void Log(string message) => Console.WriteLine($"[Challenges] {message}");
-
-        private readonly record struct SeedMark(PlayerState State, int Version);
     }
 }
