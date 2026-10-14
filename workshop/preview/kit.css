@@ -1,5 +1,6 @@
 /* Web mirror of workshop/content/panorama/styles/custom_game/challenges/hud.vcss.
-   Browser approximation only - the game is authoritative. Keep class names in sync. */
+   Browser approximation only - the game is authoritative. Keep class names in sync.
+   Tokens: ink #f5f7fa, ink-soft #e8eef4, muted #a3acb6, success #9ccf4f, danger #e05a5a, accent = theme. */
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -24,10 +25,12 @@ body {
 
 .ph-card {
   position: absolute; border-radius: 3px; display: flex;
-  opacity: 1; transition: opacity 1s ease-out;
+  opacity: 1; transform: translateY(0); transition: opacity 1s ease-out, transform 1s ease-out;
 }
 .ph-card.ph-fading { opacity: 0; }
 .ph-card.ph-off { display: none; opacity: 0; transition: none; }
+.MenuRoot.ph-card { transition-duration: 0.25s; }
+.MenuRoot.ph-card.ph-fading { transform: translateY(8px); transition: opacity 0.18s ease-in, transform 0.18s ease-in; }
 
 .ph-bg {
   position: absolute; inset: 0;
@@ -39,46 +42,48 @@ body {
 .ph-fs { inset: 68px; }
 
 .ph-titlebar {
-  display: flex; align-items: center; height: 44px; padding: 0 18px;
-  background: #ffffff14; border-bottom: 1px solid #d9d9d90a;
+  display: flex; align-items: center; height: 44px; padding: 0 16px;
+  background: #ffffff14; border-bottom: 1px solid #ffffff14;
 }
-.ph-title { flex: 1; font-size: 15px; letter-spacing: 1.6px; text-transform: uppercase; font-weight: 700; color: #fff; }
+.ph-title { flex: 1; font-size: 16px; letter-spacing: 1.6px; text-transform: uppercase; font-weight: 700; color: #f5f7fa; }
 .ph-money { font-size: 14px; letter-spacing: 1px; font-weight: 700; color: #9ccf4f; }
 .Tracker .ph-titlebar { height: auto; min-height: 44px; padding-top: 8px; padding-bottom: 8px; }
 .TrackerTitleStack { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
 .Tracker .ph-title { flex: none; width: 100%; }
 .TrackerHint {
-  font-size: 14px; letter-spacing: 0; text-transform: none; font-weight: 700; color: #9aa2ac; margin-top: 2px;
+  font-size: 14px; letter-spacing: 0; text-transform: none; font-weight: 700; color: #a3acb6; margin-top: 4px;
 }
 
 .ph-icon-btn {
   position: relative; width: 28px; height: 28px; border: 0; border-radius: 3px;
-  background: #ffffff0d; cursor: pointer;
+  background: #ffffff0d; cursor: pointer; transition: background-color 0.15s;
 }
 .ph-icon-btn:hover { background: #ffffff1c; }
+.ph-titlebar .ph-icon-btn:hover { background: #e05a5a44; }
+.ph-titlebar .ph-icon-btn:active { background: #e05a5a88; }
 .ph-close-x {
   position: absolute; left: 8px; top: 13px; width: 12px; height: 2px;
-  background: #fff; border-radius: 1px;
+  background: #f5f7fa; border-radius: 1px;
 }
 .ph-close-x-a { transform: rotate(45deg); }
 .ph-close-x-b { transform: rotate(-45deg); }
 
 .ph-stat-lab {
   display: flex; justify-content: space-between; align-items: baseline;
-  height: 18px; margin-bottom: 6px; font-size: 14px; letter-spacing: 1.2px; text-transform: uppercase;
+  height: 20px; margin-bottom: 4px; font-size: 14px; letter-spacing: 1.2px; text-transform: uppercase;
 }
-.ph-stat-name { flex: 1; font-weight: 700; color: #e8eef4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ph-stat-name { flex: 1; font-weight: 700; color: #f5f7fa; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ph-stat-when {
-  width: 150px; margin-right: 8px; text-align: right; color: #9aa2ac; font-size: 14px; font-weight: 500;
+  width: 150px; margin-right: 8px; text-align: right; color: #a3acb6; font-size: 14px; font-weight: 500;
   letter-spacing: 0; text-transform: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .ph-stat-val {
   width: 72px; text-align: right; color: var(--accent); font-weight: 700; letter-spacing: 0;
   text-transform: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.ph-stat-track { height: 7px; border-radius: 4px; background: #ffffff12; overflow: hidden; }
+.ph-stat-track { height: 6px; border-radius: 3px; background: #ffffff12; overflow: hidden; }
 .ph-stat-fill {
-  height: 100%; width: 100%; border-radius: 4px;
+  height: 100%; width: 100%; border-radius: 3px;
   background: linear-gradient(to right, var(--accent-from), var(--accent-to));
   clip-path: inset(0 100% 0 0);
   transition: clip-path 0.35s;
@@ -93,18 +98,17 @@ body {
 .ph-stat-fill.p70 { clip-path: inset(0 30% 0 0); }
 .ph-stat-fill.p80 { clip-path: inset(0 20% 0 0); }
 .ph-stat-fill.p90 { clip-path: inset(0 10% 0 0); }
-.ph-stat-fill.p0 { clip-path: inset(0 100% 0 0); }
 .ph-stat-fill.p100 { clip-path: inset(0 0 0 0); }
 
 /* Tracker */
 .Tracker { width: 420px; right: 10px; top: 10px; z-index: 100; }
 .TrackerContent { position: relative; flex: 1; display: flex; flex-direction: column; z-index: 2; }
-.TrackerBody { padding: 8px 12px 6px 14px; }
+.TrackerBody { padding: 8px 12px 4px 16px; }
 .TrackerTimerRow {
   display: flex; align-items: stretch; margin-bottom: 8px; flex-shrink: 0;
 }
 .TrackerTimerRow.is-off { display: none; }
-.TrackerTimerPadL { width: 14px; flex-shrink: 0; }
+.TrackerTimerPadL { width: 16px; flex-shrink: 0; }
 .TrackerTimerPadR { width: 12px; flex-shrink: 0; }
 .TrackerTimer { flex: 1; min-width: 0; }
 .TrackerTimerRow.running .ph-stat-fill {
@@ -115,20 +119,21 @@ body {
   to { clip-path: inset(0 100% 0 0); }
 }
 .TrackerRow {
-  padding: 8px; margin-bottom: 6px;
+  padding: 8px 12px; margin-bottom: 8px;
   background: #ffffff0d; border: 1px solid #ffffff14; border-radius: 3px;
 }
 .TrackerRow.is-off { display: none; }
-.TrackerCount { margin-left: 10px; align-self: center; }
-.TrackerRow .ph-stat-lab { height: 16px; margin-bottom: 4px; }
+.TrackerCount { margin-left: 12px; align-self: center; }
+.TrackerRow .ph-stat-lab { height: 20px; margin-bottom: 4px; }
 .TrackerRow .ph-stat-name {
-  flex: 1; min-width: 0; font-size: 14px; font-weight: 700; letter-spacing: 1.2px; color: #e8eef4;
+  flex: 1; min-width: 0; font-size: 16px; font-weight: 700; letter-spacing: 1.2px; color: #f5f7fa;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .TrackerRow .ph-stat-val { width: 52px; font-size: 14px; color: var(--accent); }
-.TrackerRow .MenuRowHead { margin-bottom: 6px; }
-.TrackerRowSplit { display: flex; flex-direction: column; gap: 4px; }
-.TrackerRow .MenuTasksCol, .TrackerRow .MenuByCol { width: 100%; padding: 6px 8px; }
+.TrackerRow .MenuRowHead { margin-bottom: 8px; }
+.TrackerRowSplit { display: flex; flex-direction: column; }
+.TrackerRow .MenuTasksCol, .TrackerRow .MenuByCol { width: 100%; padding: 0; background: none; border: 0; }
+.TrackerRow .MenuColHead { display: none; }
 
 /* Menu */
 .MenuRoot { z-index: 300; width: auto; max-width: 100%; }
@@ -137,60 +142,66 @@ body {
   height: 100%; width: 100%; min-width: 0; overflow: hidden;
 }
 .MenuRoot .ph-titlebar { padding-right: 12px; }
-.MenuBody { flex: 1; display: flex; flex-direction: column; padding: 12px 18px; min-width: 0; min-height: 0; overflow: hidden; }
+.MenuBody { flex: 1; display: flex; flex-direction: column; padding: 12px 16px; min-width: 0; min-height: 0; overflow: hidden; }
 .MenuColumns { flex: 1; display: flex; min-width: 0; min-height: 0; }
-.MenuList { flex: 2; margin-right: 18px; display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow: hidden; }
+.MenuList { flex: 2; margin-right: 16px; display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow: hidden; }
 .MenuScore { flex: 1; display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow: hidden; }
 .MenuScore.is-off { display: none; }
-.MenuFilterBar { display: flex; margin-bottom: 10px; flex-shrink: 0; }
+.MenuFilterBar { display: flex; margin-bottom: 12px; flex-shrink: 0; }
 .MenuFilterBtn {
-  height: 26px; padding: 0 10px; margin-right: 6px; border-radius: 3px;
+  height: 28px; padding: 0 12px; margin-right: 8px; border-radius: 3px;
   background: #ffffff0d; border: 1px solid transparent; cursor: pointer; color: inherit;
+  transition: background-color 0.15s, border-color 0.15s;
 }
 .MenuFilterBtn:hover { background: #ffffff1c; border-color: var(--accent-66); }
 .MenuFilterBtn.active { background: var(--accent-22); border-color: var(--accent); }
 .MenuFilterLabel { font-size: 14px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; white-space: nowrap; }
 .MenuRows { flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; gap: 0; }
 .MenuRow {
-  flex: 1 1 0; min-height: 0; padding: 6px 8px 10px 8px;
+  flex: 1 1 0; min-height: 0; padding: 8px 12px 12px 12px;
   background: #ffffff0d; border: 1px solid #ffffff14; border-radius: 3px;
   display: flex; flex-direction: column; overflow: hidden;
 }
 .MenuRow.is-off, .MenuRow.empty { display: none; }
-.MenuRowHead { margin-bottom: 6px; flex-shrink: 0; }
-.MenuRow .ph-stat-lab { height: 16px; margin-bottom: 4px; }
+.MenuRowHead { margin-bottom: 8px; flex-shrink: 0; }
+.MenuRow .ph-stat-lab { height: 20px; margin-bottom: 4px; }
 .MenuRow .ph-stat-name {
-  flex: 1; min-width: 0; font-size: 14px; font-weight: 700; letter-spacing: 1.2px; color: #e8eef4;
+  flex: 1; min-width: 0; font-size: 16px; font-weight: 700; letter-spacing: 1.2px; color: #f5f7fa;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .MenuRow .ph-stat-val { width: 56px; font-size: 14px; color: var(--accent); }
-.MenuRow .ph-stat-when { width: 150px; font-size: 14px; color: #9aa2ac; }
-.MenuRowSplit { display: flex; gap: 6px; flex: 1; min-height: 0; overflow: hidden; }
+.MenuRow .ph-stat-when { width: 150px; font-size: 14px; color: #a3acb6; }
+.MenuRowSplit { display: flex; gap: 8px; flex: 1; min-height: 0; overflow: hidden; }
 .MenuTasksCol, .MenuByCol {
-  flex: 1; min-width: 0; min-height: 0; padding: 6px 8px; background: #0b0f14aa;
-  border: 1px solid #ffffff14; border-radius: 3px; display: flex; flex-direction: column; overflow: hidden;
+  flex: 1; min-width: 0; min-height: 0; padding: 8px 12px; background: #0b0f14aa;
+  border: 0; border-radius: 3px; display: flex; flex-direction: column; overflow: hidden;
 }
 .MenuColHead {
   display: block; margin-bottom: 4px; font-size: 14px; font-weight: 700;
-  letter-spacing: 1.2px; text-transform: uppercase; color: var(--accent); flex-shrink: 0;
+  letter-spacing: 1px; text-transform: uppercase; color: #a3acb6; flex-shrink: 0;
 }
-.MenuTasks, .MenuByList { display: flex; flex-direction: column; gap: 2px; flex: 1; min-height: 0; overflow: hidden; }
-.MenuByRow { display: flex; gap: 3px; }
-.MenuTask, .MenuBy {
-  display: flex; align-items: center; height: 20px; min-width: 0; padding: 0 6px 0 5px;
-  background: #ffffff0a; border: 1px solid #ffffff10; border-radius: 2px;
+.MenuTasks, .MenuByList { display: flex; flex-direction: column; gap: 4px; flex: 1; min-height: 0; overflow: hidden; }
+.MenuByRow { display: flex; gap: 4px; }
+.MenuTask {
+  display: flex; align-items: center; height: 20px; min-width: 0; padding: 0 4px;
+  background: transparent; border-radius: 2px;
 }
-.MenuBy { flex: 1; padding-left: 6px; }
+.MenuBy {
+  display: flex; align-items: center; height: 20px; min-width: 0; flex: 1; padding: 0 8px;
+  background: #ffffff0a; border: 1px solid transparent; border-radius: 2px;
+}
 .MenuTask.is-off, .MenuBy.is-off { display: none; }
-.MenuTask.is-done { background: #9ccf4f18; border-color: #9ccf4f44; }
-.MenuTask.is-broken { background: #e05a5a22; border-color: #e05a5a66; }
+.MenuTask.is-broken { background: #e05a5a1c; }
 .MenuTaskMark {
-  width: 3px; height: 12px; margin-right: 6px; border-radius: 1px; background: var(--accent); flex-shrink: 0;
+  width: 3px; height: 12px; margin: 0 10px 0 2px; border-radius: 1px; background: var(--accent); flex-shrink: 0;
 }
-.MenuTask.is-done .MenuTaskMark { background: #9ccf4f; }
-.MenuTask.is-broken .MenuTaskMark { background: #e05a5a; }
+.MenuTask.is-done .MenuTaskMark {
+  width: 10px; height: 5px; margin: 0 6px 3px 0; background: none; border-radius: 0;
+  border-left: 2px solid #9ccf4f; border-bottom: 2px solid #9ccf4f; transform: rotate(-45deg);
+}
+.MenuTask.is-broken .MenuTaskMark { width: 9px; height: 2px; margin: 0 6px 0 0; background: #e05a5a; }
 .MenuTaskLabel {
-  flex: 1; min-width: 0; font-size: 14px; font-weight: 700; letter-spacing: 0.4px; color: #c5ccd4;
+  flex: 1; min-width: 0; font-size: 14px; font-weight: 700; letter-spacing: 0.4px; color: #e8eef4;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .MenuTask.is-done .MenuTaskLabel { color: #9ccf4f; }
@@ -200,13 +211,13 @@ body {
   min-width: 0; flex: 1; font-size: 14px; font-weight: 700; color: #e8eef4;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.MenuBy.is-empty .MenuByLabel { color: #8b8f94; }
+.MenuBy.is-empty .MenuByLabel { color: #a3acb6; }
 .MenuCredit {
-  flex-shrink: 0; margin-top: 8px; padding-top: 8px; border-top: 1px solid #d9d9d90a;
-  font-size: 14px; font-weight: 700; color: #8b8f94; text-align: center;
+  flex-shrink: 0; margin-top: 8px; padding-top: 8px; border-top: 1px solid #ffffff14;
+  font-size: 14px; font-weight: 700; color: #a3acb6; text-align: center;
 }
 .ScoreTitleBar {
-  display: flex; align-items: center; width: 100%; max-width: 100%; margin-bottom: 6px;
+  display: flex; align-items: center; width: 100%; max-width: 100%; margin-bottom: 8px;
   flex-shrink: 0; gap: 6px; min-width: 0; overflow: hidden; box-sizing: border-box;
 }
 .ScoreTitleCenter {
@@ -217,43 +228,44 @@ body {
 }
 .ScoreTitlePad { flex: 1 1 0%; min-width: 0; }
 .ScoreTitle {
-  flex: 1 1 0%; min-width: 0; font-size: 15px; font-weight: 700; text-align: right;
-  letter-spacing: 1.6px; text-transform: uppercase; color: #e8eef4;
+  flex: 1 1 0%; min-width: 0; font-size: 16px; font-weight: 700; text-align: right;
+  letter-spacing: 1.6px; text-transform: uppercase; color: #f5f7fa;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-right: 6px;
 }
 .ScoreTitlePage {
-  flex: 0 0 auto; font-size: 15px; font-weight: 700; letter-spacing: 1.6px; color: var(--accent);
+  flex: 0 0 auto; font-size: 16px; font-weight: 700; letter-spacing: 1.6px; color: #a3acb6;
   text-align: center; white-space: nowrap;
 }
 .MenuTitleNav {
   width: 36px; height: 28px; flex: 0 0 36px; background: #ffffff0d; border: 1px solid transparent;
   border-radius: 3px; color: #e8eef4; font-size: 14px; font-weight: 700; cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s;
 }
 .MenuTitleNav:hover { background: #ffffff1c; border-color: var(--accent-66); }
-.MenuTitleNav.is-disabled { opacity: 0.35; pointer-events: none; }
+.MenuTitleNav.is-disabled { opacity: 0.4; pointer-events: none; }
 .ScoreSelfCard {
-  padding: 12px; margin-bottom: 10px; flex-shrink: 0;
+  padding: 12px; margin-bottom: 12px; flex-shrink: 0;
   background: var(--accent-18); border: 1px solid var(--accent); border-radius: 3px;
 }
 .ScoreSelfCard.empty { display: none; }
-.ScoreSelfTop { display: flex; align-items: center; margin-bottom: 10px; }
+.ScoreSelfTop { display: flex; align-items: center; margin-bottom: 8px; }
 .ScoreSelfRank { width: 48px; font-size: 18px; font-weight: 700; color: var(--accent); }
-.ScoreSelfName { flex: 1; font-size: 15px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.ScoreSelfStats { display: flex; gap: 6px; }
+.ScoreSelfName { flex: 1; font-size: 16px; font-weight: 700; color: #f5f7fa; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ScoreSelfStats { display: flex; gap: 8px; }
 .ScoreSelfStat {
-  flex: 1; padding: 8px 10px; background: #0b0f14aa; border: 1px solid #ffffff14; border-radius: 3px;
+  flex: 1; padding: 8px 12px; background: #0b0f14aa; border: 0; border-radius: 3px;
 }
 .ScoreSelfStatLabel {
   display: block; margin-bottom: 4px; font-size: 14px; letter-spacing: 1px;
-  text-transform: uppercase; color: #9aa2ac;
+  text-transform: uppercase; color: #a3acb6;
 }
-.ScoreSelfStatVal { display: block; font-size: 16px; font-weight: 700; color: var(--accent); }
+.ScoreSelfStatVal { display: block; font-size: 18px; font-weight: 700; color: var(--accent); }
 .ScoreHeader {
-  display: flex; align-items: center; height: 32px; padding: 0 10px; flex-shrink: 0;
-  background: #ffffff14; border-top: 1px solid var(--accent-66); border-bottom: 1px solid var(--accent-66);
+  display: flex; align-items: center; height: 32px; padding: 0 12px; flex-shrink: 0;
+  background: #ffffff14; border-top: 1px solid #ffffff14; border-bottom: 1px solid #ffffff14;
 }
 .ScoreHead {
-  font-size: 14px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: #9aa2ac;
+  font-size: 14px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #a3acb6;
 }
 .ScoreHead.sort-active { color: var(--accent); }
 .ScoreRows {
@@ -261,7 +273,7 @@ body {
   border: 1px solid #ffffff14; border-top: 0; background: #0b0f1488;
 }
 .ScoreRow {
-  display: flex; align-items: center; height: 32px; flex: 0 0 32px; padding: 0 10px;
+  display: flex; align-items: center; height: 32px; flex: 0 0 32px; padding: 0 12px;
   background: transparent; border: 1px solid transparent; border-bottom: 1px solid #ffffff0a; border-radius: 0;
   cursor: pointer; transition: background-color 0.15s, border 0.15s;
 }
@@ -271,21 +283,21 @@ body {
 .ScoreRow.is-self { background: var(--accent-22); border-bottom-color: var(--accent-44); }
 .ScoreRow.is-viewing { background: var(--accent-22); border: 1px solid var(--accent); }
 .ScoreRow.is-viewing:hover { background: var(--accent-44); border: 1px solid var(--accent); }
-.ScoreRank { width: 36px; font-size: 14px; font-weight: 700; color: var(--accent); }
+.ScoreRank { width: 36px; font-size: 14px; font-weight: 700; color: #a3acb6; }
 .ScoreName { flex: 1; font-size: 14px; font-weight: 700; color: #e8eef4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.ScoreCur { width: 96px; margin-right: 10px; text-align: right; font-size: 14px; font-weight: 700; color: var(--accent); }
-.ScoreTot { width: 72px; text-align: right; font-size: 14px; font-weight: 700; color: #fff; }
-.ScoreHeader .ScoreCur, .ScoreHeader .ScoreTot { font-size: 14px; color: #9aa2ac; }
+.ScoreCur { width: 96px; margin-right: 12px; text-align: right; font-size: 14px; font-weight: 700; color: #f5f7fa; }
+.ScoreTot { width: 72px; text-align: right; font-size: 14px; font-weight: 700; color: #e8eef4; }
+.ScoreHeader .ScoreCur, .ScoreHeader .ScoreTot { font-size: 14px; color: #a3acb6; }
 .ScoreHeader .ScoreCur.sort-active, .ScoreHeader .ScoreTot.sort-active { color: var(--accent); }
 
 
-.MenuFilterBtn.is-disabled, .MenuTitleNav.is-disabled { opacity: 0.35; pointer-events: none; }
-.ScoreFilterBar { display: flex; align-items: center; margin-bottom: 8px; flex-shrink: 0; }
+.MenuFilterBtn.is-disabled, .MenuTitleNav.is-disabled { opacity: 0.4; pointer-events: none; }
+.ScoreFilterBar { display: flex; align-items: center; margin-bottom: 12px; flex-shrink: 0; }
 .ScoreFilterGroup { display: flex; align-items: center; }
 .ScoreFilterSpacer { flex: 1; min-width: 8px; }
 .ScoreFilterGroup .MenuFilterBtn:last-child { margin-right: 0; }
-.MenuBy.is-you { background: #3d8f4522; border-color: #3d8f45; }
-.MenuBy.is-you .MenuByLabel { color: #6fdc78; font-weight: 700; }
+.MenuBy.is-you { background: var(--accent-22); border-color: var(--accent); }
+.MenuBy.is-you .MenuByLabel { color: #f5f7fa; font-weight: 700; }
 
 /* Preview chrome: theme picker (mirrors gui.theme). ?shot hides it for screenshots. */
 .shot .preview-controls { display: none; }
@@ -305,7 +317,7 @@ body {
   color: var(--preview-accent);
   background: #ffffff14;
 }
-.preview-note { font-size: 12px; color: #9aa2ac; line-height: 1.4; }
+.preview-note { font-size: 12px; color: #a3acb6; line-height: 1.4; }
 .preview-bar {
   left: 16px; right: 16px; top: 18px; max-width: none;
   flex-direction: row; align-items: center; justify-content: space-between; gap: 16px;

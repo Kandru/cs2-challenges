@@ -10,7 +10,7 @@ Repo keeps versioned sources `tracker_vN.xml`, `menu_vN.xml`, `hud_vN.vcss`. `Pa
 
 ## Theme / type / bars
 
-Chrome: dark gradient `#12171e`→`#0b0f14`, borders `#ffffff14`, gold `#f0a531` (`gui.theme` = `gold`; `theme-*` via `HudTheme.Apply`). Themes from [`tools/hud_themes.py`](../tools/hud_themes.py). CT/T: `#96c8fa` / `#eabe54`. Font floor **14** (small labels `stratum-bold-tf`); titles **15–18**. Bars: `p0`…`p100` (`SetStepPercent` 10% challenge fills; `SetPercent` 1% = timer start position; `p0` = 0%). Tracker timer is drained by the client: start p-class, next tick `span-N` + `is-running` (`Tracker.StartTimer`), no writes while it runs.
+Chrome: dark gradient `#12171e`→`#0b0f14`, borders `#ffffff14`, gold `#f0a531` (`gui.theme` = `gold`; `theme-*` via `HudTheme.Apply`). Themes from [`tools/hud_themes.py`](../tools/hud_themes.py). CT/T: `#96c8fa` / `#eabe54`. Text tokens: ink `#f5f7fa`, ink-soft `#e8eef4`, muted `#a3acb6` (header of `hud_v4.vcss`). Type scale **14 / 16 / 18** (floor 14; card titles 16). **Accent only** for active state, bars, accent bar, sorted column and own entries (`is-you`, `is-self`); section labels are muted. Semantic colours never follow the theme: done = success check, broken = danger dash, open = accent bar (state by shape, not colour alone). One container level per card (no box per task line). Spacing on a 4px grid. Menu fades 0.25s in / 0.18s out; tracker keeps 1.0s. Bars: `p0`…`p100` (`SetStepPercent` 10% challenge fills; `SetPercent` 1% = timer start position; `p0` = 0%). Tracker timer is drained by the client: start p-class, next tick `span-N` + `is-running` (`Tracker.StartTimer`), no writes while it runs.
 
 ## Text
 
