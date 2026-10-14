@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
+using System.Runtime.InteropServices;
 using System.Threading.Channels;
-using CounterStrikeSharp.API;
 
 namespace Challenges
 {
@@ -18,15 +18,20 @@ namespace Challenges
             });
 
         private readonly ConcurrentQueue<ProgressPatch> _patches = new();
-        private readonly ConcurrentDictionary<string, int> _pending =
+        /// <summary>In-flight targets per steam id. Game thread only.</summary>
+        private readonly Dictionary<string, int> _pending =
             new(StringComparer.OrdinalIgnoreCase);
+        /// <summary>
+        /// Worker-side progress snapshots. The worker reads and writes; the game thread removes an entry
+        /// only when its pending count reached zero, so no item for that steam id is in flight.
+        /// </summary>
         private readonly ConcurrentDictionary<string, PlayerState> _shadows =
             new(StringComparer.OrdinalIgnoreCase);
-        private readonly ConcurrentDictionary<string, Action> _saveWhenIdle =
+        /// <summary>Saves deferred until the steam id has no pending work. Game thread only.</summary>
+        private readonly Dictionary<string, Action> _saveWhenIdle =
             new(StringComparer.OrdinalIgnoreCase);
 
         private Task? _workerTask;
-        private int _pumpScheduled;
         private bool _flushed;
 
         private void EnsureWorker() =>
@@ -97,16 +102,18 @@ namespace Challenges
 
         /// <summary>
         /// Runs <paramref name="save"/> now when idle, otherwise after the last patch for this steam id.
+        /// Returns true when the save was deferred.
         /// </summary>
-        public void WhenIdle(string steamId, Action save)
+        public bool WhenIdle(string steamId, Action save)
         {
-            if (!SteamIds.IsCreditable(steamId) || !HasPending(steamId))
+            if (!HasPending(steamId))
             {
                 save();
-                return;
+                return false;
             }
 
             _saveWhenIdle[steamId] = save;
+            return true;
         }
 
         private bool TryEnqueueWork(ProgressWorkItem item)
@@ -120,23 +127,16 @@ namespace Challenges
             foreach (ProgressTarget target in item.Targets)
             {
                 // First in-flight item for this steam id carries the live snapshot.
-                if (_pending.AddOrUpdate(target.SteamId, 1, static (_, value) => value + 1) == 1)
+                ref int count = ref CollectionsMarshal.GetValueRefOrAddDefault(_pending, target.SteamId, out _);
+                if (++count == 1)
                 {
                     target.Seed = CloneSeed(target.SteamId, item.ScheduleKey);
                 }
             }
 
-            if (_work.Writer.TryWrite(item))
-            {
-                return true;
-            }
-
-            foreach (ProgressTarget target in item.Targets)
-            {
-                FinishPending(target.SteamId);
-            }
-
-            return false;
+            // Cannot fail: the channel is unbounded and only Flush completes it, after setting _flushed.
+            _work.Writer.TryWrite(item);
+            return true;
         }
 
         private ProgressSeed CloneSeed(string steamId, string scheduleKey)
@@ -150,35 +150,21 @@ namespace Challenges
             };
         }
 
-        private void PostPatch(ProgressPatch patch)
-        {
-            _patches.Enqueue(patch);
-            SchedulePump();
-        }
+        /// <summary>Worker side: hands a result to the game thread. Never calls into the game.</summary>
+        private void PostPatch(ProgressPatch patch) => _patches.Enqueue(patch);
 
-        private void SchedulePump()
+        /// <summary>
+        /// Game thread, once per server tick: applies up to <see cref="ApplyBatchSize"/> patches with changes.
+        /// Completion-only patches do not count against the budget.
+        /// </summary>
+        public void OnTick()
         {
-            if (_flushed || _destroyed || Interlocked.CompareExchange(ref _pumpScheduled, 1, 0) != 0)
-            {
-                return;
-            }
-
-            Server.NextWorldUpdate(PumpPatches);
-        }
-
-        private void PumpPatches()
-        {
-            Interlocked.Exchange(ref _pumpScheduled, 0);
-            if (_destroyed || _flushed)
+            if (_patches.IsEmpty || _flushed || _destroyed)
             {
                 return;
             }
 
             DrainPatches(ApplyBatchSize);
-            if (!_patches.IsEmpty)
-            {
-                SchedulePump();
-            }
         }
 
         private void DrainPatches(int max)
@@ -186,6 +172,11 @@ namespace Challenges
             int applied = 0;
             while (applied < max && _patches.TryDequeue(out ProgressPatch? patch))
             {
+                if (patch.HasChanges)
+                {
+                    applied++;
+                }
+
                 try
                 {
                     ApplyPatch(patch);
@@ -195,25 +186,21 @@ namespace Challenges
                     Log($"progress apply failed: {ex.Message}");
                     FinishPending(patch.SteamId);
                 }
-
-                applied++;
             }
         }
 
+        /// <summary>Game thread only: one call per finished target of a work item.</summary>
         private void FinishPending(string steamId)
         {
-            int remaining = _pending.AddOrUpdate(
-                steamId,
-                static _ => 0,
-                static (_, value) => value - 1);
-            if (remaining > 0)
+            if (_pending.TryGetValue(steamId, out int count) && count > 1)
             {
+                _pending[steamId] = count - 1;
                 return;
             }
 
-            _pending.TryRemove(steamId, out _);
+            _pending.Remove(steamId);
             _shadows.TryRemove(steamId, out _);
-            if (!_saveWhenIdle.TryRemove(steamId, out Action? save))
+            if (!_saveWhenIdle.Remove(steamId, out Action? save))
             {
                 return;
             }
@@ -221,43 +208,30 @@ namespace Challenges
             RunDeferredSave(steamId, save);
         }
 
-        private void RunDeferredSave(string steamId, Action save)
+        private static void RunDeferredSave(string steamId, Action save)
         {
-            void Run()
+            try
             {
-                try
-                {
-                    save();
-                }
-                catch (Exception ex)
-                {
-                    Log($"deferred save failed for {steamId}: {ex.Message}");
-                }
+                save();
             }
-
-            // Flush is already on the main thread; the worker must marshal back.
-            if (_flushed)
+            catch (Exception ex)
             {
-                Run();
-                return;
+                Log($"deferred save failed for {steamId}: {ex.Message}");
             }
-
-            Server.NextWorldUpdate(Run);
         }
 
         private void FlushDeferredSaves()
         {
-            foreach ((string steamId, Action save) in _saveWhenIdle.ToArray())
+            if (_saveWhenIdle.Count == 0)
             {
-                _saveWhenIdle.TryRemove(steamId, out _);
-                try
-                {
-                    save();
-                }
-                catch (Exception ex)
-                {
-                    Log($"deferred save failed for {steamId}: {ex.Message}");
-                }
+                return;
+            }
+
+            KeyValuePair<string, Action>[] saves = [.. _saveWhenIdle];
+            _saveWhenIdle.Clear();
+            foreach ((string steamId, Action save) in saves)
+            {
+                RunDeferredSave(steamId, save);
             }
         }
 

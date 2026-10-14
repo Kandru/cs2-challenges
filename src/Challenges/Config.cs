@@ -68,6 +68,14 @@ namespace Challenges
         [JsonPropertyName("task_list")] public string TaskList { get; set; } = "full";
     }
 
+    public class PluginConfigPersistence
+    {
+        /// <summary>Queue dirty online players for a background save when a round ends.</summary>
+        [JsonPropertyName("autosave_on_round_end")] public bool AutosaveOnRoundEnd { get; set; } = true;
+        /// <summary>Player states serialized per server tick while saves are queued (minimum 1).</summary>
+        [JsonPropertyName("autosave_per_tick")] public int AutosavePerTick { get; set; } = 2;
+    }
+
     public class TempDataConfig
     {
         [JsonPropertyName("current_schedule_key")] public string CurrentScheduleKey { get; set; } = "";
@@ -88,6 +96,7 @@ namespace Challenges
         [JsonPropertyName("gui")] public PluginConfigGui Gui { get; set; } = new();
         [JsonPropertyName("notifications")] public PluginConfigNotifications Notifications { get; set; } = new();
         [JsonPropertyName("discord")] public PluginConfigDiscord Discord { get; set; } = new();
+        [JsonPropertyName("persistence")] public PluginConfigPersistence Persistence { get; set; } = new();
         [JsonPropertyName("temp_data")] public TempDataConfig TempData { get; set; } = new();
     }
 }

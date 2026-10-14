@@ -35,35 +35,53 @@ namespace Challenges
         public required int Slot { get; init; }
         public required string ScheduleKey { get; init; }
         public required RunningSchedule Schedule { get; init; }
-        public List<ProgressUpsert> Upserts { get; } = [];
-        public List<(string ChallengeId, string TaskId)> Removals { get; } = [];
+        /// <summary>Null until the first <see cref="Upsert"/>.</summary>
+        public List<ProgressUpsert>? Upserts { get; private set; }
+        /// <summary>Null until the first <see cref="AddRemoval"/>.</summary>
+        public List<(string ChallengeId, string TaskId)>? Removals { get; private set; }
         public int? SolvedAbsolute { get; set; }
-        public List<ProgressEffect> Effects { get; } = [];
+        /// <summary>Null until the first <see cref="AddEffect"/>.</summary>
+        public List<ProgressEffect>? Effects { get; private set; }
         public List<TrackerProgressItem>? Touched { get; set; }
         public List<string>? DebugLines { get; set; }
 
         public bool HasChanges =>
-            Upserts.Count > 0
-            || Removals.Count > 0
+            Upserts != null
+            || Removals != null
             || SolvedAbsolute != null
-            || Effects.Count > 0;
+            || Effects != null;
+
+        /// <summary>
+        /// Completion-only result: tells the game thread that one in-flight target finished without changes.
+        /// </summary>
+        public static ProgressPatch Done(string steamId, int slot, string scheduleKey, RunningSchedule schedule) =>
+            new()
+            {
+                SteamId = steamId,
+                Slot = slot,
+                ScheduleKey = scheduleKey,
+                Schedule = schedule,
+            };
 
         public void Upsert(string challengeId, string taskId, TaskProgress progress)
         {
-            for (int i = 0; i < Upserts.Count; i++)
+            List<ProgressUpsert> upserts = Upserts ??= [];
+            for (int i = 0; i < upserts.Count; i++)
             {
-                ProgressUpsert existing = Upserts[i];
+                ProgressUpsert existing = upserts[i];
                 if (existing.ChallengeId != challengeId || existing.TaskId != taskId)
                 {
                     continue;
                 }
 
-                Upserts[i] = new ProgressUpsert(challengeId, taskId, progress.Amount, progress.LastUpdate);
+                upserts[i] = new ProgressUpsert(challengeId, taskId, progress.Amount, progress.LastUpdate);
                 return;
             }
 
-            Upserts.Add(new ProgressUpsert(challengeId, taskId, progress.Amount, progress.LastUpdate));
+            upserts.Add(new ProgressUpsert(challengeId, taskId, progress.Amount, progress.LastUpdate));
         }
+
+        public void AddRemoval(string challengeId, string taskId) => (Removals ??= []).Add((challengeId, taskId));
 
         public void AddDebug(string line) => (DebugLines ??= []).Add(line);
 
@@ -74,7 +92,7 @@ namespace Challenges
             int amount = 0,
             bool challengeSolvedNow = false,
             string? command = null) =>
-            Effects.Add(new ProgressEffect(kind, challenge, task, amount, challengeSolvedNow, command));
+            (Effects ??= []).Add(new ProgressEffect(kind, challenge, task, amount, challengeSolvedNow, command));
     }
 
     internal readonly record struct ProgressUpsert(

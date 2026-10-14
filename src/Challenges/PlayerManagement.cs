@@ -20,19 +20,35 @@ namespace Challenges
             : base(state, localizer)
         {
             Commands = BuildMenuCommands(GlobalConfig.MenuCommands);
+            Events = BuildEvents(GlobalConfig.Persistence);
             Archive.EnsureLoaded(GlobalConfig, warn: Warn, debug: DebugPrint);
+            Saves = new PlayerSaveQueue(Archive, GlobalConfig, Warn, DebugPrint);
             Server.NextFrame(BindOnlinePlayers);
         }
 
-        public override List<string> Events =>
-        [
-            "EventPlayerConnectFull",
-            "EventPlayerDisconnect",
-            "EventPlayerChat",
-            "EventRoundStart",
-        ];
+        public override List<string> Events { get; }
 
         public override Dictionary<string, CommandBinding> Commands { get; }
+
+        /// <summary>Budgeted background saves; pumped from the plugin tick.</summary>
+        internal PlayerSaveQueue Saves { get; }
+
+        private static List<string> BuildEvents(PluginConfigPersistence persistence)
+        {
+            List<string> events =
+            [
+                "EventPlayerConnectFull",
+                "EventPlayerDisconnect",
+                "EventPlayerChat",
+                "EventRoundStart",
+            ];
+            if (persistence.AutosaveOnRoundEnd)
+            {
+                events.Add("EventRoundEnd");
+            }
+
+            return events;
+        }
 
         private static Dictionary<string, CommandBinding> BuildMenuCommands(IEnumerable<string> entries)
         {
@@ -58,6 +74,28 @@ namespace Challenges
         public HookResult EventRoundStart(EventRoundStart @event, GameEventInfo info)
         {
             BindOnlinePlayers();
+            return HookResult.Continue;
+        }
+
+        public HookResult EventRoundEnd(EventRoundEnd @event, GameEventInfo info)
+        {
+            int queued = 0;
+            foreach (PlayerState state in PlayerStates.Values)
+            {
+                if (!state.Dirty || state.SteamId.Length == 0)
+                {
+                    continue;
+                }
+
+                Saves.Enqueue(state);
+                queued++;
+            }
+
+            if (queued > 0 && GlobalConfig.Debug.Enable)
+            {
+                DebugPrint($"round end: queued {queued} dirty player(s) for autosave");
+            }
+
             return HookResult.Continue;
         }
 
@@ -140,6 +178,7 @@ namespace Challenges
 
         public override void Destroy()
         {
+            Saves.FlushSync();
             int sessionDirty = 0;
             foreach ((CCSPlayerController player, PlayerState state) in PlayerStates)
             {
@@ -245,21 +284,14 @@ namespace Challenges
                     return;
                 }
 
-                DebugPrint($"disconnect {label}: saving dirty state to disk");
-                if (!Archive.TryWrite(GlobalConfig, state, warn: Warn, debug: DebugPrint))
-                {
-                    DebugPrint($"disconnect {label}: save failed or blocked");
-                }
+                DebugPrint($"disconnect {label}: queued dirty state for saving");
+                Saves.Enqueue(state);
             }
 
-            if (SteamIds.IsCreditable(steamId) && engine.HasPending(steamId))
+            if (engine.WhenIdle(steamId, Save))
             {
                 DebugPrint($"disconnect {label}: deferring save until progress queue drains");
-                engine.WhenIdle(steamId, Save);
-                return;
             }
-
-            Save();
         }
 
         private static void ApplyIdentity(CCSPlayerController player, PlayerState state)

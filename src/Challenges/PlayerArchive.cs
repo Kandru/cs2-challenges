@@ -140,6 +140,9 @@ namespace Challenges
 
         public PlayerState GetOrCreate(string steamId) => GetOrCreate(steamId, out _);
 
+        /// <summary>True when a corrupt file could not be quarantined and must not be overwritten.</summary>
+        public bool IsWriteBlocked(string steamId) => _blockedWrites.Contains(steamId);
+
         /// <summary>
         /// Rebuilds offline rank snapshots only when the schedule key changes.
         /// </summary>
@@ -191,7 +194,11 @@ namespace Challenges
             _offlineScoresBuilt = false;
         }
 
-        public bool TryWrite(PluginConfig config, PlayerState state, Action<string>? warn = null, Action<string>? debug = null)
+        public bool TryWrite(PluginConfig config, PlayerState state, Action<string>? warn = null, Action<string>? debug = null) =>
+            TryWrite(PlayerFiles.DirectoryPath(config), state, warn, debug);
+
+        /// <summary>Synchronous save into an already resolved <see cref="PlayerFiles.DirectoryPath"/>.</summary>
+        public bool TryWrite(string directory, PlayerState state, Action<string>? warn = null, Action<string>? debug = null)
         {
             string steamId = state.SteamId;
             if (steamId.Length == 0)
@@ -200,7 +207,7 @@ namespace Challenges
                 return false;
             }
 
-            if (_blockedWrites.Contains(steamId))
+            if (IsWriteBlocked(steamId))
             {
                 warn?.Invoke($"skip save: writes blocked for {steamId} (corrupt file left in place)");
                 return false;
@@ -208,7 +215,7 @@ namespace Challenges
 
             try
             {
-                string path = PlayerFiles.FilePath(config, steamId);
+                string path = PlayerFiles.FilePath(directory, steamId);
                 PlayerFiles.Write(path, state);
                 state.Dirty = false;
                 debug?.Invoke(

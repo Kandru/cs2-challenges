@@ -22,6 +22,10 @@ namespace Challenges
 
         private readonly PlayerLanguageManager _playerLanguageManager = new();
         private readonly State _state = new();
+        /// <summary>Cached for the per-tick patch pump; null while modules are down.</summary>
+        private ChallengeEngine? _engine;
+        /// <summary>Cached for the per-tick save pump; null while modules are down.</summary>
+        private PlayerSaveQueue? _saves;
 
         public required PluginConfig Config { get; set; }
 
@@ -34,7 +38,7 @@ namespace Challenges
             RegisterListener<Listeners.OnMapEnd>(OnMapEnd);
             RegisterListener<Listeners.CheckTransmit>(CustomHud.OnCheckTransmit);
             CustomHud.CacheTickRate();
-            RegisterListener<Listeners.OnTick>(CustomHud.OnTick);
+            RegisterListener<Listeners.OnTick>(OnTick);
 
             var sender = new CustomEventsSender();
             CustomEventsSender.Instance = sender;
@@ -49,8 +53,15 @@ namespace Challenges
             RemoveListener<Listeners.OnMapStart>(OnMapStart);
             RemoveListener<Listeners.OnMapEnd>(OnMapEnd);
             RemoveListener<Listeners.CheckTransmit>(CustomHud.OnCheckTransmit);
-            RemoveListener<Listeners.OnTick>(CustomHud.OnTick);
+            RemoveListener<Listeners.OnTick>(OnTick);
             CustomEventsSender.Instance = null;
+        }
+
+        private void OnTick()
+        {
+            _engine?.OnTick();
+            _saves?.Pump();
+            CustomHud.OnTick();
         }
 
         public void OnConfigParsed(PluginConfig config)
@@ -91,17 +102,23 @@ namespace Challenges
                 return;
             }
 
-            Modules.Add(nameof(PlayerManagement), new PlayerManagement(_state, Localizer, isHotReloaded));
+            PlayerManagement players = new(_state, Localizer, isHotReloaded);
+            Modules.Add(nameof(PlayerManagement), players);
             Modules.Add(nameof(Schedules), new Schedules(_state, Localizer, isHotReloaded));
-            Modules.Add(nameof(ChallengeEngine), new ChallengeEngine(_state, Localizer, isHotReloaded));
+            ChallengeEngine engine = new(_state, Localizer, isHotReloaded);
+            Modules.Add(nameof(ChallengeEngine), engine);
             Modules.Add(nameof(Notifications), new Notifications(_state, Localizer, isHotReloaded));
             Modules.Add(nameof(HudDriver), new HudDriver(_state, Localizer, isHotReloaded));
             BindModuleHandlers(register: true);
+            _engine = engine;
+            _saves = players.Saves;
         }
 
         private void DestroyModules()
         {
             BindModuleHandlers(register: false);
+            _engine = null;
+            _saves = null;
             if (Modules.TryGetValue(nameof(ChallengeEngine), out Module? engine)
                 && engine is ChallengeEngine challengeEngine)
             {

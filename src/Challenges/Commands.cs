@@ -90,7 +90,7 @@ namespace Challenges
             Exception root = ex.GetBaseException();
             return root is TargetException
                 ? "Challenges.json is empty or a nested section is null; "
-                    + "gui, notifications, discord, and temp_data must be objects."
+                    + "gui, notifications, discord, persistence, and temp_data must be objects."
                 : root.Message;
         }
     }
