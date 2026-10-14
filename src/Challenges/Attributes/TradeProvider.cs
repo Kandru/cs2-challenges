@@ -133,7 +133,7 @@ namespace Challenges.Attributes
         /// Drops expired kills, then takes the latest kill of <paramref name="kill"/>'s victim on its attacker:
         /// a trade. Without one, <paramref name="kill"/> is remembered and false returned.
         /// </summary>
-        private bool TryTakeReverse(in KillRecord kill, out KillRecord first)
+        internal bool TryTakeReverse(in KillRecord kill, out KillRecord first)
         {
             PruneKills(kill.At);
             for (int i = _kills.Count - 1; i >= 0; i--)
@@ -195,7 +195,7 @@ namespace Challenges.Attributes
         }
 
         /// <summary>One kill by slot; the controllers of a trade come from the event that completes it.</summary>
-        private readonly record struct KillRecord(
+        internal readonly record struct KillRecord(
             int AttackerSlot,
             int VictimSlot,
             string Weapon,

@@ -71,6 +71,7 @@ namespace Challenges
             Config = config;
             Config.Update();
             _state.Config = config;
+            PerfCounters.Enabled = config.Debug.Enable;
             LogCatalogMismatches();
             (int challenges, int schedules) = LoadSchedulesAndChallenges();
             Console.WriteLine(Localizer["core.config"].Value
@@ -104,6 +105,7 @@ namespace Challenges
                 return;
             }
 
+            PerfCounters.Enabled = Config.Debug.Enable;
             PlayerManagement players = new(_state, Localizer, isHotReloaded);
             Modules.Add(nameof(PlayerManagement), players);
             Modules.Add(nameof(Schedules), new Schedules(_state, Localizer, isHotReloaded));
@@ -288,7 +290,7 @@ namespace Challenges
             return map;
         }
 
-        private static void NormalizeDefinition(ChallengeDefinition def)
+        internal static void NormalizeDefinition(ChallengeDefinition def)
         {
             foreach (ChallengeTask task in def.Tasks)
             {

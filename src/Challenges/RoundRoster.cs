@@ -35,6 +35,13 @@ namespace Challenges
             _built = true;
         }
 
+        /// <summary>Built and empty, without a player scan; <see cref="Set"/> fills it.</summary>
+        internal void RebuildEmpty()
+        {
+            Reset();
+            _built = true;
+        }
+
         /// <summary>Forgets everything; the next read rebuilds.</summary>
         public void Invalidate()
         {
@@ -104,7 +111,8 @@ namespace Challenges
             }
         }
 
-        private void Set(int slot, int team, bool human)
+        /// <summary>Places the player of <paramref name="slot"/>; a team outside 0-3 counts as 0.</summary>
+        internal void Set(int slot, int team, bool human)
         {
             if ((uint)slot >= MaxSlots)
             {

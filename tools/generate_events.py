@@ -19,11 +19,11 @@ DOCS_EVENTS_INDEX = ROOT / "documentation" / "reference" / "events.md"
 DOCS_LISTENERS_INDEX = ROOT / "documentation" / "reference" / "listeners.md"
 # PlayerKeys.Suffixes: player property suffixes, bits, and catalog types.
 FILL_DEMAND = ROOT / "src" / "Challenges" / "Utils" / "FillDemand.cs"
-# Rule operators live in ChallengeRules; action type cases in ChallengeEngine.Simulate.
+# Rule operators live in ChallengeRules; action type cases in ProgressPipeline.Simulate.
 RULES = ROOT / "src" / "Challenges" / "Utils" / "ChallengeRules.cs"
 # Attribute provider tables (AttributeSuffix / AttributeEventKey); shared with the runtime registry.
 ATTRIBUTES_DIR = ROOT / "src" / "Challenges" / "Attributes"
-ACTIONS = ROOT / "src" / "Challenges" / "ChallengeEngine.Simulate.cs"
+ACTIONS = ROOT / "src" / "Challenges" / "ProgressPipeline.Simulate.cs"
 WEAPONS_FILE = ROOT / "tools" / "catalog_weapons.json"
 CATALOG_OUT = ROOT / "builder" / "catalog.json"
 

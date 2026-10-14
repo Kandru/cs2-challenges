@@ -1,7 +1,7 @@
 
 namespace Challenges
 {
-    public partial class ChallengeEngine
+    internal sealed partial class ProgressPipeline
     {
         private enum ResetMode
         {

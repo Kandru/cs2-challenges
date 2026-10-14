@@ -41,6 +41,22 @@ Source markdown lives in [`documentation/`](./documentation/).
 - Build with Docker (`make debug` / `make release`) - no local .NET install required.
 - Challenge builder and documentation on GitHub Pages ([live site](https://kandru.github.io/cs2-challenges/)).
 
+## Running tests
+
+The unit tests in [`tests/Challenges.Tests`](./tests/Challenges.Tests/) cover rule checks, progress simulation, the progress pipeline under load, load-time checks (demand, gates, aliases, validation) and the attribute providers. They need no game server: CounterStrikeSharp is loaded but never called.
+
+```bash
+make test
+```
+
+Without `make` (for example Git Bash on Windows):
+
+```bash
+MSYS_NO_PATHCONV=1 docker run --rm -v "$(pwd -W)":/src -v "$HOME/.nuget/packages":/root/.nuget/packages -w /src mcr.microsoft.com/dotnet/sdk:10.0 dotnet test tests/Challenges.Tests/Challenges.Tests.csproj
+```
+
+Microbenchmarks in [`bench/Challenges.Bench`](./bench/Challenges.Bench/) (BenchmarkDotNet, not part of the plugin build) compare the old string rules, full event fill and per-event progress clone with the current code: `make bench`, or `make bench BENCH_ARGS="--job short"` for a quick run.
+
 ## Test servers
 
 - CounterStrike.Party Ballerbude ([counterstrike.party](https://counterstrike.party) or `server.counterstrike.party:27030`)

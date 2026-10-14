@@ -2,3 +2,4 @@ bin/
 obj/
 _site/
 .venv-docs/
+BenchmarkDotNet.Artifacts/

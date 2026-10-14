@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Threading.Channels;
+using Challenges.Utils;
 
 namespace Challenges
 {
@@ -44,6 +45,12 @@ namespace Challenges
         /// </summary>
         private long _writing;
         private bool _closed;
+
+        /// <summary>Steam ids waiting for a budgeted save. Game thread only.</summary>
+        public int Queued => _queue.Count;
+
+        /// <summary>Handed-off saves not yet on disk.</summary>
+        public int InFlight => _inFlight.Count;
 
         public PlayerSaveQueue(PlayerArchive archive, PluginConfig config, Action<string> warn, Action<string> debug)
             : this(archive, config, PlayerFiles.DirectoryPath(config), warn, debug)
@@ -103,6 +110,7 @@ namespace Challenges
                 return;
             }
 
+            long start = PerfCounters.Start();
             DrainFailed();
             int budget = Math.Max(1, _config.Persistence.AutosavePerTick);
             int serialized = 0;
@@ -114,6 +122,8 @@ namespace Challenges
                     serialized++;
                 }
             }
+
+            PerfCounters.Stop(PerfCounters.SavePump, start);
         }
 
         /// <summary>
