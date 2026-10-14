@@ -62,8 +62,11 @@ namespace Challenges
         /// Game thread only.
         /// </summary>
         [JsonIgnore] public bool TrackerContentDirty = true;
-        /// <summary>Schedule and <see cref="ProgressVersion"/> the tracker content was last built for.</summary>
-        [JsonIgnore] public RunningSchedule? TrackerSchedule;
+        /// <summary>
+        /// Schedule key and <see cref="ProgressVersion"/> the tracker content was last built for.
+        /// A key, not the schedule, so the state never holds a past map's schedule.
+        /// </summary>
+        [JsonIgnore] public string? TrackerScheduleKey;
         [JsonIgnore] public int TrackerProgressVersion;
 
         /// <summary>Clears tracker session fields without touching menu state.</summary>

@@ -411,10 +411,10 @@ namespace Challenges
                 return;
             }
 
-            if (!ReferenceEquals(state.TrackerSchedule, schedule)
+            if (!string.Equals(state.TrackerScheduleKey, schedule.Key, StringComparison.Ordinal)
                 || state.TrackerProgressVersion != state.ProgressVersion)
             {
-                state.TrackerSchedule = schedule;
+                state.TrackerScheduleKey = schedule.Key;
                 state.TrackerProgressVersion = state.ProgressVersion;
                 state.TrackerContentDirty = true;
             }
