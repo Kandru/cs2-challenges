@@ -38,7 +38,7 @@ namespace Challenges
             {
                 d["entity.index"] = EventData.Num(entity.Index);
             }
-            HandleListener("OnEntitySpawned", d, valid);
+            HandleListener("OnEntitySpawned", d, valid, closed);
         }
 
         public void OnEntityCreated(CEntityInstance entity)
@@ -69,7 +69,7 @@ namespace Challenges
             {
                 d["entity.index"] = EventData.Num(entity.Index);
             }
-            HandleListener("OnEntityCreated", d, valid);
+            HandleListener("OnEntityCreated", d, valid, closed);
         }
 
         public void OnEntityDeleted(CEntityInstance entity)
@@ -100,7 +100,7 @@ namespace Challenges
             {
                 d["entity.index"] = EventData.Num(entity.Index);
             }
-            HandleListener("OnEntityDeleted", d, valid);
+            HandleListener("OnEntityDeleted", d, valid, closed);
         }
 
         public void OnEntityParentChanged(CEntityInstance entity, CEntityInstance newParent)
@@ -139,7 +139,7 @@ namespace Challenges
             {
                 d["newParent.index"] = EventData.Num(newParent.Index);
             }
-            HandleListener("OnEntityParentChanged", d, valid);
+            HandleListener("OnEntityParentChanged", d, valid, closed);
         }
 
         public HookResult OnEntityTakeDamagePre(CBaseEntity entity, CTakeDamageInfo info)
@@ -226,7 +226,7 @@ namespace Challenges
             {
                 d["damage.in_take_damage_flow"] = EventData.Bool(info.InTakeDamageFlow);
             }
-            HandleListener("OnEntityTakeDamagePre", d, valid);
+            HandleListener("OnEntityTakeDamagePre", d, valid, closed);
             return HookResult.Continue;
         }
 
@@ -362,7 +362,7 @@ namespace Challenges
             {
                 d["result.override_flinch_hit_group"] = result.OverrideFlinchHitGroup.ToString();
             }
-            HandleListener("OnEntityTakeDamagePost", d, valid);
+            HandleListener("OnEntityTakeDamagePost", d, valid, closed);
         }
 
         public HookResult OnPlayerTakeDamagePre(CCSPlayerPawn player, CTakeDamageInfo info)
@@ -446,7 +446,7 @@ namespace Challenges
             {
                 d["damage.in_take_damage_flow"] = EventData.Bool(info.InTakeDamageFlow);
             }
-            HandleListener("OnPlayerTakeDamagePre", d, valid);
+            HandleListener("OnPlayerTakeDamagePre", d, valid, closed);
             return HookResult.Continue;
         }
 
@@ -579,7 +579,7 @@ namespace Challenges
             {
                 d["result.override_flinch_hit_group"] = result.OverrideFlinchHitGroup.ToString();
             }
-            HandleListener("OnPlayerTakeDamagePost", d, valid);
+            HandleListener("OnPlayerTakeDamagePost", d, valid, closed);
         }
 
         public void OnMapStart(string mapName)
@@ -606,7 +606,7 @@ namespace Challenges
             {
                 d["mapname"] = mapName;
             }
-            HandleListener("OnMapStart", d, valid);
+            HandleListener("OnMapStart", d, valid, closed);
         }
 
         public void OnMapEnd()
@@ -629,7 +629,7 @@ namespace Challenges
             }
 
             Dictionary<string, string> d = [];
-            HandleListener("OnMapEnd", d, valid);
+            HandleListener("OnMapEnd", d, valid, closed);
         }
 
         public void OnClientConnect(int playerSlot, string name, string ipAddress)
@@ -665,7 +665,7 @@ namespace Challenges
             {
                 d["ipaddress"] = ipAddress;
             }
-            HandleListener("OnClientConnect", d, valid);
+            HandleListener("OnClientConnect", d, valid, closed);
         }
 
         public void OnClientConnected(int playerSlot)
@@ -693,7 +693,7 @@ namespace Challenges
             {
                 EventData.FillPlayer(d, playerSlotPlayer, need.PrefixKeys[0], need.Prefixes[0]);
             }
-            HandleListener("OnClientConnected", d, valid);
+            HandleListener("OnClientConnected", d, valid, closed);
         }
 
         public void OnClientPutInServer(int playerSlot)
@@ -721,7 +721,7 @@ namespace Challenges
             {
                 EventData.FillPlayer(d, playerSlotPlayer, need.PrefixKeys[0], need.Prefixes[0]);
             }
-            HandleListener("OnClientPutInServer", d, valid);
+            HandleListener("OnClientPutInServer", d, valid, closed);
         }
 
         public void OnClientDisconnect(int playerSlot)
@@ -749,7 +749,7 @@ namespace Challenges
             {
                 EventData.FillPlayer(d, playerSlotPlayer, need.PrefixKeys[0], need.Prefixes[0]);
             }
-            HandleListener("OnClientDisconnect", d, valid);
+            HandleListener("OnClientDisconnect", d, valid, closed);
         }
 
         public void OnClientDisconnectPost(int playerSlot)
@@ -777,7 +777,7 @@ namespace Challenges
             {
                 EventData.FillPlayer(d, playerSlotPlayer, need.PrefixKeys[0], need.Prefixes[0]);
             }
-            HandleListener("OnClientDisconnectPost", d, valid);
+            HandleListener("OnClientDisconnectPost", d, valid, closed);
         }
 
         public void OnClientVoice(int playerSlot)
@@ -805,7 +805,7 @@ namespace Challenges
             {
                 EventData.FillPlayer(d, playerSlotPlayer, need.PrefixKeys[0], need.Prefixes[0]);
             }
-            HandleListener("OnClientVoice", d, valid);
+            HandleListener("OnClientVoice", d, valid, closed);
         }
 
         public void OnClientAuthorized(int playerSlot, SteamID steamId)
@@ -837,7 +837,7 @@ namespace Challenges
             {
                 d["steamid"] = steamId.SteamId64.ToString();
             }
-            HandleListener("OnClientAuthorized", d, valid);
+            HandleListener("OnClientAuthorized", d, valid, closed);
         }
 
         public void OnServerHibernationUpdate(bool isHibernating)
@@ -864,7 +864,7 @@ namespace Challenges
             {
                 d["ishibernating"] = EventData.Bool(isHibernating);
             }
-            HandleListener("OnServerHibernationUpdate", d, valid);
+            HandleListener("OnServerHibernationUpdate", d, valid, closed);
         }
 
         public void OnGameServerSteamAPIActivated()
@@ -887,7 +887,7 @@ namespace Challenges
             }
 
             Dictionary<string, string> d = [];
-            HandleListener("OnGameServerSteamAPIActivated", d, valid);
+            HandleListener("OnGameServerSteamAPIActivated", d, valid, closed);
         }
 
         public void OnGameServerSteamAPIDeactivated()
@@ -910,7 +910,7 @@ namespace Challenges
             }
 
             Dictionary<string, string> d = [];
-            HandleListener("OnGameServerSteamAPIDeactivated", d, valid);
+            HandleListener("OnGameServerSteamAPIDeactivated", d, valid, closed);
         }
 
         public void OnHostNameChanged(string hostname)
@@ -937,7 +937,7 @@ namespace Challenges
             {
                 d["hostname"] = hostname;
             }
-            HandleListener("OnHostNameChanged", d, valid);
+            HandleListener("OnHostNameChanged", d, valid, closed);
         }
 
         public void OnServerPreFatalShutdown()
@@ -960,7 +960,7 @@ namespace Challenges
             }
 
             Dictionary<string, string> d = [];
-            HandleListener("OnServerPreFatalShutdown", d, valid);
+            HandleListener("OnServerPreFatalShutdown", d, valid, closed);
         }
 
         public void OnServerPrecacheResources(ResourceManifest manifest)
@@ -983,7 +983,7 @@ namespace Challenges
             }
 
             Dictionary<string, string> d = [];
-            HandleListener("OnServerPrecacheResources", d, valid);
+            HandleListener("OnServerPrecacheResources", d, valid, closed);
         }
 
         public void OnPlayerButtonsChanged(CCSPlayerController player, PlayerButtons pressed, PlayerButtons released)
@@ -1019,7 +1019,7 @@ namespace Challenges
             {
                 d["released"] = EventData.Num((ulong)released);
             }
-            HandleListener("OnPlayerButtonsChanged", d, valid);
+            HandleListener("OnPlayerButtonsChanged", d, valid, closed);
         }
 
         public void OnPlayerChat(CCSPlayerController player, string message, bool teamChat)
@@ -1074,7 +1074,7 @@ namespace Challenges
                     d["teamonly"] = value;
                 }
             }
-            HandleListener("OnPlayerChat", d, valid);
+            HandleListener("OnPlayerChat", d, valid, closed);
         }
 
         public void OnMetamodAllPluginsLoaded()
@@ -1097,7 +1097,7 @@ namespace Challenges
             }
 
             Dictionary<string, string> d = [];
-            HandleListener("OnMetamodAllPluginsLoaded", d, valid);
+            HandleListener("OnMetamodAllPluginsLoaded", d, valid, closed);
         }
 
         public void OnCustomHudClicked(CCSPlayerController player, CCSCustomHudLayout customLayout, string buttonId)
@@ -1128,7 +1128,7 @@ namespace Challenges
             {
                 d["buttonid"] = buttonId;
             }
-            HandleListener("OnCustomHudClicked", d, valid);
+            HandleListener("OnCustomHudClicked", d, valid, closed);
         }
 
     }

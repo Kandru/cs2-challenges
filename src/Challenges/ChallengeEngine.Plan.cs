@@ -21,6 +21,17 @@ namespace Challenges
             RoundBits = DuringRound | NotDuringRound,
         }
 
+        /// <summary>One bit per <c>global.*</c> key the engine writes into event data.</summary>
+        [Flags]
+        private enum GlobalKeyFlags : byte
+        {
+            None = 0,
+            IsWarmup = 1,
+            IsDuringRound = 2,
+            MapName = 4,
+            HasHostages = 8,
+        }
+
         /// <summary>Tasks of one challenge type in the current schedule, compiled at load.</summary>
         private sealed class TypePlan(int id, string type)
         {
@@ -96,8 +107,13 @@ namespace Challenges
         /// <summary>Source of <see cref="_typeLayout"/>; unique across engine instances.</summary>
         private static int _nextTypeLayout;
 
-        /// <summary>Union of all type gates; selects which global values must be read per event.</summary>
+        /// <summary>Union of all type gates.</summary>
         private GlobalGate _gateUnion;
+        /// <summary>
+        /// <see cref="_gateUnion"/> plus the warmup bits when a rule reads <c>global.iswarmup</c>; selects which
+        /// global values <see cref="ReadClosedGates"/> reads per event.
+        /// </summary>
+        private GlobalGate _gateReads;
         /// <summary>Type plans by <see cref="TypePlan.Id"/>.</summary>
         private TypePlan[] _typeList = [];
         /// <summary>Identifies the current type id assignment for <see cref="PlayerState.OpenTypes"/>.</summary>
@@ -151,11 +167,12 @@ namespace Challenges
 
         /// <summary>
         /// Gate bits the current game state violates. Reads warmup / round state only when a loaded type
-        /// is gated on it. Uses the same sources as <see cref="MergeGlobalData"/>.
+        /// is gated on it or a rule reads <c>global.iswarmup</c>; <see cref="MergeGlobalData"/> reuses the
+        /// warmup bit. A bit no type is gated on closes nothing.
         /// </summary>
         private GlobalGate ReadClosedGates()
         {
-            GlobalGate union = _gateUnion;
+            GlobalGate union = _gateReads;
             if (union == GlobalGate.None)
             {
                 return GlobalGate.None;
@@ -174,6 +191,16 @@ namespace Challenges
 
             return closed;
         }
+
+        private static GlobalKeyFlags GlobalKey(string key) =>
+            key switch
+            {
+                "global.iswarmup" => GlobalKeyFlags.IsWarmup,
+                "global.isduringround" => GlobalKeyFlags.IsDuringRound,
+                "global.mapname" => GlobalKeyFlags.MapName,
+                "global.hashostages" => GlobalKeyFlags.HasHostages,
+                _ => GlobalKeyFlags.None,
+            };
 
         /// <summary>Preconditions one task's rules pin down; every such rule must pass for progress.</summary>
         private static GlobalGate TaskGate(ChallengeTask task)

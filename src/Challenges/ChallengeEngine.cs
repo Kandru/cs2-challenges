@@ -30,8 +30,11 @@ namespace Challenges
         private Dictionary<string, ExtractorPlan> _activeListeners = new(StringComparer.Ordinal);
         private List<string> _boundEvents = [];
         private List<string> _boundListeners = [];
-        private bool _usesHostageKey;
+        /// <summary>The <c>global.*</c> keys some loaded rule reads; only these are written per event.</summary>
+        private GlobalKeyFlags _globalKeys;
         private bool? _hasHostages;
+        /// <summary>Read once on first use; the engine lives for one map.</summary>
+        private string? _mapName;
         private CCSGameRulesProxy? _gameRulesProxy;
         private Notifications? _notifications;
         private bool _destroyed;
@@ -60,7 +63,7 @@ namespace Challenges
         {
             Dictionary<string, TypePlan> byType = new(StringComparer.Ordinal);
             List<ChallengeTask> allTasks = [];
-            bool hostageKey = false;
+            GlobalKeyFlags globalKeys = GlobalKeyFlags.None;
 
             if (CurrentSchedule is { } schedule)
             {
@@ -80,19 +83,9 @@ namespace Challenges
 
                         plan.Tasks.Add((challenge, task));
                         allTasks.Add(task);
-
-                        if (hostageKey)
-                        {
-                            continue;
-                        }
-
                         foreach (ChallengeRule rule in task.Rules)
                         {
-                            if (rule.Key == "global.hashostages")
-                            {
-                                hostageKey = true;
-                                break;
-                            }
+                            globalKeys |= GlobalKey(rule.Key);
                         }
                     }
                 }
@@ -115,7 +108,10 @@ namespace Challenges
             _typeLayout = Interlocked.Increment(ref _nextTypeLayout);
             _scheduleKey = CurrentSchedule?.Key ?? string.Empty;
             _gateUnion = gateUnion;
-            _usesHostageKey = hostageKey;
+            _gateReads = (globalKeys & GlobalKeyFlags.IsWarmup) != 0
+                ? gateUnion | GlobalGate.WarmupBits
+                : gateUnion;
+            _globalKeys = globalKeys;
             _situations.Configure(allTasks);
 
             HashSet<string> bound = new(StringComparer.Ordinal);
@@ -199,6 +195,8 @@ namespace Challenges
             _destroyed = true;
             _types = new(StringComparer.Ordinal);
             _gateUnion = GlobalGate.None;
+            _gateReads = GlobalGate.None;
+            _globalKeys = GlobalKeyFlags.None;
             _typeList = [];
             _activeExtractorsByEvent = new(StringComparer.Ordinal);
             _activeListeners = new(StringComparer.Ordinal);
@@ -271,11 +269,15 @@ namespace Challenges
         }
 
         /// <summary>Last step of a generated listener handler.</summary>
-        private void HandleListener(string listenerName, Dictionary<string, string> data, List<ProgressTarget> targets)
+        private void HandleListener(
+            string listenerName,
+            Dictionary<string, string> data,
+            List<ProgressTarget> targets,
+            GlobalGate closed)
         {
             try
             {
-                Enqueue(listenerName, data, targets);
+                Enqueue(listenerName, data, targets, closed);
             }
             catch (Exception ex)
             {
@@ -351,7 +353,7 @@ namespace Challenges
                         _situations.Enrich(eventName, gameEvent, data);
                     }
 
-                    Enqueue(eventName, data, targets);
+                    Enqueue(eventName, data, targets, closed);
                 }
                 catch (Exception ex)
                 {
@@ -441,14 +443,19 @@ namespace Challenges
             return identity;
         }
 
-        private void Enqueue(string source, Dictionary<string, string> data, List<ProgressTarget> targets)
+        /// <summary><paramref name="closed"/> is the event's <see cref="ReadClosedGates"/> result.</summary>
+        private void Enqueue(
+            string source,
+            Dictionary<string, string> data,
+            List<ProgressTarget> targets,
+            GlobalGate closed)
         {
             if (CurrentSchedule is not { } schedule || targets.Count == 0)
             {
                 return;
             }
 
-            MergeGlobalData(data);
+            MergeGlobalData(data, closed);
             _ = TryEnqueueWork(new ProgressWorkItem
             {
                 Source = source,
@@ -467,9 +474,10 @@ namespace Challenges
         {
             _targetBuffer.Clear();
             _targetBuffer.Add((player, type));
-            if (FilterTargets(_targetBuffer, ReadClosedGates()) is { } targets)
+            GlobalGate closed = ReadClosedGates();
+            if (FilterTargets(_targetBuffer, closed) is { } targets)
             {
-                Enqueue(type, data, targets);
+                Enqueue(type, data, targets, closed);
             }
         }
 
@@ -487,18 +495,38 @@ namespace Challenges
             return active == null ? [] : [.. active];
         }
 
-        private void MergeGlobalData(Dictionary<string, string> data)
+        /// <summary>
+        /// Writes the <c>global.*</c> keys loaded rules read. The warmup value comes from
+        /// <paramref name="closed"/>, which <see cref="ReadClosedGates"/> fills whenever that key is read.
+        /// </summary>
+        private void MergeGlobalData(Dictionary<string, string> data, GlobalGate closed)
         {
-            data["global.iswarmup"] = EventData.Bool(GetGameRules()?.WarmupPeriod ?? false);
-            data["global.isduringround"] = EventData.Bool(State.DuringRound);
-            data["global.mapname"] = Server.MapName;
-            if (!_usesHostageKey)
+            GlobalKeyFlags keys = _globalKeys;
+            if (keys == GlobalKeyFlags.None)
             {
                 return;
             }
 
-            _hasHostages ??= Utilities.FindAllEntitiesByDesignerName<CBaseEntity>("hostage_entity").Any();
-            data["global.hashostages"] = EventData.Bool(_hasHostages.Value);
+            if ((keys & GlobalKeyFlags.IsWarmup) != 0)
+            {
+                data["global.iswarmup"] = EventData.Bool((closed & GlobalGate.NoWarmup) != 0);
+            }
+
+            if ((keys & GlobalKeyFlags.IsDuringRound) != 0)
+            {
+                data["global.isduringround"] = EventData.Bool(State.DuringRound);
+            }
+
+            if ((keys & GlobalKeyFlags.MapName) != 0)
+            {
+                data["global.mapname"] = _mapName ??= Server.MapName;
+            }
+
+            if ((keys & GlobalKeyFlags.HasHostages) != 0)
+            {
+                _hasHostages ??= Utilities.FindAllEntitiesByDesignerName<CBaseEntity>("hostage_entity").Any();
+                data["global.hashostages"] = EventData.Bool(_hasHostages.Value);
+            }
         }
 
         private CCSGameRules? GetGameRules()

@@ -556,7 +556,7 @@ def generate_listener_method(listener: dict, alias: dict, snapshot: dict) -> str
         "",
         "            Dictionary<string, string> d = [];",
         *fill_lines,
-        f'            HandleListener("{name}", d, valid);',
+        f'            HandleListener("{name}", d, valid, closed);',
     ]
     if ret == "HookResult":
         lines.append("            return HookResult.Continue;")
