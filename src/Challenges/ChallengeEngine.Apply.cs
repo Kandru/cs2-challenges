@@ -16,23 +16,29 @@ namespace Challenges
             PlayerState state = Archive.GetOrCreate(patch.SteamId);
             string scheduleKey = patch.ScheduleKey;
 
-            foreach ((string challengeId, string taskId) in patch.Removals)
+            if (patch.Removals != null)
             {
-                if (state.Challenges.TryGetValue(scheduleKey, out var challenges)
-                    && challenges.TryGetValue(challengeId, out var tasks)
-                    && tasks.Remove(taskId))
+                foreach ((string challengeId, string taskId) in patch.Removals)
                 {
-                    state.Dirty = true;
+                    if (state.Challenges.TryGetValue(scheduleKey, out var challenges)
+                        && challenges.TryGetValue(challengeId, out var tasks)
+                        && tasks.Remove(taskId))
+                    {
+                        state.Dirty = true;
+                    }
                 }
             }
 
-            foreach (ProgressUpsert upsert in patch.Upserts)
+            if (patch.Upserts != null)
             {
-                TaskProgress progress = ChallengeProgress.GetOrCreate(
-                    state, scheduleKey, upsert.ChallengeId, upsert.TaskId);
-                progress.Amount = upsert.Amount;
-                progress.LastUpdate = upsert.LastUpdate;
-                state.Dirty = true;
+                foreach (ProgressUpsert upsert in patch.Upserts)
+                {
+                    TaskProgress progress = ChallengeProgress.GetOrCreate(
+                        state, scheduleKey, upsert.ChallengeId, upsert.TaskId);
+                    progress.Amount = upsert.Amount;
+                    progress.LastUpdate = upsert.LastUpdate;
+                    state.Dirty = true;
+                }
             }
 
             if (patch.SolvedAbsolute is int solved)
@@ -68,6 +74,11 @@ namespace Challenges
 
         private void PlayEffects(CCSPlayerController player, PlayerState state, ProgressPatch patch)
         {
+            if (patch.Effects == null)
+            {
+                return;
+            }
+
             foreach (ProgressEffect effect in patch.Effects)
             {
                 switch (effect.Kind)

@@ -264,7 +264,7 @@ namespace Challenges
             }
 
             shadow.Challenges[item.ScheduleKey][challenge.Id].Remove(taskId);
-            patch.Removals.Add((challenge.Id, taskId));
+            patch.AddRemoval(challenge.Id, taskId);
             if (item.Debug)
             {
                 string action = mode == ResetMode.Progress ? "task.reset_progress" : "task.reset_completed";
