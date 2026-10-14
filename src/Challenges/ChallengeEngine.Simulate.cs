@@ -9,6 +9,9 @@ namespace Challenges
             Completed,
         }
 
+        /// <summary>Reused candidate scratch list of <see cref="SimulateTarget"/>. Worker thread only.</summary>
+        private readonly List<(ChallengeDefinition Challenge, ChallengeTask Task)> _eligible = [];
+
         private void SimulateWorkItem(ProgressWorkItem item)
         {
             foreach (ProgressTarget target in item.Targets)
@@ -36,7 +39,8 @@ namespace Challenges
 
             string scheduleKey = item.ScheduleKey;
 
-            List<(ChallengeDefinition Challenge, ChallengeTask Task)> eligible = [];
+            List<(ChallengeDefinition Challenge, ChallengeTask Task)> eligible = _eligible;
+            eligible.Clear();
             foreach ((ChallengeDefinition challenge, ChallengeTask task) in target.Candidates)
             {
                 if (!ChallengeRules.IsSkipped(
