@@ -21,11 +21,11 @@ namespace Challenges
 
         private const string VarTitle = "tr_title";
         private const string VarCount = "tr_count";
-        private const string VarTasksHead = "tr_tasks_h";
         private const string VarHint = "tr_hint";
 
         private static readonly string[] RowIds = ChallengeCardPaint.Ids("ch-trow-", MaxRows);
         private static readonly string[] FillIds = ChallengeCardPaint.Ids("ch-tfill-", MaxRows);
+        private static readonly string[] RowIndexVars = ChallengeCardPaint.Ids("tr_n", MaxRows);
         private static readonly string[] RowTitleVars = ChallengeCardPaint.Ids("tr_t", MaxRows);
         private static readonly string[] RowValueVars = ChallengeCardPaint.Ids("tr_v", MaxRows);
         private static readonly string[][] TaskIds = RowTable("ch-ttask-", "-");
@@ -292,7 +292,6 @@ namespace Challenges
         {
             CustomHud.SetText(player, Panel, VarTitle, string.Empty);
             CustomHud.SetText(player, Panel, VarCount, string.Empty);
-            CustomHud.SetText(player, Panel, VarTasksHead, string.Empty);
             PaintHint(player, string.Empty);
             HudTheme.Apply(player, Panel);
             HideTimer(player, Context.GetState(player));
@@ -529,7 +528,6 @@ namespace Challenges
                     schedule.Challenges.Count);
             }
 
-            string tasksHead = Context.Text(player, "hud.menu.tasks");
             string hint = OpenHint(player);
             StringBuilder fingerprint = new StringBuilder(heading.Length + count.Length + hint.Length + rows.Count * 96)
                 .Append(heading).Append('|').Append(count).Append('|').Append(hint).Append('|').Append(upNext ? '1' : '0');
@@ -558,7 +556,6 @@ namespace Challenges
             CustomHud.ShowPanel(player, Panel);
             CustomHud.SetText(player, Panel, VarTitle, heading);
             CustomHud.SetText(player, Panel, VarCount, count);
-            CustomHud.SetText(player, Panel, VarTasksHead, tasksHead);
             PaintHint(player, hint);
 
             for (int i = 0; i < MaxRows; i++)
@@ -566,6 +563,7 @@ namespace Challenges
                 if (i < rows.Count)
                 {
                     RowPaint row = rows[i];
+                    CustomHud.SetText(player, Panel, RowIndexVars[i], ChallengeCardPaint.Index(i + 1));
                     CustomHud.SetText(player, Panel, VarRowTitle(i), row.Title);
                     CustomHud.SetText(player, Panel, VarRowValue(i), Context.FormatPercent(player, row.Percent));
                     CustomHud.SetStepPercent(player, FillId(i), row.Percent);
@@ -896,6 +894,7 @@ namespace Challenges
 
         private static void ClearRow(CCSPlayerController player, int index)
         {
+            CustomHud.SetText(player, Panel, RowIndexVars[index], string.Empty);
             CustomHud.SetText(player, Panel, VarRowTitle(index), string.Empty);
             CustomHud.SetText(player, Panel, VarRowValue(index), string.Empty);
             CustomHud.SetStepPercent(player, FillId(index), 0);

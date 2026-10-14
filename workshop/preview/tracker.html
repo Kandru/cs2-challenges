@@ -21,22 +21,21 @@
 
   <div id="Tracker" class="Tracker ph-card theme-gold ph-off">
     <div class="ph-bg"></div>
-    <div class="ph-bar"></div>
+    <i class="TxCorner TxCornerTL"></i><i class="TxCorner TxCornerTR"></i><i class="TxCorner TxCornerBL"></i><i class="TxCorner TxCornerBR"></i>
     <div class="TrackerContent">
-      <div class="ph-titlebar">
-        <div class="TrackerTitleStack">
-          <span class="ph-title" id="tr_title">Challenges</span>
-          <span class="TrackerHint" id="tr_hint">Type !c to open overview</span>
-        </div>
-        <span class="ph-money TrackerCount" id="tr_count">2 / 12</span>
+      <div class="TxHead">
+        <span class="TxKicker">//</span>
+        <span class="TxTitle" id="tr_title">Challenges</span>
+        <span class="TxCount" id="tr_count">2 / 12</span>
       </div>
       <div class="TrackerBody" id="tr_body"></div>
+      <span class="TrackerHint" id="tr_hint">Type !c to open overview</span>
       <div id="tr_timer" class="TrackerTimerRow is-off" style="--tracker-hold: 5s">
-        <div class="TrackerTimerPadL"></div>
+        <div class="TxPad"></div>
         <div class="TrackerTimer ph-stat-track">
           <div class="ph-stat-fill p100"></div>
         </div>
-        <div class="TrackerTimerPadR"></div>
+        <div class="TxPad"></div>
       </div>
     </div>
   </div>
@@ -56,18 +55,21 @@ function taskHtml(task) {
   const cls = task.broken ? ' is-broken' : task.done ? ' is-done' : '';
   return `<div class="MenuTask${cls}"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">${task.label}</span></div>`;
 }
+const CUTS = '<div class="TxSegCut"></div>'.repeat(10);
+// Index boxes are numbered in paint(): __N__ is replaced by 01, 02, ...
 function rowHtml(name, pct, fill, tasks) {
   return `<div class="TrackerRow">
-    <div class="MenuRowHead">
-      <div class="ph-stat-lab"><span class="ph-stat-name">${name}</span><span class="ph-stat-val">${pct}</span></div>
-      <div class="ph-stat-track"><div class="ph-stat-fill ${fill}"></div></div>
-    </div>
-    <div class="TrackerRowSplit">
-      <div class="MenuTasksCol">
-        <span class="MenuColHead">Tasks</span>
-        <div class="MenuTasks">${tasks.map(taskHtml).join('')}</div>
+    <div class="TxPad"></div>
+    <div class="TxCardBody">
+      <div class="TxCardHead">
+        <div class="TxIdx"><span class="TxIdxLabel">__N__</span></div>
+        <span class="TxRowTitle">${name}</span>
+        <span class="TxRowPct">${pct}</span>
       </div>
+      <div class="TxSeg"><div class="ph-stat-track TxSegTrack"><div class="ph-stat-fill ${fill}"></div></div><div class="TxSegCuts">${CUTS}</div></div>
+      <div class="MenuTasks">${tasks.map(taskHtml).join('')}</div>
     </div>
+    <div class="TxPad"></div>
   </div>`;
 }
 
@@ -133,7 +135,7 @@ const scenes = {
 function paint(scene) {
   titleEl.textContent = scene.title;
   countEl.textContent = scene.count ?? '';
-  body.innerHTML = scene.rows.join('');
+  body.innerHTML = scene.rows.map((row, i) => row.replace('__N__', String(i + 1).padStart(2, '0'))).join('');
 }
 
 function showCard() {

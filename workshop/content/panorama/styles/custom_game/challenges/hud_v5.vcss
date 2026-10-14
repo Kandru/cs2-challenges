@@ -1,0 +1,1815 @@
+/* ============================================================================
+   Challenges HUD v5 - "tactical" design, one stylesheet for tracker_v5.xml and menu_v5.xml.
+   Hex colours only; no @define/var/rgba/display. Bars use clip ladders (p0 ... p100).
+   Hide with ph-off (cards) / is-off (rows). Do not name a class "hidden".
+
+   Tokens: panel #0a0d11eb  card #ffffff08  hairline #ffffff1f / #ffffff14
+           ink #f5f7fa  ink-soft #e8eef4  muted #a3acb6  cut #10141a
+           accent = theme (gold #f0a531)  success #9ccf4f  danger #e05a5a
+           medals #f0c64a / #c9d2dc / #d08a4e
+   Language: square corners, accent corner brackets, "//" kickers, segmented bars,
+   checkbox task marks (open = empty box, done = filled, broken = red box on a red line).
+   Accent only for: brackets, kickers, index boxes, values, active state, own entries.
+   Semantic colours never follow the theme. Type scale 14 / 16 / 18 / 20 / 28.
+   Spacing on a 4px grid; horizontal insets are TxPad spacers (width:100% children
+   ignore padding). Motion: hover 0.15s, menu 0.25s in / 0.18s out, tracker 1.0s.
+   ============================================================================ */
+
+/* Shared chrome ---------------------------------------------------------------- */
+
+.HudScreen
+{
+	width: 100%;
+	height: 100%;
+	z-index: 99999;
+}
+
+.HudScreen.TrackerScreen
+{
+	z-index: 99998;
+}
+
+.ph-card
+{
+	opacity: 1;
+	transform: translateY( 0px ) scale3d( 1, 1, 1 );
+	transition-property: opacity, transform;
+	transition-duration: 1.0s;
+	transition-timing-function: ease-out;
+	overflow: noclip noclip;
+}
+
+.ph-card.ph-fading
+{
+	opacity: 0;
+}
+
+/* Not "hidden" - that name exists on csgostyles and would collide. */
+.ph-card.ph-off
+{
+	visibility: collapse;
+	opacity: 0;
+	transition-duration: 0s;
+}
+
+.MenuRoot.ph-card
+{
+	transition-duration: 0.25s;
+}
+
+.MenuRoot.ph-card.ph-fading
+{
+	transform: translateY( 8px ) scale3d( 1, 1, 1 );
+	transition-duration: 0.18s;
+	transition-timing-function: ease-in;
+}
+
+.MenuRoot.ph-card.ph-off
+{
+	transition-duration: 0s;
+}
+
+.ph-bg
+{
+	width: 100%;
+	height: 100%;
+	background-color: #0a0d11eb;
+	border: 1px solid #ffffff1f;
+	box-shadow: #000000b0 0px 10px 32px 0px;
+	world-blur: gaussian( 2 );
+	z-index: 0;
+}
+
+/* Fullscreen shell - 68px inset clears the round status. */
+.ph-fs
+{
+	width: 100%;
+	height: 100%;
+	padding-top: 68px;
+	padding-right: 68px;
+	padding-bottom: 68px;
+	padding-left: 68px;
+}
+
+/* Corner brackets: one top+left "L", turned for the other corners. */
+.TxCorner
+{
+	width: 12px;
+	height: 12px;
+	border-top: 2px solid #f0a531;
+	border-left: 2px solid #f0a531;
+	z-index: 6;
+}
+
+.TxCornerTL
+{
+	horizontal-align: left;
+	vertical-align: top;
+}
+
+.TxCornerTR
+{
+	horizontal-align: right;
+	vertical-align: top;
+	transform: rotateZ( 90deg );
+}
+
+.TxCornerBR
+{
+	horizontal-align: right;
+	vertical-align: bottom;
+	transform: rotateZ( 180deg );
+}
+
+.TxCornerBL
+{
+	horizontal-align: left;
+	vertical-align: bottom;
+	transform: rotateZ( 270deg );
+}
+
+.TxPad
+{
+	width: 16px;
+	height: 100%;
+}
+
+.TxVPad
+{
+	width: 100%;
+	height: 16px;
+}
+
+/* Panel head: "// TITLE  sub ......  03/12  [x]" */
+.TxHead
+{
+	width: 100%;
+	height: 52px;
+	flow-children: right;
+	padding-left: 20px;
+	padding-right: 16px;
+	border-bottom: 1px solid #ffffff14;
+}
+
+Label.TxKicker
+{
+	vertical-align: middle;
+	margin-right: 10px;
+	font-size: 16;
+	letter-spacing: 1px;
+	color: #f0a531;
+}
+
+Label.TxTitle
+{
+	vertical-align: middle;
+	font-size: 20;
+	letter-spacing: 2px;
+	text-transform: uppercase;
+	color: #f5f7fa;
+}
+
+Label.TxHeadSub
+{
+	width: fill-parent-flow( 1.0 );
+	vertical-align: middle;
+	margin-left: 16px;
+	font-size: 16;
+	letter-spacing: 1px;
+	color: #a3acb6;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+Label.TxCount
+{
+	vertical-align: middle;
+	margin-left: 16px;
+	font-size: 28;
+	letter-spacing: 1px;
+	color: #f5f7fa;
+}
+
+.TxClose
+{
+	margin-left: 16px;
+}
+
+.ph-icon-btn
+{
+	width: 32px;
+	height: 32px;
+	flow-children: none;
+	vertical-align: middle;
+	background-color: #ffffff08;
+	border: 1px solid #ffffff33;
+	wash-color: none;
+	transition-property: background-color, border;
+	transition-duration: 0.15s;
+}
+
+.ph-icon-btn:hover
+{
+	background-color: #e05a5a44;
+	border: 1px solid #e05a5a;
+	cursor: pointer;
+	sound: "UIPanorama.generic_button_rollover";
+}
+
+.ph-icon-btn:active
+{
+	background-color: #e05a5a88;
+	sound: "UIPanorama.generic_button_press";
+}
+
+.ph-close-x
+{
+	width: 14px;
+	height: 2px;
+	horizontal-align: center;
+	vertical-align: middle;
+	background-color: #f5f7fa;
+}
+
+.ph-close-x-a
+{
+	transform: rotateZ( 45deg );
+}
+
+.ph-close-x-b
+{
+	transform: rotateZ( -45deg );
+}
+
+Label.ph-nav-label
+{
+	width: 100%;
+	horizontal-align: center;
+	vertical-align: middle;
+	text-align: center;
+	font-size: 16;
+	color: #e8eef4;
+}
+
+/* Index box "01" */
+.TxIdx
+{
+	width: 32px;
+	height: 24px;
+	flow-children: none;
+	vertical-align: middle;
+	margin-right: 12px;
+	border: 1px solid #f0a531;
+}
+
+Label.TxIdxLabel
+{
+	width: 100%;
+	horizontal-align: center;
+	vertical-align: middle;
+	text-align: center;
+	font-size: 14;
+	letter-spacing: 1px;
+	color: #f0a531;
+}
+
+/* Segmented bar: a clip-ladder fill under ten cut cells. */
+.TxSeg
+{
+	width: 100%;
+	height: 6px;
+	margin-top: 12px;
+	margin-bottom: 8px;
+	flow-children: none;
+}
+
+.ph-stat-track
+{
+	width: 100%;
+	height: 6px;
+	flow-children: none;
+	background-color: #ffffff14;
+	overflow: clip;
+}
+
+.ph-stat-fill
+{
+	width: 100%;
+	height: 100%;
+	background-color: gradient( linear, 0% 0%, 100% 0%, from( #f0a531 ), to( #ffd27a ) );
+	clip: rect( 0%, 0%, 100%, 0% );
+	transition-property: clip;
+	transition-duration: 0.35s;
+	transition-timing-function: ease-out;
+}
+
+.TxSegCuts
+{
+	width: 100%;
+	height: 100%;
+	margin-left: -3px;
+	flow-children: right;
+	z-index: 3;
+}
+
+.TxSegCut
+{
+	width: fill-parent-flow( 1.0 );
+	height: 100%;
+	border-left: 3px solid #10141a;
+}
+
+/* Task lines: checkbox marks. */
+.MenuTasks
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: down;
+}
+
+.MenuTask
+{
+	width: 100%;
+	height: 24px;
+	flow-children: right;
+}
+
+.MenuTask.is-off
+{
+	visibility: collapse;
+}
+
+.MenuTask.is-broken
+{
+	background-color: #e05a5a14;
+}
+
+.MenuTaskMark
+{
+	width: 12px;
+	height: 12px;
+	margin-left: 2px;
+	margin-right: 10px;
+	vertical-align: middle;
+	background-color: none;
+	border: 2px solid #ffffff55;
+}
+
+.MenuTask.is-done .MenuTaskMark
+{
+	background-color: #9ccf4f;
+	border: 2px solid #9ccf4f;
+}
+
+.MenuTask.is-broken .MenuTaskMark
+{
+	background-color: #e05a5a66;
+	border: 2px solid #e05a5a;
+}
+
+Label.MenuTaskLabel
+{
+	width: fill-parent-flow( 1.0 );
+	vertical-align: middle;
+	font-size: 15;
+	letter-spacing: 0.3px;
+	color: #e8eef4;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.MenuTask.is-done Label.MenuTaskLabel
+{
+	color: #9ccf4f;
+}
+
+.MenuTask.is-broken Label.MenuTaskLabel
+{
+	color: #e05a5a;
+}
+
+/* Tracker ---------------------------------------------------------------------- */
+
+.Tracker
+{
+	width: 420px;
+	horizontal-align: right;
+	vertical-align: top;
+	margin-top: 10px;
+	margin-right: 10px;
+	flow-children: none;
+	z-index: 100;
+}
+
+.TrackerContent
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: down;
+	z-index: 2;
+}
+
+.Tracker .TxHead
+{
+	height: 48px;
+	padding-left: 16px;
+}
+
+.Tracker Label.TxTitle
+{
+	width: fill-parent-flow( 1.0 );
+	font-size: 18;
+}
+
+.Tracker Label.TxCount
+{
+	font-size: 22;
+}
+
+.TrackerBody
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: down;
+}
+
+.TrackerRow
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: right;
+	padding-top: 12px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid #ffffff10;
+}
+
+.TrackerRow.is-off
+{
+	visibility: collapse;
+}
+
+.TrackerRow .TxPad
+{
+	height: 1px;
+}
+
+.TxCardBody
+{
+	width: fill-parent-flow( 1.0 );
+	height: 100%;
+	flow-children: down;
+}
+
+.TrackerRow .TxCardBody
+{
+	height: fit-children;
+}
+
+.TxCardHead
+{
+	width: 100%;
+	height: 28px;
+	flow-children: right;
+}
+
+.TrackerRow .TxCardHead
+{
+	height: 24px;
+}
+
+.TrackerRow .TxIdx
+{
+	width: 28px;
+	height: 20px;
+	margin-right: 10px;
+}
+
+.TrackerRow .TxSeg
+{
+	margin-top: 8px;
+	margin-bottom: 8px;
+}
+
+.TrackerRow .MenuTask
+{
+	height: 22px;
+}
+
+Label.TxRowTitle
+{
+	width: fill-parent-flow( 1.0 );
+	vertical-align: middle;
+	font-size: 16;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	color: #f5f7fa;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+Label.TxRowPct
+{
+	vertical-align: middle;
+	margin-left: 12px;
+	font-size: 18;
+	color: #f0a531;
+}
+
+Label.TrackerHint
+{
+	margin-top: 10px;
+	margin-left: 16px;
+	font-size: 14;
+	letter-spacing: 2px;
+	text-transform: uppercase;
+	color: #a3acb6;
+}
+
+Label.TrackerHint.is-off
+{
+	visibility: collapse;
+}
+
+.TrackerTimerRow
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: right;
+	margin-top: 10px;
+	margin-bottom: 12px;
+}
+
+.TrackerTimerRow.is-off
+{
+	visibility: collapse;
+}
+
+.TrackerTimerRow .TxPad
+{
+	height: 1px;
+}
+
+.TrackerTimer
+{
+	width: fill-parent-flow( 1.0 );
+	height: 3px;
+}
+
+/* Menu: frame ------------------------------------------------------------------ */
+
+.MenuRoot
+{
+	z-index: 300;
+}
+
+.MenuColumns
+{
+	width: 100%;
+	height: 100%;
+	flow-children: right;
+}
+
+.TxPanel
+{
+	height: 100%;
+	flow-children: none;
+}
+
+.MenuMain
+{
+	width: fill-parent-flow( 1.0 );
+}
+
+.TxColGap
+{
+	width: 16px;
+	height: 100%;
+}
+
+.MenuScore
+{
+	width: 420px;
+}
+
+.MenuScore.is-off
+{
+	visibility: collapse;
+}
+
+.TxPanelContent
+{
+	width: 100%;
+	height: 100%;
+	flow-children: down;
+	z-index: 2;
+}
+
+.MenuBody
+{
+	width: 100%;
+	height: fill-parent-flow( 1.0 );
+	flow-children: right;
+}
+
+/* Menu: filter rail ------------------------------------------------------------ */
+
+.TxRail
+{
+	width: 220px;
+	height: 100%;
+	flow-children: down;
+	padding-top: 16px;
+}
+
+Label.TxRailHead
+{
+	margin-left: 16px;
+	margin-bottom: 8px;
+	font-size: 14;
+	letter-spacing: 3px;
+	text-transform: uppercase;
+	color: #a3acb6;
+}
+
+.TxNav
+{
+	width: 100%;
+	height: 36px;
+	flow-children: right;
+	padding-left: 13px;
+	padding-right: 16px;
+	margin-bottom: 2px;
+	background-color: #00000000;
+	border-left: 3px solid #00000000;
+	wash-color: none;
+	transition-property: background-color;
+	transition-duration: 0.15s;
+}
+
+.TxNav:hover
+{
+	background-color: #ffffff0d;
+	cursor: pointer;
+	sound: "UIPanorama.generic_button_rollover";
+}
+
+.TxNav:active
+{
+	background-color: #ffffff1a;
+	sound: "UIPanorama.generic_button_press";
+}
+
+.TxNav.active
+{
+	background-color: #f0a5311f;
+	border-left: 3px solid #f0a531;
+}
+
+.TxNav.is-disabled
+{
+	opacity: 0.4;
+}
+
+.TxNav.is-disabled:hover
+{
+	background-color: #00000000;
+	cursor: default;
+	sound: "";
+}
+
+Label.TxNavLabel
+{
+	width: fill-parent-flow( 1.0 );
+	vertical-align: middle;
+	font-size: 16;
+	letter-spacing: 2px;
+	text-transform: uppercase;
+	color: #e8eef4;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+Label.TxNavCount
+{
+	vertical-align: middle;
+	margin-left: 8px;
+	font-size: 16;
+	color: #a3acb6;
+}
+
+.TxNav.active Label.TxNavLabel
+{
+	color: #f5f7fa;
+}
+
+.TxNav.active Label.TxNavCount
+{
+	color: #f0a531;
+}
+
+/* Menu: card grid -------------------------------------------------------------- */
+
+.MenuList
+{
+	width: fill-parent-flow( 1.0 );
+	height: 100%;
+	flow-children: right;
+	border-left: 1px solid #ffffff14;
+}
+
+.TxListInner
+{
+	width: fill-parent-flow( 1.0 );
+	height: 100%;
+	flow-children: down;
+}
+
+.TxListBar
+{
+	width: 100%;
+	height: 32px;
+	flow-children: right;
+	margin-bottom: 12px;
+}
+
+Label.TxListPage
+{
+	width: fill-parent-flow( 1.0 );
+	vertical-align: middle;
+	font-size: 14;
+	letter-spacing: 3px;
+	text-transform: uppercase;
+	color: #a3acb6;
+}
+
+.MenuTitleNav
+{
+	width: 36px;
+	height: 28px;
+	flow-children: none;
+	vertical-align: middle;
+	margin-left: 8px;
+	background-color: #ffffff08;
+	border: 1px solid #ffffff1f;
+	wash-color: none;
+	transition-property: background-color, border;
+	transition-duration: 0.15s;
+}
+
+.MenuTitleNav:hover
+{
+	background-color: #ffffff14;
+	border: 1px solid #f0a53166;
+	cursor: pointer;
+	sound: "UIPanorama.generic_button_rollover";
+}
+
+.MenuTitleNav:active
+{
+	background-color: #ffffff24;
+	border: 1px solid #f0a531;
+	sound: "UIPanorama.generic_button_press";
+}
+
+.MenuTitleNav.is-disabled,
+.MenuTitleNav.is-disabled:hover
+{
+	opacity: 0.4;
+	background-color: #ffffff08;
+	border: 1px solid #ffffff1f;
+	cursor: default;
+	sound: "";
+}
+
+.MenuRows
+{
+	width: 100%;
+	height: fill-parent-flow( 1.0 );
+	flow-children: down;
+}
+
+.TxGridRow
+{
+	width: 100%;
+	height: fill-parent-flow( 1.0 );
+	flow-children: right;
+	margin-bottom: 12px;
+}
+
+.TxGridGap
+{
+	width: 12px;
+	height: 100%;
+}
+
+.MenuRow
+{
+	width: fill-parent-flow( 1.0 );
+	height: 100%;
+	flow-children: right;
+	padding-top: 14px;
+	padding-bottom: 14px;
+	background-color: #ffffff08;
+	border: 1px solid #ffffff14;
+	overflow: clip;
+}
+
+/* An unused slot keeps its place in the grid. */
+.MenuRow.empty
+{
+	opacity: 0;
+}
+
+.MenuRow.is-off
+{
+	visibility: collapse;
+}
+
+Label.TxCardTitle
+{
+	width: fill-parent-flow( 1.0 );
+	vertical-align: middle;
+	font-size: 18;
+	letter-spacing: 2px;
+	text-transform: uppercase;
+	color: #f5f7fa;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+Label.TxCardPct
+{
+	vertical-align: middle;
+	margin-left: 12px;
+	font-size: 24;
+	color: #f0a531;
+}
+
+Label.TxWhen
+{
+	margin-bottom: 10px;
+	font-size: 14;
+	color: #a3acb6;
+}
+
+Label.TxSection
+{
+	margin-top: 12px;
+	margin-bottom: 6px;
+	font-size: 14;
+	letter-spacing: 3px;
+	text-transform: uppercase;
+	color: #a3acb6;
+}
+
+.MenuByList
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: down;
+}
+
+.MenuByRow
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: right;
+	margin-bottom: 6px;
+}
+
+.MenuBy
+{
+	width: fit-children;
+	height: 24px;
+	flow-children: right;
+	padding-left: 10px;
+	padding-right: 10px;
+	margin-right: 6px;
+	background-color: #ffffff08;
+	border: 1px solid #ffffff1f;
+}
+
+.MenuBy.is-off
+{
+	visibility: collapse;
+}
+
+.MenuBy.is-empty
+{
+	padding-left: 0px;
+	background-color: #00000000;
+	border: 1px solid #00000000;
+}
+
+.MenuBy.is-you
+{
+	background-color: #f0a5311f;
+	border: 1px solid #f0a531;
+}
+
+Label.MenuByLabel
+{
+	max-width: 160px;
+	vertical-align: middle;
+	font-size: 14;
+	color: #e8eef4;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.MenuBy.is-empty Label.MenuByLabel
+{
+	color: #a3acb6;
+}
+
+.MenuBy.is-you Label.MenuByLabel
+{
+	color: #f5f7fa;
+}
+
+Label.MenuEmpty
+{
+	width: 100%;
+	margin-top: 24px;
+	font-size: 16;
+	text-align: center;
+	color: #a3acb6;
+}
+
+Label.MenuEmpty.is-off
+{
+	visibility: collapse;
+}
+
+/* Hardcoded English credit in menu.xml - not a dialog variable. */
+Label.MenuCredit
+{
+	width: 100%;
+	padding-top: 8px;
+	padding-bottom: 8px;
+	border-top: 1px solid #ffffff14;
+	font-size: 14;
+	color: #a3acb6;
+	text-align: center;
+	text-overflow: shrink;
+}
+
+/* Menu: scoreboard ------------------------------------------------------------- */
+
+.MenuScore Label.TxTitle
+{
+	width: fill-parent-flow( 1.0 );
+}
+
+.MenuScore Label.TxListPage
+{
+	width: fit-children;
+	margin-right: 4px;
+}
+
+.ScoreBody
+{
+	width: 100%;
+	height: fill-parent-flow( 1.0 );
+	flow-children: right;
+}
+
+.ScoreInner
+{
+	width: fill-parent-flow( 1.0 );
+	height: 100%;
+	flow-children: down;
+}
+
+.ScoreFilterBar
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: right;
+	margin-bottom: 14px;
+}
+
+.ScoreFilterGroup
+{
+	width: fit-children;
+	height: fit-children;
+	flow-children: right;
+}
+
+.ScoreFilterSpacer
+{
+	width: fill-parent-flow( 1.0 );
+	height: 1px;
+}
+
+.TxChip
+{
+	height: 28px;
+	flow-children: none;
+	padding-left: 12px;
+	padding-right: 12px;
+	margin-right: 6px;
+	background-color: #ffffff08;
+	border: 1px solid #ffffff1f;
+	wash-color: none;
+	transition-property: background-color, border;
+	transition-duration: 0.15s;
+}
+
+.TxChip:last-child
+{
+	margin-right: 0px;
+}
+
+.TxChip:hover
+{
+	background-color: #ffffff14;
+	border: 1px solid #f0a53166;
+	cursor: pointer;
+	sound: "UIPanorama.generic_button_rollover";
+}
+
+.TxChip:active
+{
+	background-color: #ffffff24;
+	sound: "UIPanorama.generic_button_press";
+}
+
+.TxChip.active
+{
+	background-color: #f0a5311f;
+	border: 1px solid #f0a531;
+}
+
+Label.TxChipLabel
+{
+	vertical-align: middle;
+	font-size: 14;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	color: #e8eef4;
+	white-space: nowrap;
+}
+
+.TxChip.active Label.TxChipLabel
+{
+	color: #f5f7fa;
+}
+
+.ScoreSelfCard
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: down;
+	padding-top: 12px;
+	padding-bottom: 12px;
+	margin-bottom: 14px;
+	background-color: #f0a53114;
+	border: 1px solid #f0a531;
+	wash-color: none;
+}
+
+.ScoreSelfCard.empty
+{
+	visibility: collapse;
+}
+
+.ScoreSelfTop
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: right;
+	margin-left: 14px;
+	margin-bottom: 8px;
+}
+
+Label.ScoreSelfRank
+{
+	width: 64px;
+	vertical-align: middle;
+	font-size: 28;
+	color: #f0a531;
+}
+
+Label.ScoreSelfName
+{
+	width: 280px;
+	vertical-align: middle;
+	font-size: 18;
+	letter-spacing: 2px;
+	text-transform: uppercase;
+	color: #f5f7fa;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.ScoreSelfStats
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: right;
+	margin-left: 14px;
+}
+
+.ScoreSelfStat
+{
+	width: 168px;
+	height: fit-children;
+	flow-children: down;
+	padding: 8px 12px 8px 12px;
+	margin-right: 8px;
+	background-color: #0a0d11aa;
+}
+
+Label.ScoreSelfStatLabel
+{
+	margin-bottom: 4px;
+	font-size: 14;
+	letter-spacing: 2px;
+	text-transform: uppercase;
+	color: #a3acb6;
+}
+
+Label.ScoreSelfStatVal
+{
+	font-size: 18;
+	color: #f5f7fa;
+}
+
+.ScoreHeader
+{
+	width: 100%;
+	height: 32px;
+	flow-children: right;
+	padding-left: 12px;
+	padding-right: 12px;
+	border-bottom: 1px solid #ffffff1f;
+}
+
+Label.ScoreHead
+{
+	font-size: 14;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	color: #a3acb6;
+	vertical-align: middle;
+}
+
+Label.ScoreHead.sort-active
+{
+	color: #f0a531;
+}
+
+.ScoreRows
+{
+	width: 100%;
+	height: fill-parent-flow( 1.0 );
+	flow-children: down;
+	overflow: clip;
+}
+
+.ScoreRow
+{
+	width: 100%;
+	height: 36px;
+	flow-children: right;
+	padding-left: 9px;
+	padding-right: 12px;
+	background-color: #00000000;
+	border-left: 3px solid #00000000;
+	border-bottom: 1px solid #ffffff10;
+	wash-color: none;
+	transition-property: background-color;
+	transition-duration: 0.15s;
+}
+
+.ScoreRow.alt
+{
+	background-color: #ffffff05;
+}
+
+.ScoreRow.empty,
+.ScoreRow.is-off
+{
+	visibility: collapse;
+}
+
+.ScoreRow:hover
+{
+	background-color: #ffffff0d;
+	cursor: pointer;
+	sound: "UIPanorama.generic_button_rollover";
+}
+
+.ScoreRow:active
+{
+	background-color: #ffffff1a;
+	sound: "UIPanorama.generic_button_press";
+}
+
+.ScoreRow.is-self
+{
+	background-color: #f0a5311a;
+	border-left: 3px solid #f0a531;
+}
+
+.ScoreRow.is-viewing
+{
+	background-color: #f0a5312e;
+	border-left: 3px solid #f0a531;
+}
+
+Label.ScoreRank
+{
+	width: 36px;
+	vertical-align: middle;
+	font-size: 16;
+	color: #a3acb6;
+}
+
+.ScoreRow.rank-1 Label.ScoreRank
+{
+	color: #f0c64a;
+}
+
+.ScoreRow.rank-2 Label.ScoreRank
+{
+	color: #c9d2dc;
+}
+
+.ScoreRow.rank-3 Label.ScoreRank
+{
+	color: #d08a4e;
+}
+
+Label.ScoreName
+{
+	width: fill-parent-flow( 1.0 );
+	vertical-align: middle;
+	font-size: 16;
+	color: #e8eef4;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+Label.ScoreCur
+{
+	width: 72px;
+	vertical-align: middle;
+	margin-right: 12px;
+	font-size: 16;
+	text-align: right;
+	color: #f5f7fa;
+}
+
+Label.ScoreTot
+{
+	width: 64px;
+	vertical-align: middle;
+	font-size: 16;
+	text-align: right;
+	color: #a3acb6;
+}
+
+.ScoreHeader Label.ScoreRank,
+.ScoreHeader Label.ScoreName,
+.ScoreHeader Label.ScoreCur,
+.ScoreHeader Label.ScoreTot
+{
+	font-size: 14;
+	color: #a3acb6;
+}
+
+.ScoreHeader Label.ScoreCur.sort-active,
+.ScoreHeader Label.ScoreTot.sort-active
+{
+	color: #f0a531;
+}
+
+/* Clip ladder (SetPercent / SetStepPercent), then the client-drained timer. ------ */
+
+.ph-stat-fill.p100 { clip: rect( 0%, 100%, 100%, 0% ); }
+.ph-stat-fill.p99 { clip: rect( 0%, 99%, 100%, 0% ); }
+.ph-stat-fill.p98 { clip: rect( 0%, 98%, 100%, 0% ); }
+.ph-stat-fill.p97 { clip: rect( 0%, 97%, 100%, 0% ); }
+.ph-stat-fill.p96 { clip: rect( 0%, 96%, 100%, 0% ); }
+.ph-stat-fill.p95 { clip: rect( 0%, 95%, 100%, 0% ); }
+.ph-stat-fill.p94 { clip: rect( 0%, 94%, 100%, 0% ); }
+.ph-stat-fill.p93 { clip: rect( 0%, 93%, 100%, 0% ); }
+.ph-stat-fill.p92 { clip: rect( 0%, 92%, 100%, 0% ); }
+.ph-stat-fill.p91 { clip: rect( 0%, 91%, 100%, 0% ); }
+.ph-stat-fill.p90 { clip: rect( 0%, 90%, 100%, 0% ); }
+.ph-stat-fill.p89 { clip: rect( 0%, 89%, 100%, 0% ); }
+.ph-stat-fill.p88 { clip: rect( 0%, 88%, 100%, 0% ); }
+.ph-stat-fill.p87 { clip: rect( 0%, 87%, 100%, 0% ); }
+.ph-stat-fill.p86 { clip: rect( 0%, 86%, 100%, 0% ); }
+.ph-stat-fill.p85 { clip: rect( 0%, 85%, 100%, 0% ); }
+.ph-stat-fill.p84 { clip: rect( 0%, 84%, 100%, 0% ); }
+.ph-stat-fill.p83 { clip: rect( 0%, 83%, 100%, 0% ); }
+.ph-stat-fill.p82 { clip: rect( 0%, 82%, 100%, 0% ); }
+.ph-stat-fill.p81 { clip: rect( 0%, 81%, 100%, 0% ); }
+.ph-stat-fill.p80 { clip: rect( 0%, 80%, 100%, 0% ); }
+.ph-stat-fill.p79 { clip: rect( 0%, 79%, 100%, 0% ); }
+.ph-stat-fill.p78 { clip: rect( 0%, 78%, 100%, 0% ); }
+.ph-stat-fill.p77 { clip: rect( 0%, 77%, 100%, 0% ); }
+.ph-stat-fill.p76 { clip: rect( 0%, 76%, 100%, 0% ); }
+.ph-stat-fill.p75 { clip: rect( 0%, 75%, 100%, 0% ); }
+.ph-stat-fill.p74 { clip: rect( 0%, 74%, 100%, 0% ); }
+.ph-stat-fill.p73 { clip: rect( 0%, 73%, 100%, 0% ); }
+.ph-stat-fill.p72 { clip: rect( 0%, 72%, 100%, 0% ); }
+.ph-stat-fill.p71 { clip: rect( 0%, 71%, 100%, 0% ); }
+.ph-stat-fill.p70 { clip: rect( 0%, 70%, 100%, 0% ); }
+.ph-stat-fill.p69 { clip: rect( 0%, 69%, 100%, 0% ); }
+.ph-stat-fill.p68 { clip: rect( 0%, 68%, 100%, 0% ); }
+.ph-stat-fill.p67 { clip: rect( 0%, 67%, 100%, 0% ); }
+.ph-stat-fill.p66 { clip: rect( 0%, 66%, 100%, 0% ); }
+.ph-stat-fill.p65 { clip: rect( 0%, 65%, 100%, 0% ); }
+.ph-stat-fill.p64 { clip: rect( 0%, 64%, 100%, 0% ); }
+.ph-stat-fill.p63 { clip: rect( 0%, 63%, 100%, 0% ); }
+.ph-stat-fill.p62 { clip: rect( 0%, 62%, 100%, 0% ); }
+.ph-stat-fill.p61 { clip: rect( 0%, 61%, 100%, 0% ); }
+.ph-stat-fill.p60 { clip: rect( 0%, 60%, 100%, 0% ); }
+.ph-stat-fill.p59 { clip: rect( 0%, 59%, 100%, 0% ); }
+.ph-stat-fill.p58 { clip: rect( 0%, 58%, 100%, 0% ); }
+.ph-stat-fill.p57 { clip: rect( 0%, 57%, 100%, 0% ); }
+.ph-stat-fill.p56 { clip: rect( 0%, 56%, 100%, 0% ); }
+.ph-stat-fill.p55 { clip: rect( 0%, 55%, 100%, 0% ); }
+.ph-stat-fill.p54 { clip: rect( 0%, 54%, 100%, 0% ); }
+.ph-stat-fill.p53 { clip: rect( 0%, 53%, 100%, 0% ); }
+.ph-stat-fill.p52 { clip: rect( 0%, 52%, 100%, 0% ); }
+.ph-stat-fill.p51 { clip: rect( 0%, 51%, 100%, 0% ); }
+.ph-stat-fill.p50 { clip: rect( 0%, 50%, 100%, 0% ); }
+.ph-stat-fill.p49 { clip: rect( 0%, 49%, 100%, 0% ); }
+.ph-stat-fill.p48 { clip: rect( 0%, 48%, 100%, 0% ); }
+.ph-stat-fill.p47 { clip: rect( 0%, 47%, 100%, 0% ); }
+.ph-stat-fill.p46 { clip: rect( 0%, 46%, 100%, 0% ); }
+.ph-stat-fill.p45 { clip: rect( 0%, 45%, 100%, 0% ); }
+.ph-stat-fill.p44 { clip: rect( 0%, 44%, 100%, 0% ); }
+.ph-stat-fill.p43 { clip: rect( 0%, 43%, 100%, 0% ); }
+.ph-stat-fill.p42 { clip: rect( 0%, 42%, 100%, 0% ); }
+.ph-stat-fill.p41 { clip: rect( 0%, 41%, 100%, 0% ); }
+.ph-stat-fill.p40 { clip: rect( 0%, 40%, 100%, 0% ); }
+.ph-stat-fill.p39 { clip: rect( 0%, 39%, 100%, 0% ); }
+.ph-stat-fill.p38 { clip: rect( 0%, 38%, 100%, 0% ); }
+.ph-stat-fill.p37 { clip: rect( 0%, 37%, 100%, 0% ); }
+.ph-stat-fill.p36 { clip: rect( 0%, 36%, 100%, 0% ); }
+.ph-stat-fill.p35 { clip: rect( 0%, 35%, 100%, 0% ); }
+.ph-stat-fill.p34 { clip: rect( 0%, 34%, 100%, 0% ); }
+.ph-stat-fill.p33 { clip: rect( 0%, 33%, 100%, 0% ); }
+.ph-stat-fill.p32 { clip: rect( 0%, 32%, 100%, 0% ); }
+.ph-stat-fill.p31 { clip: rect( 0%, 31%, 100%, 0% ); }
+.ph-stat-fill.p30 { clip: rect( 0%, 30%, 100%, 0% ); }
+.ph-stat-fill.p29 { clip: rect( 0%, 29%, 100%, 0% ); }
+.ph-stat-fill.p28 { clip: rect( 0%, 28%, 100%, 0% ); }
+.ph-stat-fill.p27 { clip: rect( 0%, 27%, 100%, 0% ); }
+.ph-stat-fill.p26 { clip: rect( 0%, 26%, 100%, 0% ); }
+.ph-stat-fill.p25 { clip: rect( 0%, 25%, 100%, 0% ); }
+.ph-stat-fill.p24 { clip: rect( 0%, 24%, 100%, 0% ); }
+.ph-stat-fill.p23 { clip: rect( 0%, 23%, 100%, 0% ); }
+.ph-stat-fill.p22 { clip: rect( 0%, 22%, 100%, 0% ); }
+.ph-stat-fill.p21 { clip: rect( 0%, 21%, 100%, 0% ); }
+.ph-stat-fill.p20 { clip: rect( 0%, 20%, 100%, 0% ); }
+.ph-stat-fill.p19 { clip: rect( 0%, 19%, 100%, 0% ); }
+.ph-stat-fill.p18 { clip: rect( 0%, 18%, 100%, 0% ); }
+.ph-stat-fill.p17 { clip: rect( 0%, 17%, 100%, 0% ); }
+.ph-stat-fill.p16 { clip: rect( 0%, 16%, 100%, 0% ); }
+.ph-stat-fill.p15 { clip: rect( 0%, 15%, 100%, 0% ); }
+.ph-stat-fill.p14 { clip: rect( 0%, 14%, 100%, 0% ); }
+.ph-stat-fill.p13 { clip: rect( 0%, 13%, 100%, 0% ); }
+.ph-stat-fill.p12 { clip: rect( 0%, 12%, 100%, 0% ); }
+.ph-stat-fill.p11 { clip: rect( 0%, 11%, 100%, 0% ); }
+.ph-stat-fill.p10 { clip: rect( 0%, 10%, 100%, 0% ); }
+.ph-stat-fill.p9 { clip: rect( 0%, 9%, 100%, 0% ); }
+.ph-stat-fill.p8 { clip: rect( 0%, 8%, 100%, 0% ); }
+.ph-stat-fill.p7 { clip: rect( 0%, 7%, 100%, 0% ); }
+.ph-stat-fill.p6 { clip: rect( 0%, 6%, 100%, 0% ); }
+.ph-stat-fill.p5 { clip: rect( 0%, 5%, 100%, 0% ); }
+.ph-stat-fill.p4 { clip: rect( 0%, 4%, 100%, 0% ); }
+.ph-stat-fill.p3 { clip: rect( 0%, 3%, 100%, 0% ); }
+.ph-stat-fill.p2 { clip: rect( 0%, 2%, 100%, 0% ); }
+.ph-stat-fill.p1 { clip: rect( 0%, 1%, 100%, 0% ); }
+.ph-stat-fill.p0 { clip: rect( 0%, 0%, 100%, 0% ); }
+
+/* Tracker timer: drained by the client. Server writes the start p-class, then span-N + is-running once.
+   0s default so removing is-running snaps back instead of animating a refill. Must follow the ladder. */
+
+.TrackerTimerFill
+{
+	transition-duration: 0s;
+	transition-timing-function: linear;
+}
+
+.TrackerTimerFill.is-running { clip: rect( 0%, 0%, 100%, 0% ); }
+.TrackerTimerFill.span-1 { transition-duration: 1.0s; }
+.TrackerTimerFill.span-2 { transition-duration: 2.0s; }
+.TrackerTimerFill.span-3 { transition-duration: 3.0s; }
+.TrackerTimerFill.span-4 { transition-duration: 4.0s; }
+.TrackerTimerFill.span-5 { transition-duration: 5.0s; }
+.TrackerTimerFill.span-6 { transition-duration: 6.0s; }
+.TrackerTimerFill.span-7 { transition-duration: 7.0s; }
+.TrackerTimerFill.span-8 { transition-duration: 8.0s; }
+.TrackerTimerFill.span-9 { transition-duration: 9.0s; }
+.TrackerTimerFill.span-10 { transition-duration: 10.0s; }
+.TrackerTimerFill.span-11 { transition-duration: 11.0s; }
+.TrackerTimerFill.span-12 { transition-duration: 12.0s; }
+.TrackerTimerFill.span-13 { transition-duration: 13.0s; }
+.TrackerTimerFill.span-14 { transition-duration: 14.0s; }
+.TrackerTimerFill.span-15 { transition-duration: 15.0s; }
+.TrackerTimerFill.span-16 { transition-duration: 16.0s; }
+.TrackerTimerFill.span-17 { transition-duration: 17.0s; }
+.TrackerTimerFill.span-18 { transition-duration: 18.0s; }
+.TrackerTimerFill.span-19 { transition-duration: 19.0s; }
+.TrackerTimerFill.span-20 { transition-duration: 20.0s; }
+.TrackerTimerFill.span-21 { transition-duration: 21.0s; }
+.TrackerTimerFill.span-22 { transition-duration: 22.0s; }
+.TrackerTimerFill.span-23 { transition-duration: 23.0s; }
+.TrackerTimerFill.span-24 { transition-duration: 24.0s; }
+.TrackerTimerFill.span-25 { transition-duration: 25.0s; }
+.TrackerTimerFill.span-26 { transition-duration: 26.0s; }
+.TrackerTimerFill.span-27 { transition-duration: 27.0s; }
+.TrackerTimerFill.span-28 { transition-duration: 28.0s; }
+.TrackerTimerFill.span-29 { transition-duration: 29.0s; }
+.TrackerTimerFill.span-30 { transition-duration: 30.0s; }
+.TrackerTimerFill.span-31 { transition-duration: 31.0s; }
+.TrackerTimerFill.span-32 { transition-duration: 32.0s; }
+.TrackerTimerFill.span-33 { transition-duration: 33.0s; }
+.TrackerTimerFill.span-34 { transition-duration: 34.0s; }
+.TrackerTimerFill.span-35 { transition-duration: 35.0s; }
+.TrackerTimerFill.span-36 { transition-duration: 36.0s; }
+.TrackerTimerFill.span-37 { transition-duration: 37.0s; }
+.TrackerTimerFill.span-38 { transition-duration: 38.0s; }
+.TrackerTimerFill.span-39 { transition-duration: 39.0s; }
+.TrackerTimerFill.span-40 { transition-duration: 40.0s; }
+.TrackerTimerFill.span-41 { transition-duration: 41.0s; }
+.TrackerTimerFill.span-42 { transition-duration: 42.0s; }
+.TrackerTimerFill.span-43 { transition-duration: 43.0s; }
+.TrackerTimerFill.span-44 { transition-duration: 44.0s; }
+.TrackerTimerFill.span-45 { transition-duration: 45.0s; }
+.TrackerTimerFill.span-46 { transition-duration: 46.0s; }
+.TrackerTimerFill.span-47 { transition-duration: 47.0s; }
+.TrackerTimerFill.span-48 { transition-duration: 48.0s; }
+.TrackerTimerFill.span-49 { transition-duration: 49.0s; }
+.TrackerTimerFill.span-50 { transition-duration: 50.0s; }
+.TrackerTimerFill.span-51 { transition-duration: 51.0s; }
+.TrackerTimerFill.span-52 { transition-duration: 52.0s; }
+.TrackerTimerFill.span-53 { transition-duration: 53.0s; }
+.TrackerTimerFill.span-54 { transition-duration: 54.0s; }
+.TrackerTimerFill.span-55 { transition-duration: 55.0s; }
+.TrackerTimerFill.span-56 { transition-duration: 56.0s; }
+.TrackerTimerFill.span-57 { transition-duration: 57.0s; }
+.TrackerTimerFill.span-58 { transition-duration: 58.0s; }
+.TrackerTimerFill.span-59 { transition-duration: 59.0s; }
+.TrackerTimerFill.span-60 { transition-duration: 60.0s; }
+
+/* >>> hud_themes:begin */
+/* Accent themes (gui.theme). Generated from tools/hud_themes.py - do not edit by hand. */
+/* Gold is the baked-in default; other themes override accents. CT/T = stock CS2 colours. */
+
+.theme-red .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #a83a3a ), to( #e05a5a ) ); }
+.theme-red Label.TxKicker,
+.theme-red Label.TxIdxLabel,
+.theme-red Label.TxCardPct,
+.theme-red Label.TxRowPct,
+.theme-red .TxNav.active Label.TxNavCount,
+.theme-red Label.ScoreSelfRank,
+.theme-red Label.ScoreHead.sort-active,
+.theme-red .ScoreHeader Label.ScoreCur.sort-active,
+.theme-red .ScoreHeader Label.ScoreTot.sort-active
+{ color: #e05a5a; }
+.theme-red .TxCorner { border-top: 2px solid #e05a5a; border-left: 2px solid #e05a5a; }
+.theme-red .TxIdx { border: 1px solid #e05a5a; }
+.theme-red .TxNav.active { background-color: #e05a5a1f; border-left: 3px solid #e05a5a; }
+.theme-red .TxChip:hover { border: 1px solid #e05a5a66; }
+.theme-red .TxChip.active { background-color: #e05a5a1f; border: 1px solid #e05a5a; }
+.theme-red .MenuTitleNav:hover { border: 1px solid #e05a5a66; }
+.theme-red .MenuTitleNav:active { border: 1px solid #e05a5a; }
+.theme-red .ScoreSelfCard { background-color: #e05a5a14; border: 1px solid #e05a5a; }
+.theme-red .ScoreRow.is-self { background-color: #e05a5a1a; border-left: 3px solid #e05a5a; }
+.theme-red .ScoreRow.is-viewing { background-color: #e05a5a2e; border-left: 3px solid #e05a5a; }
+.theme-red .MenuBy.is-you { background-color: #e05a5a1f; border: 1px solid #e05a5a; }
+
+.theme-coral .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #c44830 ), to( #ff7a59 ) ); }
+.theme-coral Label.TxKicker,
+.theme-coral Label.TxIdxLabel,
+.theme-coral Label.TxCardPct,
+.theme-coral Label.TxRowPct,
+.theme-coral .TxNav.active Label.TxNavCount,
+.theme-coral Label.ScoreSelfRank,
+.theme-coral Label.ScoreHead.sort-active,
+.theme-coral .ScoreHeader Label.ScoreCur.sort-active,
+.theme-coral .ScoreHeader Label.ScoreTot.sort-active
+{ color: #ff7a59; }
+.theme-coral .TxCorner { border-top: 2px solid #ff7a59; border-left: 2px solid #ff7a59; }
+.theme-coral .TxIdx { border: 1px solid #ff7a59; }
+.theme-coral .TxNav.active { background-color: #ff7a591f; border-left: 3px solid #ff7a59; }
+.theme-coral .TxChip:hover { border: 1px solid #ff7a5966; }
+.theme-coral .TxChip.active { background-color: #ff7a591f; border: 1px solid #ff7a59; }
+.theme-coral .MenuTitleNav:hover { border: 1px solid #ff7a5966; }
+.theme-coral .MenuTitleNav:active { border: 1px solid #ff7a59; }
+.theme-coral .ScoreSelfCard { background-color: #ff7a5914; border: 1px solid #ff7a59; }
+.theme-coral .ScoreRow.is-self { background-color: #ff7a591a; border-left: 3px solid #ff7a59; }
+.theme-coral .ScoreRow.is-viewing { background-color: #ff7a592e; border-left: 3px solid #ff7a59; }
+.theme-coral .MenuBy.is-you { background-color: #ff7a591f; border: 1px solid #ff7a59; }
+
+.theme-orange .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #c45a1a ), to( #ff8a3d ) ); }
+.theme-orange Label.TxKicker,
+.theme-orange Label.TxIdxLabel,
+.theme-orange Label.TxCardPct,
+.theme-orange Label.TxRowPct,
+.theme-orange .TxNav.active Label.TxNavCount,
+.theme-orange Label.ScoreSelfRank,
+.theme-orange Label.ScoreHead.sort-active,
+.theme-orange .ScoreHeader Label.ScoreCur.sort-active,
+.theme-orange .ScoreHeader Label.ScoreTot.sort-active
+{ color: #ff8a3d; }
+.theme-orange .TxCorner { border-top: 2px solid #ff8a3d; border-left: 2px solid #ff8a3d; }
+.theme-orange .TxIdx { border: 1px solid #ff8a3d; }
+.theme-orange .TxNav.active { background-color: #ff8a3d1f; border-left: 3px solid #ff8a3d; }
+.theme-orange .TxChip:hover { border: 1px solid #ff8a3d66; }
+.theme-orange .TxChip.active { background-color: #ff8a3d1f; border: 1px solid #ff8a3d; }
+.theme-orange .MenuTitleNav:hover { border: 1px solid #ff8a3d66; }
+.theme-orange .MenuTitleNav:active { border: 1px solid #ff8a3d; }
+.theme-orange .ScoreSelfCard { background-color: #ff8a3d14; border: 1px solid #ff8a3d; }
+.theme-orange .ScoreRow.is-self { background-color: #ff8a3d1a; border-left: 3px solid #ff8a3d; }
+.theme-orange .ScoreRow.is-viewing { background-color: #ff8a3d2e; border-left: 3px solid #ff8a3d; }
+.theme-orange .MenuBy.is-you { background-color: #ff8a3d1f; border: 1px solid #ff8a3d; }
+
+.theme-copper .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #a85a30 ), to( #e08a5a ) ); }
+.theme-copper Label.TxKicker,
+.theme-copper Label.TxIdxLabel,
+.theme-copper Label.TxCardPct,
+.theme-copper Label.TxRowPct,
+.theme-copper .TxNav.active Label.TxNavCount,
+.theme-copper Label.ScoreSelfRank,
+.theme-copper Label.ScoreHead.sort-active,
+.theme-copper .ScoreHeader Label.ScoreCur.sort-active,
+.theme-copper .ScoreHeader Label.ScoreTot.sort-active
+{ color: #e08a5a; }
+.theme-copper .TxCorner { border-top: 2px solid #e08a5a; border-left: 2px solid #e08a5a; }
+.theme-copper .TxIdx { border: 1px solid #e08a5a; }
+.theme-copper .TxNav.active { background-color: #e08a5a1f; border-left: 3px solid #e08a5a; }
+.theme-copper .TxChip:hover { border: 1px solid #e08a5a66; }
+.theme-copper .TxChip.active { background-color: #e08a5a1f; border: 1px solid #e08a5a; }
+.theme-copper .MenuTitleNav:hover { border: 1px solid #e08a5a66; }
+.theme-copper .MenuTitleNav:active { border: 1px solid #e08a5a; }
+.theme-copper .ScoreSelfCard { background-color: #e08a5a14; border: 1px solid #e08a5a; }
+.theme-copper .ScoreRow.is-self { background-color: #e08a5a1a; border-left: 3px solid #e08a5a; }
+.theme-copper .ScoreRow.is-viewing { background-color: #e08a5a2e; border-left: 3px solid #e08a5a; }
+.theme-copper .MenuBy.is-you { background-color: #e08a5a1f; border: 1px solid #e08a5a; }
+
+.theme-gold .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #f0a531 ), to( #ffd27a ) ); }
+
+.theme-t .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #c9a03a ), to( #eabe54 ) ); }
+.theme-t Label.TxKicker,
+.theme-t Label.TxIdxLabel,
+.theme-t Label.TxCardPct,
+.theme-t Label.TxRowPct,
+.theme-t .TxNav.active Label.TxNavCount,
+.theme-t Label.ScoreSelfRank,
+.theme-t Label.ScoreHead.sort-active,
+.theme-t .ScoreHeader Label.ScoreCur.sort-active,
+.theme-t .ScoreHeader Label.ScoreTot.sort-active
+{ color: #eabe54; }
+.theme-t .TxCorner { border-top: 2px solid #eabe54; border-left: 2px solid #eabe54; }
+.theme-t .TxIdx { border: 1px solid #eabe54; }
+.theme-t .TxNav.active { background-color: #eabe541f; border-left: 3px solid #eabe54; }
+.theme-t .TxChip:hover { border: 1px solid #eabe5466; }
+.theme-t .TxChip.active { background-color: #eabe541f; border: 1px solid #eabe54; }
+.theme-t .MenuTitleNav:hover { border: 1px solid #eabe5466; }
+.theme-t .MenuTitleNav:active { border: 1px solid #eabe54; }
+.theme-t .ScoreSelfCard { background-color: #eabe5414; border: 1px solid #eabe54; }
+.theme-t .ScoreRow.is-self { background-color: #eabe541a; border-left: 3px solid #eabe54; }
+.theme-t .ScoreRow.is-viewing { background-color: #eabe542e; border-left: 3px solid #eabe54; }
+.theme-t .MenuBy.is-you { background-color: #eabe541f; border: 1px solid #eabe54; }
+
+.theme-lime .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #7aa81a ), to( #c6f04a ) ); }
+.theme-lime Label.TxKicker,
+.theme-lime Label.TxIdxLabel,
+.theme-lime Label.TxCardPct,
+.theme-lime Label.TxRowPct,
+.theme-lime .TxNav.active Label.TxNavCount,
+.theme-lime Label.ScoreSelfRank,
+.theme-lime Label.ScoreHead.sort-active,
+.theme-lime .ScoreHeader Label.ScoreCur.sort-active,
+.theme-lime .ScoreHeader Label.ScoreTot.sort-active
+{ color: #c6f04a; }
+.theme-lime .TxCorner { border-top: 2px solid #c6f04a; border-left: 2px solid #c6f04a; }
+.theme-lime .TxIdx { border: 1px solid #c6f04a; }
+.theme-lime .TxNav.active { background-color: #c6f04a1f; border-left: 3px solid #c6f04a; }
+.theme-lime .TxChip:hover { border: 1px solid #c6f04a66; }
+.theme-lime .TxChip.active { background-color: #c6f04a1f; border: 1px solid #c6f04a; }
+.theme-lime .MenuTitleNav:hover { border: 1px solid #c6f04a66; }
+.theme-lime .MenuTitleNav:active { border: 1px solid #c6f04a; }
+.theme-lime .ScoreSelfCard { background-color: #c6f04a14; border: 1px solid #c6f04a; }
+.theme-lime .ScoreRow.is-self { background-color: #c6f04a1a; border-left: 3px solid #c6f04a; }
+.theme-lime .ScoreRow.is-viewing { background-color: #c6f04a2e; border-left: 3px solid #c6f04a; }
+.theme-lime .MenuBy.is-you { background-color: #c6f04a1f; border: 1px solid #c6f04a; }
+
+.theme-green .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #3d8f45 ), to( #6fdc78 ) ); }
+.theme-green Label.TxKicker,
+.theme-green Label.TxIdxLabel,
+.theme-green Label.TxCardPct,
+.theme-green Label.TxRowPct,
+.theme-green .TxNav.active Label.TxNavCount,
+.theme-green Label.ScoreSelfRank,
+.theme-green Label.ScoreHead.sort-active,
+.theme-green .ScoreHeader Label.ScoreCur.sort-active,
+.theme-green .ScoreHeader Label.ScoreTot.sort-active
+{ color: #6fdc78; }
+.theme-green .TxCorner { border-top: 2px solid #6fdc78; border-left: 2px solid #6fdc78; }
+.theme-green .TxIdx { border: 1px solid #6fdc78; }
+.theme-green .TxNav.active { background-color: #6fdc781f; border-left: 3px solid #6fdc78; }
+.theme-green .TxChip:hover { border: 1px solid #6fdc7866; }
+.theme-green .TxChip.active { background-color: #6fdc781f; border: 1px solid #6fdc78; }
+.theme-green .MenuTitleNav:hover { border: 1px solid #6fdc7866; }
+.theme-green .MenuTitleNav:active { border: 1px solid #6fdc78; }
+.theme-green .ScoreSelfCard { background-color: #6fdc7814; border: 1px solid #6fdc78; }
+.theme-green .ScoreRow.is-self { background-color: #6fdc781a; border-left: 3px solid #6fdc78; }
+.theme-green .ScoreRow.is-viewing { background-color: #6fdc782e; border-left: 3px solid #6fdc78; }
+.theme-green .MenuBy.is-you { background-color: #6fdc781f; border: 1px solid #6fdc78; }
+
+.theme-teal .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #17856c ), to( #2ec9a6 ) ); }
+.theme-teal Label.TxKicker,
+.theme-teal Label.TxIdxLabel,
+.theme-teal Label.TxCardPct,
+.theme-teal Label.TxRowPct,
+.theme-teal .TxNav.active Label.TxNavCount,
+.theme-teal Label.ScoreSelfRank,
+.theme-teal Label.ScoreHead.sort-active,
+.theme-teal .ScoreHeader Label.ScoreCur.sort-active,
+.theme-teal .ScoreHeader Label.ScoreTot.sort-active
+{ color: #2ec9a6; }
+.theme-teal .TxCorner { border-top: 2px solid #2ec9a6; border-left: 2px solid #2ec9a6; }
+.theme-teal .TxIdx { border: 1px solid #2ec9a6; }
+.theme-teal .TxNav.active { background-color: #2ec9a61f; border-left: 3px solid #2ec9a6; }
+.theme-teal .TxChip:hover { border: 1px solid #2ec9a666; }
+.theme-teal .TxChip.active { background-color: #2ec9a61f; border: 1px solid #2ec9a6; }
+.theme-teal .MenuTitleNav:hover { border: 1px solid #2ec9a666; }
+.theme-teal .MenuTitleNav:active { border: 1px solid #2ec9a6; }
+.theme-teal .ScoreSelfCard { background-color: #2ec9a614; border: 1px solid #2ec9a6; }
+.theme-teal .ScoreRow.is-self { background-color: #2ec9a61a; border-left: 3px solid #2ec9a6; }
+.theme-teal .ScoreRow.is-viewing { background-color: #2ec9a62e; border-left: 3px solid #2ec9a6; }
+.theme-teal .MenuBy.is-you { background-color: #2ec9a61f; border: 1px solid #2ec9a6; }
+
+.theme-cyan .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #1a9bb0 ), to( #3ee0f0 ) ); }
+.theme-cyan Label.TxKicker,
+.theme-cyan Label.TxIdxLabel,
+.theme-cyan Label.TxCardPct,
+.theme-cyan Label.TxRowPct,
+.theme-cyan .TxNav.active Label.TxNavCount,
+.theme-cyan Label.ScoreSelfRank,
+.theme-cyan Label.ScoreHead.sort-active,
+.theme-cyan .ScoreHeader Label.ScoreCur.sort-active,
+.theme-cyan .ScoreHeader Label.ScoreTot.sort-active
+{ color: #3ee0f0; }
+.theme-cyan .TxCorner { border-top: 2px solid #3ee0f0; border-left: 2px solid #3ee0f0; }
+.theme-cyan .TxIdx { border: 1px solid #3ee0f0; }
+.theme-cyan .TxNav.active { background-color: #3ee0f01f; border-left: 3px solid #3ee0f0; }
+.theme-cyan .TxChip:hover { border: 1px solid #3ee0f066; }
+.theme-cyan .TxChip.active { background-color: #3ee0f01f; border: 1px solid #3ee0f0; }
+.theme-cyan .MenuTitleNav:hover { border: 1px solid #3ee0f066; }
+.theme-cyan .MenuTitleNav:active { border: 1px solid #3ee0f0; }
+.theme-cyan .ScoreSelfCard { background-color: #3ee0f014; border: 1px solid #3ee0f0; }
+.theme-cyan .ScoreRow.is-self { background-color: #3ee0f01a; border-left: 3px solid #3ee0f0; }
+.theme-cyan .ScoreRow.is-viewing { background-color: #3ee0f02e; border-left: 3px solid #3ee0f0; }
+.theme-cyan .MenuBy.is-you { background-color: #3ee0f01f; border: 1px solid #3ee0f0; }
+
+.theme-blue .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #2d56c4 ), to( #5b8cff ) ); }
+.theme-blue Label.TxKicker,
+.theme-blue Label.TxIdxLabel,
+.theme-blue Label.TxCardPct,
+.theme-blue Label.TxRowPct,
+.theme-blue .TxNav.active Label.TxNavCount,
+.theme-blue Label.ScoreSelfRank,
+.theme-blue Label.ScoreHead.sort-active,
+.theme-blue .ScoreHeader Label.ScoreCur.sort-active,
+.theme-blue .ScoreHeader Label.ScoreTot.sort-active
+{ color: #5b8cff; }
+.theme-blue .TxCorner { border-top: 2px solid #5b8cff; border-left: 2px solid #5b8cff; }
+.theme-blue .TxIdx { border: 1px solid #5b8cff; }
+.theme-blue .TxNav.active { background-color: #5b8cff1f; border-left: 3px solid #5b8cff; }
+.theme-blue .TxChip:hover { border: 1px solid #5b8cff66; }
+.theme-blue .TxChip.active { background-color: #5b8cff1f; border: 1px solid #5b8cff; }
+.theme-blue .MenuTitleNav:hover { border: 1px solid #5b8cff66; }
+.theme-blue .MenuTitleNav:active { border: 1px solid #5b8cff; }
+.theme-blue .ScoreSelfCard { background-color: #5b8cff14; border: 1px solid #5b8cff; }
+.theme-blue .ScoreRow.is-self { background-color: #5b8cff1a; border-left: 3px solid #5b8cff; }
+.theme-blue .ScoreRow.is-viewing { background-color: #5b8cff2e; border-left: 3px solid #5b8cff; }
+.theme-blue .MenuBy.is-you { background-color: #5b8cff1f; border: 1px solid #5b8cff; }
+
+.theme-ct .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #5a9fd4 ), to( #96c8fa ) ); }
+.theme-ct Label.TxKicker,
+.theme-ct Label.TxIdxLabel,
+.theme-ct Label.TxCardPct,
+.theme-ct Label.TxRowPct,
+.theme-ct .TxNav.active Label.TxNavCount,
+.theme-ct Label.ScoreSelfRank,
+.theme-ct Label.ScoreHead.sort-active,
+.theme-ct .ScoreHeader Label.ScoreCur.sort-active,
+.theme-ct .ScoreHeader Label.ScoreTot.sort-active
+{ color: #96c8fa; }
+.theme-ct .TxCorner { border-top: 2px solid #96c8fa; border-left: 2px solid #96c8fa; }
+.theme-ct .TxIdx { border: 1px solid #96c8fa; }
+.theme-ct .TxNav.active { background-color: #96c8fa1f; border-left: 3px solid #96c8fa; }
+.theme-ct .TxChip:hover { border: 1px solid #96c8fa66; }
+.theme-ct .TxChip.active { background-color: #96c8fa1f; border: 1px solid #96c8fa; }
+.theme-ct .MenuTitleNav:hover { border: 1px solid #96c8fa66; }
+.theme-ct .MenuTitleNav:active { border: 1px solid #96c8fa; }
+.theme-ct .ScoreSelfCard { background-color: #96c8fa14; border: 1px solid #96c8fa; }
+.theme-ct .ScoreRow.is-self { background-color: #96c8fa1a; border-left: 3px solid #96c8fa; }
+.theme-ct .ScoreRow.is-viewing { background-color: #96c8fa2e; border-left: 3px solid #96c8fa; }
+.theme-ct .MenuBy.is-you { background-color: #96c8fa1f; border: 1px solid #96c8fa; }
+
+.theme-purple .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #7a4fc4 ), to( #b07cff ) ); }
+.theme-purple Label.TxKicker,
+.theme-purple Label.TxIdxLabel,
+.theme-purple Label.TxCardPct,
+.theme-purple Label.TxRowPct,
+.theme-purple .TxNav.active Label.TxNavCount,
+.theme-purple Label.ScoreSelfRank,
+.theme-purple Label.ScoreHead.sort-active,
+.theme-purple .ScoreHeader Label.ScoreCur.sort-active,
+.theme-purple .ScoreHeader Label.ScoreTot.sort-active
+{ color: #b07cff; }
+.theme-purple .TxCorner { border-top: 2px solid #b07cff; border-left: 2px solid #b07cff; }
+.theme-purple .TxIdx { border: 1px solid #b07cff; }
+.theme-purple .TxNav.active { background-color: #b07cff1f; border-left: 3px solid #b07cff; }
+.theme-purple .TxChip:hover { border: 1px solid #b07cff66; }
+.theme-purple .TxChip.active { background-color: #b07cff1f; border: 1px solid #b07cff; }
+.theme-purple .MenuTitleNav:hover { border: 1px solid #b07cff66; }
+.theme-purple .MenuTitleNav:active { border: 1px solid #b07cff; }
+.theme-purple .ScoreSelfCard { background-color: #b07cff14; border: 1px solid #b07cff; }
+.theme-purple .ScoreRow.is-self { background-color: #b07cff1a; border-left: 3px solid #b07cff; }
+.theme-purple .ScoreRow.is-viewing { background-color: #b07cff2e; border-left: 3px solid #b07cff; }
+.theme-purple .MenuBy.is-you { background-color: #b07cff1f; border: 1px solid #b07cff; }
+
+.theme-magenta .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #a030c0 ), to( #e85dff ) ); }
+.theme-magenta Label.TxKicker,
+.theme-magenta Label.TxIdxLabel,
+.theme-magenta Label.TxCardPct,
+.theme-magenta Label.TxRowPct,
+.theme-magenta .TxNav.active Label.TxNavCount,
+.theme-magenta Label.ScoreSelfRank,
+.theme-magenta Label.ScoreHead.sort-active,
+.theme-magenta .ScoreHeader Label.ScoreCur.sort-active,
+.theme-magenta .ScoreHeader Label.ScoreTot.sort-active
+{ color: #e85dff; }
+.theme-magenta .TxCorner { border-top: 2px solid #e85dff; border-left: 2px solid #e85dff; }
+.theme-magenta .TxIdx { border: 1px solid #e85dff; }
+.theme-magenta .TxNav.active { background-color: #e85dff1f; border-left: 3px solid #e85dff; }
+.theme-magenta .TxChip:hover { border: 1px solid #e85dff66; }
+.theme-magenta .TxChip.active { background-color: #e85dff1f; border: 1px solid #e85dff; }
+.theme-magenta .MenuTitleNav:hover { border: 1px solid #e85dff66; }
+.theme-magenta .MenuTitleNav:active { border: 1px solid #e85dff; }
+.theme-magenta .ScoreSelfCard { background-color: #e85dff14; border: 1px solid #e85dff; }
+.theme-magenta .ScoreRow.is-self { background-color: #e85dff1a; border-left: 3px solid #e85dff; }
+.theme-magenta .ScoreRow.is-viewing { background-color: #e85dff2e; border-left: 3px solid #e85dff; }
+.theme-magenta .MenuBy.is-you { background-color: #e85dff1f; border: 1px solid #e85dff; }
+
+.theme-pink .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #c43a68 ), to( #ff6b9a ) ); }
+.theme-pink Label.TxKicker,
+.theme-pink Label.TxIdxLabel,
+.theme-pink Label.TxCardPct,
+.theme-pink Label.TxRowPct,
+.theme-pink .TxNav.active Label.TxNavCount,
+.theme-pink Label.ScoreSelfRank,
+.theme-pink Label.ScoreHead.sort-active,
+.theme-pink .ScoreHeader Label.ScoreCur.sort-active,
+.theme-pink .ScoreHeader Label.ScoreTot.sort-active
+{ color: #ff6b9a; }
+.theme-pink .TxCorner { border-top: 2px solid #ff6b9a; border-left: 2px solid #ff6b9a; }
+.theme-pink .TxIdx { border: 1px solid #ff6b9a; }
+.theme-pink .TxNav.active { background-color: #ff6b9a1f; border-left: 3px solid #ff6b9a; }
+.theme-pink .TxChip:hover { border: 1px solid #ff6b9a66; }
+.theme-pink .TxChip.active { background-color: #ff6b9a1f; border: 1px solid #ff6b9a; }
+.theme-pink .MenuTitleNav:hover { border: 1px solid #ff6b9a66; }
+.theme-pink .MenuTitleNav:active { border: 1px solid #ff6b9a; }
+.theme-pink .ScoreSelfCard { background-color: #ff6b9a14; border: 1px solid #ff6b9a; }
+.theme-pink .ScoreRow.is-self { background-color: #ff6b9a1a; border-left: 3px solid #ff6b9a; }
+.theme-pink .ScoreRow.is-viewing { background-color: #ff6b9a2e; border-left: 3px solid #ff6b9a; }
+.theme-pink .MenuBy.is-you { background-color: #ff6b9a1f; border: 1px solid #ff6b9a; }
+
+.theme-silver .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #8a96a6 ), to( #c9d2dc ) ); }
+.theme-silver Label.TxKicker,
+.theme-silver Label.TxIdxLabel,
+.theme-silver Label.TxCardPct,
+.theme-silver Label.TxRowPct,
+.theme-silver .TxNav.active Label.TxNavCount,
+.theme-silver Label.ScoreSelfRank,
+.theme-silver Label.ScoreHead.sort-active,
+.theme-silver .ScoreHeader Label.ScoreCur.sort-active,
+.theme-silver .ScoreHeader Label.ScoreTot.sort-active
+{ color: #c9d2dc; }
+.theme-silver .TxCorner { border-top: 2px solid #c9d2dc; border-left: 2px solid #c9d2dc; }
+.theme-silver .TxIdx { border: 1px solid #c9d2dc; }
+.theme-silver .TxNav.active { background-color: #c9d2dc1f; border-left: 3px solid #c9d2dc; }
+.theme-silver .TxChip:hover { border: 1px solid #c9d2dc66; }
+.theme-silver .TxChip.active { background-color: #c9d2dc1f; border: 1px solid #c9d2dc; }
+.theme-silver .MenuTitleNav:hover { border: 1px solid #c9d2dc66; }
+.theme-silver .MenuTitleNav:active { border: 1px solid #c9d2dc; }
+.theme-silver .ScoreSelfCard { background-color: #c9d2dc14; border: 1px solid #c9d2dc; }
+.theme-silver .ScoreRow.is-self { background-color: #c9d2dc1a; border-left: 3px solid #c9d2dc; }
+.theme-silver .ScoreRow.is-viewing { background-color: #c9d2dc2e; border-left: 3px solid #c9d2dc; }
+.theme-silver .MenuBy.is-you { background-color: #c9d2dc1f; border: 1px solid #c9d2dc; }
+
+/* <<< hud_themes:end */

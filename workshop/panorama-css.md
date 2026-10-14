@@ -28,4 +28,6 @@ Do not: `display`/flex/grid, `calc()`, `var()`, `@define`, `@media`, `::before`/
 
 ## This project
 
-Show/hide: `.ph-card.ph-off`, `.is-off` for rows. Fills: `.ph-stat-fill.p0`…`.p100`. Clear `wash-color` on Buttons. `hittest="false"` on every Panel and Label (also in the menu); Buttons carry no `hittest` and still receive clicks. Previews: [`preview/tracker.html`](preview/tracker.html), [`preview/menu.html`](preview/menu.html), [`preview/kit.css`](preview/kit.css).
+Show/hide: `.ph-card.ph-off`, `.is-off` for rows. Fills: `.ph-stat-fill.p0`…`.p100`. Clear `wash-color` on Buttons. `hittest="false"` on every Panel and Label (also in the menu); Buttons carry no `hittest` and still receive clicks.
+
+**v5 tricks:** `border-right` is not in the known-good sheet - corner brackets are one top+left "L" (`.TxCorner`) turned with `rotateZ( 90 / 180 / 270deg )`. Segmented bars are the normal clip-ladder fill with ten `TxSegCut` cells on top (`border-left` in the card colour, container shifted `margin-left: -3px` so the first cut falls outside). Unused grid cards keep their slot with `opacity: 0` (`.MenuRow.empty`), never `collapse`, or the 2×2 grid reflows. Layouts are generated: keep one element per line so diffs stay readable. Previews: [`preview/tracker.html`](preview/tracker.html), [`preview/menu.html`](preview/menu.html), [`preview/kit.css`](preview/kit.css).

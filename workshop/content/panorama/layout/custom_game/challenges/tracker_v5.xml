@@ -1,0 +1,254 @@
+<root>
+	<styles>
+		<include src="s2r://panorama/styles/csgostyles.vcss" />
+		<include src="s2r://panorama/styles/custom_game/challenges/hud_v5.vcss" />
+	</styles>
+
+	<!-- Tracker v5 (tactical): top-right card, tasks only. Contract: Tracker.cs, validated by make panorama. -->
+	<Panel class="HudScreen TrackerScreen" hittest="false">
+		<Panel id="Tracker" class="Tracker ph-card ph-off theme-gold" hittest="false">
+			<Panel class="ph-bg" hittest="false" />
+			<Panel class="TxCorner TxCornerTL" hittest="false" />
+			<Panel class="TxCorner TxCornerTR" hittest="false" />
+			<Panel class="TxCorner TxCornerBL" hittest="false" />
+			<Panel class="TxCorner TxCornerBR" hittest="false" />
+			<Panel class="TrackerContent" hittest="false">
+				<Panel class="TxHead" hittest="false">
+					<Label class="TxKicker stratum-bold-tf" hittest="false" text="//" />
+					<Label class="TxTitle stratum-bold-tf" hittest="false" text="{s:tr_title}" />
+					<Label class="TxCount stratum-bold-tf" hittest="false" text="{s:tr_count}" />
+				</Panel>
+				<Panel class="TrackerBody" hittest="false">
+					<Panel id="ch-trow-0" class="TrackerRow is-off" hittest="false">
+						<Panel class="TxPad" hittest="false" />
+						<Panel class="TxCardBody" hittest="false">
+							<Panel class="TxCardHead" hittest="false">
+								<Panel class="TxIdx" hittest="false">
+									<Label class="TxIdxLabel stratum-bold-tf" hittest="false" text="{s:tr_n0}" />
+								</Panel>
+								<Label class="TxRowTitle stratum-bold-tf" hittest="false" text="{s:tr_t0}" />
+								<Label class="TxRowPct stratum-bold-tf" hittest="false" text="{s:tr_v0}" />
+							</Panel>
+							<Panel class="TxSeg" hittest="false">
+								<Panel class="ph-stat-track TxSegTrack" hittest="false">
+									<Panel id="ch-tfill-0" class="ph-stat-fill p0" hittest="false" />
+								</Panel>
+								<Panel class="TxSegCuts" hittest="false">
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+								</Panel>
+							</Panel>
+							<Panel class="MenuTasks" hittest="false">
+								<Panel id="ch-ttask-0-0" class="MenuTask is-off" hittest="false">
+									<Panel class="MenuTaskMark" hittest="false" />
+									<Label class="MenuTaskLabel stratum-bold-tf" hittest="false" text="{s:tr_0_t0}" />
+								</Panel>
+								<Panel id="ch-ttask-0-1" class="MenuTask is-off" hittest="false">
+									<Panel class="MenuTaskMark" hittest="false" />
+									<Label class="MenuTaskLabel stratum-bold-tf" hittest="false" text="{s:tr_0_t1}" />
+								</Panel>
+								<Panel id="ch-ttask-0-2" class="MenuTask is-off" hittest="false">
+									<Panel class="MenuTaskMark" hittest="false" />
+									<Label class="MenuTaskLabel stratum-bold-tf" hittest="false" text="{s:tr_0_t2}" />
+								</Panel>
+							</Panel>
+						</Panel>
+						<Panel class="TxPad" hittest="false" />
+					</Panel>
+					<Panel id="ch-trow-1" class="TrackerRow is-off" hittest="false">
+						<Panel class="TxPad" hittest="false" />
+						<Panel class="TxCardBody" hittest="false">
+							<Panel class="TxCardHead" hittest="false">
+								<Panel class="TxIdx" hittest="false">
+									<Label class="TxIdxLabel stratum-bold-tf" hittest="false" text="{s:tr_n1}" />
+								</Panel>
+								<Label class="TxRowTitle stratum-bold-tf" hittest="false" text="{s:tr_t1}" />
+								<Label class="TxRowPct stratum-bold-tf" hittest="false" text="{s:tr_v1}" />
+							</Panel>
+							<Panel class="TxSeg" hittest="false">
+								<Panel class="ph-stat-track TxSegTrack" hittest="false">
+									<Panel id="ch-tfill-1" class="ph-stat-fill p0" hittest="false" />
+								</Panel>
+								<Panel class="TxSegCuts" hittest="false">
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+								</Panel>
+							</Panel>
+							<Panel class="MenuTasks" hittest="false">
+								<Panel id="ch-ttask-1-0" class="MenuTask is-off" hittest="false">
+									<Panel class="MenuTaskMark" hittest="false" />
+									<Label class="MenuTaskLabel stratum-bold-tf" hittest="false" text="{s:tr_1_t0}" />
+								</Panel>
+								<Panel id="ch-ttask-1-1" class="MenuTask is-off" hittest="false">
+									<Panel class="MenuTaskMark" hittest="false" />
+									<Label class="MenuTaskLabel stratum-bold-tf" hittest="false" text="{s:tr_1_t1}" />
+								</Panel>
+								<Panel id="ch-ttask-1-2" class="MenuTask is-off" hittest="false">
+									<Panel class="MenuTaskMark" hittest="false" />
+									<Label class="MenuTaskLabel stratum-bold-tf" hittest="false" text="{s:tr_1_t2}" />
+								</Panel>
+							</Panel>
+						</Panel>
+						<Panel class="TxPad" hittest="false" />
+					</Panel>
+					<Panel id="ch-trow-2" class="TrackerRow is-off" hittest="false">
+						<Panel class="TxPad" hittest="false" />
+						<Panel class="TxCardBody" hittest="false">
+							<Panel class="TxCardHead" hittest="false">
+								<Panel class="TxIdx" hittest="false">
+									<Label class="TxIdxLabel stratum-bold-tf" hittest="false" text="{s:tr_n2}" />
+								</Panel>
+								<Label class="TxRowTitle stratum-bold-tf" hittest="false" text="{s:tr_t2}" />
+								<Label class="TxRowPct stratum-bold-tf" hittest="false" text="{s:tr_v2}" />
+							</Panel>
+							<Panel class="TxSeg" hittest="false">
+								<Panel class="ph-stat-track TxSegTrack" hittest="false">
+									<Panel id="ch-tfill-2" class="ph-stat-fill p0" hittest="false" />
+								</Panel>
+								<Panel class="TxSegCuts" hittest="false">
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+								</Panel>
+							</Panel>
+							<Panel class="MenuTasks" hittest="false">
+								<Panel id="ch-ttask-2-0" class="MenuTask is-off" hittest="false">
+									<Panel class="MenuTaskMark" hittest="false" />
+									<Label class="MenuTaskLabel stratum-bold-tf" hittest="false" text="{s:tr_2_t0}" />
+								</Panel>
+								<Panel id="ch-ttask-2-1" class="MenuTask is-off" hittest="false">
+									<Panel class="MenuTaskMark" hittest="false" />
+									<Label class="MenuTaskLabel stratum-bold-tf" hittest="false" text="{s:tr_2_t1}" />
+								</Panel>
+								<Panel id="ch-ttask-2-2" class="MenuTask is-off" hittest="false">
+									<Panel class="MenuTaskMark" hittest="false" />
+									<Label class="MenuTaskLabel stratum-bold-tf" hittest="false" text="{s:tr_2_t2}" />
+								</Panel>
+							</Panel>
+						</Panel>
+						<Panel class="TxPad" hittest="false" />
+					</Panel>
+					<Panel id="ch-trow-3" class="TrackerRow is-off" hittest="false">
+						<Panel class="TxPad" hittest="false" />
+						<Panel class="TxCardBody" hittest="false">
+							<Panel class="TxCardHead" hittest="false">
+								<Panel class="TxIdx" hittest="false">
+									<Label class="TxIdxLabel stratum-bold-tf" hittest="false" text="{s:tr_n3}" />
+								</Panel>
+								<Label class="TxRowTitle stratum-bold-tf" hittest="false" text="{s:tr_t3}" />
+								<Label class="TxRowPct stratum-bold-tf" hittest="false" text="{s:tr_v3}" />
+							</Panel>
+							<Panel class="TxSeg" hittest="false">
+								<Panel class="ph-stat-track TxSegTrack" hittest="false">
+									<Panel id="ch-tfill-3" class="ph-stat-fill p0" hittest="false" />
+								</Panel>
+								<Panel class="TxSegCuts" hittest="false">
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+								</Panel>
+							</Panel>
+							<Panel class="MenuTasks" hittest="false">
+								<Panel id="ch-ttask-3-0" class="MenuTask is-off" hittest="false">
+									<Panel class="MenuTaskMark" hittest="false" />
+									<Label class="MenuTaskLabel stratum-bold-tf" hittest="false" text="{s:tr_3_t0}" />
+								</Panel>
+								<Panel id="ch-ttask-3-1" class="MenuTask is-off" hittest="false">
+									<Panel class="MenuTaskMark" hittest="false" />
+									<Label class="MenuTaskLabel stratum-bold-tf" hittest="false" text="{s:tr_3_t1}" />
+								</Panel>
+								<Panel id="ch-ttask-3-2" class="MenuTask is-off" hittest="false">
+									<Panel class="MenuTaskMark" hittest="false" />
+									<Label class="MenuTaskLabel stratum-bold-tf" hittest="false" text="{s:tr_3_t2}" />
+								</Panel>
+							</Panel>
+						</Panel>
+						<Panel class="TxPad" hittest="false" />
+					</Panel>
+					<Panel id="ch-trow-4" class="TrackerRow is-off" hittest="false">
+						<Panel class="TxPad" hittest="false" />
+						<Panel class="TxCardBody" hittest="false">
+							<Panel class="TxCardHead" hittest="false">
+								<Panel class="TxIdx" hittest="false">
+									<Label class="TxIdxLabel stratum-bold-tf" hittest="false" text="{s:tr_n4}" />
+								</Panel>
+								<Label class="TxRowTitle stratum-bold-tf" hittest="false" text="{s:tr_t4}" />
+								<Label class="TxRowPct stratum-bold-tf" hittest="false" text="{s:tr_v4}" />
+							</Panel>
+							<Panel class="TxSeg" hittest="false">
+								<Panel class="ph-stat-track TxSegTrack" hittest="false">
+									<Panel id="ch-tfill-4" class="ph-stat-fill p0" hittest="false" />
+								</Panel>
+								<Panel class="TxSegCuts" hittest="false">
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+									<Panel class="TxSegCut" hittest="false" />
+								</Panel>
+							</Panel>
+							<Panel class="MenuTasks" hittest="false">
+								<Panel id="ch-ttask-4-0" class="MenuTask is-off" hittest="false">
+									<Panel class="MenuTaskMark" hittest="false" />
+									<Label class="MenuTaskLabel stratum-bold-tf" hittest="false" text="{s:tr_4_t0}" />
+								</Panel>
+								<Panel id="ch-ttask-4-1" class="MenuTask is-off" hittest="false">
+									<Panel class="MenuTaskMark" hittest="false" />
+									<Label class="MenuTaskLabel stratum-bold-tf" hittest="false" text="{s:tr_4_t1}" />
+								</Panel>
+								<Panel id="ch-ttask-4-2" class="MenuTask is-off" hittest="false">
+									<Panel class="MenuTaskMark" hittest="false" />
+									<Label class="MenuTaskLabel stratum-bold-tf" hittest="false" text="{s:tr_4_t2}" />
+								</Panel>
+							</Panel>
+						</Panel>
+						<Panel class="TxPad" hittest="false" />
+					</Panel>
+				</Panel>
+				<Label id="ch-tr-hint" class="TrackerHint stratum-bold-tf is-off" hittest="false" text="{s:tr_hint}" />
+				<Panel id="ch-ttimer" class="TrackerTimerRow is-off" hittest="false">
+					<Panel class="TxPad" hittest="false" />
+					<Panel class="TrackerTimer ph-stat-track" hittest="false">
+						<Panel id="ch-ttimer-fill" class="ph-stat-fill TrackerTimerFill p100" hittest="false" />
+					</Panel>
+					<Panel class="TxPad" hittest="false" />
+				</Panel>
+			</Panel>
+		</Panel>
+	</Panel>
+</root>
