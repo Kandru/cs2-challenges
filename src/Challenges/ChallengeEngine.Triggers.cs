@@ -5,12 +5,20 @@ namespace Challenges
 {
     public partial class ChallengeEngine
     {
+        /// <summary>Plugin events are only built while some plugin listens.</summary>
+        private static bool HasEventListeners => CustomEventsSender.Instance is { HasListeners: true };
+
         private void TriggerProgress(
             CCSPlayerController player,
             ChallengeDefinition challenge,
             ChallengeTask task,
             int amount)
         {
+            if (!HasEventListeners)
+            {
+                return;
+            }
+
             TriggerTaskEvent(
                 player,
                 challenge,
@@ -22,6 +30,11 @@ namespace Challenges
 
         private void TriggerCompleted(CCSPlayerController player, ChallengeDefinition challenge, ChallengeTask task)
         {
+            if (!HasEventListeners)
+            {
+                return;
+            }
+
             TriggerTaskEvent(
                 player,
                 challenge,
@@ -68,7 +81,7 @@ namespace Challenges
 
         private void TriggerChallengeSolved(CCSPlayerController player, ChallengeDefinition challenge)
         {
-            if (player.UserId is not int userId)
+            if (!HasEventListeners || player.UserId is not int userId)
             {
                 return;
             }
