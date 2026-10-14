@@ -90,6 +90,37 @@ namespace Challenges.Tests
             Assert.Empty(TempFiles());
         }
 
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Stalled_write_never_lands_over_a_newer_synchronous_save(bool handedOffAgain)
+        {
+            using Stall stall = new();
+            PlayerSaveQueue saves = Queue(new PluginConfig(), stall);
+            PlayerState a = Dirty(1, "old");
+            saves.Enqueue(a);
+            saves.Pump();
+            string stalledTemp = stall.WaitForTemp();
+
+            // Progress after the hand-off: queued again, or already handed off behind the stalled write.
+            a.Username = "new";
+            a.Dirty = true;
+            saves.Enqueue(a);
+            if (handedOffAgain)
+            {
+                saves.Pump();
+            }
+
+            saves.FlushSync();
+            Assert.Equal("new", OnDisk(a));
+            Assert.False(a.Dirty);
+
+            stall.Release();
+            WaitUntil(() => !File.Exists(stalledTemp));
+            Assert.Equal("new", OnDisk(a));
+            Assert.Empty(TempFiles());
+        }
+
         /// <summary>A stalled writer always misses the join, so its wait is short; otherwise the default applies.</summary>
         private PlayerSaveQueue Queue(PluginConfig config, Stall? stall = null) =>
             stall == null
