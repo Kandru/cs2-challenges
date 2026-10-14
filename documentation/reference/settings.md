@@ -53,7 +53,7 @@ Created on first start. Example:
 | Setting | Meaning |
 |---------|---------|
 | `enabled` | Turns the whole plugin on or off. |
-| `development.enable` | Extra log messages (YAML / matching hints). |
+| `development.enable` | Extra log messages (YAML / matching hints) and handler timings for `challenges perf`. Off: nothing is timed. |
 | `development.allow_bots` | Skip `*.isbot` rules that are `bool==` `"false"` so bot victims/attackers still count for **humans**. Default `false`. Does not let bots earn progress. |
 | `menu_commands` | Chat names that open the challenges menu (default `["c", "challenges"]`). Leading `!` / `/` / `.` optional. Empty list disables chat commands and hides the tracker hint. |
 | `command_prefix` | Chat trigger shown on the tracker before the shortest menu command (default `"!"`). Does not apply to `!lang`. |
@@ -92,3 +92,5 @@ Tracker, menu, and language behavior: [In game](../tutorial/in-game.md).
 | `challenges enable` | Enable the plugin and remember that. |
 | `challenges test-discord` | Post sample Discord embeds (schedule, challenge, task full/short) to `discord.webhook_url` using the loaded schedule/challenges. Fails if the URL or data is missing. |
 | `challenges check-catalog` | Compare `catalog.json` to the loaded extractors. Reports mismatches. |
+| `challenges perf` | With `development.enable`: the 15 handlers with the most total time since start or the last reset (game events, listeners, HUD tick and transmit, patch apply, save pump), each with calls, average and maximum microseconds and total milliseconds, then the gauges `worker_queue` (events waiting for the progress worker), `patches` (results waiting to be applied), `pending_steamids` (players with unapplied work), `shadows` (worker progress copies), `save_queue` and `saves_in_flight`. |
+| `challenges perf reset` | Zero all perf counters. |

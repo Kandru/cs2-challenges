@@ -3,13 +3,14 @@ using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Modules.Commands;
 using CounterStrikeSharp.API.Modules.Extensions;
+using Challenges.Utils;
 
 namespace Challenges
 {
     public partial class Challenges
     {
-        [ConsoleCommand("challenges", "Challenges admin commands: reload | enable | disable | check-catalog | test-discord")]
-        [CommandHelper(whoCanExecute: CommandUsage.SERVER_ONLY, minArgs: 1, usage: "<reload|enable|disable|check-catalog|test-discord>")]
+        [ConsoleCommand("challenges", "Challenges admin commands: reload | enable | disable | check-catalog | test-discord | perf [reset]")]
+        [CommandHelper(whoCanExecute: CommandUsage.SERVER_ONLY, minArgs: 1, usage: "<reload|enable|disable|check-catalog|test-discord|perf [reset]>")]
         public void CommandAdmin(CCSPlayerController? player, CommandInfo command)
         {
             string subCommand = command.GetArg(1);
@@ -68,10 +69,48 @@ namespace Challenges
 
                     command.ReplyToCommand(notes.SendDiscordTestSamples() ?? Localizer["admin.discord.test.ok"].Value);
                     break;
+                case "perf":
+                    CommandPerf(command);
+                    break;
                 default:
                     command.ReplyToCommand(Localizer["admin.unknown_command"].Value
                         .Replace("{command}", subCommand));
                     break;
+            }
+        }
+
+        /// <summary><c>challenges perf</c>: top handlers by total time plus queue gauges; <c>perf reset</c> zeroes them.</summary>
+        private void CommandPerf(CommandInfo command)
+        {
+            if (command.GetArg(2).Equals("reset", StringComparison.OrdinalIgnoreCase))
+            {
+                PerfCounters.Global.Reset();
+                command.ReplyToCommand(Localizer["admin.perf.reset"]);
+                return;
+            }
+
+            if (!PerfCounters.Enabled)
+            {
+                command.ReplyToCommand(Localizer["admin.perf.disabled"]);
+                return;
+            }
+
+            PerfGauges? gauges = null;
+            if (_engine is { } engine && _saves is { } saves)
+            {
+                ProgressPipeline pipeline = engine.Pipeline;
+                gauges = new PerfGauges(
+                    pipeline.QueuedWork,
+                    pipeline.QueuedPatches,
+                    pipeline.PendingSteamIds,
+                    pipeline.ShadowCount,
+                    saves.Queued,
+                    saves.InFlight);
+            }
+
+            foreach (string line in PerfCounters.Global.Report(PerfCounters.ReportRows, gauges))
+            {
+                command.ReplyToCommand(line);
             }
         }
 

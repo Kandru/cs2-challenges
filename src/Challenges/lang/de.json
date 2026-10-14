@@ -22,6 +22,8 @@
   "admin.discord.test.no_multi_task": "[Herausforderungen] Discord-Test fehlgeschlagen: eine Herausforderung mit mindestens zwei sichtbaren Aufgaben wird für Aufgaben-Embeds benötigt.",
   "admin.discord.test.no_plugin": "[Herausforderungen] Discord-Test fehlgeschlagen: Plugin-Klassen sind nicht initialisiert.",
   "admin.discord.test.failed": "[Herausforderungen] Discord-Test fehlgeschlagen: {error}",
+  "admin.perf.disabled": "[Herausforderungen] Perf-Zähler sind aus; development.enable auf true setzen und neu laden.",
+  "admin.perf.reset": "[Herausforderungen] Perf-Zähler zurückgesetzt.",
   "chat.prefix": "{gold}[Herausforderungen]",
   "challenges.progress": "{prefix} {default}Fortschritt: {green}{challenge}",
   "challenges.completed.all": "Alles abgeschlossen <3",

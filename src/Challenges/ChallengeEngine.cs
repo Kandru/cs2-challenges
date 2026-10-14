@@ -42,6 +42,8 @@ namespace Challenges
         private string? _mapName;
         private CCSGameRulesProxy? _gameRulesProxy;
         private Notifications? _notifications;
+        /// <summary>Perf clock reading of the listener handler in progress; 0 when none is measured.</summary>
+        private long _listenerStart;
         private bool _destroyed;
 
         public ChallengeEngine(State state, IStringLocalizer localizer, bool isHotReloaded)
@@ -54,6 +56,9 @@ namespace Challenges
 
         /// <summary>Attribute providers; the generated button listener forwards to them first.</summary>
         internal AttributeRegistry Providers => _attributes;
+
+        /// <summary>Progress pipeline; read for the <c>challenges perf</c> gauges.</summary>
+        internal ProgressPipeline Pipeline => _pipeline;
 
         public override List<string> Events => _boundEvents;
         public override List<string> Listeners => _boundListeners;
@@ -280,6 +285,7 @@ namespace Challenges
                 return false;
             }
 
+            _listenerStart = PerfCounters.Start();
             closed = ReadClosedGates();
             if (!plan.AllClosed(closed))
             {
@@ -291,6 +297,7 @@ namespace Challenges
                 DebugPrint($"{listenerName} gated");
             }
 
+            StopListener(listenerName);
             return false;
         }
 
@@ -310,9 +317,14 @@ namespace Challenges
             try
             {
                 List<ProgressTarget>? valid = FilterTargets(targets, closed);
-                if (valid == null && GlobalConfig.Debug.Enable)
+                if (valid == null)
                 {
-                    DebugPrint($"{listenerName} no targets");
+                    if (GlobalConfig.Debug.Enable)
+                    {
+                        DebugPrint($"{listenerName} no targets");
+                    }
+
+                    StopListener(listenerName);
                 }
 
                 return valid;
@@ -320,6 +332,7 @@ namespace Challenges
             catch (Exception ex)
             {
                 Log($"{listenerName} failed: {ex.Message}");
+                StopListener(listenerName);
                 return null;
             }
         }
@@ -339,9 +352,38 @@ namespace Challenges
             {
                 Log($"{listenerName} failed: {ex.Message}");
             }
+            finally
+            {
+                StopListener(listenerName);
+            }
         }
 
+        /// <summary>
+        /// Records the listener handler time since <see cref="BeginListener"/>. A nested handler records its own
+        /// span and clears the start, so the outer one is skipped rather than counted twice.
+        /// </summary>
+        private void StopListener(string listenerName)
+        {
+            long start = _listenerStart;
+            _listenerStart = 0;
+            PerfCounters.Stop(listenerName, start);
+        }
+
+        /// <summary>Generated event handlers: <see cref="DispatchEvent"/>, timed while perf counters are on.</summary>
         private HookResult HandleEvent(string eventName, GameEvent gameEvent)
+        {
+            if (!PerfCounters.Enabled)
+            {
+                return DispatchEvent(eventName, gameEvent);
+            }
+
+            long start = PerfCounters.Start();
+            HookResult result = DispatchEvent(eventName, gameEvent);
+            PerfCounters.Stop(eventName, start);
+            return result;
+        }
+
+        private HookResult DispatchEvent(string eventName, GameEvent gameEvent)
         {
             if (_destroyed || !GlobalConfig.Enabled)
             {

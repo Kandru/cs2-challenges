@@ -2,6 +2,7 @@ using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Extensions;
 using CounterStrikeSharp.API.Modules.Utils;
+using Challenges.Utils;
 
 namespace Challenges
 {
@@ -393,6 +394,14 @@ namespace Challenges
 
         public static void OnTick()
         {
+            long start = PerfCounters.Start();
+            RefreshViewers();
+            PerfCounters.Stop(PerfCounters.HudTick, start);
+        }
+
+        /// <summary>Per tick: roster rebuild once a second, then this tick's share of tracker and menu refreshes.</summary>
+        private static void RefreshViewers()
+        {
             uint tick = _tick++;
 
             if (tick % (uint)_ticksPerSecond == 0)
@@ -456,6 +465,13 @@ namespace Challenges
         /// while its root panel is shown or closing; other viewers are left untouched.
         /// </summary>
         public static void OnCheckTransmit(CCheckTransmitInfoList infoList)
+        {
+            long start = PerfCounters.Start();
+            FilterTransmit(infoList);
+            PerfCounters.Stop(PerfCounters.HudTransmit, start);
+        }
+
+        private static void FilterTransmit(CCheckTransmitInfoList infoList)
         {
             ExpireClosingRoots();
 

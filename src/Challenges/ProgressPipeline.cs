@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Runtime.InteropServices;
 using System.Threading.Channels;
+using Challenges.Utils;
 
 namespace Challenges
 {
@@ -55,6 +56,18 @@ namespace Challenges
 
         /// <summary>True after <see cref="Flush"/>; no work is accepted any more.</summary>
         public bool IsFlushed => _flushed;
+
+        /// <summary>Work items the worker has not taken yet.</summary>
+        public int QueuedWork => _work.Reader.Count;
+
+        /// <summary>Finished patches waiting for the game thread.</summary>
+        public int QueuedPatches => _patches.Count;
+
+        /// <summary>Steam ids with in-flight work. Game thread only.</summary>
+        public int PendingSteamIds => _pending.Count;
+
+        /// <summary>Worker shadows kept across bursts.</summary>
+        public int ShadowCount => _shadows.Count;
 
         private void EnsureWorker() =>
             _workerTask ??= Task.Factory.StartNew(
@@ -204,6 +217,7 @@ namespace Challenges
 
         private void DrainPatches(int max)
         {
+            long start = PerfCounters.Start();
             int applied = 0;
             while (applied < max && _patches.TryDequeue(out ProgressPatch? patch))
             {
@@ -223,6 +237,8 @@ namespace Challenges
                     FinishPending(patch.SteamId);
                 }
             }
+
+            PerfCounters.Stop(PerfCounters.DrainPatches, start);
         }
 
         private void ApplyPatch(ProgressPatch patch)

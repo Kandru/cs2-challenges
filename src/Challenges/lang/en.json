@@ -22,6 +22,8 @@
   "admin.discord.test.no_multi_task": "[Challenges] Discord test failed: need a challenge with at least two visible tasks for task embeds.",
   "admin.discord.test.no_plugin": "[Challenges] Discord test failed: plugin classes are not initialized.",
   "admin.discord.test.failed": "[Challenges] Discord test failed: {error}",
+  "admin.perf.disabled": "[Challenges] Perf counters are off; set development.enable to true and reload.",
+  "admin.perf.reset": "[Challenges] Perf counters reset.",
   "chat.prefix": "{gold}[Challenges]",
   "challenges.progress": "{prefix} {default}Challenge Progress: {green}{challenge}",
   "challenges.completed.all": "Everything completed <3",
