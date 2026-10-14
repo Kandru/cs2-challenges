@@ -7,9 +7,10 @@ namespace Challenges.Attributes
 {
     /// <summary>
     /// Recent kills; a mutual kill inside the window emits the synthetic <see cref="TradeType"/> once for each
-    /// of the two players. Writes no keys into other events.
+    /// of the two players through the engine's enqueue. Writes no keys into other events; the registry
+    /// feeds it <c>player_death</c> while a <see cref="TradeType"/> task is loaded. Game thread only.
     /// </summary>
-    internal sealed class TradeProvider : IAttributeProvider
+    internal sealed class TradeProvider(Action<CCSPlayerController, string, Dictionary<string, EventValue>> enqueueOne)
     {
         /// <summary>Synthetic challenge type emitted for a mutual kill.</summary>
         public const string TradeType = "player_trade";
@@ -31,19 +32,12 @@ namespace Challenges.Attributes
 
         private static readonly string[] TradeAttackerKeys = PlayerKeys.For("attacker");
         private static readonly string[] TradeVictimKeys = PlayerKeys.For("victim");
-        private static readonly string[] Watched = ["EventPlayerDeath"];
 
         private readonly List<KillRecord> _kills = [];
         private double _retentionSeconds = DefaultTradeSeconds;
         /// <summary>Player fields the loaded <c>player_trade</c> rules read, per trade prefix.</summary>
         private PlayerFields _attackerFields;
         private PlayerFields _victimFields;
-
-        public string Name => "trade";
-        public IReadOnlyList<AttributeSuffix> PlayerSuffixes => [];
-        public IReadOnlyList<AttributeEventKey> EventKeys => [];
-        public bool UsesRoster => false;
-        public IReadOnlyCollection<string> WatchedEvents => Watched;
 
         public bool Configure(IReadOnlyList<ChallengeTask> tasks)
         {
@@ -89,26 +83,6 @@ namespace Challenges.Attributes
             return trade;
         }
 
-        public void Observe(string eventName, GameEvent gameEvent, ProviderContext context)
-        {
-            if (eventName == "EventPlayerDeath")
-            {
-                OnPlayerDeath((EventPlayerDeath)gameEvent, context);
-            }
-        }
-
-        public void AfterEvent(string eventName, GameEvent gameEvent)
-        {
-        }
-
-        public void WritePlayer(Dictionary<string, EventValue> d, string[] keys, uint suffixes, CCSPlayerController? player)
-        {
-        }
-
-        public void WriteEvent(string eventName, GameEvent gameEvent, Dictionary<string, EventValue> d, uint keys)
-        {
-        }
-
         public void Clear() => _kills.Clear();
 
         public void ForgetSlot(int slot)
@@ -123,7 +97,7 @@ namespace Challenges.Attributes
             }
         }
 
-        private void OnPlayerDeath(EventPlayerDeath e, ProviderContext context)
+        public void OnPlayerDeath(EventPlayerDeath e)
         {
             CCSPlayerController? victim = e.Userid;
             CCSPlayerController? attacker = e.Attacker;
@@ -169,11 +143,11 @@ namespace Challenges.Attributes
             _kills.RemoveAt(reverseIndex);
             double seconds = Math.Max(0, now - first.At);
             var second = new KillRecord(attackerSlot, victimSlot, attacker, victim, weapon, e.Headshot, teamKill, now);
-            EmitTrade(context, first, second, seconds);
-            EmitTrade(context, second, first, seconds);
+            EmitTrade(first, second, seconds);
+            EmitTrade(second, first, seconds);
         }
 
-        private void EmitTrade(ProviderContext context, KillRecord mine, KillRecord theirs, double seconds)
+        private void EmitTrade(KillRecord mine, KillRecord theirs, double seconds)
         {
             CCSPlayerController player = mine.Attacker;
             CCSPlayerController other = mine.Victim;
@@ -197,7 +171,7 @@ namespace Challenges.Attributes
             };
             EventData.FillPlayer(d, player, TradeAttackerKeys, _attackerFields);
             EventData.FillPlayer(d, other, TradeVictimKeys, _victimFields);
-            context.EnqueueOne(player, TradeType, d);
+            enqueueOne(player, TradeType, d);
         }
 
         private void PruneKills(double now)

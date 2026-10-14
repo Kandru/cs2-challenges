@@ -8,8 +8,8 @@ using Challenges.Utils;
 namespace Challenges.Attributes
 {
     /// <summary>
-    /// The attribute providers and the shared <see cref="RoundRoster"/>. Configured on rebuild; only active
-    /// providers are observed, and only providers some rule reads write values for an extractor.
+    /// The attribute providers, the trade tracker and the shared <see cref="RoundRoster"/>. Configured on rebuild;
+    /// only active providers are observed, and only providers some rule reads write values for an extractor.
     /// Volatile round memory: never persisted, cleared on round start, map end and unload. Game thread only.
     /// </summary>
     internal sealed class AttributeRegistry
@@ -22,6 +22,8 @@ namespace Challenges.Attributes
         public static readonly IReadOnlyList<AttributeEventKey> AllEventKeys =
             [.. AceProvider.Keys, .. SmokeProvider.Keys];
 
+        private const string DeathEvent = "EventPlayerDeath";
+
         private static readonly string[] RosterEvents =
         [
             "EventRoundStart", "EventPlayerTeam", "EventPlayerDisconnect",
@@ -29,28 +31,29 @@ namespace Challenges.Attributes
 
         private readonly RoundRoster _roster = new();
         private readonly GrenadeProvider _grenade = new();
+        private readonly TradeProvider _trade;
+        private readonly AceProvider _ace;
         private readonly IAttributeProvider[] _providers;
-        private readonly ProviderContext _context;
         private IAttributeProvider[] _active = [];
         private Dictionary<string, AttributeWatch> _watches = new(StringComparer.Ordinal);
         private bool _buttons;
+        private bool _tradeActive;
 
         public AttributeRegistry(Action<CCSPlayerController, string, Dictionary<string, EventValue>> enqueueOne)
         {
-            _providers = [new AceProvider(), new TradeProvider(), _grenade, new SmokeProvider()];
-            _context = new ProviderContext(enqueueOne, _roster);
+            _trade = new TradeProvider(enqueueOne);
+            _ace = new AceProvider(_roster);
+            _providers = [_ace, _grenade, new SmokeProvider()];
         }
 
-        public bool AnyActive => _active.Length > 0;
-        /// <summary>True while an active provider needs <see cref="Roster"/> kept current.</summary>
-        public bool RosterEnabled { get; private set; }
-        public RoundRoster Roster => _roster;
+        public bool AnyActive => _active.Length > 0 || _tradeActive;
 
         /// <summary>Activates the providers the loaded rules use; reads canonical keys.</summary>
         public void Configure(IReadOnlyList<ChallengeTask> tasks)
         {
             List<IAttributeProvider> active = [];
             Dictionary<string, List<IAttributeProvider>> watchers = new(StringComparer.Ordinal);
+            bool trade = _trade.Configure(tasks);
             bool roster = false;
             bool buttons = false;
             foreach (IAttributeProvider provider in _providers)
@@ -61,7 +64,7 @@ namespace Challenges.Attributes
                 }
 
                 active.Add(provider);
-                roster |= provider.UsesRoster;
+                roster |= ReferenceEquals(provider, _ace);
                 buttons |= ReferenceEquals(provider, _grenade);
                 foreach (string eventName in provider.WatchedEvents)
                 {
@@ -82,20 +85,28 @@ namespace Challenges.Attributes
                 }
             }
 
+            if (trade)
+            {
+                watchers.TryAdd(DeathEvent, []);
+            }
+
             Dictionary<string, AttributeWatch> watches = new(watchers.Count, StringComparer.Ordinal);
             foreach ((string eventName, List<IAttributeProvider> list) in watchers)
             {
-                watches[eventName] = new AttributeWatch([.. list], roster && Array.IndexOf(RosterEvents, eventName) >= 0);
+                watches[eventName] = new AttributeWatch(
+                    [.. list],
+                    roster && Array.IndexOf(RosterEvents, eventName) >= 0,
+                    trade && eventName == DeathEvent);
             }
 
-            RosterEnabled = roster;
+            _tradeActive = trade;
             _roster.Invalidate();
             _active = [.. active];
             _watches = watches;
             _buttons = buttons;
         }
 
-        /// <summary>True when an active provider (or the roster) observes <paramref name="eventClassName"/>.</summary>
+        /// <summary>True when an active provider, the trade tracker or the roster observes <paramref name="eventClassName"/>.</summary>
         public bool Watches(string eventClassName) => _watches.ContainsKey(eventClassName);
 
         /// <summary>Observers of <paramref name="eventClassName"/>; null when none. One lookup.</summary>
@@ -106,7 +117,12 @@ namespace Challenges.Attributes
         {
             foreach (IAttributeProvider provider in watch.Providers)
             {
-                provider.Observe(eventName, gameEvent, _context);
+                provider.Observe(eventName, gameEvent);
+            }
+
+            if (watch.Trade)
+            {
+                _trade.OnPlayerDeath((EventPlayerDeath)gameEvent);
             }
 
             if (watch.Roster)
@@ -195,6 +211,8 @@ namespace Challenges.Attributes
             {
                 provider.Clear();
             }
+
+            _trade.Clear();
         }
 
         public void ForgetSlot(int slot)
@@ -204,6 +222,7 @@ namespace Challenges.Attributes
                 provider.ForgetSlot(slot);
             }
 
+            _trade.ForgetSlot(slot);
             _roster.Remove(slot);
         }
 
@@ -229,11 +248,12 @@ namespace Challenges.Attributes
         }
     }
 
-    /// <summary>The active providers observing one event, in registry order, and whether the roster follows it.</summary>
-    internal sealed class AttributeWatch(IAttributeProvider[] providers, bool roster)
+    /// <summary>The active providers observing one event, in registry order, and whether the trade tracker and the roster follow it.</summary>
+    internal sealed class AttributeWatch(IAttributeProvider[] providers, bool roster, bool trade)
     {
         public IAttributeProvider[] Providers { get; } = providers;
         public bool Roster { get; } = roster;
+        public bool Trade { get; } = trade;
     }
 
     /// <summary>What one provider writes for one extractor. Masks index the provider's tables.</summary>

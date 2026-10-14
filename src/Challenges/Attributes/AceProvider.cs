@@ -9,7 +9,7 @@ namespace Challenges.Attributes
     /// Kills per attacker slot this round; writes <c>isace.{min}.{max}</c> on <c>player_death</c> for every
     /// loaded <c>isace</c> bound pair. Each attacker is credited at most once per pair and round.
     /// </summary>
-    internal sealed class AceProvider : IAttributeProvider
+    internal sealed class AceProvider(RoundRoster roster) : IAttributeProvider
     {
         public static readonly AttributeEventKey[] Keys =
         [
@@ -26,10 +26,7 @@ namespace Challenges.Attributes
         /// <summary>Smallest loaded <c>min_players</c>; fewer kills can never complete a bound.</summary>
         private int _minKills;
 
-        public string Name => "ace";
-        public IReadOnlyList<AttributeSuffix> PlayerSuffixes => [];
         public IReadOnlyList<AttributeEventKey> EventKeys => Keys;
-        public bool UsesRoster => true;
         public IReadOnlyCollection<string> WatchedEvents => Watched;
 
         public bool Configure(IReadOnlyList<ChallengeTask> tasks)
@@ -66,20 +63,12 @@ namespace Challenges.Attributes
             return _bounds.Count > 0;
         }
 
-        public void Observe(string eventName, GameEvent gameEvent, ProviderContext context)
+        public void Observe(string eventName, GameEvent gameEvent)
         {
             if (eventName == "EventPlayerDeath")
             {
-                OnDeath((EventPlayerDeath)gameEvent, context.Roster);
+                OnDeath((EventPlayerDeath)gameEvent);
             }
-        }
-
-        public void AfterEvent(string eventName, GameEvent gameEvent)
-        {
-        }
-
-        public void WritePlayer(Dictionary<string, EventValue> d, string[] keys, uint suffixes, CCSPlayerController? player)
-        {
         }
 
         public void WriteEvent(string eventName, GameEvent gameEvent, Dictionary<string, EventValue> d, uint keys)
@@ -107,7 +96,7 @@ namespace Challenges.Attributes
             _credited.RemoveWhere(entry => entry.Slot == slot);
         }
 
-        private void OnDeath(EventPlayerDeath e, RoundRoster roster)
+        private void OnDeath(EventPlayerDeath e)
         {
             Array.Clear(_hits);
 
@@ -138,7 +127,7 @@ namespace Challenges.Attributes
                 return;
             }
 
-            int enemies = CountEnemyHumans(roster, victimSlot, enemyTeam);
+            int enemies = CountEnemyHumans(victimSlot, enemyTeam);
             for (int i = 0; i < _bounds.Count; i++)
             {
                 AceBound bound = _bounds[i];
@@ -157,7 +146,7 @@ namespace Challenges.Attributes
         }
 
         /// <summary>Humans in the victim's team, dead or alive; the victim counts exactly once.</summary>
-        private static int CountEnemyHumans(RoundRoster roster, int victimSlot, int team)
+        private int CountEnemyHumans(int victimSlot, int team)
         {
             int count = roster.HumansInTeam(team);
             return roster.IsHumanInTeam(victimSlot, team) ? count : count + 1;

@@ -43,30 +43,18 @@ namespace Challenges.Attributes
         private float _bombZ;
         private bool _hasBombOrigin;
 
-        public string Name => "smoke";
         public IReadOnlyList<AttributeSuffix> PlayerSuffixes => Suffixes;
         public IReadOnlyList<AttributeEventKey> EventKeys => Keys;
-        public bool UsesRoster => false;
         public IReadOnlyCollection<string> WatchedEvents => _watched;
 
         public bool Configure(IReadOnlyList<ChallengeTask> tasks)
         {
-            bool player = false;
-            bool bomb = false;
-            foreach (ChallengeTask task in tasks)
-            {
-                foreach (CompiledRule rule in task.CompiledRules)
-                {
-                    bomb |= AttributeKeys.IsEventKey(rule.Key, Keys);
-                    player |= AttributeKeys.SuffixIndex(rule.Key, Suffixes) >= 0;
-                }
-            }
-
+            bool bomb = AttributeKeys.AnyRule(tasks, static key => AttributeKeys.IsEventKey(key, Keys));
             _watched = bomb ? BombEvents : SmokeEvents;
-            return player | bomb;
+            return bomb || AttributeKeys.AnyRule(tasks, static key => AttributeKeys.SuffixIndex(key, Suffixes) >= 0);
         }
 
-        public void Observe(string eventName, GameEvent gameEvent, ProviderContext context)
+        public void Observe(string eventName, GameEvent gameEvent)
         {
             switch (eventName)
             {
@@ -90,10 +78,6 @@ namespace Challenges.Attributes
                     TryCacheBombOrigin();
                     return;
             }
-        }
-
-        public void AfterEvent(string eventName, GameEvent gameEvent)
-        {
         }
 
         public void WritePlayer(Dictionary<string, EventValue> d, string[] keys, uint suffixes, CCSPlayerController? player)
@@ -129,10 +113,6 @@ namespace Challenges.Attributes
         {
             _smokes.Clear();
             _hasBombOrigin = false;
-        }
-
-        public void ForgetSlot(int slot)
-        {
         }
 
         private void ProbeBomb(out bool inside, out float distance, out float age)

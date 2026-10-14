@@ -53,29 +53,13 @@ namespace Challenges.Attributes
         private readonly StringBuilder _thrownScratch = new(32);
         private bool _thrownFlushScheduled;
 
-        public string Name => "grenade";
         public IReadOnlyList<AttributeSuffix> PlayerSuffixes => Suffixes;
-        public IReadOnlyList<AttributeEventKey> EventKeys => [];
-        public bool UsesRoster => false;
         public IReadOnlyCollection<string> WatchedEvents => Watched;
 
-        public bool Configure(IReadOnlyList<ChallengeTask> tasks)
-        {
-            foreach (ChallengeTask task in tasks)
-            {
-                foreach (CompiledRule rule in task.CompiledRules)
-                {
-                    if (AttributeKeys.SuffixIndex(rule.Key, Suffixes) >= 0)
-                    {
-                        return true;
-                    }
-                }
-            }
+        public bool Configure(IReadOnlyList<ChallengeTask> tasks) =>
+            AttributeKeys.AnyRule(tasks, static key => AttributeKeys.SuffixIndex(key, Suffixes) >= 0);
 
-            return false;
-        }
-
-        public void Observe(string eventName, GameEvent gameEvent, ProviderContext context)
+        public void Observe(string eventName, GameEvent gameEvent)
         {
             switch (eventName)
             {
@@ -143,10 +127,6 @@ namespace Challenges.Attributes
             {
                 d[keys[3]] = EventValue.Of(BuildThrowingList(player, slot, holding, holdWeapon));
             }
-        }
-
-        public void WriteEvent(string eventName, GameEvent gameEvent, Dictionary<string, EventValue> d, uint keys)
-        {
         }
 
         public void OnButtonsChanged(CCSPlayerController player, PlayerButtons pressed, PlayerButtons released)
