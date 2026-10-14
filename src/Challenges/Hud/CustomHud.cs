@@ -409,8 +409,9 @@ namespace Challenges
             int gap = _refreshGap;
             for (int i = (int)(tick % (uint)gap); i < count; i += gap)
             {
+                // The roster holds humans only; between rebuilds a controller can only stop being valid.
                 CCSPlayerController player = _humanRoster[i];
-                if (Players.IsHumanViewer(player))
+                if (player.IsValid)
                 {
                     Tracker.Refresh(player);
                     Menu.PaintIfDirty(player);

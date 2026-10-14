@@ -184,6 +184,15 @@ namespace Challenges
                 return;
             }
 
+            // Idle: nothing to show, time or hide. Every path that shows the card again invalidates it first.
+            if (!state.TrackerFreezeVisible
+                && state.TrackerProgressUntil == null
+                && state.TrackerFadeUntil == null
+                && !CustomHud.IsPanelVisible(player, Panel))
+            {
+                return;
+            }
+
             DateTime now = DateTime.UtcNow;
 
             if (state.TrackerFadeUntil is { } fadeUntil)
