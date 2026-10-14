@@ -1,61 +1,40 @@
 using CounterStrikeSharp.API.Core;
-using CounterStrikeSharp.API.Modules.Events;
 using CounterStrikeSharp.API.Modules.Utils;
 using Challenges.Utils;
 
 namespace Challenges.Extractors
 {
-    /// <summary>Derived rule keys that are not 1:1 CSS fields (team/self flags, enum names).</summary>
+    /// <summary>
+    /// Derived rule keys that are not 1:1 CSS fields (team/self flags, enum names). Generated extractors call these
+    /// with the controllers they already read; key names come from <c>DERIVED_KEYS</c> in <c>tools/generate_events.py</c>.
+    /// </summary>
     public static class DerivedKeys
     {
-        public static void Apply(string kind, GameEvent gameEvent, Dictionary<string, EventValue> d)
-        {
-            switch (kind)
-            {
-                case "team_self_kill":
-                    WriteTeamSelf((EventPlayerDeath)gameEvent, d, "isteamkill", "isselfkill",
-                        e => e.Attacker, e => e.Userid);
-                    break;
-                case "team_self_damage" when gameEvent is EventPlayerHurt hurt:
-                    WriteTeamSelf(hurt, d, "isteamdamage", "isselfdamage",
-                        e => e.Attacker, e => e.Userid);
-                    break;
-                case "team_self_damage" when gameEvent is EventBulletDamage bullet:
-                    WriteTeamSelf(bullet, d, "isteamdamage", "isselfdamage",
-                        e => e.Attacker, e => e.Victim);
-                    break;
-                case "team_self_flash":
-                    WriteTeamSelf((EventPlayerBlind)gameEvent, d, "isteamflash", "isselfflash",
-                        e => e.Attacker, e => e.Userid);
-                    break;
-                case "self_avenged":
-                {
-                    var e = (EventPlayerAvengedTeammate)gameEvent;
-                    d["isselfavenged"] = EventValue.Of(e.AvengerId == e.AvengedPlayerId);
-                    break;
-                }
-                case "player_team_names":
-                {
-                    var e = (EventPlayerTeam)gameEvent;
-                    d["old_team"] = EventValue.Of(Enum.GetName(typeof(CsTeam), e.Oldteam) ?? "Unknown");
-                    d["new_team"] = EventValue.Of(Enum.GetName(typeof(CsTeam), e.Team) ?? "Unknown");
-                    break;
-                }
-            }
-        }
-
-        private static void WriteTeamSelf<T>(
-            T gameEvent,
+        /// <summary>Whether both controllers are in one team, and whether they are the same player.</summary>
+        public static void TeamSelf(
             Dictionary<string, EventValue> d,
+            CCSPlayerController? attacker,
+            CCSPlayerController? victim,
             string teamKey,
-            string selfKey,
-            Func<T, CCSPlayerController?> attackerOf,
-            Func<T, CCSPlayerController?> victimOf)
+            string selfKey)
         {
-            CCSPlayerController? attacker = attackerOf(gameEvent);
-            CCSPlayerController? victim = victimOf(gameEvent);
             d[teamKey] = EventValue.Of(attacker != null && victim != null && attacker.TeamNum == victim.TeamNum);
             d[selfKey] = EventValue.Of(Players.Same(attacker, victim));
+        }
+
+        /// <summary>Whether the two controllers compare equal.</summary>
+        public static void Equal(
+            Dictionary<string, EventValue> d,
+            CCSPlayerController? left,
+            CCSPlayerController? right,
+            string key) =>
+            d[key] = EventValue.Of(left == right);
+
+        /// <summary><see cref="CsTeam"/> names of two team numbers; <c>Unknown</c> for other numbers.</summary>
+        public static void TeamNames(Dictionary<string, EventValue> d, int oldTeam, int newTeam, string oldKey, string newKey)
+        {
+            d[oldKey] = EventValue.Of(Enum.GetName(typeof(CsTeam), oldTeam) ?? "Unknown");
+            d[newKey] = EventValue.Of(Enum.GetName(typeof(CsTeam), newTeam) ?? "Unknown");
         }
     }
 }

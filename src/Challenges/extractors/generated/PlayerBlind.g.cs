@@ -31,7 +31,7 @@ namespace Challenges.Extractors
             if (need.Keys[1]) d["entityid"] = EventValue.Of(e.Entityid);
             if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, ReadPlayer(e, 0, players), need, 0);
             if (need.Prefixes[1] != PlayerFields.None) EventData.FillPlayer(d, ReadPlayer(e, 1, players), need, 1);
-            if (need.Derived) global::Challenges.Extractors.DerivedKeys.Apply("team_self_flash", gameEvent, d);
+            if (need.Derived) global::Challenges.Extractors.DerivedKeys.TeamSelf(d, ReadPlayer(e, 0, players), ReadPlayer(e, 1, players), "isteamflash", "isselfflash");
         }
 
         public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need, EventPlayers players)

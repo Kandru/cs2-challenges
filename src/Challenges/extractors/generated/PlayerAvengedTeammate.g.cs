@@ -27,7 +27,7 @@ namespace Challenges.Extractors
             var e = (EventPlayerAvengedTeammate)gameEvent;
             if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, ReadPlayer(e, 0, players), need, 0);
             if (need.Prefixes[1] != PlayerFields.None) EventData.FillPlayer(d, ReadPlayer(e, 1, players), need, 1);
-            if (need.Derived) global::Challenges.Extractors.DerivedKeys.Apply("self_avenged", gameEvent, d);
+            if (need.Derived) global::Challenges.Extractors.DerivedKeys.Equal(d, ReadPlayer(e, 1, players), ReadPlayer(e, 0, players), "isselfavenged");
         }
 
         public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need, EventPlayers players)

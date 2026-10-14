@@ -112,14 +112,34 @@ def listener_challenge_types(listener: dict, alias: dict) -> list[str]:
     return ordered_unique(types)
 
 
-# Derived key kinds handled by DerivedKeys.Apply, with catalog value types.
-DERIVED_KEYS: dict[str, list[tuple[str, str]]] = {
-    "team_self_kill": [("isteamkill", "bool"), ("isselfkill", "bool")],
-    "team_self_damage": [("isteamdamage", "bool"), ("isselfdamage", "bool")],
-    "team_self_flash": [("isteamflash", "bool"), ("isselfflash", "bool")],
-    "self_avenged": [("isselfavenged", "bool")],
-    "player_team_names": [("old_team", "string"), ("new_team", "string")],
+# Derived key kinds: (keys with catalog value types, DerivedKeys method, arguments). An argument names an event
+# player field (its controller, read once through ReadPlayer; "a|b" takes the first field the event has) or, with
+# "e.", an event property. The generated call passes the arguments, then the key names: this table is their source.
+DERIVED_KEYS: dict[str, tuple[list[tuple[str, str]], str, list[str]]] = {
+    "team_self_kill": ([("isteamkill", "bool"), ("isselfkill", "bool")], "TeamSelf", ["attacker", "userid"]),
+    "team_self_damage": ([("isteamdamage", "bool"), ("isselfdamage", "bool")], "TeamSelf", ["attacker", "userid|victim"]),
+    "team_self_flash": ([("isteamflash", "bool"), ("isselfflash", "bool")], "TeamSelf", ["attacker", "userid"]),
+    "self_avenged": ([("isselfavenged", "bool")], "Equal", ["avenger_id", "avenged_player_id"]),
+    "player_team_names": ([("old_team", "string"), ("new_team", "string")], "TeamNames", ["e.Oldteam", "e.Team"]),
 }
+
+
+def derived_call(event: dict, derived: str) -> str:
+    """The DerivedKeys call of one derived kind for a game event extractor."""
+    keys, method, args = DERIVED_KEYS[derived]
+    prefix_index = {p["field"]: i for i, p in enumerate(player_props(event))}
+    exprs: list[str] = []
+    for arg in args:
+        if arg.startswith("e."):
+            exprs.append(arg)
+            continue
+        field = next((f for f in arg.split("|") if f in prefix_index), None)
+        if field is None:
+            raise SystemExit(f"derived kind {derived} needs player field {arg} in {event['class_name']}")
+        exprs.append(f"ReadPlayer(e, {prefix_index[field]}, players)")
+    exprs.extend(f'"{key}"' for key, _ in keys)
+    return f"global::Challenges.Extractors.DerivedKeys.{method}(d, {', '.join(exprs)})"
+
 
 FILL_SIGNATURE = (
     "        public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need, "
@@ -312,15 +332,13 @@ def generate_event_extractor(event: dict, alias: dict) -> str:
     types, audience = event_challenge_types(event, alias)
     derived = alias.get("derived")
     keys, prefixes, prefix_exprs, key_aliases, prefix_aliases, fill_lines = emit_event_fill(event, alias)
-    derived_keys = [k for k, _ in DERIVED_KEYS.get(derived, [])] if derived else []
+    derived_keys = [k for k, _ in DERIVED_KEYS[derived][0]] if derived in DERIVED_KEYS else []
     if derived and not derived_keys:
         raise SystemExit(f"unknown derived kind {derived} in {event['class_name']}")
 
-    needs_cast = bool(fill_lines)
     if derived:
-        fill_lines.append(
-            f'            if (need.Derived) global::Challenges.Extractors.DerivedKeys.Apply("{derived}", gameEvent, d);'
-        )
+        fill_lines.append(f"            if (need.Derived) {derived_call(event, derived)};")
+    needs_cast = bool(fill_lines)
 
     target_lines = emit_targets(event, alias, types, audience)
     needs_utilities = any("Utilities." in line for line in target_lines)
@@ -802,7 +820,7 @@ def catalog_keys_for_event(event: dict, alias: dict, suffixes: list[dict], attrs
         for alt in key_aliases.get(prop["field"], []):
             add(alt, typ)
 
-    for key, typ in DERIVED_KEYS.get(alias.get("derived") or "", []):
+    for key, typ in DERIVED_KEYS.get(alias.get("derived") or "", ([], "", []))[0]:
         add(key, typ)
 
     for prop in players:

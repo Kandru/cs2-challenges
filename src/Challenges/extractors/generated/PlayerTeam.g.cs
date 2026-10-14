@@ -31,7 +31,7 @@ namespace Challenges.Extractors
             if (need.Keys[4]) d["silent"] = EventValue.Of(e.Silent);
             if (need.Keys[5]) d["team"] = EventValue.Of(e.Team);
             if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, ReadPlayer(e, 0, players), need, 0);
-            if (need.Derived) global::Challenges.Extractors.DerivedKeys.Apply("player_team_names", gameEvent, d);
+            if (need.Derived) global::Challenges.Extractors.DerivedKeys.TeamNames(d, e.Oldteam, e.Team, "old_team", "new_team");
         }
 
         public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need, EventPlayers players)

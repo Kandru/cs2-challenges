@@ -36,7 +36,7 @@ namespace Challenges.Extractors
             if (need.Keys[5]) d["weapon"] = EventValue.Of(e.Weapon);
             if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, ReadPlayer(e, 0, players), need, 0);
             if (need.Prefixes[1] != PlayerFields.None) EventData.FillPlayer(d, ReadPlayer(e, 1, players), need, 1);
-            if (need.Derived) global::Challenges.Extractors.DerivedKeys.Apply("team_self_damage", gameEvent, d);
+            if (need.Derived) global::Challenges.Extractors.DerivedKeys.TeamSelf(d, ReadPlayer(e, 0, players), ReadPlayer(e, 1, players), "isteamdamage", "isselfdamage");
         }
 
         public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need, EventPlayers players)
