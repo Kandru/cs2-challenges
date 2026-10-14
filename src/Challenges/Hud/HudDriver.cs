@@ -1,12 +1,16 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Modules.Timers;
 using Microsoft.Extensions.Localization;
+using CssTimer = CounterStrikeSharp.API.Modules.Timers.Timer;
 
 namespace Challenges
 {
     /// <summary>Round-lifecycle driver for the tracker HUD: freeze-time show, progress reset, intermission hide.</summary>
     public class HudDriver : Module
     {
+        private const float WarmUpDelaySeconds = 1.0f;
+
         private bool _destroyed;
 
         public HudDriver(State state, IStringLocalizer localizer, bool isHotReloaded)
@@ -17,6 +21,15 @@ namespace Challenges
             {
                 State.DuringRound = true;
             }
+
+            // Spawn the layouts a moment into the map, so no chat command or round start pays for it.
+            _ = new CssTimer(WarmUpDelaySeconds, () =>
+            {
+                if (!_destroyed)
+                {
+                    CustomHud.WarmUp();
+                }
+            }, TimerFlags.STOP_ON_MAPCHANGE);
         }
 
         public override List<string> Events =>

@@ -1,4 +1,5 @@
 using System.Text;
+using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Cvars;
 
@@ -12,6 +13,11 @@ namespace Challenges
         public const string TimerId = "ch-ttimer";
         public const string TimerFillId = "ch-ttimer-fill";
         public const string HintId = "ch-tr-hint";
+
+        /// <summary>Longest client-side drain; <c>hud_vN.vcss</c> defines <c>.TrackerTimerFill.span-1</c> … <c>span-{this}</c>.</summary>
+        public const int TimerMaxSpanSeconds = 60;
+        private const string TimerRunningClass = "is-running";
+        private static readonly string[] SpanClasses = ChallengeCardPaint.Ids("span-", TimerMaxSpanSeconds + 1);
 
         private const string VarTitle = "tr_title";
         private const string VarCount = "tr_count";
@@ -273,7 +279,7 @@ namespace Challenges
                     CustomHud.HidePanel(player, Panel);
                 }
 
-                HideTimer(player);
+                HideTimer(player, state);
                 state.InvalidateTracker();
                 return;
             }
@@ -289,7 +295,7 @@ namespace Challenges
             CustomHud.SetText(player, Panel, VarTasksHead, string.Empty);
             PaintHint(player, string.Empty);
             HudTheme.Apply(player, Panel);
-            HideTimer(player);
+            HideTimer(player, Context.GetState(player));
             CustomHud.SetPercent(player, TimerFillId, 100);
             for (int i = 0; i < MaxRows; i++)
             {
@@ -297,39 +303,97 @@ namespace Challenges
             }
         }
 
+        /// <summary>
+        /// The client drains the bar: one start write per hold, nothing while it runs. Repeated calls for the
+        /// same hold return after one comparison.
+        /// </summary>
         private static void PaintTimer(CCSPlayerController player, PlayerState state)
         {
             DateTime now = DateTime.UtcNow;
+            DateTime end;
             float total;
-            float remaining;
 
             if (state.TrackerProgressUntil is { } progressUntil && now < progressUntil)
             {
+                end = progressUntil;
                 total = ProgressSeconds;
-                remaining = (float)(progressUntil - now).TotalSeconds;
             }
             else if (state.TrackerFreezeVisible
                 && state.TrackerFreezeUntil is { } freezeUntil
                 && state.TrackerFreezeDuration > 0
                 && now < freezeUntil)
             {
+                end = freezeUntil;
                 total = state.TrackerFreezeDuration;
-                remaining = (float)(freezeUntil - now).TotalSeconds;
             }
             else
             {
-                HideTimer(player);
+                HideTimer(player, state);
                 return;
             }
 
-            int percent = (int)Math.Clamp(Math.Round(remaining / total * 100.0), 0, 100);
-            CustomHud.SetHasClass(player, TimerId, "is-off", false);
-            CustomHud.SetPercent(player, TimerFillId, percent);
+            if (state.TrackerTimerEnd == end)
+            {
+                return;
+            }
+
+            StartTimer(player, state, end, (end - now).TotalSeconds, total);
         }
 
-        private static void HideTimer(CCSPlayerController player)
+        /// <summary>
+        /// Tick 1: snap the fill to the remaining share (no span = 0s transition). Tick 2: <c>span-N</c> +
+        /// <c>is-running</c>, so the client animates it to empty in N seconds.
+        /// </summary>
+        private static void StartTimer(
+            CCSPlayerController player,
+            PlayerState state,
+            DateTime end,
+            double remaining,
+            float total)
+        {
+            int percent = (int)Math.Clamp(Math.Round(remaining / total * 100.0), 0, 100);
+            int span = Math.Clamp((int)Math.Ceiling(remaining), 1, TimerMaxSpanSeconds);
+
+            StopTimer(player, state);
+            state.TrackerTimerEnd = end;
+            CustomHud.SetHasClass(player, TimerId, "is-off", false);
+            CustomHud.SetPercent(player, TimerFillId, percent);
+
+            int slot = player.Slot;
+            Server.NextFrame(() =>
+            {
+                if (Utilities.GetPlayerFromSlot(slot) is not { IsValid: true } live
+                    || Context.GetState(live) is not { } liveState
+                    || liveState.TrackerTimerEnd != end)
+                {
+                    return;
+                }
+
+                liveState.TrackerTimerSpan = span;
+                CustomHud.SetHasClass(live, TimerFillId, SpanClasses[span], true);
+                CustomHud.SetHasClass(live, TimerFillId, TimerRunningClass, true);
+            });
+        }
+
+        /// <summary>Drops <c>is-running</c> and the span: with the 0s default the fill snaps to its p-class.</summary>
+        private static void StopTimer(CCSPlayerController player, PlayerState? state)
+        {
+            CustomHud.SetHasClass(player, TimerFillId, TimerRunningClass, false);
+            if (state is { TrackerTimerSpan: > 0 })
+            {
+                CustomHud.SetHasClass(player, TimerFillId, SpanClasses[state.TrackerTimerSpan], false);
+                state.TrackerTimerSpan = 0;
+            }
+        }
+
+        private static void HideTimer(CCSPlayerController player, PlayerState? state)
         {
             CustomHud.SetHasClass(player, TimerId, "is-off", true);
+            if (state is not null)
+            {
+                StopTimer(player, state);
+                state.TrackerTimerEnd = null;
+            }
         }
 
         private static void BeginFadeOut(CCSPlayerController player, PlayerState state, bool upNext)

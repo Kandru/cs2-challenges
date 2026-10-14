@@ -68,6 +68,10 @@ namespace Challenges
         /// </summary>
         [JsonIgnore] public string? TrackerScheduleKey;
         [JsonIgnore] public int TrackerProgressVersion;
+        /// <summary>End of the drain the client is running; null while the timer is stopped.</summary>
+        [JsonIgnore] public DateTime? TrackerTimerEnd;
+        /// <summary>Seconds of the <c>span-N</c> class set on the timer fill; 0 = none.</summary>
+        [JsonIgnore] public int TrackerTimerSpan;
 
         /// <summary>Clears tracker session fields without touching menu state.</summary>
         public void ClearTrackerUi()
@@ -81,6 +85,8 @@ namespace Challenges
             TrackerShowingUpNext = false;
             TrackerProgressItems.Clear();
             TrackerRuleBrokenQueue.Clear();
+            // TrackerTimerSpan mirrors a client class and is cleared only by the write that removes it.
+            TrackerTimerEnd = null;
             InvalidateTracker();
         }
 

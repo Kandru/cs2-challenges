@@ -6,6 +6,6 @@ namespace Challenges
     {
         public override string ModuleVersion => "26.10.8";
 
-        public const string PanoramaVersion = "v3";
+        public const string PanoramaVersion = "v4";
     }
 }
