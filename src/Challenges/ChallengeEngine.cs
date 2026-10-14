@@ -501,8 +501,7 @@ namespace Challenges
                     continue;
                 }
 
-                // Nothing left to earn for this type; in-flight work may still reset tasks, so never skip then.
-                if (!_openTypes.IsOpen(identity.State, plan.Id) && !_pipeline.HasPending(identity.SteamId))
+                if (_openTypes.CanSkip(identity.State, identity.SteamId, plan.Id, _pipeline))
                 {
                     continue;
                 }

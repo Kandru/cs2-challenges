@@ -45,9 +45,9 @@ namespace Challenges.Tests
             return index;
         }
 
-        /// <summary>The engine's <c>FilterTargets</c> skip: nothing left to earn and no work in flight.</summary>
+        /// <summary>The engine's <c>FilterTargets</c> skip for this player and type.</summary>
         public bool Skips(OpenTypeIndex index, string steamId, string type) =>
-            !index.IsOpen(Archive.GetOrCreate(steamId), _types[type].Id) && !Pipeline.HasPending(steamId);
+            index.CanSkip(Archive.GetOrCreate(steamId), steamId, _types[type].Id, Pipeline);
 
         /// <summary>One work item; each target gets the candidates of its type like <c>FilterTargets</c> gives them.</summary>
         public ProgressWorkItem Item(Dictionary<string, EventValue> data, params (string SteamId, string Type)[] targets)

@@ -43,6 +43,14 @@ namespace Challenges
             return open[typeId];
         }
 
+        /// <summary>
+        /// True when an event target can be dropped: nothing of type <paramref name="typeId"/> is left to earn for
+        /// <paramref name="state"/> and no work for <paramref name="steamId"/> is in flight, since in-flight work may
+        /// still reset tasks of the type.
+        /// </summary>
+        public bool CanSkip(PlayerState state, string steamId, int typeId, ProgressPipeline pipeline) =>
+            !IsOpen(state, typeId) && !pipeline.HasPending(steamId);
+
         private bool[] Recompute(PlayerState state)
         {
             bool[] open = state.OpenTypes is { } existing && existing.Length == _types.Length
