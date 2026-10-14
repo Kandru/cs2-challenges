@@ -1,3 +1,5 @@
+using System.Numerics;
+
 namespace Challenges.Utils
 {
     /// <summary>One bit per player property suffix written by <c>EventData.FillPlayer</c>.</summary>
@@ -134,6 +136,31 @@ namespace Challenges.Utils
         public string[][] PrefixKeys { get; }
         /// <summary>True when a loaded rule reads a derived key (team/self flags, team names).</summary>
         public bool Derived { get; set; }
+        /// <summary>Upper bound of the keys one event's data holds; sizes its dictionary up front.</summary>
+        public int Capacity { get; private set; }
+
+        /// <summary>
+        /// Sets <see cref="Capacity"/> once every rule is added: requested keys, player fields and derived
+        /// keys, plus <paramref name="extra"/> keys merged in later (globals, situation keys).
+        /// </summary>
+        public void SetCapacity(int derivedKeys, int extra)
+        {
+            int count = extra;
+            foreach (bool key in Keys)
+            {
+                if (key)
+                {
+                    count++;
+                }
+            }
+
+            foreach (PlayerFields fields in Prefixes)
+            {
+                count += BitOperations.PopCount((uint)fields);
+            }
+
+            Capacity = Derived ? count + derivedKeys : count;
+        }
 
         /// <summary>Marks what <paramref name="key"/> needs. Keys the extractor never writes are ignored.</summary>
         public void Add(

@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Events;
@@ -119,13 +120,14 @@ namespace Challenges
             List<string> listeners = [];
             Dictionary<string, List<ExtractorPlan>> active = new(StringComparer.Ordinal);
             Dictionary<string, ExtractorPlan> activeListeners = new(StringComparer.Ordinal);
+            int globalKeyCount = BitOperations.PopCount((uint)globalKeys);
             foreach (IExtractor extractor in Registry.All)
             {
                 TypePlan[] types = ActiveTypes(extractor, byType);
                 bool used = types.Length > 0;
                 if (used && extractor.Kind == ExtractorKind.Listener)
                 {
-                    activeListeners[extractor.EventClassName] = new ExtractorPlan(extractor, types);
+                    activeListeners[extractor.EventClassName] = new ExtractorPlan(extractor, types, globalKeyCount);
                 }
                 else if (used)
                 {
@@ -134,7 +136,8 @@ namespace Challenges
                         active[extractor.EventClassName] = list = [];
                     }
 
-                    list.Add(new ExtractorPlan(extractor, types));
+                    int extraKeys = globalKeyCount + _situations.EnrichKeyCount(extractor.EventClassName);
+                    list.Add(new ExtractorPlan(extractor, types, extraKeys));
                 }
 
                 if ((!used && !_situations.Watches(extractor.EventClassName))
@@ -346,7 +349,7 @@ namespace Challenges
                         continue;
                     }
 
-                    Dictionary<string, string> data = [];
+                    Dictionary<string, string> data = new(plan.Demand.Capacity);
                     extractor.Fill(gameEvent, data, plan.Demand);
                     if (enrich)
                     {

@@ -20,6 +20,10 @@ namespace Challenges
         private const double ThrowingExpireSeconds = 1.0;
         private const double SmokeExpireSeconds = 22.0;
         private const PlayerButtons AttackMask = PlayerButtons.Attack | PlayerButtons.Attack2;
+        /// <summary>Four grenade keys for each of attacker, victim and userid.</summary>
+        private const int GrenadeKeyCount = 12;
+        /// <summary>insmoke, smoke.distance, smoke.age, {player}.insmoke, userid.insmoke.</summary>
+        private const int SmokeKeyCount = 5;
 
         private static readonly string[] TradeAttackerKeys = PlayerKeys.For("attacker");
         private static readonly string[] TradeVictimKeys = PlayerKeys.For("victim");
@@ -196,6 +200,15 @@ namespace Challenges
         }
 
         public bool Watches(string eventClassName) => _watchEvents.Contains(eventClassName);
+
+        /// <summary>Upper bound of the keys <see cref="Enrich"/> adds to <paramref name="eventClassName"/> data.</summary>
+        public int EnrichKeyCount(string eventClassName) =>
+            eventClassName switch
+            {
+                "EventPlayerDeath" => (AceEnabled ? _aceBounds.Count : 0) + (GrenadeEnabled ? GrenadeKeyCount : 0),
+                "EventBombBegindefuse" or "EventBombDefused" => SmokeEnabled ? SmokeKeyCount : 0,
+                _ => 0,
+            };
 
         public void Clear()
         {

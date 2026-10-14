@@ -554,7 +554,7 @@ def generate_listener_method(listener: dict, alias: dict, snapshot: dict) -> str
         exit_line,
         "            }",
         "",
-        "            Dictionary<string, string> d = [];",
+        "            Dictionary<string, string> d = new(need.Capacity);",
         *fill_lines,
         f'            HandleListener("{name}", d, valid, closed);',
     ]

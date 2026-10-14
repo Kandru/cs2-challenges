@@ -44,12 +44,15 @@ namespace Challenges
             public bool IsClosed(GlobalGate closed) => (Gate & closed) != 0;
         }
 
-        /// <summary>An extractor with at least one active type, its active types, and what to fill.</summary>
-        private sealed class ExtractorPlan(IExtractor extractor, TypePlan[] types)
+        /// <summary>
+        /// An extractor with at least one active type, its active types, and what to fill.
+        /// <paramref name="extraKeys"/> counts keys merged in after the fill (globals, situation keys).
+        /// </summary>
+        private sealed class ExtractorPlan(IExtractor extractor, TypePlan[] types, int extraKeys)
         {
             public IExtractor Extractor { get; } = extractor;
             public TypePlan[] Types { get; } = types;
-            public FillDemand Demand { get; } = BuildDemand(extractor, types);
+            public FillDemand Demand { get; } = BuildDemand(extractor, types, extraKeys);
 
             public bool AllClosed(GlobalGate closed)
             {
@@ -75,7 +78,7 @@ namespace Challenges
         /// player prefixes and derived keys. Keys owned by situations or <c>global.*</c> do not match and
         /// are ignored.
         /// </summary>
-        private static FillDemand BuildDemand(IExtractor extractor, TypePlan[] types)
+        private static FillDemand BuildDemand(IExtractor extractor, TypePlan[] types, int extraKeys)
         {
             IReadOnlyList<string> challengeTypes = extractor.ChallengeTypes;
             FillDemand need = new(challengeTypes.Count, extractor.Keys.Count, extractor.PlayerPrefixes);
@@ -101,6 +104,7 @@ namespace Challenges
                 }
             }
 
+            need.SetCapacity(extractor.DerivedKeys.Count, extraKeys);
             return need;
         }
 

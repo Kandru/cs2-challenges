@@ -29,7 +29,7 @@ namespace Challenges
                 return;
             }
 
-            Dictionary<string, string> d = [];
+            Dictionary<string, string> d = new(need.Capacity);
             if (need.Keys[0])
             {
                 d["entity.designername"] = entity.DesignerName;
@@ -60,7 +60,7 @@ namespace Challenges
                 return;
             }
 
-            Dictionary<string, string> d = [];
+            Dictionary<string, string> d = new(need.Capacity);
             if (need.Keys[0])
             {
                 d["entity.designername"] = entity.DesignerName;
@@ -91,7 +91,7 @@ namespace Challenges
                 return;
             }
 
-            Dictionary<string, string> d = [];
+            Dictionary<string, string> d = new(need.Capacity);
             if (need.Keys[0])
             {
                 d["entity.designername"] = entity.DesignerName;
@@ -122,7 +122,7 @@ namespace Challenges
                 return;
             }
 
-            Dictionary<string, string> d = [];
+            Dictionary<string, string> d = new(need.Capacity);
             if (need.Keys[0])
             {
                 d["entity.designername"] = entity.DesignerName;
@@ -161,7 +161,7 @@ namespace Challenges
                 return HookResult.Continue;
             }
 
-            Dictionary<string, string> d = [];
+            Dictionary<string, string> d = new(need.Capacity);
             if (need.Keys[0])
             {
                 d["entity.designername"] = entity.DesignerName;
@@ -249,7 +249,7 @@ namespace Challenges
                 return;
             }
 
-            Dictionary<string, string> d = [];
+            Dictionary<string, string> d = new(need.Capacity);
             if (need.Keys[0])
             {
                 d["entity.designername"] = entity.DesignerName;
@@ -385,7 +385,7 @@ namespace Challenges
                 return HookResult.Continue;
             }
 
-            Dictionary<string, string> d = [];
+            Dictionary<string, string> d = new(need.Capacity);
             if (need.Prefixes[0] != PlayerFields.None)
             {
                 EventData.FillPlayer(d, playerController, need.PrefixKeys[0], need.Prefixes[0]);
@@ -470,7 +470,7 @@ namespace Challenges
                 return;
             }
 
-            Dictionary<string, string> d = [];
+            Dictionary<string, string> d = new(need.Capacity);
             if (need.Prefixes[0] != PlayerFields.None)
             {
                 EventData.FillPlayer(d, playerController, need.PrefixKeys[0], need.Prefixes[0]);
@@ -601,7 +601,7 @@ namespace Challenges
                 return;
             }
 
-            Dictionary<string, string> d = [];
+            Dictionary<string, string> d = new(need.Capacity);
             if (need.Keys[0])
             {
                 d["mapname"] = mapName;
@@ -628,7 +628,7 @@ namespace Challenges
                 return;
             }
 
-            Dictionary<string, string> d = [];
+            Dictionary<string, string> d = new(need.Capacity);
             HandleListener("OnMapEnd", d, valid, closed);
         }
 
@@ -652,7 +652,7 @@ namespace Challenges
                 return;
             }
 
-            Dictionary<string, string> d = [];
+            Dictionary<string, string> d = new(need.Capacity);
             if (need.Prefixes[0] != PlayerFields.None)
             {
                 EventData.FillPlayer(d, playerSlotPlayer, need.PrefixKeys[0], need.Prefixes[0]);
@@ -688,7 +688,7 @@ namespace Challenges
                 return;
             }
 
-            Dictionary<string, string> d = [];
+            Dictionary<string, string> d = new(need.Capacity);
             if (need.Prefixes[0] != PlayerFields.None)
             {
                 EventData.FillPlayer(d, playerSlotPlayer, need.PrefixKeys[0], need.Prefixes[0]);
@@ -716,7 +716,7 @@ namespace Challenges
                 return;
             }
 
-            Dictionary<string, string> d = [];
+            Dictionary<string, string> d = new(need.Capacity);
             if (need.Prefixes[0] != PlayerFields.None)
             {
                 EventData.FillPlayer(d, playerSlotPlayer, need.PrefixKeys[0], need.Prefixes[0]);
@@ -744,7 +744,7 @@ namespace Challenges
                 return;
             }
 
-            Dictionary<string, string> d = [];
+            Dictionary<string, string> d = new(need.Capacity);
             if (need.Prefixes[0] != PlayerFields.None)
             {
                 EventData.FillPlayer(d, playerSlotPlayer, need.PrefixKeys[0], need.Prefixes[0]);
@@ -772,7 +772,7 @@ namespace Challenges
                 return;
             }
 
-            Dictionary<string, string> d = [];
+            Dictionary<string, string> d = new(need.Capacity);
             if (need.Prefixes[0] != PlayerFields.None)
             {
                 EventData.FillPlayer(d, playerSlotPlayer, need.PrefixKeys[0], need.Prefixes[0]);
@@ -800,7 +800,7 @@ namespace Challenges
                 return;
             }
 
-            Dictionary<string, string> d = [];
+            Dictionary<string, string> d = new(need.Capacity);
             if (need.Prefixes[0] != PlayerFields.None)
             {
                 EventData.FillPlayer(d, playerSlotPlayer, need.PrefixKeys[0], need.Prefixes[0]);
@@ -828,7 +828,7 @@ namespace Challenges
                 return;
             }
 
-            Dictionary<string, string> d = [];
+            Dictionary<string, string> d = new(need.Capacity);
             if (need.Prefixes[0] != PlayerFields.None)
             {
                 EventData.FillPlayer(d, playerSlotPlayer, need.PrefixKeys[0], need.Prefixes[0]);
@@ -859,7 +859,7 @@ namespace Challenges
                 return;
             }
 
-            Dictionary<string, string> d = [];
+            Dictionary<string, string> d = new(need.Capacity);
             if (need.Keys[0])
             {
                 d["ishibernating"] = EventData.Bool(isHibernating);
@@ -886,7 +886,7 @@ namespace Challenges
                 return;
             }
 
-            Dictionary<string, string> d = [];
+            Dictionary<string, string> d = new(need.Capacity);
             HandleListener("OnGameServerSteamAPIActivated", d, valid, closed);
         }
 
@@ -909,7 +909,7 @@ namespace Challenges
                 return;
             }
 
-            Dictionary<string, string> d = [];
+            Dictionary<string, string> d = new(need.Capacity);
             HandleListener("OnGameServerSteamAPIDeactivated", d, valid, closed);
         }
 
@@ -932,7 +932,7 @@ namespace Challenges
                 return;
             }
 
-            Dictionary<string, string> d = [];
+            Dictionary<string, string> d = new(need.Capacity);
             if (need.Keys[0])
             {
                 d["hostname"] = hostname;
@@ -959,7 +959,7 @@ namespace Challenges
                 return;
             }
 
-            Dictionary<string, string> d = [];
+            Dictionary<string, string> d = new(need.Capacity);
             HandleListener("OnServerPreFatalShutdown", d, valid, closed);
         }
 
@@ -982,7 +982,7 @@ namespace Challenges
                 return;
             }
 
-            Dictionary<string, string> d = [];
+            Dictionary<string, string> d = new(need.Capacity);
             HandleListener("OnServerPrecacheResources", d, valid, closed);
         }
 
@@ -1006,7 +1006,7 @@ namespace Challenges
                 return;
             }
 
-            Dictionary<string, string> d = [];
+            Dictionary<string, string> d = new(need.Capacity);
             if (need.Prefixes[0] != PlayerFields.None)
             {
                 EventData.FillPlayer(d, player, need.PrefixKeys[0], need.Prefixes[0]);
@@ -1045,7 +1045,7 @@ namespace Challenges
                 return;
             }
 
-            Dictionary<string, string> d = [];
+            Dictionary<string, string> d = new(need.Capacity);
             if (need.Prefixes[0] != PlayerFields.None)
             {
                 EventData.FillPlayer(d, player, need.PrefixKeys[0], need.Prefixes[0]);
@@ -1096,7 +1096,7 @@ namespace Challenges
                 return;
             }
 
-            Dictionary<string, string> d = [];
+            Dictionary<string, string> d = new(need.Capacity);
             HandleListener("OnMetamodAllPluginsLoaded", d, valid, closed);
         }
 
@@ -1119,7 +1119,7 @@ namespace Challenges
                 return;
             }
 
-            Dictionary<string, string> d = [];
+            Dictionary<string, string> d = new(need.Capacity);
             if (need.Prefixes[0] != PlayerFields.None)
             {
                 EventData.FillPlayer(d, player, need.PrefixKeys[0], need.Prefixes[0]);
