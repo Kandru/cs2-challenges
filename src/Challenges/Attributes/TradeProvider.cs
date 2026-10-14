@@ -7,10 +7,13 @@ namespace Challenges.Attributes
 {
     /// <summary>
     /// Recent kills; a mutual kill inside the window emits the synthetic <see cref="TradeType"/> once for each
-    /// of the two players through the engine's enqueue. Writes no keys into other events; the registry
-    /// feeds it <c>player_death</c> while a <see cref="TradeType"/> task is loaded. Game thread only.
+    /// of the two players: <c>targetOne</c> checks the player first, data is only built for an accepted target and
+    /// handed to <c>enqueueOne</c>. Writes no keys into other events; the registry feeds it <c>player_death</c>
+    /// while a <see cref="TradeType"/> task is loaded. Game thread only.
     /// </summary>
-    internal sealed class TradeProvider(Action<CCSPlayerController, string, Dictionary<string, EventValue>> enqueueOne)
+    internal sealed class TradeProvider(
+        Func<CCSPlayerController, string, List<ProgressTarget>?> targetOne,
+        Action<string, Dictionary<string, EventValue>, List<ProgressTarget>> enqueueOne)
     {
         /// <summary>Synthetic challenge type emitted for a mutual kill.</summary>
         public const string TradeType = "player_trade";
@@ -113,45 +116,50 @@ namespace Challenges.Attributes
                 return;
             }
 
-            double now = RoundClock.NowSeconds();
-            PruneKills(now);
-
-            int reverseIndex = -1;
-            for (int i = _kills.Count - 1; i >= 0; i--)
-            {
-                KillRecord k = _kills[i];
-                if (k.AttackerSlot != victimSlot
-                    || k.VictimSlot != attackerSlot
-                    || now - k.At > _retentionSeconds)
-                {
-                    continue;
-                }
-
-                reverseIndex = i;
-                break;
-            }
-
-            string weapon = e.Weapon ?? "";
             bool teamKill = attacker.TeamNum == victim.TeamNum;
-            if (reverseIndex < 0)
+            KillRecord kill = new(attackerSlot, victimSlot, e.Weapon ?? "", e.Headshot, teamKill, RoundClock.NowSeconds());
+            if (!TryTakeReverse(kill, out KillRecord first))
             {
-                _kills.Add(new KillRecord(attackerSlot, victimSlot, attacker, victim, weapon, e.Headshot, teamKill, now));
                 return;
             }
 
-            KillRecord first = _kills[reverseIndex];
-            _kills.RemoveAt(reverseIndex);
-            double seconds = Math.Max(0, now - first.At);
-            var second = new KillRecord(attackerSlot, victimSlot, attacker, victim, weapon, e.Headshot, teamKill, now);
-            EmitTrade(first, second, seconds);
-            EmitTrade(second, first, seconds);
+            // The earlier kill was the current victim's on the current attacker.
+            double seconds = Math.Max(0, kill.At - first.At);
+            EmitTrade(victim, attacker, first, kill, seconds);
+            EmitTrade(attacker, victim, kill, first, seconds);
         }
 
-        private void EmitTrade(KillRecord mine, KillRecord theirs, double seconds)
+        /// <summary>
+        /// Drops expired kills, then takes the latest kill of <paramref name="kill"/>'s victim on its attacker:
+        /// a trade. Without one, <paramref name="kill"/> is remembered and false returned.
+        /// </summary>
+        private bool TryTakeReverse(in KillRecord kill, out KillRecord first)
         {
-            CCSPlayerController player = mine.Attacker;
-            CCSPlayerController other = mine.Victim;
-            if (!player.IsValid || !other.IsValid)
+            PruneKills(kill.At);
+            for (int i = _kills.Count - 1; i >= 0; i--)
+            {
+                first = _kills[i];
+                if (first.AttackerSlot == kill.VictimSlot && first.VictimSlot == kill.AttackerSlot)
+                {
+                    _kills.RemoveAt(i);
+                    return true;
+                }
+            }
+
+            first = default;
+            _kills.Add(kill);
+            return false;
+        }
+
+        /// <summary><paramref name="mine"/> is the kill of <paramref name="player"/> on <paramref name="other"/>.</summary>
+        private void EmitTrade(
+            CCSPlayerController player,
+            CCSPlayerController other,
+            in KillRecord mine,
+            in KillRecord theirs,
+            double seconds)
+        {
+            if (targetOne(player, TradeType) is not { } targets)
             {
                 return;
             }
@@ -171,7 +179,7 @@ namespace Challenges.Attributes
             };
             EventData.FillPlayer(d, player, TradeAttackerKeys, _attackerFields);
             EventData.FillPlayer(d, other, TradeVictimKeys, _victimFields);
-            enqueueOne(player, TradeType, d);
+            enqueueOne(TradeType, d, targets);
         }
 
         private void PruneKills(double now)
@@ -186,24 +194,13 @@ namespace Challenges.Attributes
             }
         }
 
-        private sealed class KillRecord(
-            int attackerSlot,
-            int victimSlot,
-            CCSPlayerController attacker,
-            CCSPlayerController victim,
-            string weapon,
-            bool headshot,
-            bool teamKill,
-            double at)
-        {
-            public int AttackerSlot { get; } = attackerSlot;
-            public int VictimSlot { get; } = victimSlot;
-            public CCSPlayerController Attacker { get; } = attacker;
-            public CCSPlayerController Victim { get; } = victim;
-            public string Weapon { get; } = weapon;
-            public bool Headshot { get; } = headshot;
-            public bool TeamKill { get; } = teamKill;
-            public double At { get; } = at;
-        }
+        /// <summary>One kill by slot; the controllers of a trade come from the event that completes it.</summary>
+        private readonly record struct KillRecord(
+            int AttackerSlot,
+            int VictimSlot,
+            string Weapon,
+            bool Headshot,
+            bool TeamKill,
+            double At);
     }
 }

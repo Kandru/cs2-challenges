@@ -46,7 +46,7 @@ namespace Challenges
         public ChallengeEngine(State state, IStringLocalizer localizer, bool isHotReloaded)
             : base(state, localizer)
         {
-            _attributes = new AttributeRegistry(EnqueueOne);
+            _attributes = new AttributeRegistry(TargetOne, EnqueueOne);
             RebuildEvents();
         }
 
@@ -499,17 +499,20 @@ namespace Challenges
             });
         }
 
-        /// <summary>Enqueue progress for a single player (e.g. synthetic <c>player_trade</c>).</summary>
-        private void EnqueueOne(CCSPlayerController player, string type, Dictionary<string, EventValue> data)
+        /// <summary>
+        /// Synthetic progress for one player (e.g. <c>player_trade</c>), step one: the valid targets, or null when the
+        /// player cannot progress <paramref name="type"/>. The caller builds data only on success.
+        /// </summary>
+        private List<ProgressTarget>? TargetOne(CCSPlayerController player, string type)
         {
             _targetBuffer.Clear();
             _targetBuffer.Add((player, type));
-            GlobalGate closed = ReadClosedGates();
-            if (FilterTargets(_targetBuffer, closed) is { } targets)
-            {
-                Enqueue(type, data, targets, closed);
-            }
+            return FilterTargets(_targetBuffer, ReadClosedGates());
         }
+
+        /// <summary>Step two of synthetic progress: enqueues <paramref name="data"/> for the targets of <see cref="TargetOne"/>.</summary>
+        private void EnqueueOne(string type, Dictionary<string, EventValue> data, List<ProgressTarget> targets) =>
+            Enqueue(type, data, targets, ReadClosedGates());
 
         private static TypePlan[] ActiveTypes(IExtractor extractor, Dictionary<string, TypePlan> types)
         {

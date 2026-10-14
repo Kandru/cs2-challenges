@@ -39,9 +39,12 @@ namespace Challenges.Attributes
         private bool _buttons;
         private bool _tradeActive;
 
-        public AttributeRegistry(Action<CCSPlayerController, string, Dictionary<string, EventValue>> enqueueOne)
+        /// <summary>The delegates are the engine's synthetic progress path (see <see cref="TradeProvider"/>).</summary>
+        public AttributeRegistry(
+            Func<CCSPlayerController, string, List<ProgressTarget>?> targetOne,
+            Action<string, Dictionary<string, EventValue>, List<ProgressTarget>> enqueueOne)
         {
-            _trade = new TradeProvider(enqueueOne);
+            _trade = new TradeProvider(targetOne, enqueueOne);
             _ace = new AceProvider(_roster);
             _providers = [_ace, _grenade, new SmokeProvider()];
         }
