@@ -194,7 +194,11 @@ namespace Challenges
             _offlineScoresBuilt = false;
         }
 
-        public bool TryWrite(PluginConfig config, PlayerState state, Action<string>? warn = null, Action<string>? debug = null)
+        public bool TryWrite(PluginConfig config, PlayerState state, Action<string>? warn = null, Action<string>? debug = null) =>
+            TryWrite(PlayerFiles.DirectoryPath(config), state, warn, debug);
+
+        /// <summary>Synchronous save into an already resolved <see cref="PlayerFiles.DirectoryPath"/>.</summary>
+        public bool TryWrite(string directory, PlayerState state, Action<string>? warn = null, Action<string>? debug = null)
         {
             string steamId = state.SteamId;
             if (steamId.Length == 0)
@@ -211,7 +215,7 @@ namespace Challenges
 
             try
             {
-                string path = PlayerFiles.FilePath(config, steamId);
+                string path = PlayerFiles.FilePath(directory, steamId);
                 PlayerFiles.Write(path, state);
                 state.Dirty = false;
                 debug?.Invoke(

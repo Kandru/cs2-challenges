@@ -11,7 +11,6 @@ namespace Challenges
     internal sealed class PlayerSaveQueue
     {
         private const long WriterClosed = -1;
-        private static readonly TimeSpan WriterJoinTimeout = TimeSpan.FromSeconds(5);
 
         private readonly PlayerArchive _archive;
         private readonly PluginConfig _config;
@@ -30,6 +29,11 @@ namespace Challenges
         private readonly ConcurrentDictionary<string, long> _inFlight = new(StringComparer.OrdinalIgnoreCase);
         private readonly ConcurrentQueue<FailedWrite> _failed = new();
         private readonly CancellationTokenSource _abort = new();
+        /// <summary>
+        /// Held by the writer while it replaces a file and by <see cref="FlushSync"/> while it closes the writer,
+        /// so no background write lands after the synchronous saves.
+        /// </summary>
+        private readonly Lock _commit = new();
         private readonly string _directory;
 
         private Task? _writer;
@@ -42,13 +46,33 @@ namespace Challenges
         private bool _closed;
 
         public PlayerSaveQueue(PlayerArchive archive, PluginConfig config, Action<string> warn, Action<string> debug)
+            : this(archive, config, PlayerFiles.DirectoryPath(config), warn, debug)
+        {
+        }
+
+        /// <summary>Saves into <paramref name="directory"/> instead of the plugin's player folder.</summary>
+        internal PlayerSaveQueue(
+            PlayerArchive archive,
+            PluginConfig config,
+            string directory,
+            Action<string> warn,
+            Action<string> debug)
         {
             _archive = archive;
             _config = config;
             _warn = warn;
             _debug = debug;
-            _directory = PlayerFiles.DirectoryPath(config);
+            _directory = directory;
         }
+
+        /// <summary>How long <see cref="FlushSync"/> waits for the writer.</summary>
+        internal TimeSpan WriterJoinTimeout { get; init; } = TimeSpan.FromSeconds(5);
+
+        /// <summary>
+        /// The writer's first step, <see cref="PlayerFiles.WriteTemp"/>; replaceable so tests can stall the writer
+        /// between writing the temp file and replacing the target.
+        /// </summary>
+        internal Func<string, byte[], long, string> WriteTemp { get; init; } = PlayerFiles.WriteTemp;
 
         /// <summary>Game thread: remembers the steam id for a later budgeted save (no duplicates).</summary>
         public void Enqueue(PlayerState state)
@@ -95,7 +119,7 @@ namespace Challenges
         /// <summary>
         /// Game thread, on teardown: stops the writer, waits for it, and writes everything that is still queued
         /// or not yet on disk synchronously. Later <see cref="Enqueue"/> calls are ignored. When the writer misses
-        /// the join, the hand-off it is still writing is not written a second time.
+        /// the join, a write it is still doing never replaces the file; the synchronous saves are the last ones.
         /// </summary>
         public void FlushSync()
         {
@@ -106,17 +130,20 @@ namespace Challenges
 
             _closed = true;
             _writes.Writer.TryComplete();
-            long busy = 0;
             if (_writer != null)
             {
                 try
                 {
                     if (!_writer.Wait(WriterJoinTimeout))
                     {
-                        // Closing the marker stops the writer from starting another write; a write that
-                        // already started is reported here and left to the writer.
+                        // Closing the marker stops the writer from starting another write, and a write that
+                        // already started from replacing its file; waits only for a rename in progress.
                         _abort.Cancel();
-                        busy = Interlocked.Exchange(ref _writing, WriterClosed);
+                        lock (_commit)
+                        {
+                            Interlocked.Exchange(ref _writing, WriterClosed);
+                        }
+
                         _warn("player save writer did not finish in time");
                     }
                 }
@@ -128,13 +155,8 @@ namespace Challenges
 
             _abort.Dispose();
             DrainFailed();
-            foreach ((string steamId, long version) in _inFlight)
+            foreach (string steamId in _inFlight.Keys)
             {
-                if (version == busy)
-                {
-                    continue;
-                }
-
                 if (_archive.TryGet(steamId) is { } state)
                 {
                     state.Dirty = true;
@@ -150,7 +172,7 @@ namespace Challenges
             {
                 if (_archive.TryGet(steamId) is { Dirty: true } state)
                 {
-                    _archive.TryWrite(_config, state, _warn, _debug);
+                    _archive.TryWrite(_directory, state, _warn, _debug);
                 }
             }
 
@@ -251,7 +273,19 @@ namespace Challenges
 
                     try
                     {
-                        PlayerFiles.WriteBytes(write.Path, write.Bytes, write.Version);
+                        string temp = WriteTemp(write.Path, write.Bytes, write.Version);
+                        lock (_commit)
+                        {
+                            // FlushSync closed the writer while this write stalled; its own save is newer.
+                            if (Volatile.Read(ref _writing) != write.Version)
+                            {
+                                PlayerFiles.Discard(temp);
+                                return;
+                            }
+
+                            PlayerFiles.Commit(temp, write.Path);
+                        }
+
                         _inFlight.TryRemove(KeyValuePair.Create(write.SteamId, write.Version));
                     }
                     catch (Exception ex)
