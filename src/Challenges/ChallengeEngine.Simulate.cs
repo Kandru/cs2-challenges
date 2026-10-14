@@ -158,6 +158,7 @@ namespace Challenges
                 return TrackerProgressKind.Progress;
             }
 
+            patch.CompletesTask = true;
             bool solvedNow = task.Visible
                 && !wasSolved
                 && ChallengeProgress.IsChallengeSolved(shadow, scheduleKey, challenge);
@@ -303,6 +304,7 @@ namespace Challenges
             progress.Amount = Math.Max(progress.Amount, Math.Max(1, markTarget.Amount));
             progress.LastUpdate = item.Now;
             patch.Upsert(challenge.Id, taskId, progress);
+            patch.CompletesTask = true;
             if (item.Debug)
             {
                 patch.AddDebug($"{target.Name} task.mark_completed {challenge.Id}/{owner.Id} mark {taskId}");

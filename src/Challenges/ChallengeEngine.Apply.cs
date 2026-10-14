@@ -20,7 +20,8 @@ namespace Challenges
 
             PlayerState state = Archive.GetOrCreate(patch.SteamId);
             string scheduleKey = patch.ScheduleKey;
-            if (patch.Upserts != null || patch.Removals != null)
+            // Progress below the goal never closes or reopens a type, so the open-type cache stays valid then.
+            if (patch.CompletesTask || patch.Removals != null)
             {
                 state.OpenTypesDirty = true;
             }

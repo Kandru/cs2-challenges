@@ -40,6 +40,8 @@ namespace Challenges
         /// <summary>Null until the first <see cref="AddRemoval"/>.</summary>
         public List<(string ChallengeId, string TaskId)>? Removals { get; private set; }
         public int? SolvedAbsolute { get; set; }
+        /// <summary>True when an upsert brought a task to its goal; with removals, the only change that can close a type.</summary>
+        public bool CompletesTask { get; set; }
         /// <summary>Null until the first <see cref="AddEffect"/>.</summary>
         public List<ProgressEffect>? Effects { get; private set; }
         public List<TrackerProgressItem>? Touched { get; set; }
