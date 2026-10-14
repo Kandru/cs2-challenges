@@ -38,14 +38,16 @@ namespace Challenges.Extractors
             return false;
         }
 
-        /// <summary>Stores the controller read for prefix <paramref name="prefixIndex"/>, null included.</summary>
-        public void Set(int prefixIndex, CCSPlayerController? player)
+        /// <summary>Stores the controller read for prefix <paramref name="prefixIndex"/>, null included, and returns it.</summary>
+        public CCSPlayerController? Set(int prefixIndex, CCSPlayerController? player)
         {
             if ((uint)prefixIndex < (uint)_read.Length)
             {
                 _players[prefixIndex] = player;
                 _read[prefixIndex] = true;
             }
+
+            return player;
         }
 
         /// <summary>Forgets every controller so none outlives its event.</summary>

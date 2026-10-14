@@ -16,10 +16,7 @@ namespace Challenges.Extractors
         public IReadOnlyList<string> PlayerPrefixes { get; } = ["userid"];
         public IReadOnlyList<string> DerivedKeys { get; } = ["old_team", "new_team"];
         public IReadOnlyDictionary<string, string> KeyAliases { get; } = ReadOnlyDictionary<string, string>.Empty;
-        public IReadOnlyDictionary<string, string> PrefixAliases { get; } = new Dictionary<string, string>(StringComparer.Ordinal)
-        {
-            ["player"] = "userid",
-        };
+        public IReadOnlyDictionary<string, string> PrefixAliases { get; } = AliasTables.PlayerToUserid;
 
         public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need, EventPlayers players)
         {
@@ -44,20 +41,9 @@ namespace Challenges.Extractors
             ReadPlayer((EventPlayerTeam)gameEvent, prefixIndex, players);
 
         /// <summary>Controller of one prefix: one native read per extractor call, cached in players.</summary>
-        private static CCSPlayerController? ReadPlayer(EventPlayerTeam e, int prefixIndex, EventPlayers players)
-        {
-            if (players.TryGet(prefixIndex, out CCSPlayerController? player))
-            {
-                return player;
-            }
-
-            player = prefixIndex switch
-            {
-                0 => e.Userid,
-                _ => null,
-            };
-            players.Set(prefixIndex, player);
-            return player;
-        }
+        private static CCSPlayerController? ReadPlayer(EventPlayerTeam e, int i, EventPlayers players) =>
+            players.TryGet(i, out CCSPlayerController? player)
+                ? player
+                : players.Set(i, i switch { 0 => e.Userid, _ => null });
     }
 }

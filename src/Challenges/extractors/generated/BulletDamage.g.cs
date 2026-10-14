@@ -64,21 +64,9 @@ namespace Challenges.Extractors
             ReadPlayer((EventBulletDamage)gameEvent, prefixIndex, players);
 
         /// <summary>Controller of one prefix: one native read per extractor call, cached in players.</summary>
-        private static CCSPlayerController? ReadPlayer(EventBulletDamage e, int prefixIndex, EventPlayers players)
-        {
-            if (players.TryGet(prefixIndex, out CCSPlayerController? player))
-            {
-                return player;
-            }
-
-            player = prefixIndex switch
-            {
-                0 => e.Attacker,
-                1 => e.Victim,
-                _ => null,
-            };
-            players.Set(prefixIndex, player);
-            return player;
-        }
+        private static CCSPlayerController? ReadPlayer(EventBulletDamage e, int i, EventPlayers players) =>
+            players.TryGet(i, out CCSPlayerController? player)
+                ? player
+                : players.Set(i, i switch { 0 => e.Attacker, 1 => e.Victim, _ => null });
     }
 }

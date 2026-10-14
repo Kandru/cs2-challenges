@@ -15,10 +15,7 @@ namespace Challenges.Extractors
         public IReadOnlyList<string> Keys { get; } = ["site"];
         public IReadOnlyList<string> PlayerPrefixes { get; } = ["userid"];
         public IReadOnlyList<string> DerivedKeys { get; } = [];
-        public IReadOnlyDictionary<string, string> KeyAliases { get; } = new Dictionary<string, string>(StringComparer.Ordinal)
-        {
-            ["bomb_site"] = "site",
-        };
+        public IReadOnlyDictionary<string, string> KeyAliases { get; } = AliasTables.BombSiteToSite;
         public IReadOnlyDictionary<string, string> PrefixAliases { get; } = new Dictionary<string, string>(StringComparer.Ordinal)
         {
             ["defuser"] = "userid",
@@ -42,20 +39,9 @@ namespace Challenges.Extractors
             ReadPlayer((EventBombDefused)gameEvent, prefixIndex, players);
 
         /// <summary>Controller of one prefix: one native read per extractor call, cached in players.</summary>
-        private static CCSPlayerController? ReadPlayer(EventBombDefused e, int prefixIndex, EventPlayers players)
-        {
-            if (players.TryGet(prefixIndex, out CCSPlayerController? player))
-            {
-                return player;
-            }
-
-            player = prefixIndex switch
-            {
-                0 => e.Userid,
-                _ => null,
-            };
-            players.Set(prefixIndex, player);
-            return player;
-        }
+        private static CCSPlayerController? ReadPlayer(EventBombDefused e, int i, EventPlayers players) =>
+            players.TryGet(i, out CCSPlayerController? player)
+                ? player
+                : players.Set(i, i switch { 0 => e.Userid, _ => null });
     }
 }

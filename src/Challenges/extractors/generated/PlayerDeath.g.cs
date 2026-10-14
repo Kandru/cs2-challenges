@@ -21,10 +21,7 @@ namespace Challenges.Extractors
             ["dmghealth"] = "dmg_health",
             ["weaponitemid"] = "weapon_itemid",
         };
-        public IReadOnlyDictionary<string, string> PrefixAliases { get; } = new Dictionary<string, string>(StringComparer.Ordinal)
-        {
-            ["victim"] = "userid",
-        };
+        public IReadOnlyDictionary<string, string> PrefixAliases { get; } = AliasTables.VictimToUserid;
 
         public void Fill(GameEvent gameEvent, Dictionary<string, EventValue> d, FillDemand need, EventPlayers players)
         {
@@ -66,22 +63,9 @@ namespace Challenges.Extractors
             ReadPlayer((EventPlayerDeath)gameEvent, prefixIndex, players);
 
         /// <summary>Controller of one prefix: one native read per extractor call, cached in players.</summary>
-        private static CCSPlayerController? ReadPlayer(EventPlayerDeath e, int prefixIndex, EventPlayers players)
-        {
-            if (players.TryGet(prefixIndex, out CCSPlayerController? player))
-            {
-                return player;
-            }
-
-            player = prefixIndex switch
-            {
-                0 => e.Assister,
-                1 => e.Attacker,
-                2 => e.Userid,
-                _ => null,
-            };
-            players.Set(prefixIndex, player);
-            return player;
-        }
+        private static CCSPlayerController? ReadPlayer(EventPlayerDeath e, int i, EventPlayers players) =>
+            players.TryGet(i, out CCSPlayerController? player)
+                ? player
+                : players.Set(i, i switch { 0 => e.Assister, 1 => e.Attacker, 2 => e.Userid, _ => null });
     }
 }
