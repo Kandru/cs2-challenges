@@ -372,7 +372,7 @@ namespace Challenges
 
         /// <summary>
         /// Valid, creditable targets whose type is loaded and not closed by <paramref name="closed"/>.
-        /// Null when none remain.
+        /// Null when none remain. Clears <paramref name="targets"/>.
         /// </summary>
         private List<ProgressTarget>? FilterTargets(
             List<(CCSPlayerController? Player, string Type)> targets,
@@ -407,6 +407,8 @@ namespace Challenges
                 });
             }
 
+            // Scratch lists must not keep controller wrappers alive until the next event.
+            targets.Clear();
             return valid;
         }
 
