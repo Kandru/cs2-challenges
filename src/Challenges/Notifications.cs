@@ -27,7 +27,6 @@ namespace Challenges
 
         private static readonly HttpClient Http = new() { Timeout = TimeSpan.FromSeconds(15) };
         private static readonly string[] NoMentionParse = [];
-        private static readonly TimeSpan WebhookJoinTimeout = TimeSpan.FromSeconds(2);
         private static readonly TimeSpan WebhookDefaultRetry = TimeSpan.FromSeconds(1);
         private static readonly TimeSpan WebhookMaxRetry = TimeSpan.FromSeconds(60);
         private static readonly TaskListMode[] TestTaskListModes =
@@ -40,12 +39,14 @@ namespace Challenges
         private readonly Dictionary<string, string> _completionByLanguage = new(StringComparer.Ordinal);
         private readonly HashSet<string> _mergedTitles = new(StringComparer.Ordinal);
 
-        /// <summary>Single-reader queue drained by <see cref="_webhookSender"/>; both created on the first post.</summary>
-        private Channel<WebhookPost>? _webhooks;
-        private Task? _webhookSender;
-        private readonly CancellationTokenSource _webhookStop = new();
+        /// <summary>
+        /// Single-reader queue with one sender task, created on the first post. Process-wide like <see cref="Http"/>:
+        /// it outlives map changes and is closed by <see cref="ShutdownWebhooks"/> on plugin unload. Game thread only.
+        /// </summary>
+        private static Channel<WebhookPost>? _webhooks;
+        private static CancellationTokenSource? _webhookStop;
         /// <summary>1 after the overflow was logged; reset once the queue drains.</summary>
-        private int _webhookDropLogged;
+        private static int _webhookDropLogged;
 
         private readonly record struct WebhookPost(string Url, Dictionary<string, object?> Embed);
 
@@ -802,47 +803,37 @@ namespace Challenges
             player.ExecuteClientCommand($"play {sound}");
         }
 
-        /// <summary>
-        /// Stops accepting posts, lets the sender drain for up to <see cref="WebhookJoinTimeout"/>,
-        /// then cancels whatever is still pending.
-        /// </summary>
+        /// <summary>The webhook queue keeps running across map changes; see <see cref="ShutdownWebhooks"/>.</summary>
         public override void Destroy()
         {
             _pendingCompletions.Clear();
-            Channel<WebhookPost>? queue = _webhooks;
-            Task? sender = _webhookSender;
-            if (queue != null && sender != null)
-            {
-                queue.Writer.TryComplete();
-                bool drained;
-                try
-                {
-                    drained = sender.Wait(WebhookJoinTimeout);
-                }
-                catch (AggregateException)
-                {
-                    drained = true;
-                }
-
-                if (!drained)
-                {
-                    Console.WriteLine(
-                        $"[Challenges] Discord webhook queue not drained within {WebhookJoinTimeout.TotalSeconds:0}s; "
-                        + $"dropping {queue.Reader.Count} pending post(s)");
-                }
-            }
-
-            _webhookStop.Cancel();
         }
 
-        /// <summary>Game thread: embeds are built here, serialisation and HTTP run on the single sender.</summary>
-        private void QueueWebhook(string webhookUrl, Dictionary<string, object?> embed)
+        /// <summary>
+        /// Plugin unload: closes the queue and cancels the sender without waiting for it; pending posts are dropped.
+        /// </summary>
+        public static void ShutdownWebhooks()
         {
-            if (_webhookStop.IsCancellationRequested)
+            Channel<WebhookPost>? queue = _webhooks;
+            CancellationTokenSource? stop = _webhookStop;
+            _webhooks = null;
+            _webhookStop = null;
+            if (queue == null || stop == null)
             {
                 return;
             }
 
+            queue.Writer.TryComplete();
+            stop.Cancel();
+            if (queue.Reader.Count is int pending and > 0)
+            {
+                Console.WriteLine($"[Challenges] Discord webhook queue closed; dropping {pending} pending post(s)");
+            }
+        }
+
+        /// <summary>Game thread: embeds are built here, serialisation and HTTP run on the single sender.</summary>
+        private static void QueueWebhook(string webhookUrl, Dictionary<string, object?> embed)
+        {
             if (_webhooks == null)
             {
                 Channel<WebhookPost> queue = Channel.CreateBounded<WebhookPost>(
@@ -853,15 +844,16 @@ namespace Challenges
                         SingleWriter = true,
                     },
                     OnWebhookDropped);
+                CancellationTokenSource stop = new();
                 _webhooks = queue;
-                CancellationToken token = _webhookStop.Token;
-                _webhookSender = Task.Run(() => SendWebhooksAsync(queue.Reader, token));
+                _webhookStop = stop;
+                _ = Task.Run(() => SendWebhooksAsync(queue.Reader, stop.Token));
             }
 
             _webhooks.Writer.TryWrite(new WebhookPost(webhookUrl, embed));
         }
 
-        private void OnWebhookDropped(WebhookPost _)
+        private static void OnWebhookDropped(WebhookPost _)
         {
             if (Interlocked.Exchange(ref _webhookDropLogged, 1) == 0)
             {
@@ -870,7 +862,7 @@ namespace Challenges
             }
         }
 
-        private async Task SendWebhooksAsync(ChannelReader<WebhookPost> reader, CancellationToken token)
+        private static async Task SendWebhooksAsync(ChannelReader<WebhookPost> reader, CancellationToken token)
         {
             try
             {
@@ -953,7 +945,7 @@ namespace Challenges
             }
         }
 
-        /// <summary>JSON <c>retry_after</c>, else the <c>Retry-After</c> header, else one second; capped at a minute.</summary>
+        /// <summary>JSON <c>retry_after</c>, else the <c>Retry-After</c> header (seconds), else one second; capped at a minute.</summary>
         private static async Task<TimeSpan> RetryAfterAsync(HttpResponseMessage response, CancellationToken token)
         {
             TimeSpan? wait = null;
@@ -965,30 +957,26 @@ namespace Challenges
                     && doc.RootElement.TryGetProperty("retry_after", out JsonElement retry)
                     && retry.ValueKind == JsonValueKind.Number)
                 {
-                    wait = TimeSpan.FromSeconds(retry.GetDouble());
+                    wait = Seconds(retry.GetDouble());
                 }
             }
             catch (Exception ex) when (ex is JsonException or HttpRequestException)
             {
             }
 
-            if (wait == null && response.Headers.RetryAfter is { } header)
-            {
-                wait = header.Delta ?? (header.Date is { } date ? date - DateTimeOffset.UtcNow : null);
-            }
-
-            wait ??= ParseSeconds(HeaderValue(response, "Retry-After")) ?? WebhookDefaultRetry;
-            return wait.Value < TimeSpan.Zero
-                ? TimeSpan.Zero
-                : wait.Value > WebhookMaxRetry ? WebhookMaxRetry : wait.Value;
+            return wait ?? ParseSeconds(HeaderValue(response, "Retry-After")) ?? WebhookDefaultRetry;
         }
 
         private static string? HeaderValue(HttpResponseMessage response, string name) =>
             response.Headers.TryGetValues(name, out IEnumerable<string>? values) ? values.FirstOrDefault() : null;
 
         private static TimeSpan? ParseSeconds(string? value) =>
-            double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out double seconds) && seconds >= 0
-                ? TimeSpan.FromSeconds(Math.Min(seconds, WebhookMaxRetry.TotalSeconds))
+            double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out double seconds)
+                ? Seconds(seconds)
                 : null;
+
+        /// <summary>Non-negative seconds capped at <see cref="WebhookMaxRetry"/>; null otherwise.</summary>
+        private static TimeSpan? Seconds(double seconds) =>
+            seconds >= 0 ? TimeSpan.FromSeconds(Math.Min(seconds, WebhookMaxRetry.TotalSeconds)) : null;
     }
 }
