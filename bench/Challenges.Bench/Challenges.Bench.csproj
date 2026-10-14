@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>Challenges.Bench</RootNamespace>
+    <AssemblyName>Challenges.Bench</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.15.2" />
+    <!-- The plugin compiles against CounterStrikeSharp without its runtime assembly (the game server provides
+         it). The benchmark host needs the managed assembly to load plugin types; it never calls native code. -->
+    <PackageReference Include="CounterStrikeSharp.API" Version="1.0.376" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Challenges\Challenges.csproj" />
+    <ProjectReference Include="..\..\src\ChallengesShared\ChallengesShared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\examples\blueprints\*.yaml" LinkBase="blueprints" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

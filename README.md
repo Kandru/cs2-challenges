@@ -55,6 +55,8 @@ Without `make` (for example Git Bash on Windows):
 MSYS_NO_PATHCONV=1 docker run --rm -v "$(pwd -W)":/src -v "$HOME/.nuget/packages":/root/.nuget/packages -w /src mcr.microsoft.com/dotnet/sdk:10.0 dotnet test tests/Challenges.Tests/Challenges.Tests.csproj
 ```
 
+Microbenchmarks in [`bench/Challenges.Bench`](./bench/Challenges.Bench/) (BenchmarkDotNet, not part of the plugin build) compare the old string rules, full event fill and per-event progress clone with the current code: `make bench`, or `make bench BENCH_ARGS="--job short"` for a quick run.
+
 ## Test servers
 
 - CounterStrike.Party Ballerbude ([counterstrike.party](https://counterstrike.party) or `server.counterstrike.party:27030`)

@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="Challenges.Tests" />
+    <InternalsVisibleTo Include="Challenges.Bench" />
   </ItemGroup>
 
   <ItemGroup>

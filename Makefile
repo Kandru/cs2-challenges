@@ -1,5 +1,8 @@
 PROJECT   := src/Challenges/Challenges.csproj
 TEST_PROJECT := tests/Challenges.Tests/Challenges.Tests.csproj
+BENCH_PROJECT := bench/Challenges.Bench/Challenges.Bench.csproj
+# Extra BenchmarkDotNet arguments, e.g. make bench BENCH_ARGS="--filter '*Rule*' --job short"
+BENCH_ARGS ?=
 SDK_IMAGE := mcr.microsoft.com/dotnet/sdk:10.0
 UID       := $(shell id -u)
 GID       := $(shell id -g)
@@ -25,7 +28,7 @@ DOCKER_RUN = docker run --rm \
 
 .DEFAULT_GOAL := help
 
-.PHONY: help debug release restore clean dirs panorama catalog css-sync test
+.PHONY: help debug release restore clean dirs panorama catalog css-sync test bench
 
 help: ## Show this help
 	@echo "CS2 Challenges"
@@ -60,6 +63,9 @@ clean: dirs ## Remove build artifacts
 
 test: dirs ## Run the unit tests (no game server needed)
 	$(DOCKER_RUN) dotnet test $(TEST_PROJECT)
+
+bench: dirs ## Run the microbenchmarks (Release, BenchmarkDotNet; results in BenchmarkDotNet.Artifacts)
+	$(DOCKER_RUN) dotnet run -c Release --project $(BENCH_PROJECT) -- $(BENCH_ARGS)
 
 panorama: ## Validate HUD Panorama XML and CSS
 	python3 tools/validate_panorama.py
