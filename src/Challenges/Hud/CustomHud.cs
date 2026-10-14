@@ -575,6 +575,8 @@ namespace Challenges
 
             HudMenu.ReleasePlayer(player);
             RestorePlayerDefaults(player);
+            // The next player in this slot starts with unknown panel state.
+            ClearSlotCaches(player.Slot);
             if ((uint)player.Slot < MaxSlots)
             {
                 _viewerKind[player.Slot] = ViewerUnknown;
@@ -604,6 +606,10 @@ namespace Challenges
             }
         }
 
+        /// <summary>
+        /// Hides both cards and writes their defaults through the write caches: only values that differ are sent,
+        /// and the caches keep the defaults so the next paint takes the diff path.
+        /// </summary>
         private static void RestorePlayerDefaults(CCSPlayerController player)
         {
             if (player is not { IsValid: true })
@@ -614,42 +620,12 @@ namespace Challenges
             int slot = player.Slot;
             bool dirty = _classBySlot.ContainsKey(slot)
                 || _textBySlot.ContainsKey(slot)
-                || _visibleBySlot.ContainsKey(slot);
+                || _stepBySlot.ContainsKey(slot)
+                || _visibleBySlot.ContainsKey(slot)
+                || IsRootLive(slot);
             if (!dirty)
             {
                 return;
-            }
-
-            _classBySlot.TryGetValue(slot, out Dictionary<string, Dictionary<string, bool>>? classes);
-            _textBySlot.TryGetValue(slot, out Dictionary<string, Dictionary<string, string>>? texts);
-            ClearSlotCaches(slot);
-
-            if (classes is not null)
-            {
-                foreach ((string panelId, Dictionary<string, bool> map) in classes)
-                {
-                    foreach ((string className, bool enabled) in map)
-                    {
-                        if (enabled)
-                        {
-                            SetHasClass(player, panelId, className, false);
-                        }
-                    }
-                }
-            }
-
-            if (texts is not null)
-            {
-                foreach ((string panelId, Dictionary<string, string> vars) in texts)
-                {
-                    foreach ((string name, string value) in vars)
-                    {
-                        if (value.Length > 0)
-                        {
-                            SetText(player, panelId, name, string.Empty);
-                        }
-                    }
-                }
             }
 
             for (int i = 0; i < RootPanels.Length; i++)
@@ -660,17 +636,41 @@ namespace Challenges
                 MarkClosingRoot(slot, i);
             }
 
+            // Together they cover every class and text the painters write.
             Tracker.WriteDefaults(player);
             Menu.WriteDefaults(player);
-            ClearSlotCaches(slot);
+            ClearVisibility(slot);
+        }
+
+        private static bool IsRootLive(int slot)
+        {
+            if ((uint)slot >= MaxSlots)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < RootPanels.Length; i++)
+            {
+                if (_rootVisible[i][slot] || _closingUntil[i][slot] != 0)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private static void ClearSlotCaches(int slot)
         {
-            _visibleBySlot.Remove(slot);
             _classBySlot.Remove(slot);
             _textBySlot.Remove(slot);
             _stepBySlot.Remove(slot);
+            ClearVisibility(slot);
+        }
+
+        private static void ClearVisibility(int slot)
+        {
+            _visibleBySlot.Remove(slot);
             if ((uint)slot < MaxSlots)
             {
                 for (int i = 0; i < _rootVisible.Length; i++)
@@ -709,12 +709,17 @@ namespace Challenges
             }
         }
 
-        private static void ClearAllSlotState()
+        private static void ClearWriteCaches()
         {
-            _visibleBySlot.Clear();
             _classBySlot.Clear();
             _textBySlot.Clear();
             _stepBySlot.Clear();
+        }
+
+        private static void ClearAllSlotState()
+        {
+            _visibleBySlot.Clear();
+            ClearWriteCaches();
             for (int i = 0; i < _rootVisible.Length; i++)
             {
                 Array.Clear(_rootVisible[i]);
@@ -789,6 +794,11 @@ namespace Challenges
                 }
 
                 existing.AcceptInput("Kill");
+            }
+            else if (_layoutVerified[index])
+            {
+                // The panel state written to the lost entity went with it; the caches no longer match any client.
+                ClearWriteCaches();
             }
 
             ForgetLayout(index);
