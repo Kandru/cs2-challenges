@@ -207,7 +207,9 @@ function setMode(mode) {
 document.querySelectorAll('.preview-controls button[data-mode]').forEach(btn => {
   btn.addEventListener('click', () => setMode(btn.dataset.mode));
 });
-setMode('freeze');
+// ?mode=<data-mode> starts in that mode (screenshots); default freeze.
+const startMode = new URLSearchParams(window.location.search).get('mode');
+setMode((scenes[startMode] || startMode === 'hide') ? startMode : 'freeze');
 </script>
 <script src="theme-data.js"></script>
 <script src="theme.js"></script>

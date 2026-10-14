@@ -18,7 +18,7 @@ Web CSS is dropped with no log. Run `make panorama` (`tools/validate_panorama.py
 
 `background-color` hex / `#rrggbbaa` / `gradient(linear, …)` / `none` - **no `rgba()`/`rgb()`/`hsl()`**. `background-size: contains` (not web `contain`). `font-size` **unitless**. Hex colours only - no `@define` / `var()` / bareword tokens. `visibility: collapse` (no `display`). `overflow: noclip|clip|scroll`. HUD `z-index` ~`99999` (siblings only).
 
-Bars: `clip: rect(…)` class ladder `p0`…`p100` - **not `width`**. Blur: `world-blur: gaussian(n)`. `box-shadow`: colour first. Split transition properties.
+Bars: `clip: rect(…)` class ladder `p0`…`p100` - **not `width`**. Countdown bars run on the client: `.TrackerTimerFill` (0s default, linear), `span-N` sets `transition-duration`, `is-running` sets the empty `clip`; these rules must follow the ladder so they win at equal specificity. Blur: `world-blur: gaussian(n)`. `box-shadow`: colour first. Split transition properties.
 
 ## Shared / do not
 
@@ -28,4 +28,4 @@ Do not: `display`/flex/grid, `calc()`, `var()`, `@define`, `@media`, `::before`/
 
 ## This project
 
-Show/hide: `.ph-card.ph-off`, `.is-off` for rows. Fills: `.ph-stat-fill.p0`…`.p100`. Clear `wash-color` on Buttons. Previews: [`preview/tracker.html`](preview/tracker.html), [`preview/menu.html`](preview/menu.html), [`preview/kit.css`](preview/kit.css).
+Show/hide: `.ph-card.ph-off`, `.is-off` for rows. Fills: `.ph-stat-fill.p0`…`.p100`. Clear `wash-color` on Buttons. `hittest="false"` on every Panel and Label (also in the menu); Buttons carry no `hittest` and still receive clicks. Previews: [`preview/tracker.html`](preview/tracker.html), [`preview/menu.html`](preview/menu.html), [`preview/kit.css`](preview/kit.css).

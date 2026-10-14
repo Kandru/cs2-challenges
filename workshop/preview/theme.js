@@ -76,6 +76,14 @@
     } catch (_) {
       initial = currentTheme(root);
     }
+    // ?theme=<name> and ?shot (no preview controls) make screenshots reproducible.
+    const params = new URLSearchParams(window.location.search);
+    if (DATA[params.get('theme')]) {
+      initial = params.get('theme');
+    }
+    if (params.has('shot')) {
+      document.body.classList.add('shot');
+    }
     applyTheme(root, stage, initial, buttons);
     buttons.forEach((btn) => {
       btn.addEventListener('click', () => applyTheme(root, stage, btn.dataset.theme, buttons));
