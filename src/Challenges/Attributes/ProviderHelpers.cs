@@ -3,18 +3,19 @@ namespace Challenges.Attributes
     /// <summary>Weapon name helpers shared by providers.</summary>
     internal static class Weapons
     {
-        /// <summary>Name without the <c>weapon_</c> prefix; empty for null.</summary>
-        public static string Short(string? weapon)
-        {
-            if (string.IsNullOrEmpty(weapon))
+        /// <summary>Name without the <c>weapon_</c> prefix; empty for null. Constant strings for grenades.</summary>
+        public static string Short(string? weapon) =>
+            weapon switch
             {
-                return "";
-            }
-
-            return weapon.StartsWith("weapon_", StringComparison.OrdinalIgnoreCase)
-                ? weapon[7..]
-                : weapon;
-        }
+                null or "" => "",
+                "weapon_hegrenade" => "hegrenade",
+                "weapon_flashbang" => "flashbang",
+                "weapon_smokegrenade" => "smokegrenade",
+                "weapon_molotov" => "molotov",
+                "weapon_incgrenade" => "incgrenade",
+                "weapon_decoy" => "decoy",
+                _ => weapon.StartsWith("weapon_", StringComparison.OrdinalIgnoreCase) ? weapon[7..] : weapon,
+            };
 
         /// <summary>Same short name, or both knives.</summary>
         public static bool Same(string left, string right) =>

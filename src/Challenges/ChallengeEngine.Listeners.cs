@@ -601,6 +601,11 @@ namespace Challenges
 
         public void OnPlayerButtonsChanged(CCSPlayerController player, PlayerButtons pressed, PlayerButtons released)
         {
+            if (!CanHandle())
+            {
+                return;
+            }
+
             Providers.OnButtonsChanged(player, pressed, released);
             if (!BeginListener("OnPlayerButtonsChanged", out ExtractorPlan? plan, out GlobalGate closed))
             {

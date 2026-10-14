@@ -546,6 +546,11 @@ def generate_listener_method(listener: dict, alias: dict, snapshot: dict) -> str
     preamble: list[str] = []
     if name == "OnPlayerButtonsChanged":
         preamble = [
+            "            if (!CanHandle())",
+            "            {",
+            exit_line,
+            "            }",
+            "",
             "            Providers.OnButtonsChanged(player, pressed, released);",
         ]
 

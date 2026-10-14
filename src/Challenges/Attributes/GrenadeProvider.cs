@@ -137,16 +137,15 @@ namespace Challenges.Attributes
             }
 
             int slot = player.Slot;
-            if (!TryActiveGrenade(player, out string? active, out bool pinPulled))
+            bool releasedAttack = (released & AttackMask) != 0;
+            if (!releasedAttack && (pressed & AttackMask) == 0 && HoldingOf(slot) == null)
             {
-                SetHolding(slot, null);
                 return;
             }
 
-            bool pressedAttack = (pressed & AttackMask) != 0;
-            bool releasedAttack = (released & AttackMask) != 0;
-            if (!pressedAttack && !releasedAttack && HoldingOf(slot) == null)
+            if (!TryActiveGrenade(player, out string? active, out bool pinPulled))
             {
+                SetHolding(slot, null);
                 return;
             }
 
