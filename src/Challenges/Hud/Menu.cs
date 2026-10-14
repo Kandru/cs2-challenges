@@ -379,7 +379,7 @@ namespace Challenges
             Paint(player);
         }
 
-        /// <summary>Drops cached scoreboards; call when any player's progress, presence or identity changes.</summary>
+        /// <summary>Drops cached scoreboards; call when any player's solved counts, presence or identity change.</summary>
         public static void InvalidateScoreboard() => _scoreVersion = unchecked(_scoreVersion + 1);
 
         public static void ResetCaches()

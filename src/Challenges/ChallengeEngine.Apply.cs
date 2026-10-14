@@ -60,6 +60,11 @@ namespace Challenges
             if (patch.Upserts != null || patch.Removals != null || patch.SolvedAbsolute != null)
             {
                 state.TrackerContentDirty = true;
+            }
+
+            // Scoreboard columns count solved challenges; progress below a task goal cannot change them.
+            if (patch.SolvedAbsolute != null || patch.Removals != null || patch.CompletesTask)
+            {
                 Menu.InvalidateScoreboard();
             }
 
