@@ -92,21 +92,13 @@ namespace Challenges
                 _pendingCompletions.Add((challenge, task));
             }
 
-            if (!GlobalConfig.Notifications.NotifyPlayerOnChallengeComplete)
+            if (!GlobalConfig.Notifications.NotifyPlayerOnChallengeComplete || !Players.IsHumanViewer(player))
             {
                 return;
             }
 
-            foreach (CCSPlayerController entry in Players.GetHumans())
-            {
-                if (!Players.Same(entry, player))
-                {
-                    continue;
-                }
-
-                PlayClientSound(player, GlobalConfig.Notifications.ChallengeCompleteSound);
-                entry.PrintToChat(CompletionMessage(entry, "challenges.completed.user", player.PlayerName, challenge, task));
-            }
+            PlayClientSound(player, GlobalConfig.Notifications.ChallengeCompleteSound);
+            player.PrintToChat(CompletionMessage(player, "challenges.completed.user", player.PlayerName, challenge, task));
         }
 
         /// <summary>
