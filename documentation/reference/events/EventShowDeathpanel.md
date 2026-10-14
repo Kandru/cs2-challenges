@@ -36,3 +36,13 @@ Unknown keys never match — see [Rules](../rules.md).
 | `hits_given` | int |
 | `hits_taken` | int |
 | `killer` | string |
+| `killer_controller.grenade` | string |
+| `killer_controller.grenade.holding` | string |
+| `killer_controller.grenade.thrown` | string |
+| `killer_controller.grenade.throwing` | string |
+| `killer_controller.insmoke` | bool |
+| `victim.grenade` | string |
+| `victim.grenade.holding` | string |
+| `victim.grenade.thrown` | string |
+| `victim.grenade.throwing` | string |
+| `victim.insmoke` | bool |

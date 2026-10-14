@@ -35,3 +35,13 @@ Unknown keys never match — see [Rules](../rules.md).
 | `nomusic` | int |
 | `reason` | int |
 | `value` | int |
+| `userid.grenade` | string |
+| `userid.grenade.holding` | string |
+| `userid.grenade.thrown` | string |
+| `userid.grenade.throwing` | string |
+| `userid.insmoke` | bool |
+| `player.grenade` | string |
+| `player.grenade.holding` | string |
+| `player.grenade.thrown` | string |
+| `player.grenade.throwing` | string |
+| `player.insmoke` | bool |

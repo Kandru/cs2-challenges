@@ -242,6 +242,26 @@
       {
         "key": "player.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventAchievementEarnedLocal": [
@@ -434,6 +454,46 @@
       {
         "key": "player.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventAddPlayerSonarIcon": [
@@ -568,6 +628,46 @@
       {
         "key": "player.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventAmmoPickup": [
@@ -698,6 +798,46 @@
       {
         "key": "player.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventAmmoRefill": [
@@ -824,6 +964,46 @@
       {
         "key": "player.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventAnnouncePhaseEnd": [],
@@ -947,6 +1127,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -1073,6 +1293,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -1208,6 +1468,46 @@
         "type": "bool"
       },
       {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
+      },
+      {
         "key": "insmoke",
         "type": "bool"
       },
@@ -1218,14 +1518,6 @@
       {
         "key": "smoke.age",
         "type": "float"
-      },
-      {
-        "key": "userid.insmoke",
-        "type": "bool"
-      },
-      {
-        "key": "player.insmoke",
-        "type": "bool"
       }
     ],
     "EventBombBeginplant": [
@@ -1351,6 +1643,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -1484,6 +1816,46 @@
         "type": "bool"
       },
       {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "defuser.grenade",
+        "type": "string"
+      },
+      {
+        "key": "defuser.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "defuser.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "defuser.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "defuser.insmoke",
+        "type": "bool"
+      },
+      {
         "key": "insmoke",
         "type": "bool"
       },
@@ -1494,14 +1866,6 @@
       {
         "key": "smoke.age",
         "type": "float"
-      },
-      {
-        "key": "userid.insmoke",
-        "type": "bool"
-      },
-      {
-        "key": "defuser.insmoke",
-        "type": "bool"
       }
     ],
     "EventBombDropped": [
@@ -1627,6 +1991,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -1758,6 +2162,46 @@
       {
         "key": "exploder.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "exploder.grenade",
+        "type": "string"
+      },
+      {
+        "key": "exploder.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "exploder.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "exploder.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "exploder.insmoke",
+        "type": "bool"
       }
     ],
     "EventBombPickup": [
@@ -1879,6 +2323,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -2009,6 +2493,46 @@
       },
       {
         "key": "planter.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "planter.grenade",
+        "type": "string"
+      },
+      {
+        "key": "planter.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "planter.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "planter.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "planter.insmoke",
         "type": "bool"
       }
     ],
@@ -2222,6 +2746,66 @@
       {
         "key": "y",
         "type": "float"
+      },
+      {
+        "key": "botid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "botid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "botid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "botid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "botid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventBreakBreakable": [
@@ -2351,6 +2935,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -2490,6 +3114,46 @@
       {
         "key": "player.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventBrokenBreakable": [
@@ -2619,6 +3283,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -2850,6 +3554,46 @@
       {
         "key": "isselfdamage",
         "type": "bool"
+      },
+      {
+        "key": "attacker.grenade",
+        "type": "string"
+      },
+      {
+        "key": "attacker.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "attacker.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "attacker.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "attacker.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "victim.grenade",
+        "type": "string"
+      },
+      {
+        "key": "victim.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "victim.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "victim.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "victim.insmoke",
+        "type": "bool"
       }
     ],
     "EventBulletImpact": [
@@ -2984,6 +3728,46 @@
       {
         "key": "z",
         "type": "float"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventBuymenuClose": [
@@ -3105,6 +3889,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -3296,6 +4120,46 @@
       {
         "key": "timer_time",
         "type": "int"
+      },
+      {
+        "key": "funfact_player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "funfact_player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "funfact_player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "funfact_player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "funfact_player.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventDecoyDetonate": [
@@ -3434,6 +4298,46 @@
       {
         "key": "z",
         "type": "float"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventDecoyFiring": [
@@ -3572,6 +4476,46 @@
       {
         "key": "z",
         "type": "float"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventDecoyStarted": [
@@ -3710,6 +4654,46 @@
       {
         "key": "z",
         "type": "float"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventDefuserDropped": [
@@ -3841,6 +4825,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -4043,6 +5067,46 @@
       {
         "key": "player.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventDoorClosed": [
@@ -4168,6 +5232,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -4295,6 +5399,46 @@
       {
         "key": "player.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventDoorOpen": [
@@ -4421,6 +5565,46 @@
       {
         "key": "player.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventDroneAboveRoof": [
@@ -4546,6 +5730,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -4677,6 +5901,46 @@
       {
         "key": "player.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventDroneDispatched": [
@@ -4807,6 +6071,46 @@
       {
         "key": "player.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventDronegunAttack": [
@@ -4928,6 +6232,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -5060,6 +6404,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -5244,6 +6628,46 @@
       {
         "key": "player.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventEnterBuyzone": [
@@ -5370,6 +6794,46 @@
       {
         "key": "player.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventEnterRescueZone": [
@@ -5491,6 +6955,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -5644,6 +7148,46 @@
       {
         "key": "player.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventEventTicketModified": [],
@@ -5775,6 +7319,46 @@
       {
         "key": "player.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventExitBuyzone": [
@@ -5901,6 +7485,46 @@
       {
         "key": "player.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventExitRescueZone": [
@@ -6022,6 +7646,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -6179,6 +7843,46 @@
       {
         "key": "z",
         "type": "float"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventGameEnd": [
@@ -6368,6 +8072,46 @@
       {
         "key": "victimid.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "attackerid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "attackerid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "attackerid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "attackerid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "attackerid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "victimid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "victimid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "victimid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "victimid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "victimid.insmoke",
+        "type": "bool"
       }
     ],
     "EventGrenadeBounce": [
@@ -6489,6 +8233,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -6616,6 +8400,46 @@
       {
         "key": "weapon",
         "type": "string"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventGuardianWaveRestart": [],
@@ -6755,6 +8579,46 @@
       {
         "key": "z",
         "type": "float"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventHelicopterGrenadePuntMiss": [],
@@ -6889,6 +8753,46 @@
       {
         "key": "player.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventHostageHurt": [
@@ -7015,6 +8919,46 @@
       {
         "key": "player.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventHostageKilled": [
@@ -7140,6 +9084,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -7275,6 +9259,46 @@
       {
         "key": "player.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventHostageRescuedAll": [],
@@ -7401,6 +9425,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -7584,6 +9648,46 @@
       {
         "key": "player.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventInstructorCloseLesson": [
@@ -7709,6 +9813,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -7936,6 +10080,46 @@
       {
         "key": "userid.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "hint_activator_userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "hint_activator_userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "hint_activator_userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "hint_activator_userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "hint_activator_userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
       }
     ],
     "EventInstructorServerHintStop": [
@@ -8087,6 +10271,46 @@
       },
       {
         "key": "vr_single_controller",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -8252,6 +10476,46 @@
       {
         "key": "weptype",
         "type": "int"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventItemPickup": [
@@ -8385,6 +10649,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -8520,6 +10824,46 @@
       {
         "key": "player.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventItemPickupSlerp": [
@@ -8649,6 +10993,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -8784,6 +11168,46 @@
       {
         "key": "weapon",
         "type": "string"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventItemRemove": [
@@ -8914,6 +11338,46 @@
       {
         "key": "player.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventItemSchemaInitialized": [],
@@ -9040,6 +11504,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -9170,6 +11674,46 @@
       {
         "key": "player.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventLootCrateVisible": [
@@ -9299,6 +11843,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -9457,6 +12041,46 @@
       {
         "key": "z",
         "type": "float"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventNavBlocked": [
@@ -9611,6 +12235,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -9784,6 +12448,46 @@
       {
         "key": "player.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventParachutePickup": [
@@ -9905,6 +12609,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -10033,6 +12777,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -10280,6 +13064,86 @@
       {
         "key": "isselfavenged",
         "type": "bool"
+      },
+      {
+        "key": "avenged_player_id.grenade",
+        "type": "string"
+      },
+      {
+        "key": "avenged_player_id.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "avenged_player_id.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "avenged_player_id.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "avenged_player_id.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "victim.grenade",
+        "type": "string"
+      },
+      {
+        "key": "victim.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "victim.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "victim.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "victim.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "avenger_id.grenade",
+        "type": "string"
+      },
+      {
+        "key": "avenger_id.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "avenger_id.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "avenger_id.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "avenger_id.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "avenger.grenade",
+        "type": "string"
+      },
+      {
+        "key": "avenger.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "avenger.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "avenger.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "avenger.insmoke",
+        "type": "bool"
       }
     ],
     "EventPlayerBlind": [
@@ -10482,6 +13346,66 @@
       {
         "key": "isselfflash",
         "type": "bool"
+      },
+      {
+        "key": "attacker.grenade",
+        "type": "string"
+      },
+      {
+        "key": "attacker.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "attacker.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "attacker.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "attacker.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "victim.grenade",
+        "type": "string"
+      },
+      {
+        "key": "victim.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "victim.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "victim.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "victim.insmoke",
+        "type": "bool"
       }
     ],
     "EventPlayerChangename": [
@@ -10619,6 +13543,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -10758,6 +13722,46 @@
       {
         "key": "xuid",
         "type": "int"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventPlayerConnectFull": [
@@ -10879,6 +13883,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -11220,6 +14264,26 @@
         "type": "bool"
       },
       {
+        "key": "assister.grenade",
+        "type": "string"
+      },
+      {
+        "key": "assister.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "assister.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "assister.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "assister.insmoke",
+        "type": "bool"
+      },
+      {
         "key": "attacker.grenade",
         "type": "string"
       },
@@ -11234,6 +14298,30 @@
       {
         "key": "attacker.grenade.throwing",
         "type": "string"
+      },
+      {
+        "key": "attacker.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
       },
       {
         "key": "victim.grenade",
@@ -11252,20 +14340,8 @@
         "type": "string"
       },
       {
-        "key": "userid.grenade",
-        "type": "string"
-      },
-      {
-        "key": "userid.grenade.holding",
-        "type": "string"
-      },
-      {
-        "key": "userid.grenade.thrown",
-        "type": "string"
-      },
-      {
-        "key": "userid.grenade.throwing",
-        "type": "string"
+        "key": "victim.insmoke",
+        "type": "bool"
       },
       {
         "key": "isace",
@@ -11391,6 +14467,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -11538,6 +14654,46 @@
       {
         "key": "xuid",
         "type": "int"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventPlayerFalldamage": [
@@ -11664,6 +14820,46 @@
       {
         "key": "player.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventPlayerFootstep": [
@@ -11785,6 +14981,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -11912,6 +15148,46 @@
       {
         "key": "player.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventPlayerGivenC4": [
@@ -12033,6 +15309,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -12262,6 +15578,66 @@
       {
         "key": "isselfdamage",
         "type": "bool"
+      },
+      {
+        "key": "attacker.grenade",
+        "type": "string"
+      },
+      {
+        "key": "attacker.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "attacker.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "attacker.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "attacker.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "victim.grenade",
+        "type": "string"
+      },
+      {
+        "key": "victim.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "victim.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "victim.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "victim.insmoke",
+        "type": "bool"
       }
     ],
     "EventPlayerInfo": [
@@ -12396,6 +15772,46 @@
       {
         "key": "player.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventPlayerJump": [
@@ -12517,6 +15933,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -12660,6 +16116,46 @@
       {
         "key": "z",
         "type": "float"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventPlayerPingStop": [
@@ -12792,6 +16288,46 @@
       {
         "key": "player.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventPlayerResetVote": [
@@ -12917,6 +16453,46 @@
       },
       {
         "key": "vote",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -13052,6 +16628,46 @@
       {
         "key": "player.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventPlayerShoot": [
@@ -13182,6 +16798,46 @@
       {
         "key": "weapon",
         "type": "int"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventPlayerSound": [
@@ -13316,6 +16972,46 @@
       {
         "key": "player.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventPlayerSpawn": [
@@ -13437,6 +17133,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -13563,6 +17299,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -13724,6 +17500,46 @@
       {
         "key": "new_team",
         "type": "string"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventRagdollDissolved": [
@@ -13927,6 +17743,46 @@
       {
         "key": "value",
         "type": "int"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventRoundOfficiallyEnded": [],
@@ -14076,6 +17932,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -14313,6 +18209,46 @@
       {
         "key": "victim.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "killer_controller.grenade",
+        "type": "string"
+      },
+      {
+        "key": "killer_controller.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "killer_controller.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "killer_controller.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "killer_controller.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "victim.grenade",
+        "type": "string"
+      },
+      {
+        "key": "victim.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "victim.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "victim.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "victim.insmoke",
+        "type": "bool"
       }
     ],
     "EventShowSurvivalRespawnStatus": [
@@ -14443,6 +18379,46 @@
       {
         "key": "player.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventSilencerDetach": [
@@ -14564,6 +18540,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -14687,6 +18703,46 @@
       {
         "key": "player.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventSilencerOn": [
@@ -14808,6 +18864,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -14934,6 +19030,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -15073,6 +19209,46 @@
       {
         "key": "z",
         "type": "float"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventSmokegrenadeExpired": [
@@ -15211,6 +19387,46 @@
       {
         "key": "z",
         "type": "float"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventSpecModeUpdated": [
@@ -15332,6 +19548,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -15458,6 +19714,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -15590,6 +19886,46 @@
       {
         "key": "vote_parameter",
         "type": "int"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventStorePricesheetUpdated": [],
@@ -15719,6 +20055,46 @@
       {
         "key": "player.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventSurvivalNoRespawnsWarning": [
@@ -15840,6 +20216,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -15974,6 +20390,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -16135,6 +20591,46 @@
       {
         "key": "z",
         "type": "float"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventTeamInfo": [
@@ -16282,6 +20778,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -16434,6 +20970,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -16597,6 +21173,46 @@
       {
         "key": "player.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventVipKilled": [
@@ -16718,6 +21334,46 @@
       },
       {
         "key": "userid.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "attacker.grenade",
+        "type": "string"
+      },
+      {
+        "key": "attacker.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "attacker.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "attacker.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "attacker.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
         "type": "bool"
       }
     ],
@@ -16849,6 +21505,46 @@
       {
         "key": "vote_option",
         "type": "int"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventVoteCastNo": [
@@ -17115,6 +21811,46 @@
       {
         "key": "weapon",
         "type": "string"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventWeaponFireOnEmpty": [
@@ -17241,6 +21977,46 @@
       {
         "key": "weapon",
         "type": "string"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventWeaponReload": [
@@ -17362,6 +22138,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -17485,6 +22301,46 @@
       {
         "key": "player.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "EventWeaponZoomRifle": [
@@ -17606,6 +22462,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -17736,6 +22632,46 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "userid.grenade",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "userid.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "userid.insmoke",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -18036,6 +22972,26 @@
         "type": "bool"
       },
       {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
+      },
+      {
         "key": "damage.damage",
         "type": "float"
       },
@@ -18151,6 +23107,26 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       },
       {
@@ -18327,6 +23303,26 @@
         "type": "bool"
       },
       {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
+      },
+      {
         "key": "name",
         "type": "string"
       },
@@ -18395,6 +23391,26 @@
       {
         "key": "player.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "OnClientPutInServer": [
@@ -18456,6 +23472,26 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -18519,6 +23555,26 @@
       {
         "key": "player.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "OnClientDisconnectPost": [
@@ -18580,6 +23636,26 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       }
     ],
@@ -18643,6 +23719,26 @@
       {
         "key": "player.hashelmet",
         "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
       }
     ],
     "OnClientAuthorized": [
@@ -18704,6 +23800,26 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       },
       {
@@ -18789,6 +23905,26 @@
         "type": "bool"
       },
       {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
+        "type": "bool"
+      },
+      {
         "key": "pressed",
         "type": "int"
       },
@@ -18856,6 +23992,26 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       },
       {
@@ -18935,6 +24091,26 @@
       },
       {
         "key": "player.hashelmet",
+        "type": "bool"
+      },
+      {
+        "key": "player.grenade",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.holding",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.thrown",
+        "type": "string"
+      },
+      {
+        "key": "player.grenade.throwing",
+        "type": "string"
+      },
+      {
+        "key": "player.insmoke",
         "type": "bool"
       },
       {
@@ -20427,7 +25603,7 @@
     {
       "type": "player_trade",
       "event_class": "PlayerTrade",
-      "extractor": "SituationMemory",
+      "extractor": "TradeProvider",
       "kind": "synthetic"
     },
     {

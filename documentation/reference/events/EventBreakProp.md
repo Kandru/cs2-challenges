@@ -34,3 +34,13 @@ Unknown keys never match — see [Rules](../rules.md).
 | `player_dropped` | bool |
 | `player_held` | bool |
 | `player_thrown` | bool |
+| `userid.grenade` | string |
+| `userid.grenade.holding` | string |
+| `userid.grenade.thrown` | string |
+| `userid.grenade.throwing` | string |
+| `userid.insmoke` | bool |
+| `player.grenade` | string |
+| `player.grenade.holding` | string |
+| `player.grenade.thrown` | string |
+| `player.grenade.throwing` | string |
+| `player.insmoke` | bool |

@@ -5,6 +5,10 @@ namespace Challenges.Utils
     {
         public const int DefaultMin = 2;
         public const int DefaultMax = 5;
+        /// <summary>Rule key of the ace situation.</summary>
+        public const string RuleKey = "isace";
+        /// <summary>Challenge type an <c>isace</c> rule requires; it fails for any other type.</summary>
+        public const string RequiredType = "player_kill";
 
         public static (int Min, int Max) Resolve(ChallengeRule rule, bool warn = false)
         {

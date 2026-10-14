@@ -5,6 +5,7 @@ using CounterStrikeSharp.API.Core.Translations;
 using CounterStrikeSharp.API.Modules.Extensions;
 using ChallengesShared;
 using ChallengesShared.Events;
+using Challenges.Utils;
 using System.Text.Json;
 using YamlDotNet.Serialization;
 
@@ -275,6 +276,7 @@ namespace Challenges
                     }
 
                     NormalizeDefinition(def);
+                    LogRuleProblems(file, def);
                     map[id] = def;
                 }
                 catch (Exception ex)
@@ -303,6 +305,8 @@ namespace Challenges
                     rule.Operator = rule.Operator.Trim();
                 }
 
+                task.CompiledRules = ChallengeRules.Compile(task);
+
                 foreach (ChallengeAction action in task.Actions)
                 {
                     action.Type = action.Type.Trim().ToLowerInvariant();
@@ -315,6 +319,15 @@ namespace Challenges
             }
 
             def.BuildTaskIndex();
+        }
+
+        /// <summary>Warns about unknown types, keys and operators; the blueprint still loads.</summary>
+        private void LogRuleProblems(string file, ChallengeDefinition def)
+        {
+            foreach (string problem in RuleValidation.Check(def))
+            {
+                LogBadConfig(file, problem);
+            }
         }
 
         private Dictionary<string, ChallengeSchedule> ReadSchedules()

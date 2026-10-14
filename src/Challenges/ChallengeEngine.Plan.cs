@@ -1,3 +1,4 @@
+using Challenges.Attributes;
 using Challenges.Extractors;
 using Challenges.Utils;
 
@@ -44,15 +45,27 @@ namespace Challenges
             public bool IsClosed(GlobalGate closed) => (Gate & closed) != 0;
         }
 
-        /// <summary>
-        /// An extractor with at least one active type, its active types, and what to fill.
-        /// <paramref name="extraKeys"/> counts keys merged in after the fill (globals, situation keys).
-        /// </summary>
-        private sealed class ExtractorPlan(IExtractor extractor, TypePlan[] types, int extraKeys)
+        /// <summary>An extractor with at least one active type, its active types, and what to fill.</summary>
+        private sealed class ExtractorPlan
         {
-            public IExtractor Extractor { get; } = extractor;
-            public TypePlan[] Types { get; } = types;
-            public FillDemand Demand { get; } = BuildDemand(extractor, types, extraKeys);
+            /// <summary><paramref name="globalKeys"/> counts the <c>global.*</c> keys merged in before enqueue.</summary>
+            public ExtractorPlan(IExtractor extractor, TypePlan[] types, AttributeRegistry attributes, int globalKeys)
+            {
+                Extractor = extractor;
+                GameEvent = extractor as IGameEventExtractor;
+                Types = types;
+                HashSet<string> keys = RuleKeysOf(types);
+                Attributes = attributes.BuildDemand(extractor, keys);
+                Demand = BuildDemand(extractor, types, keys, globalKeys + (Attributes?.KeyCount ?? 0));
+            }
+
+            public IExtractor Extractor { get; }
+            /// <summary><see cref="Extractor"/> of a game event; null for listeners, whose handlers fill the data.</summary>
+            public IGameEventExtractor? GameEvent { get; }
+            public TypePlan[] Types { get; }
+            public FillDemand Demand { get; }
+            /// <summary>Provider values to add after <c>Fill</c>; null when no rule of these types reads one.</summary>
+            public AttributeDemand? Attributes { get; }
 
             public bool AllClosed(GlobalGate closed)
             {
@@ -73,12 +86,35 @@ namespace Challenges
             }
         }
 
+        /// <summary>Canonical keys the rules of <paramref name="types"/> read.</summary>
+        private static HashSet<string> RuleKeysOf(TypePlan[] types)
+        {
+            HashSet<string> keys = new(StringComparer.Ordinal);
+            foreach (TypePlan type in types)
+            {
+                foreach ((_, ChallengeTask task) in type.Tasks)
+                {
+                    foreach (CompiledRule rule in task.CompiledRules)
+                    {
+                        keys.Add(rule.Key);
+                    }
+                }
+            }
+
+            return keys;
+        }
+
         /// <summary>
-        /// Union of the keys the rules of <paramref name="types"/> read, mapped onto the extractor's keys,
-        /// player prefixes and derived keys. Keys owned by situations or <c>global.*</c> do not match and
-        /// are ignored.
+        /// <paramref name="keys"/> mapped onto the extractor's keys, player prefixes and derived keys. Keys owned
+        /// by attribute providers (player suffixes such as <c>userid.grenade</c> are not player fields) or
+        /// <c>global.*</c> do not match and are ignored. <paramref name="extraKeys"/> counts keys merged in after the
+        /// fill (globals, provider values).
         /// </summary>
-        private static FillDemand BuildDemand(IExtractor extractor, TypePlan[] types, int extraKeys)
+        private static FillDemand BuildDemand(
+            IExtractor extractor,
+            TypePlan[] types,
+            HashSet<string> keys,
+            int extraKeys)
         {
             IReadOnlyList<string> challengeTypes = extractor.ChallengeTypes;
             FillDemand need = new(challengeTypes.Count, extractor.Keys.Count, extractor.PlayerPrefixes);
@@ -93,15 +129,9 @@ namespace Challenges
                 }
             }
 
-            foreach (TypePlan type in types)
+            foreach (string key in keys)
             {
-                foreach ((_, ChallengeTask task) in type.Tasks)
-                {
-                    foreach (ChallengeRule rule in task.Rules)
-                    {
-                        need.Add(rule.Key, extractor.Keys, extractor.PlayerPrefixes, extractor.DerivedKeys);
-                    }
-                }
+                need.Add(key, extractor.Keys, extractor.PlayerPrefixes, extractor.DerivedKeys);
             }
 
             need.SetCapacity(extractor.DerivedKeys.Count, extraKeys);
@@ -199,10 +229,10 @@ namespace Challenges
         private static GlobalKeyFlags GlobalKey(string key) =>
             key switch
             {
-                "global.iswarmup" => GlobalKeyFlags.IsWarmup,
-                "global.isduringround" => GlobalKeyFlags.IsDuringRound,
-                "global.mapname" => GlobalKeyFlags.MapName,
-                "global.hashostages" => GlobalKeyFlags.HasHostages,
+                GlobalKeys.IsWarmup => GlobalKeyFlags.IsWarmup,
+                GlobalKeys.IsDuringRound => GlobalKeyFlags.IsDuringRound,
+                GlobalKeys.MapName => GlobalKeyFlags.MapName,
+                GlobalKeys.HasHostages => GlobalKeyFlags.HasHostages,
                 _ => GlobalKeyFlags.None,
             };
 
@@ -210,14 +240,14 @@ namespace Challenges
         private static GlobalGate TaskGate(ChallengeTask task)
         {
             GlobalGate gate = GlobalGate.None;
-            foreach (ChallengeRule rule in task.Rules)
+            foreach (CompiledRule rule in task.CompiledRules)
             {
                 switch (rule.Key)
                 {
-                    case "global.iswarmup" when RequiredBool(rule) is bool warmup:
+                    case GlobalKeys.IsWarmup when RequiredBool(rule) is bool warmup:
                         gate |= warmup ? GlobalGate.Warmup : GlobalGate.NoWarmup;
                         break;
-                    case "global.isduringround" when RequiredBool(rule) is bool duringRound:
+                    case GlobalKeys.IsDuringRound when RequiredBool(rule) is bool duringRound:
                         gate |= duringRound ? GlobalGate.DuringRound : GlobalGate.NotDuringRound;
                         break;
                 }
@@ -230,22 +260,22 @@ namespace Challenges
         /// The only value of a <c>true</c>/<c>false</c> key that passes <paramref name="rule"/>, or null when
         /// the rule does not pin one down. Mirrors <see cref="ChallengeRules"/> operator semantics.
         /// </summary>
-        private static bool? RequiredBool(ChallengeRule rule)
+        private static bool? RequiredBool(CompiledRule rule)
         {
-            switch (rule.Operator)
+            switch (rule.Op)
             {
-                case "bool==" when bool.TryParse(rule.Value, out bool value):
-                    return value;
-                case "bool!=" when bool.TryParse(rule.Value, out bool value):
-                    return !value;
-                case "==" or "!=":
-                    bool equals = rule.Operator == "==";
-                    if (string.Equals(rule.Value, "true", StringComparison.OrdinalIgnoreCase))
+                case RuleOperator.BoolEqual:
+                    return rule.Bool;
+                case RuleOperator.BoolNotEqual:
+                    return !rule.Bool;
+                case RuleOperator.Equal or RuleOperator.NotEqual:
+                    bool equals = rule.Op == RuleOperator.Equal;
+                    if (string.Equals(rule.Text, "true", StringComparison.OrdinalIgnoreCase))
                     {
                         return equals;
                     }
 
-                    if (string.Equals(rule.Value, "false", StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(rule.Text, "false", StringComparison.OrdinalIgnoreCase))
                     {
                         return !equals;
                     }

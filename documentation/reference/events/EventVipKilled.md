@@ -31,3 +31,13 @@ Unknown keys never match — see [Rules](../rules.md).
 |-----|------|
 | [global event data](../../rules/GlobalEventData.md) | see page |
 | [player data](../../rules/GlobalPlayerData.md) | prefixes `attacker`, `userid` |
+| `attacker.grenade` | string |
+| `attacker.grenade.holding` | string |
+| `attacker.grenade.thrown` | string |
+| `attacker.grenade.throwing` | string |
+| `attacker.insmoke` | bool |
+| `userid.grenade` | string |
+| `userid.grenade.holding` | string |
+| `userid.grenade.thrown` | string |
+| `userid.grenade.throwing` | string |
+| `userid.insmoke` | bool |

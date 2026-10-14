@@ -18,7 +18,7 @@ namespace Challenges
         private readonly bool[] _present = new bool[MaxSlots];
         private readonly int[] _humans = new int[TeamCount];
 
-        public bool IsBuilt { get; private set; }
+        private bool _built;
 
         /// <summary>Re-reads every connected player. One scan; used at round start.</summary>
         public void Rebuild()
@@ -32,20 +32,20 @@ namespace Challenges
                 }
             }
 
-            IsBuilt = true;
+            _built = true;
         }
 
         /// <summary>Forgets everything; the next read rebuilds.</summary>
         public void Invalidate()
         {
             Reset();
-            IsBuilt = false;
+            _built = false;
         }
 
         /// <summary><paramref name="team"/> is the new team from the event (the controller may lag).</summary>
         public void OnTeam(CCSPlayerController? player, int team, bool disconnect)
         {
-            if (!IsBuilt || player is not { IsValid: true })
+            if (!_built || player is not { IsValid: true })
             {
                 return;
             }
@@ -98,7 +98,7 @@ namespace Challenges
 
         private void EnsureBuilt()
         {
-            if (!IsBuilt)
+            if (!_built)
             {
                 Rebuild();
             }

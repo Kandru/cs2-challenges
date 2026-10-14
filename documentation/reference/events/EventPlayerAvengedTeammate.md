@@ -32,3 +32,23 @@ Unknown keys never match — see [Rules](../rules.md).
 | [global event data](../../rules/GlobalEventData.md) | see page |
 | [player data](../../rules/GlobalPlayerData.md) | prefixes `avenged_player_id`, `victim`, `avenger_id`, `avenger` |
 | `isselfavenged` | bool |
+| `avenged_player_id.grenade` | string |
+| `avenged_player_id.grenade.holding` | string |
+| `avenged_player_id.grenade.thrown` | string |
+| `avenged_player_id.grenade.throwing` | string |
+| `avenged_player_id.insmoke` | bool |
+| `victim.grenade` | string |
+| `victim.grenade.holding` | string |
+| `victim.grenade.thrown` | string |
+| `victim.grenade.throwing` | string |
+| `victim.insmoke` | bool |
+| `avenger_id.grenade` | string |
+| `avenger_id.grenade.holding` | string |
+| `avenger_id.grenade.thrown` | string |
+| `avenger_id.grenade.throwing` | string |
+| `avenger_id.insmoke` | bool |
+| `avenger.grenade` | string |
+| `avenger.grenade.holding` | string |
+| `avenger.grenade.thrown` | string |
+| `avenger.grenade.throwing` | string |
+| `avenger.insmoke` | bool |

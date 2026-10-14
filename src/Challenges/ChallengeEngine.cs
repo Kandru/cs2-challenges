@@ -3,6 +3,7 @@ using System.Numerics;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Events;
+using Challenges.Attributes;
 using Challenges.Extractors;
 using Challenges.Utils;
 using Microsoft.Extensions.Localization;
@@ -21,11 +22,13 @@ namespace Challenges
         private readonly List<(CCSPlayerController? Player, string Type)> _targetBuffer = [];
         /// <summary>Same for generated listener handlers, so a listener can never clobber an event's list.</summary>
         private readonly List<(CCSPlayerController? Player, string Type)> _listenerTargets = [];
+        /// <summary>Controllers of the event in <see cref="HandleExtractors"/>, one native read each. Game thread only.</summary>
+        private readonly EventPlayers _eventPlayers = new(Registry.All);
         /// <summary>Resolved identity per player slot, keyed by user id. Game thread only.</summary>
         private readonly SlotIdentity?[] _slots = new SlotIdentity?[MaxSlots];
         private readonly HashSet<PlayerState> _pruned = [];
         private readonly List<string> _pruneScratch = [];
-        private readonly SituationMemory _situations = new();
+        private readonly AttributeRegistry _attributes;
         private Dictionary<string, TypePlan> _types = new(StringComparer.Ordinal);
         private Dictionary<string, ExtractorPlan[]> _activeExtractorsByEvent = new(StringComparer.Ordinal);
         private Dictionary<string, ExtractorPlan> _activeListeners = new(StringComparer.Ordinal);
@@ -43,11 +46,12 @@ namespace Challenges
         public ChallengeEngine(State state, IStringLocalizer localizer, bool isHotReloaded)
             : base(state, localizer)
         {
+            _attributes = new AttributeRegistry(TargetOne, EnqueueOne);
             RebuildEvents();
         }
 
-        /// <summary>Used by the generated button listener when grenade situation rules are loaded.</summary>
-        internal SituationMemory Situations => _situations;
+        /// <summary>Attribute providers; the generated button listener forwards to them first.</summary>
+        internal AttributeRegistry Providers => _attributes;
 
         public override List<string> Events => _boundEvents;
         public override List<string> Listeners => _boundListeners;
@@ -72,6 +76,12 @@ namespace Challenges
                 {
                     foreach (ChallengeTask task in challenge.Tasks)
                     {
+                        // Tasks built without Challenges.NormalizeDefinition; RulesPass fails closed on these.
+                        if (task.CompiledRules.Length != task.Rules.Count)
+                        {
+                            task.CompiledRules = ChallengeRules.Compile(task);
+                        }
+
                         GlobalGate gate = TaskGate(task);
                         if (!byType.TryGetValue(task.Type, out TypePlan? plan))
                         {
@@ -84,7 +94,7 @@ namespace Challenges
 
                         plan.Tasks.Add((challenge, task));
                         allTasks.Add(task);
-                        foreach (ChallengeRule rule in task.Rules)
+                        foreach (CompiledRule rule in task.CompiledRules)
                         {
                             globalKeys |= GlobalKey(rule.Key);
                         }
@@ -113,7 +123,7 @@ namespace Challenges
                 ? gateUnion | GlobalGate.WarmupBits
                 : gateUnion;
             _globalKeys = globalKeys;
-            _situations.Configure(allTasks);
+            _attributes.Configure(allTasks);
 
             HashSet<string> bound = new(StringComparer.Ordinal);
             List<string> events = [];
@@ -127,7 +137,8 @@ namespace Challenges
                 bool used = types.Length > 0;
                 if (used && extractor.Kind == ExtractorKind.Listener)
                 {
-                    activeListeners[extractor.EventClassName] = new ExtractorPlan(extractor, types, globalKeyCount);
+                    activeListeners[extractor.EventClassName] =
+                        new ExtractorPlan(extractor, types, _attributes, globalKeyCount);
                 }
                 else if (used)
                 {
@@ -136,11 +147,10 @@ namespace Challenges
                         active[extractor.EventClassName] = list = [];
                     }
 
-                    int extraKeys = globalKeyCount + _situations.EnrichKeyCount(extractor.EventClassName);
-                    list.Add(new ExtractorPlan(extractor, types, extraKeys));
+                    list.Add(new ExtractorPlan(extractor, types, _attributes, globalKeyCount));
                 }
 
-                if ((!used && !_situations.Watches(extractor.EventClassName))
+                if ((!used && !_attributes.Watches(extractor.EventClassName))
                     || !bound.Add(extractor.EventClassName))
                 {
                     continue;
@@ -168,7 +178,7 @@ namespace Challenges
             _boundListeners = listeners;
         }
 
-        /// <summary>Drops per-player engine and situation state when the player leaves.</summary>
+        /// <summary>Drops per-player engine and attribute state when the player leaves.</summary>
         public void ForgetPlayer(CCSPlayerController player, PlayerState state)
         {
             _pruned.Remove(state);
@@ -183,14 +193,14 @@ namespace Challenges
                 _slots[slot] = null;
             }
 
-            _situations.ForgetPlayer(player);
+            _attributes.ForgetSlot(slot);
         }
 
-        /// <summary>Clears round-scoped caches (hostages, situation memory).</summary>
+        /// <summary>Clears round-scoped caches (hostages, attribute providers).</summary>
         public void InvalidateRoundCache()
         {
             _hasHostages = null;
-            _situations.Clear();
+            _attributes.Clear();
         }
 
         public override void Destroy()
@@ -208,7 +218,7 @@ namespace Challenges
             _pruned.Clear();
             Array.Clear(_slots);
             _gameRulesProxy = null;
-            _situations.Clear();
+            _attributes.Clear();
         }
 
         /// <summary>
@@ -274,7 +284,7 @@ namespace Challenges
         /// <summary>Last step of a generated listener handler.</summary>
         private void HandleListener(
             string listenerName,
-            Dictionary<string, string> data,
+            Dictionary<string, EventValue> data,
             List<ProgressTarget> targets,
             GlobalGate closed)
         {
@@ -296,30 +306,47 @@ namespace Challenges
             }
 
             bool hasTasks = _types.Count > 0;
-            if (!hasTasks && !_situations.AnyEnabled)
+            if (!hasTasks && !_attributes.AnyActive)
             {
                 return HookResult.Continue;
             }
 
-            if (_situations.Watches(eventName))
+            AttributeWatch? watch = _attributes.WatchOf(eventName);
+            if (watch != null)
             {
                 try
                 {
-                    _situations.Observe(eventName, gameEvent, EnqueueOne);
+                    _attributes.Observe(watch, eventName, gameEvent);
                 }
                 catch (Exception ex)
                 {
-                    Log($"situation {eventName} failed: {ex.Message}");
+                    Log($"attributes {eventName} failed: {ex.Message}");
                 }
             }
 
-            if (!hasTasks
-                || !_activeExtractorsByEvent.TryGetValue(eventName, out ExtractorPlan[]? extractors))
+            if (hasTasks && _activeExtractorsByEvent.TryGetValue(eventName, out ExtractorPlan[]? extractors))
             {
-                return HookResult.Continue;
+                HandleExtractors(eventName, gameEvent, extractors);
             }
 
-            bool enrich = _situations.AnyEnabled;
+            if (watch != null)
+            {
+                try
+                {
+                    _attributes.AfterEvent(watch, eventName, gameEvent);
+                }
+                catch (Exception ex)
+                {
+                    Log($"attributes {eventName} failed: {ex.Message}");
+                }
+            }
+
+            return HookResult.Continue;
+        }
+
+        /// <summary>Per active extractor: gates, targets, fill, provider values, enqueue.</summary>
+        private void HandleExtractors(string eventName, GameEvent gameEvent, ExtractorPlan[] extractors)
+        {
             GlobalGate closed = ReadClosedGates();
             foreach (ExtractorPlan plan in extractors)
             {
@@ -333,11 +360,12 @@ namespace Challenges
                     continue;
                 }
 
-                IExtractor extractor = plan.Extractor;
+                // Only game event plans are listed by event.
+                IGameEventExtractor extractor = plan.GameEvent!;
                 try
                 {
                     _targetBuffer.Clear();
-                    extractor.Targets(gameEvent, _targetBuffer, plan.Demand);
+                    extractor.Targets(gameEvent, _targetBuffer, plan.Demand, _eventPlayers);
                     List<ProgressTarget>? targets = FilterTargets(_targetBuffer, closed);
                     if (targets == null)
                     {
@@ -349,22 +377,20 @@ namespace Challenges
                         continue;
                     }
 
-                    Dictionary<string, string> data = new(plan.Demand.Capacity);
-                    extractor.Fill(gameEvent, data, plan.Demand);
-                    if (enrich)
-                    {
-                        _situations.Enrich(eventName, gameEvent, data);
-                    }
-
+                    Dictionary<string, EventValue> data = new(plan.Demand.Capacity);
+                    extractor.Fill(gameEvent, data, plan.Demand, _eventPlayers);
+                    plan.Attributes?.Write(eventName, gameEvent, extractor, _eventPlayers, data);
                     Enqueue(eventName, data, targets, closed);
                 }
                 catch (Exception ex)
                 {
                     Log($"{eventName} failed: {ex.Message}");
                 }
+                finally
+                {
+                    _eventPlayers.Clear();
+                }
             }
-
-            return HookResult.Continue;
         }
 
         private bool CanHandle() =>
@@ -451,7 +477,7 @@ namespace Challenges
         /// <summary><paramref name="closed"/> is the event's <see cref="ReadClosedGates"/> result.</summary>
         private void Enqueue(
             string source,
-            Dictionary<string, string> data,
+            Dictionary<string, EventValue> data,
             List<ProgressTarget> targets,
             GlobalGate closed)
         {
@@ -474,17 +500,20 @@ namespace Challenges
             });
         }
 
-        /// <summary>Enqueue progress for a single player (e.g. synthetic <c>player_trade</c>).</summary>
-        private void EnqueueOne(CCSPlayerController player, string type, Dictionary<string, string> data)
+        /// <summary>
+        /// Synthetic progress for one player (e.g. <c>player_trade</c>), step one: the valid targets, or null when the
+        /// player cannot progress <paramref name="type"/>. The caller builds data only on success.
+        /// </summary>
+        private List<ProgressTarget>? TargetOne(CCSPlayerController player, string type)
         {
             _targetBuffer.Clear();
             _targetBuffer.Add((player, type));
-            GlobalGate closed = ReadClosedGates();
-            if (FilterTargets(_targetBuffer, closed) is { } targets)
-            {
-                Enqueue(type, data, targets, closed);
-            }
+            return FilterTargets(_targetBuffer, ReadClosedGates());
         }
+
+        /// <summary>Step two of synthetic progress: enqueues <paramref name="data"/> for the targets of <see cref="TargetOne"/>.</summary>
+        private void EnqueueOne(string type, Dictionary<string, EventValue> data, List<ProgressTarget> targets) =>
+            Enqueue(type, data, targets, ReadClosedGates());
 
         private static TypePlan[] ActiveTypes(IExtractor extractor, Dictionary<string, TypePlan> types)
         {
@@ -504,7 +533,7 @@ namespace Challenges
         /// Writes the <c>global.*</c> keys loaded rules read. The warmup value comes from
         /// <paramref name="closed"/>, which <see cref="ReadClosedGates"/> fills whenever that key is read.
         /// </summary>
-        private void MergeGlobalData(Dictionary<string, string> data, GlobalGate closed)
+        private void MergeGlobalData(Dictionary<string, EventValue> data, GlobalGate closed)
         {
             GlobalKeyFlags keys = _globalKeys;
             if (keys == GlobalKeyFlags.None)
@@ -514,23 +543,23 @@ namespace Challenges
 
             if ((keys & GlobalKeyFlags.IsWarmup) != 0)
             {
-                data["global.iswarmup"] = EventData.Bool((closed & GlobalGate.NoWarmup) != 0);
+                data[GlobalKeys.IsWarmup] = EventValue.Of((closed & GlobalGate.NoWarmup) != 0);
             }
 
             if ((keys & GlobalKeyFlags.IsDuringRound) != 0)
             {
-                data["global.isduringround"] = EventData.Bool(State.DuringRound);
+                data[GlobalKeys.IsDuringRound] = EventValue.Of(State.DuringRound);
             }
 
             if ((keys & GlobalKeyFlags.MapName) != 0)
             {
-                data["global.mapname"] = _mapName ??= Server.MapName;
+                data[GlobalKeys.MapName] = EventValue.Of(_mapName ??= Server.MapName);
             }
 
             if ((keys & GlobalKeyFlags.HasHostages) != 0)
             {
                 _hasHostages ??= Utilities.FindAllEntitiesByDesignerName<CBaseEntity>("hostage_entity").Any();
-                data["global.hashostages"] = EventData.Bool(_hasHostages.Value);
+                data[GlobalKeys.HasHostages] = EventValue.Of(_hasHostages.Value);
             }
         }
 

@@ -31,6 +31,11 @@ Unknown keys never match — see [Rules](../rules.md).
 |-----|------|
 | [global event data](../../rules/GlobalEventData.md) | see page |
 | [player data](../../rules/GlobalPlayerData.md) | prefixes `player` |
+| `player.grenade` | string |
+| `player.grenade.holding` | string |
+| `player.grenade.thrown` | string |
+| `player.grenade.throwing` | string |
+| `player.insmoke` | bool |
 | `message` | string |
 | `text` | string |
 | `teamchat` | bool |

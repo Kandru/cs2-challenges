@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Challenges.Utils;
 using YamlDotNet.Serialization;
 
 namespace Challenges
@@ -48,6 +49,14 @@ namespace Challenges
         [YamlMember(Alias = "rules")] public List<ChallengeRule> Rules { get; set; } = [];
         [YamlMember(Alias = "actions")] public List<ChallengeAction> Actions { get; set; } = [];
         [YamlMember(Alias = "requires")] public List<string> Requires { get; set; } = [];
+
+        /// <summary>
+        /// <see cref="Rules"/> prepared at load by <see cref="ChallengeRules.Compile"/>, same order. The per-event
+        /// rule check reads only these and fails closed when their count differs from <see cref="Rules"/>.
+        /// </summary>
+        [JsonIgnore]
+        [YamlIgnore]
+        internal CompiledRule[] CompiledRules { get; set; } = [];
     }
 
     public sealed class ChallengeRule

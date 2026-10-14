@@ -34,3 +34,13 @@ Unknown keys never match — see [Rules](../rules.md).
 | `bonus` | bool |
 | `dominated` | int |
 | `revenge` | int |
+| `attackerid.grenade` | string |
+| `attackerid.grenade.holding` | string |
+| `attackerid.grenade.thrown` | string |
+| `attackerid.grenade.throwing` | string |
+| `attackerid.insmoke` | bool |
+| `victimid.grenade` | string |
+| `victimid.grenade.holding` | string |
+| `victimid.grenade.thrown` | string |
+| `victimid.grenade.throwing` | string |
+| `victimid.insmoke` | bool |
