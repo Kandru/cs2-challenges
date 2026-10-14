@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text;
 using System.Text.Json;
+using System.Threading.Channels;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Translations;
 using CounterStrikeSharp.API.Modules.Cvars;
@@ -19,13 +20,35 @@ namespace Challenges
         private const int EmbedAuthorLimit = 256;
         private const int EmbedFooterLimit = 2048;
 
+        /// <summary>Pending webhook posts; when full the oldest is dropped.</summary>
+        private const int WebhookQueueCapacity = 100;
+        /// <summary>Total tries per post when Discord answers 429.</summary>
+        private const int WebhookMaxAttempts = 3;
+
         private static readonly HttpClient Http = new() { Timeout = TimeSpan.FromSeconds(15) };
         private static readonly string[] NoMentionParse = [];
+        private static readonly TimeSpan WebhookDefaultRetry = TimeSpan.FromSeconds(1);
+        private static readonly TimeSpan WebhookMaxRetry = TimeSpan.FromSeconds(60);
         private static readonly TaskListMode[] TestTaskListModes =
         [
             TaskListMode.Full,
             TaskListMode.Short,
         ];
+
+        private readonly List<(ChallengeDefinition Challenge, ChallengeTask Task)> _pendingCompletions = [];
+        private readonly Dictionary<string, string> _completionByLanguage = new(StringComparer.Ordinal);
+        private readonly HashSet<string> _mergedTitles = new(StringComparer.Ordinal);
+
+        /// <summary>
+        /// Single-reader queue with one sender task, created on the first post. Process-wide like <see cref="Http"/>:
+        /// it outlives map changes and is closed by <see cref="ShutdownWebhooks"/> on plugin unload. Game thread only.
+        /// </summary>
+        private static Channel<WebhookPost>? _webhooks;
+        private static CancellationTokenSource? _webhookStop;
+        /// <summary>1 after the overflow was logged; reset once the queue drains.</summary>
+        private static int _webhookDropLogged;
+
+        private readonly record struct WebhookPost(string Url, Dictionary<string, object?> Embed);
 
         public Notifications(State state, IStringLocalizer localizer, bool isHotReloaded)
             : base(state, localizer)
@@ -53,6 +76,10 @@ namespace Challenges
             player.PrintToChat(message);
         }
 
+        /// <summary>
+        /// Tells the player at once; completions for the other players are collected until
+        /// <see cref="FlushCompletions"/> sends them as one message per patch.
+        /// </summary>
         public void NotifyCompletion(CCSPlayerController player, ChallengeDefinition challenge, ChallengeTask task)
         {
             if (!player.IsValid || !task.AnnounceCompletion)
@@ -60,27 +87,109 @@ namespace Challenges
                 return;
             }
 
-            foreach (CCSPlayerController entry in Players.GetHumans())
+            if (GlobalConfig.Notifications.NotifyOtherOnChallengeComplete)
             {
-                bool self = Players.Same(entry, player);
-                if ((self && !GlobalConfig.Notifications.NotifyPlayerOnChallengeComplete)
-                    || (!self && !GlobalConfig.Notifications.NotifyOtherOnChallengeComplete))
+                _pendingCompletions.Add((challenge, task));
+            }
+
+            if (!GlobalConfig.Notifications.NotifyPlayerOnChallengeComplete || !Players.IsHumanViewer(player))
+            {
+                return;
+            }
+
+            PlayClientSound(player, GlobalConfig.Notifications.ChallengeCompleteSound);
+            player.PrintToChat(CompletionMessage(player, "challenges.completed.user", player.PlayerName, challenge, task));
+        }
+
+        /// <summary>
+        /// Sends the completions collected for <paramref name="player"/> to every other human as one message,
+        /// formatted once per recipient language.
+        /// </summary>
+        public void FlushCompletions(CCSPlayerController player)
+        {
+            if (_pendingCompletions.Count == 0)
+            {
+                return;
+            }
+
+            try
+            {
+                if (!player.IsValid || !GlobalConfig.Notifications.NotifyOtherOnChallengeComplete)
+                {
+                    return;
+                }
+
+                string playerName = player.PlayerName;
+                _completionByLanguage.Clear();
+                foreach (CCSPlayerController entry in Players.GetHumans())
+                {
+                    if (Players.Same(entry, player))
+                    {
+                        continue;
+                    }
+
+                    string language = entry.GetLanguage().Name;
+                    if (!_completionByLanguage.TryGetValue(language, out string? message))
+                    {
+                        message = MergedCompletionMessage(entry, playerName);
+                        _completionByLanguage[language] = message;
+                    }
+
+                    entry.PrintToChat(message);
+                }
+            }
+            finally
+            {
+                _pendingCompletions.Clear();
+                _completionByLanguage.Clear();
+            }
+        }
+
+        private string CompletionMessage(
+            CCSPlayerController viewer,
+            string key,
+            string playerName,
+            ChallengeDefinition challenge,
+            ChallengeTask task) =>
+            ChatMessage(viewer, key)
+                .Replace("{challenge}", TaskTitle(viewer, challenge, task, task.Amount))
+                .Replace("{player}", playerName)
+                .Replace("{total}", task.Amount.ToString())
+                .Replace("{count}", task.Amount.ToString());
+
+        /// <summary>One completion reads as before; several list their distinct titles, count/total from the first.</summary>
+        private string MergedCompletionMessage(CCSPlayerController viewer, string playerName)
+        {
+            (ChallengeDefinition firstChallenge, ChallengeTask firstTask) = _pendingCompletions[0];
+            if (_pendingCompletions.Count == 1)
+            {
+                return CompletionMessage(viewer, "challenges.completed.other", playerName, firstChallenge, firstTask);
+            }
+
+            StringBuilder titles = new();
+            _mergedTitles.Clear();
+            foreach ((ChallengeDefinition challenge, ChallengeTask task) in _pendingCompletions)
+            {
+                string title = TaskTitle(viewer, challenge, task, task.Amount);
+                if (!_mergedTitles.Add(title))
                 {
                     continue;
                 }
 
-                if (self)
+                if (titles.Length > 0)
                 {
-                    PlayClientSound(player, GlobalConfig.Notifications.ChallengeCompleteSound);
+                    titles.Append(", ");
                 }
 
-                string key = self ? "challenges.completed.user" : "challenges.completed.other";
-                entry.PrintToChat(ChatMessage(entry, key)
-                    .Replace("{challenge}", TaskTitle(entry, challenge, task, task.Amount))
-                    .Replace("{player}", player.PlayerName)
-                    .Replace("{total}", task.Amount.ToString())
-                    .Replace("{count}", task.Amount.ToString()));
+                titles.Append(title);
             }
+
+            _mergedTitles.Clear();
+            return ChatMessage(viewer, "challenges.completed.other")
+                .Replace("{challenge}", titles.ToString())
+                .Replace("{player}", playerName)
+                .Replace("{total}", firstTask.Amount.ToString())
+                .Replace("{count}", firstTask.Amount.ToString());
         }
 
         public void NotifyRuleBroken(CCSPlayerController player, ChallengeDefinition challenge, ChallengeTask task)
@@ -133,7 +242,7 @@ namespace Challenges
                 if (challengeSolvedNow
                     && (discord.OnChallengeCompleted || (singleTask && discord.OnTaskCompleted)))
                 {
-                    _ = SendWebhook(url, BuildChallengeEmbed(player.PlayerName, challenge));
+                    QueueWebhook(url, BuildChallengeEmbed(player.PlayerName, challenge));
                     return;
                 }
 
@@ -144,7 +253,7 @@ namespace Challenges
                     return;
                 }
 
-                _ = SendWebhook(url, BuildTaskEmbed(player.PlayerName, state, schedule, challenge, task));
+                QueueWebhook(url, BuildTaskEmbed(player.PlayerName, state, schedule, challenge, task));
             }
             catch (Exception ex)
             {
@@ -163,7 +272,7 @@ namespace Challenges
 
             try
             {
-                _ = SendWebhook(url, BuildScheduleEmbed(schedule));
+                QueueWebhook(url, BuildScheduleEmbed(schedule));
             }
             catch (Exception ex)
             {
@@ -207,12 +316,12 @@ namespace Challenges
 
             try
             {
-                _ = SendWebhook(url, BuildScheduleEmbed(schedule));
+                QueueWebhook(url, BuildScheduleEmbed(schedule));
                 // Prefer a multi-task challenge so the completed-task list is visible.
-                _ = SendWebhook(url, BuildChallengeEmbed(playerName, multiChallenge));
+                QueueWebhook(url, BuildChallengeEmbed(playerName, multiChallenge));
                 foreach (TaskListMode mode in TestTaskListModes)
                 {
-                    _ = SendWebhook(url, BuildTaskEmbed(playerName, demo, schedule, multiChallenge, completedTask, mode));
+                    QueueWebhook(url, BuildTaskEmbed(playerName, demo, schedule, multiChallenge, completedTask, mode));
                 }
             }
             catch (Exception ex)
@@ -686,27 +795,180 @@ namespace Challenges
             player.ExecuteClientCommand($"play {sound}");
         }
 
-        private async Task SendWebhook(string webhookUrl, Dictionary<string, object?> embed)
+        /// <summary>The webhook queue keeps running across map changes; see <see cref="ShutdownWebhooks"/>.</summary>
+        public override void Destroy()
+        {
+            _pendingCompletions.Clear();
+        }
+
+        /// <summary>
+        /// Plugin unload: closes the queue and cancels the sender without waiting for it; pending posts are dropped.
+        /// </summary>
+        public static void ShutdownWebhooks()
+        {
+            Channel<WebhookPost>? queue = _webhooks;
+            CancellationTokenSource? stop = _webhookStop;
+            _webhooks = null;
+            _webhookStop = null;
+            if (queue == null || stop == null)
+            {
+                return;
+            }
+
+            queue.Writer.TryComplete();
+            stop.Cancel();
+            if (queue.Reader.Count is int pending and > 0)
+            {
+                Console.WriteLine($"[Challenges] Discord webhook queue closed; dropping {pending} pending post(s)");
+            }
+        }
+
+        /// <summary>Game thread: embeds are built here, serialisation and HTTP run on the single sender.</summary>
+        private static void QueueWebhook(string webhookUrl, Dictionary<string, object?> embed)
+        {
+            if (_webhooks == null)
+            {
+                Channel<WebhookPost> queue = Channel.CreateBounded<WebhookPost>(
+                    new BoundedChannelOptions(WebhookQueueCapacity)
+                    {
+                        FullMode = BoundedChannelFullMode.DropOldest,
+                        SingleReader = true,
+                        SingleWriter = true,
+                    },
+                    OnWebhookDropped);
+                CancellationTokenSource stop = new();
+                _webhooks = queue;
+                _webhookStop = stop;
+                _ = Task.Run(() => SendWebhooksAsync(queue.Reader, stop.Token));
+            }
+
+            _webhooks.Writer.TryWrite(new WebhookPost(webhookUrl, embed));
+        }
+
+        private static void OnWebhookDropped(WebhookPost _)
+        {
+            if (Interlocked.Exchange(ref _webhookDropLogged, 1) == 0)
+            {
+                Console.WriteLine(
+                    $"[Challenges] Discord webhook queue full ({WebhookQueueCapacity}); dropping the oldest posts");
+            }
+        }
+
+        private static async Task SendWebhooksAsync(ChannelReader<WebhookPost> reader, CancellationToken token)
         {
             try
             {
-                string json = JsonSerializer.Serialize(new Dictionary<string, object>
+                while (await reader.WaitToReadAsync(token).ConfigureAwait(false))
                 {
-                    ["embeds"] = new[] { embed },
+                    while (reader.TryRead(out WebhookPost post))
+                    {
+                        await SendWebhookAsync(post, token).ConfigureAwait(false);
+                    }
+
+                    Volatile.Write(ref _webhookDropLogged, 0);
+                }
+            }
+            catch (OperationCanceledException) when (token.IsCancellationRequested)
+            {
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[Challenges] Discord webhook sender stopped: {ex.Message}");
+            }
+        }
+
+        /// <summary>Posts one embed; on 429 waits for <c>Retry-After</c> and retries, up to <see cref="WebhookMaxAttempts"/> tries.</summary>
+        private static async Task SendWebhookAsync(WebhookPost post, CancellationToken token)
+        {
+            string json;
+            try
+            {
+                json = JsonSerializer.Serialize(new Dictionary<string, object>
+                {
+                    ["embeds"] = new[] { post.Embed },
                     ["allowed_mentions"] = new Dictionary<string, object> { ["parse"] = NoMentionParse },
                 });
-                using StringContent content = new(json, Encoding.UTF8, "application/json");
-                using HttpResponseMessage response = await Http.PostAsync(webhookUrl, content).ConfigureAwait(false);
-                if (!response.IsSuccessStatusCode)
-                {
-                    Console.WriteLine(
-                        $"[Challenges] Discord webhook failed: {(int)response.StatusCode} {response.ReasonPhrase}");
-                }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"[Challenges] Discord webhook failed: {ex.Message}");
+                return;
+            }
+
+            for (int attempt = 1; ; attempt++)
+            {
+                TimeSpan wait;
+                try
+                {
+                    using StringContent content = new(json, Encoding.UTF8, "application/json");
+                    using HttpResponseMessage response = await Http.PostAsync(post.Url, content, token).ConfigureAwait(false);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        // Bucket exhausted: wait for its reset before the next post instead of running into a 429.
+                        if (HeaderValue(response, "X-RateLimit-Remaining") == "0"
+                            && ParseSeconds(HeaderValue(response, "X-RateLimit-Reset-After")) is { } reset)
+                        {
+                            await Task.Delay(reset, token).ConfigureAwait(false);
+                        }
+
+                        return;
+                    }
+
+                    if ((int)response.StatusCode != 429 || attempt >= WebhookMaxAttempts)
+                    {
+                        Console.WriteLine(
+                            $"[Challenges] Discord webhook failed: {(int)response.StatusCode} {response.ReasonPhrase}");
+                        return;
+                    }
+
+                    wait = await RetryAfterAsync(response, token).ConfigureAwait(false);
+                }
+                catch (OperationCanceledException) when (token.IsCancellationRequested)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[Challenges] Discord webhook failed: {ex.Message}");
+                    return;
+                }
+
+                await Task.Delay(wait, token).ConfigureAwait(false);
             }
         }
+
+        /// <summary>JSON <c>retry_after</c>, else the <c>Retry-After</c> header (seconds), else one second; capped at a minute.</summary>
+        private static async Task<TimeSpan> RetryAfterAsync(HttpResponseMessage response, CancellationToken token)
+        {
+            TimeSpan? wait = null;
+            try
+            {
+                string body = await response.Content.ReadAsStringAsync(token).ConfigureAwait(false);
+                using JsonDocument doc = JsonDocument.Parse(body);
+                if (doc.RootElement.ValueKind == JsonValueKind.Object
+                    && doc.RootElement.TryGetProperty("retry_after", out JsonElement retry)
+                    && retry.ValueKind == JsonValueKind.Number)
+                {
+                    wait = Seconds(retry.GetDouble());
+                }
+            }
+            catch (Exception ex) when (ex is JsonException or HttpRequestException)
+            {
+            }
+
+            return wait ?? ParseSeconds(HeaderValue(response, "Retry-After")) ?? WebhookDefaultRetry;
+        }
+
+        private static string? HeaderValue(HttpResponseMessage response, string name) =>
+            response.Headers.TryGetValues(name, out IEnumerable<string>? values) ? values.FirstOrDefault() : null;
+
+        private static TimeSpan? ParseSeconds(string? value) =>
+            double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out double seconds)
+                ? Seconds(seconds)
+                : null;
+
+        /// <summary>Non-negative seconds capped at <see cref="WebhookMaxRetry"/>; null otherwise.</summary>
+        private static TimeSpan? Seconds(double seconds) =>
+            seconds >= 0 ? TimeSpan.FromSeconds(Math.Min(seconds, WebhookMaxRetry.TotalSeconds)) : null;
     }
 }

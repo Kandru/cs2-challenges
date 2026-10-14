@@ -57,6 +57,17 @@ namespace Challenges
                 state.Dirty = true;
             }
 
+            if (patch.Upserts != null || patch.Removals != null || patch.SolvedAbsolute != null)
+            {
+                state.TrackerContentDirty = true;
+            }
+
+            // Scoreboard columns count solved challenges; progress below a task goal cannot change them.
+            if (patch.SolvedAbsolute != null || patch.Removals != null || patch.CompletesTask)
+            {
+                Menu.InvalidateScoreboard();
+            }
+
             if (patch.DebugLines is { Count: > 0 })
             {
                 foreach (string line in patch.DebugLines)
@@ -67,15 +78,25 @@ namespace Challenges
 
             if (SteamIds.GetPlayerIfSteam(patch.Slot, patch.SteamId) is { } player)
             {
-                PlayEffects(player, state, patch);
+                try
+                {
+                    PlayEffects(player, state, patch);
+                }
+                finally
+                {
+                    // Other players get one message for all completions of this patch.
+                    Notes.FlushCompletions(player);
+                }
+
                 if (patch.Touched is { Count: > 0 } touched && GlobalConfig.Gui.ShowOnProgress)
                 {
                     Tracker.ShowProgress(player, touched);
                 }
 
+                // Repainted from the roster tick, at most 4 times per second.
                 if (HudMenu.IsOpen(player))
                 {
-                    Menu.Paint(player);
+                    state.MenuDirty = true;
                 }
             }
 

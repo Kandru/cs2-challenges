@@ -43,6 +43,10 @@ namespace Challenges
         [JsonIgnore] public readonly string?[] MenuScoreRowSteamIds = new string?[Menu.ScoreSlots];
         /// <summary>How many list slots the last paint filled (unused clears stop here).</summary>
         [JsonIgnore] public int MenuListPainted;
+        /// <summary>Applied progress changed what the open menu shows; repainted from the roster tick.</summary>
+        [JsonIgnore] public bool MenuDirty;
+        /// <summary><see cref="Environment.TickCount64"/> of the last menu paint.</summary>
+        [JsonIgnore] public long MenuPaintedAt;
         [JsonIgnore] public bool TrackerFreezeVisible;
         [JsonIgnore] public DateTime? TrackerFreezeUntil;
         [JsonIgnore] public float TrackerFreezeDuration;
@@ -53,6 +57,17 @@ namespace Challenges
         [JsonIgnore] public List<TrackerProgressItem> TrackerProgressItems = [];
         [JsonIgnore] public List<TrackerProgressItem> TrackerRuleBrokenQueue = [];
         [JsonIgnore] public string? TrackerFingerprint;
+        /// <summary>
+        /// Tracker rows, heading and hint must be rebuilt on the next paint (progress, language, mode or schedule changed).
+        /// Game thread only.
+        /// </summary>
+        [JsonIgnore] public bool TrackerContentDirty = true;
+        /// <summary>
+        /// Schedule key and <see cref="ProgressVersion"/> the tracker content was last built for.
+        /// A key, not the schedule, so the state never holds a past map's schedule.
+        /// </summary>
+        [JsonIgnore] public string? TrackerScheduleKey;
+        [JsonIgnore] public int TrackerProgressVersion;
 
         /// <summary>Clears tracker session fields without touching menu state.</summary>
         public void ClearTrackerUi()
@@ -66,7 +81,14 @@ namespace Challenges
             TrackerShowingUpNext = false;
             TrackerProgressItems.Clear();
             TrackerRuleBrokenQueue.Clear();
+            InvalidateTracker();
+        }
+
+        /// <summary>Forces the next tracker paint to rebuild its content.</summary>
+        public void InvalidateTracker()
+        {
             TrackerFingerprint = null;
+            TrackerContentDirty = true;
         }
 
         /// <summary>Clears menu/tracker session fields so a later connect does not inherit UI state.</summary>
@@ -80,6 +102,8 @@ namespace Challenges
             ScoreboardFilter = ScoreboardFilter.Online;
             MenuSubjectSteamId = null;
             MenuListPainted = 0;
+            MenuDirty = false;
+            MenuPaintedAt = 0;
             Array.Clear(MenuScoreRowSteamIds);
             ClearTrackerUi();
         }

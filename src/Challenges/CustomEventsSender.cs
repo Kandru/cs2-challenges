@@ -10,6 +10,9 @@ namespace Challenges
 
         public event EventHandler<IChallengesEvent>? Events;
 
+        /// <summary>True while another plugin subscribes to <see cref="Events"/>; callers skip building events otherwise.</summary>
+        public bool HasListeners => Events != null;
+
         public void TriggerEvent(IChallengesEvent @event)
         {
             try

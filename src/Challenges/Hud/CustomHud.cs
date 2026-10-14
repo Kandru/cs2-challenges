@@ -36,11 +36,42 @@ namespace Challenges
 
         private static readonly string[] CaptureRoots = [Menu.Panel];
         public const double FadeSeconds = 1.0;
-        private static readonly TimeSpan CloseTransmitGrace = TimeSpan.FromSeconds(FadeSeconds);
+        private const long CloseTransmitGraceMs = (long)(FadeSeconds * 1000);
+
+        /// <summary>Player slots covered by the per-slot transmit tables.</summary>
+        private const int MaxSlots = 65;
+
+        private const byte ViewerUnknown = 0;
+        private const byte ViewerHuman = 1;
+        private const byte ViewerOther = 2;
 
         private static readonly CCSCustomHudLayout?[] _layouts = new CCSCustomHudLayout?[2];
-        private static readonly Dictionary<int, HashSet<string>> _visibleBySlot = [];
-        private static readonly Dictionary<int, Dictionary<string, DateTime>> _closingRootsBySlot = [];
+
+        /// <summary>Per layout: the cached entity was matched against its resource while its handle stays valid.</summary>
+        private static readonly bool[] _layoutVerified = new bool[2];
+
+        /// <summary>Per layout: entity index of the verified layout, or -1.</summary>
+        private static readonly int[] _layoutEntityIndex = [-1, -1];
+
+        /// <summary>Per layout: <c>PlayerLayoutStates.Count</c> at validation, refreshed when a slot falls outside.</summary>
+        private static readonly int[] _layoutSlotCount = new int[2];
+
+        /// <summary>Per root layout and slot: the root panel is shown. The only visibility record; panels are shown by root id.</summary>
+        private static readonly bool[][] _rootVisible = SlotTable<bool>();
+
+        /// <summary>
+        /// Per root layout and slot: <see cref="Environment.TickCount64"/> at which the closing transmit grace ends; 0 = not closing.
+        /// </summary>
+        private static readonly long[][] _closingUntil = SlotTable<long>();
+
+        /// <summary>Earliest pending <see cref="_closingUntil"/>; <see cref="long.MaxValue"/> when nothing is closing.</summary>
+        private static long _nextClosingExpiry = long.MaxValue;
+
+        /// <summary>Per slot: cached human check for transmit viewers. Reset with every roster rebuild and on release.</summary>
+        private static readonly byte[] _viewerKind = new byte[MaxSlots];
+
+        /// <summary>Per root layout: entity index transmitted this frame, or -1 while the layout is not live.</summary>
+        private static readonly int[] _frameEntityIndex = new int[RootPanels.Length];
         private static readonly Dictionary<int, Dictionary<string, Dictionary<string, bool>>> _classBySlot = [];
         private static readonly Dictionary<int, Dictionary<string, Dictionary<string, string>>> _textBySlot = [];
         private static readonly Dictionary<int, Dictionary<string, int>> _stepBySlot = [];
@@ -50,10 +81,42 @@ namespace Challenges
         private static int _refreshGap = MinRefreshGapTicks;
         private static uint _tick;
 
-        public static bool IsPanelVisible(CCSPlayerController player, string panelId) =>
-            player is { IsValid: true }
-            && _visibleBySlot.TryGetValue(player.Slot, out HashSet<string>? set)
-            && set.Contains(panelId);
+        /// <summary>Slots in the last roster; a change invalidates the cached scoreboards.</summary>
+        private static ulong _rosterMask;
+
+        public static bool IsPanelVisible(CCSPlayerController player, string panelId)
+        {
+            if (player is not { IsValid: true })
+            {
+                return false;
+            }
+
+            return IsRootVisible(player.Slot, RootIndex(panelId));
+        }
+
+        private static T[][] SlotTable<T>()
+        {
+            T[][] table = new T[RootPanels.Length][];
+            for (int i = 0; i < table.Length; i++)
+            {
+                table[i] = new T[MaxSlots];
+            }
+
+            return table;
+        }
+
+        private static int RootIndex(string panelId)
+        {
+            for (int i = 0; i < RootPanels.Length; i++)
+            {
+                if (string.Equals(RootPanels[i], panelId, StringComparison.Ordinal))
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
 
         public static bool EnsureSpawned(CCSPlayerController player) =>
             Players.IsHumanViewer(player) && EnsureLayouts();
@@ -104,14 +167,9 @@ namespace Challenges
                 return;
             }
 
-            if (!_visibleBySlot.TryGetValue(player.Slot, out HashSet<string>? set))
-            {
-                _visibleBySlot[player.Slot] = set = [];
-            }
-
-            bool wasVisible = set.Contains(panelId);
-            set.Add(panelId);
-            ClearClosingRoot(player.Slot, TransmitRoot(panelId));
+            bool wasVisible = IsRootVisible(player.Slot, RootIndex(panelId));
+            SetRootVisible(player.Slot, panelId, true);
+            ClearClosingRoot(player.Slot, LayoutIndexForPanel(panelId));
             SetHasClass(player, panelId, "ph-off", false);
             if (wasVisible)
             {
@@ -137,7 +195,7 @@ namespace Challenges
             SetHasClass(player, panelId, "ph-fading", true);
             if (collapseAfter)
             {
-                MarkClosingRoot(player.Slot, TransmitRoot(panelId));
+                MarkClosingRoot(player.Slot, LayoutIndexForPanel(panelId));
             }
         }
 
@@ -161,7 +219,7 @@ namespace Challenges
 
             SetHasClass(player, panelId, "ph-off", true);
             SetHasClass(player, panelId, "ph-fading", false);
-            ForgetVisible(player.Slot, panelId);
+            SetRootVisible(player.Slot, panelId, false);
         }
 
         public static void HidePanel(CCSPlayerController player, string panelId)
@@ -172,7 +230,7 @@ namespace Challenges
             }
 
             BeginFadeOut(player, panelId, collapseAfter: true);
-            ForgetVisible(player.Slot, panelId);
+            SetRootVisible(player.Slot, panelId, false);
         }
 
         private static void ScheduleFadeIn(CCSPlayerController player, string panelId)
@@ -188,20 +246,6 @@ namespace Challenges
                     SetHasClass(live, id, "ph-fading", false);
                 }
             });
-        }
-
-        private static void ForgetVisible(int slot, string panelId)
-        {
-            if (!_visibleBySlot.TryGetValue(slot, out HashSet<string>? set))
-            {
-                return;
-            }
-
-            set.Remove(panelId);
-            if (set.Count == 0)
-            {
-                _visibleBySlot.Remove(slot);
-            }
         }
 
         public static void SetText(CCSPlayerController player, string panelId, string name, string value)
@@ -343,6 +387,7 @@ namespace Challenges
             _refreshPerTick = Math.Max(1, FullServerRefreshPerSecond / _ticksPerSecond);
             _tick = 0;
             _humanRoster.Clear();
+            Array.Clear(_viewerKind);
             _refreshGap = MinRefreshGapTicks;
         }
 
@@ -364,20 +409,40 @@ namespace Challenges
             int gap = _refreshGap;
             for (int i = (int)(tick % (uint)gap); i < count; i += gap)
             {
+                // The roster holds humans only; between rebuilds a controller can only stop being valid.
                 CCSPlayerController player = _humanRoster[i];
-                if (Players.IsHumanViewer(player))
+                if (player.IsValid)
                 {
                     Tracker.Refresh(player);
+                    Menu.PaintIfDirty(player);
                 }
             }
         }
 
         private static void RebuildHumanRoster()
         {
+            ulong mask = 0;
             _humanRoster.Clear();
+            Array.Clear(_viewerKind);
             foreach (CCSPlayerController player in Players.GetHumans())
             {
                 _humanRoster.Add(player);
+                int slot = player.Slot;
+                if ((uint)slot < MaxSlots)
+                {
+                    _viewerKind[slot] = ViewerHuman;
+                }
+
+                if ((uint)slot < 64)
+                {
+                    mask |= 1UL << slot;
+                }
+            }
+
+            if (mask != _rosterMask)
+            {
+                _rosterMask = mask;
+                Menu.InvalidateScoreboard();
             }
 
             int count = _humanRoster.Count;
@@ -386,27 +451,51 @@ namespace Challenges
                 : Math.Max(MinRefreshGapTicks, (count + _refreshPerTick - 1) / _refreshPerTick);
         }
 
+        /// <summary>
+        /// Per frame: one pass over the viewers, array reads only. Each root layout is sent to a human viewer
+        /// while its root panel is shown or closing; other viewers are left untouched.
+        /// </summary>
         public static void OnCheckTransmit(CCheckTransmitInfoList infoList)
         {
             ExpireClosingRoots();
 
-            for (int i = 0; i < _layouts.Length; i++)
+            bool anyLive = false;
+            for (int i = 0; i < _frameEntityIndex.Length; i++)
             {
-                if (_layouts[i] is not { IsValid: true } layout)
+                int index = _layouts[i] is { IsValid: true } ? _layoutEntityIndex[i] : -1;
+                _frameEntityIndex[i] = index;
+                anyLive |= index >= 0;
+            }
+
+            if (!anyLive)
+            {
+                return;
+            }
+
+            int count = infoList.Count;
+            for (int v = 0; v < count; v++)
+            {
+                (CCheckTransmitInfo info, CCSPlayerController? viewer) = infoList[v];
+                if (viewer is null)
                 {
                     continue;
                 }
 
-                int index = (int)layout.Index;
-                string root = RootPanels[i];
-                foreach ((CCheckTransmitInfo info, CCSPlayerController? viewer) in infoList)
+                int slot = viewer.Slot;
+                if ((uint)slot >= MaxSlots || !IsHumanSlot(viewer, slot))
                 {
-                    if (!Players.IsHumanViewer(viewer))
+                    continue;
+                }
+
+                for (int i = 0; i < _frameEntityIndex.Length; i++)
+                {
+                    int index = _frameEntityIndex[i];
+                    if (index < 0)
                     {
                         continue;
                     }
 
-                    if (ShouldTransmit(viewer.Slot, root))
+                    if (_rootVisible[i][slot] || _closingUntil[i][slot] != 0)
                     {
                         info.TransmitEntities.Add(index);
                     }
@@ -416,6 +505,24 @@ namespace Challenges
                     }
                 }
             }
+        }
+
+        /// <summary>Roster-backed human check; unknown slots resolve once with the native reads.</summary>
+        private static bool IsHumanSlot(CCSPlayerController viewer, int slot)
+        {
+            byte kind = _viewerKind[slot];
+            if (kind == ViewerUnknown)
+            {
+                if (!viewer.IsValid)
+                {
+                    return false;
+                }
+
+                kind = viewer is { IsBot: false, IsHLTV: false } ? ViewerHuman : ViewerOther;
+                _viewerKind[slot] = kind;
+            }
+
+            return kind == ViewerHuman;
         }
 
         public static void ResetRound()
@@ -440,6 +547,13 @@ namespace Challenges
 
             HudMenu.ReleasePlayer(player);
             RestorePlayerDefaults(player);
+            // The next player in this slot starts with unknown panel state.
+            ClearSlotCaches(player.Slot);
+            if ((uint)player.Slot < MaxSlots)
+            {
+                _viewerKind[player.Slot] = ViewerUnknown;
+            }
+
             foreach (string root in CaptureRoots)
             {
                 if (TryGetLayout(player, root, out CCSCustomHudLayout hud))
@@ -452,6 +566,7 @@ namespace Challenges
         public static void Shutdown()
         {
             HudMenu.Shutdown();
+            Menu.ResetCaches();
             ClearAllSlotState();
             for (int i = 0; i < _layouts.Length; i++)
             {
@@ -459,10 +574,14 @@ namespace Challenges
                 {
                     layout.AcceptInput("Kill");
                 }
-                _layouts[i] = null;
+                ForgetLayout(i);
             }
         }
 
+        /// <summary>
+        /// Hides both cards and writes their defaults through the write caches: only values that differ are sent,
+        /// and the caches keep the defaults so the next paint takes the diff path.
+        /// </summary>
         private static void RestorePlayerDefaults(CCSPlayerController player)
         {
             if (player is not { IsValid: true })
@@ -473,62 +592,73 @@ namespace Challenges
             int slot = player.Slot;
             bool dirty = _classBySlot.ContainsKey(slot)
                 || _textBySlot.ContainsKey(slot)
-                || _visibleBySlot.ContainsKey(slot);
+                || _stepBySlot.ContainsKey(slot)
+                || IsRootLive(slot);
             if (!dirty)
             {
                 return;
             }
 
-            _classBySlot.TryGetValue(slot, out Dictionary<string, Dictionary<string, bool>>? classes);
-            _textBySlot.TryGetValue(slot, out Dictionary<string, Dictionary<string, string>>? texts);
-            ClearSlotCaches(slot);
-
-            if (classes is not null)
+            for (int i = 0; i < RootPanels.Length; i++)
             {
-                foreach ((string panelId, Dictionary<string, bool> map) in classes)
-                {
-                    foreach ((string className, bool enabled) in map)
-                    {
-                        if (enabled)
-                        {
-                            SetHasClass(player, panelId, className, false);
-                        }
-                    }
-                }
-            }
-
-            if (texts is not null)
-            {
-                foreach ((string panelId, Dictionary<string, string> vars) in texts)
-                {
-                    foreach ((string name, string value) in vars)
-                    {
-                        if (value.Length > 0)
-                        {
-                            SetText(player, panelId, name, string.Empty);
-                        }
-                    }
-                }
-            }
-
-            foreach (string root in RootPanels)
-            {
+                string root = RootPanels[i];
                 SetHasClass(player, root, "ph-fading", false);
                 SetHasClass(player, root, "ph-off", true);
-                MarkClosingRoot(slot, root);
+                MarkClosingRoot(slot, i);
             }
 
+            // Together they cover every class and text the painters write.
             Tracker.WriteDefaults(player);
             Menu.WriteDefaults(player);
-            ClearSlotCaches(slot);
+            ClearVisibility(slot);
         }
 
+        private static bool IsRootLive(int slot)
+        {
+            if ((uint)slot >= MaxSlots)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < RootPanels.Length; i++)
+            {
+                if (_rootVisible[i][slot] || _closingUntil[i][slot] != 0)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Forgets the slot entirely, including its closing grace: no transmit and no expiry write
+        /// reaches the slot afterwards (a later player in it would receive them).
+        /// </summary>
         private static void ClearSlotCaches(int slot)
         {
-            _visibleBySlot.Remove(slot);
             _classBySlot.Remove(slot);
             _textBySlot.Remove(slot);
             _stepBySlot.Remove(slot);
+            ClearVisibility(slot);
+            if ((uint)slot < MaxSlots)
+            {
+                for (int i = 0; i < _closingUntil.Length; i++)
+                {
+                    _closingUntil[i][slot] = 0;
+                }
+            }
+        }
+
+        private static void ClearVisibility(int slot)
+        {
+            if ((uint)slot < MaxSlots)
+            {
+                for (int i = 0; i < _rootVisible.Length; i++)
+                {
+                    _rootVisible[i][slot] = false;
+                }
+            }
         }
 
         private static void ClearOrphanedSlots(HashSet<int> liveSlots)
@@ -541,67 +671,117 @@ namespace Challenges
                 }
             }
 
-            Purge(_visibleBySlot);
             Purge(_classBySlot);
             Purge(_textBySlot);
             Purge(_stepBySlot);
-            Purge(_closingRootsBySlot);
+            for (int slot = 0; slot < MaxSlots; slot++)
+            {
+                if (liveSlots.Contains(slot))
+                {
+                    continue;
+                }
+
+                for (int i = 0; i < _rootVisible.Length; i++)
+                {
+                    _rootVisible[i][slot] = false;
+                    _closingUntil[i][slot] = 0;
+                }
+            }
+        }
+
+        private static void ClearWriteCaches()
+        {
+            _classBySlot.Clear();
+            _textBySlot.Clear();
+            _stepBySlot.Clear();
         }
 
         private static void ClearAllSlotState()
         {
-            _visibleBySlot.Clear();
-            _closingRootsBySlot.Clear();
-            _classBySlot.Clear();
-            _textBySlot.Clear();
-            _stepBySlot.Clear();
+            ClearWriteCaches();
+            for (int i = 0; i < _rootVisible.Length; i++)
+            {
+                Array.Clear(_rootVisible[i]);
+                Array.Clear(_closingUntil[i]);
+            }
+
+            _nextClosingExpiry = long.MaxValue;
+            Array.Clear(_viewerKind);
             _humanRoster.Clear();
             _refreshGap = MinRefreshGapTicks;
             _tick = 0;
+            _rosterMask = 0;
         }
 
+        /// <summary>One comparison while nothing is due; otherwise an allocation-free sweep of the closing table.</summary>
         private static void ExpireClosingRoots()
         {
-            if (_closingRootsBySlot.Count == 0)
+            long now = Environment.TickCount64;
+            if (now < _nextClosingExpiry)
             {
                 return;
             }
 
-            DateTime now = DateTime.UtcNow;
-            foreach (int slot in _closingRootsBySlot.Keys.ToList())
+            // Writes below may mark new closings; they lower the bound again.
+            _nextClosingExpiry = long.MaxValue;
+            long next = long.MaxValue;
+            for (int i = 0; i < _closingUntil.Length; i++)
             {
-                Dictionary<string, DateTime> closing = _closingRootsBySlot[slot];
-                foreach (string root in closing.Where(kv => now >= kv.Value).Select(kv => kv.Key).ToList())
+                long[] closing = _closingUntil[i];
+                for (int slot = 0; slot < MaxSlots; slot++)
                 {
-                    closing.Remove(root);
+                    long until = closing[slot];
+                    if (until == 0)
+                    {
+                        continue;
+                    }
+
+                    if (now < until)
+                    {
+                        next = Math.Min(next, until);
+                        continue;
+                    }
+
+                    closing[slot] = 0;
                     if (Utilities.GetPlayerFromSlot(slot) is { IsValid: true } player)
                     {
-                        SetHasClass(player, root, "ph-off", true);
-                        SetHasClass(player, root, "ph-fading", false);
+                        SetHasClass(player, RootPanels[i], "ph-off", true);
+                        SetHasClass(player, RootPanels[i], "ph-fading", false);
                     }
                 }
-
-                if (closing.Count == 0)
-                {
-                    _closingRootsBySlot.Remove(slot);
-                }
             }
+
+            _nextClosingExpiry = Math.Min(_nextClosingExpiry, next);
         }
 
+        /// <summary>
+        /// Validated once per entity: <c>StrLayout</c> is only read again after the cached handle stops being valid.
+        /// </summary>
         private static bool EnsureOne(int index)
         {
+            if (_layouts[index] is { IsValid: true } existing)
+            {
+                if (_layoutVerified[index])
+                {
+                    return true;
+                }
+
+                if (LayoutPath(existing) == LayoutResources[index])
+                {
+                    Adopt(index, existing);
+                    return true;
+                }
+
+                existing.AcceptInput("Kill");
+            }
+            else if (_layoutVerified[index])
+            {
+                // The panel state written to the lost entity went with it; the caches no longer match any client.
+                ClearWriteCaches();
+            }
+
+            ForgetLayout(index);
             string resource = LayoutResources[index];
-            if (_layouts[index] is { IsValid: true } existing && LayoutPath(existing) == resource)
-            {
-                return true;
-            }
-
-            if (_layouts[index] is { IsValid: true } stale)
-            {
-                stale.AcceptInput("Kill");
-                _layouts[index] = null;
-            }
-
             foreach (CCSCustomHudLayout found in
                      Utilities.FindAllEntitiesByDesignerName<CCSCustomHudLayout>("custom_hud_layout"))
             {
@@ -613,12 +793,40 @@ namespace Challenges
                 string? path = LayoutPath(found);
                 if (path == resource)
                 {
-                    _layouts[index] = found;
+                    Adopt(index, found);
                     return true;
                 }
             }
 
             return Create(index);
+        }
+
+        private static void Adopt(int index, CCSCustomHudLayout layout)
+        {
+            _layouts[index] = layout;
+            _layoutVerified[index] = true;
+            _layoutEntityIndex[index] = (int)layout.Index;
+            _layoutSlotCount[index] = ReadSlotCount(layout);
+        }
+
+        private static void ForgetLayout(int index)
+        {
+            _layouts[index] = null;
+            _layoutVerified[index] = false;
+            _layoutEntityIndex[index] = -1;
+            _layoutSlotCount[index] = 0;
+        }
+
+        private static int ReadSlotCount(CCSCustomHudLayout layout)
+        {
+            try
+            {
+                return layout.PlayerLayoutStates.Count;
+            }
+            catch
+            {
+                return 0;
+            }
         }
 
         private static bool Create(int index)
@@ -647,7 +855,7 @@ namespace Challenges
                     return false;
                 }
 
-                _layouts[index] = hud;
+                Adopt(index, hud);
                 Console.WriteLine($"[Challenges][CustomHud] Spawned #{hud.Index} → {resource}");
                 return true;
             }
@@ -667,20 +875,26 @@ namespace Challenges
                 return false;
             }
 
-            if (!EnsureSpawned(player) || _layouts[index] is not { IsValid: true } layout)
+            if (!Players.IsHumanViewer(player) || !EnsureOne(index) || _layouts[index] is not { } layout)
             {
                 return false;
             }
 
             hud = layout;
-            try
-            {
-                return player.Slot >= 0 && player.Slot < hud.PlayerLayoutStates.Count;
-            }
-            catch
+            int slot = player.Slot;
+            if (slot < 0)
             {
                 return false;
             }
+
+            if (slot < _layoutSlotCount[index])
+            {
+                return true;
+            }
+
+            // Re-read only when the cached count does not cover the slot (e.g. sized after spawn).
+            _layoutSlotCount[index] = ReadSlotCount(layout);
+            return slot < _layoutSlotCount[index];
         }
 
         private static int LayoutIndexForPanel(string panelId)
@@ -705,49 +919,35 @@ namespace Challenges
             return -1;
         }
 
-        private static bool ShouldTransmit(int slot, string rootPanelId)
+        private static bool IsRootVisible(int slot, int root) =>
+            root >= 0 && (uint)slot < MaxSlots && _rootVisible[root][slot];
+
+        private static void SetRootVisible(int slot, string panelId, bool visible)
         {
-            if (_visibleBySlot.TryGetValue(slot, out HashSet<string>? set) && set.Contains(rootPanelId))
+            int root = RootIndex(panelId);
+            if (root >= 0 && (uint)slot < MaxSlots)
             {
-                return true;
+                _rootVisible[root][slot] = visible;
             }
-
-            if (_closingRootsBySlot.TryGetValue(slot, out Dictionary<string, DateTime>? closing)
-                && closing.TryGetValue(rootPanelId, out DateTime until))
-            {
-                return DateTime.UtcNow < until;
-            }
-
-            return false;
         }
 
-        private static string TransmitRoot(string panelId)
+        private static void MarkClosingRoot(int slot, int layoutIndex)
         {
-            int index = LayoutIndexForPanel(panelId);
-            return index >= 0 ? RootPanels[index] : panelId;
-        }
-
-        private static void MarkClosingRoot(int slot, string rootPanelId)
-        {
-            if (!_closingRootsBySlot.TryGetValue(slot, out Dictionary<string, DateTime>? closing))
-            {
-                _closingRootsBySlot[slot] = closing = new Dictionary<string, DateTime>(StringComparer.Ordinal);
-            }
-
-            closing[rootPanelId] = DateTime.UtcNow + CloseTransmitGrace;
-        }
-
-        private static void ClearClosingRoot(int slot, string rootPanelId)
-        {
-            if (!_closingRootsBySlot.TryGetValue(slot, out Dictionary<string, DateTime>? closing))
+            if (layoutIndex < 0 || (uint)slot >= MaxSlots)
             {
                 return;
             }
 
-            closing.Remove(rootPanelId);
-            if (closing.Count == 0)
+            long until = Environment.TickCount64 + CloseTransmitGraceMs;
+            _closingUntil[layoutIndex][slot] = until;
+            _nextClosingExpiry = Math.Min(_nextClosingExpiry, until);
+        }
+
+        private static void ClearClosingRoot(int slot, int layoutIndex)
+        {
+            if (layoutIndex >= 0 && (uint)slot < MaxSlots)
             {
-                _closingRootsBySlot.Remove(slot);
+                _closingUntil[layoutIndex][slot] = 0;
             }
         }
 

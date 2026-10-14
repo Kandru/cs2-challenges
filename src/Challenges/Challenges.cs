@@ -50,6 +50,7 @@ namespace Challenges
         public override void Unload(bool hotReload)
         {
             DestroyModules();
+            Notifications.ShutdownWebhooks();
             RemoveListener<Listeners.OnMapStart>(OnMapStart);
             RemoveListener<Listeners.OnMapEnd>(OnMapEnd);
             RemoveListener<Listeners.CheckTransmit>(CustomHud.OnCheckTransmit);

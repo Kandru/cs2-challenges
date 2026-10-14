@@ -8,6 +8,18 @@ namespace Challenges
         public const int TaskSlots = 3;
         public const int CompleterSlots = 6;
 
+        /// <summary>Precomputed panel or variable ids: <c>{prefix}{i}{suffix}</c> for <c>i</c> in 0..count-1.</summary>
+        public static string[] Ids(string prefix, int count, string suffix = "")
+        {
+            string[] ids = new string[count];
+            for (int i = 0; i < count; i++)
+            {
+                ids[i] = prefix + i + suffix;
+            }
+
+            return ids;
+        }
+
         public readonly record struct Slots(
             string Panel,
             Func<int, string> TaskId,

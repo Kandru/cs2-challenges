@@ -145,11 +145,12 @@ namespace Challenges
             TrySetLanguage(player.NetworkIDString, language);
             Server.NextFrame(() =>
             {
-                if (!player.IsValid || !PlayerStates.ContainsKey(player))
+                if (!player.IsValid || !PlayerStates.TryGetValue(player, out PlayerState? live))
                 {
                     return;
                 }
 
+                live.TrackerContentDirty = true;
                 Tracker.Refresh(player);
                 if (HudMenu.IsOpen(player))
                 {
@@ -250,6 +251,7 @@ namespace Challenges
             bool created = Archive.TryGet(steamId) == null;
             PlayerState state = BindPlayer(player, steamId);
             ApplyIdentity(player, state);
+            Menu.InvalidateScoreboard();
             TrySetLanguage(steamId, state.Language);
             if (created)
             {
@@ -275,6 +277,7 @@ namespace Challenges
             engine.ForgetPlayer(player, state);
             state.ResetSession();
             Archive.PatchOfflineScore(state, Context.Schedule, DebugPrint);
+            Menu.InvalidateScoreboard();
 
             void Save()
             {

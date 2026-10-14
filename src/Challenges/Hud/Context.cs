@@ -10,6 +10,8 @@ namespace Challenges
     {
         private static State? _state;
         private static IStringLocalizer? _localizer;
+        /// <summary>Resolved once per bind so per-tick painters skip the module lookup.</summary>
+        private static Schedules? _schedules;
 
         public static bool IsBound => _state != null && _localizer != null;
 
@@ -17,12 +19,14 @@ namespace Challenges
         {
             _state = state;
             _localizer = localizer;
+            _schedules = null;
         }
 
         public static void Unbind()
         {
             _state = null;
             _localizer = null;
+            _schedules = null;
         }
 
         public static PluginConfig Config => _state?.Config ?? new PluginConfig();
@@ -31,10 +35,11 @@ namespace Challenges
 
         public static PlayerArchive? Archive => _state?.Archive;
 
-        public static RunningSchedule? Schedule =>
+        public static RunningSchedule? Schedule => (_schedules ??= ResolveSchedules())?.Current;
+
+        private static Schedules? ResolveSchedules() =>
             _state?.Modules.TryGetValue(nameof(Schedules), out Module? entry) == true
-            && entry is Schedules schedules
-                ? schedules.Current
+                ? entry as Schedules
                 : null;
 
         public static IReadOnlyDictionary<string, ChallengeSchedule> ScheduleMap =>
