@@ -10,6 +10,7 @@ namespace Challenges
     /// </summary>
     internal sealed class PlayerSaveQueue
     {
+        private const long WriterClosed = -1;
         private static readonly TimeSpan WriterJoinTimeout = TimeSpan.FromSeconds(5);
 
         private readonly PlayerArchive _archive;
@@ -29,9 +30,15 @@ namespace Challenges
         private readonly ConcurrentDictionary<string, long> _inFlight = new(StringComparer.OrdinalIgnoreCase);
         private readonly ConcurrentQueue<FailedWrite> _failed = new();
         private readonly CancellationTokenSource _abort = new();
+        private readonly string _directory;
 
         private Task? _writer;
         private long _version;
+        /// <summary>
+        /// Version the writer is writing right now, 0 when idle, <see cref="WriterClosed"/> once
+        /// <see cref="FlushSync"/> gave up on the writer.
+        /// </summary>
+        private long _writing;
         private bool _closed;
 
         public PlayerSaveQueue(PlayerArchive archive, PluginConfig config, Action<string> warn, Action<string> debug)
@@ -40,6 +47,7 @@ namespace Challenges
             _config = config;
             _warn = warn;
             _debug = debug;
+            _directory = PlayerFiles.DirectoryPath(config);
         }
 
         /// <summary>Game thread: remembers the steam id for a later budgeted save (no duplicates).</summary>
@@ -86,7 +94,8 @@ namespace Challenges
 
         /// <summary>
         /// Game thread, on teardown: stops the writer, waits for it, and writes everything that is still queued
-        /// or not yet on disk synchronously. Later <see cref="Enqueue"/> calls are ignored.
+        /// or not yet on disk synchronously. Later <see cref="Enqueue"/> calls are ignored. When the writer misses
+        /// the join, the hand-off it is still writing is not written a second time.
         /// </summary>
         public void FlushSync()
         {
@@ -97,13 +106,17 @@ namespace Challenges
 
             _closed = true;
             _writes.Writer.TryComplete();
+            long busy = 0;
             if (_writer != null)
             {
                 try
                 {
                     if (!_writer.Wait(WriterJoinTimeout))
                     {
+                        // Closing the marker stops the writer from starting another write; a write that
+                        // already started is reported here and left to the writer.
                         _abort.Cancel();
+                        busy = Interlocked.Exchange(ref _writing, WriterClosed);
                         _warn("player save writer did not finish in time");
                     }
                 }
@@ -113,9 +126,15 @@ namespace Challenges
                 }
             }
 
+            _abort.Dispose();
             DrainFailed();
-            foreach (string steamId in _inFlight.Keys)
+            foreach ((string steamId, long version) in _inFlight)
             {
+                if (version == busy)
+                {
+                    continue;
+                }
+
                 if (_archive.TryGet(steamId) is { } state)
                 {
                     state.Dirty = true;
@@ -167,7 +186,7 @@ namespace Challenges
             EnsureWriter();
             if (!_writes.Writer.TryWrite(new PendingWrite(
                     state.SteamId,
-                    PlayerFiles.FilePath(_config, state.SteamId),
+                    PlayerFiles.FilePath(_directory, state.SteamId),
                     bytes,
                     version)))
             {
@@ -220,24 +239,28 @@ namespace Challenges
             {
                 await foreach (PendingWrite write in _writes.Reader.ReadAllAsync(_abort.Token).ConfigureAwait(false))
                 {
-                    if (_abort.IsCancellationRequested)
-                    {
-                        return;
-                    }
-
                     if (!_inFlight.TryGetValue(write.SteamId, out long newest) || newest != write.Version)
                     {
                         continue;
                     }
 
+                    if (Interlocked.CompareExchange(ref _writing, write.Version, 0) != 0)
+                    {
+                        return;
+                    }
+
                     try
                     {
-                        PlayerFiles.WriteBytes(write.Path, write.Bytes);
+                        PlayerFiles.WriteBytes(write.Path, write.Bytes, write.Version);
                         _inFlight.TryRemove(KeyValuePair.Create(write.SteamId, write.Version));
                     }
                     catch (Exception ex)
                     {
                         _failed.Enqueue(new FailedWrite(write.SteamId, write.Version, ex.Message));
+                    }
+                    finally
+                    {
+                        Interlocked.CompareExchange(ref _writing, 0, write.Version);
                     }
                 }
             }

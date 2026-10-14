@@ -13,7 +13,11 @@ namespace Challenges
 
         /// <summary>Target path. Does not create directories.</summary>
         public static string FilePath(PluginConfig config, string steamId) =>
-            Path.Combine(DirectoryPath(config), $"{SafeFileName(steamId)}.json");
+            FilePath(DirectoryPath(config), steamId);
+
+        /// <summary>Target path inside an already resolved <see cref="DirectoryPath"/>. Does not create directories.</summary>
+        public static string FilePath(string directory, string steamId) =>
+            Path.Combine(directory, $"{SafeFileName(steamId)}.json");
 
         private static string SafeFileName(string steamId) =>
             string.Concat(steamId.Split(Path.GetInvalidFileNameChars()));
@@ -40,8 +44,12 @@ namespace Challenges
         /// <summary>Atomic write via temp file + replace.</summary>
         public static void Write(string path, PlayerState state) => WriteBytes(path, Serialize(state));
 
-        /// <summary>Atomic write of already serialized bytes via temp file + replace. Safe off the game thread.</summary>
-        public static void WriteBytes(string path, byte[] bytes)
+        /// <summary>
+        /// Atomic write of already serialized bytes via temp file + replace. Safe off the game thread.
+        /// A positive <paramref name="version"/> gives the temp file a unique name, so a background write never
+        /// shares its temp file with another write of the same path.
+        /// </summary>
+        public static void WriteBytes(string path, byte[] bytes, long version = 0)
         {
             string? dir = Path.GetDirectoryName(path);
             if (!string.IsNullOrEmpty(dir))
@@ -49,9 +57,24 @@ namespace Challenges
                 Directory.CreateDirectory(dir);
             }
 
-            string temp = path + ".tmp";
-            File.WriteAllBytes(temp, bytes);
-            File.Move(temp, path, overwrite: true);
+            string temp = version > 0 ? $"{path}.{version}.tmp" : path + ".tmp";
+            try
+            {
+                File.WriteAllBytes(temp, bytes);
+                File.Move(temp, path, overwrite: true);
+            }
+            catch
+            {
+                try
+                {
+                    File.Delete(temp);
+                }
+                catch
+                {
+                }
+
+                throw;
+            }
         }
 
         public static bool TryQuarantine(string path, out string? quarantinePath)
