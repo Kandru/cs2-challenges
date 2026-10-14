@@ -25,6 +25,15 @@ namespace Challenges
             }
         }
 
+        /// <summary>Generated extractors: lists every connected player as a target of <paramref name="type"/>.</summary>
+        public static void AddAll(List<(CCSPlayerController? Player, string Type)> buffer, string type)
+        {
+            foreach (CCSPlayerController player in Utilities.GetPlayers())
+            {
+                buffer.Add((player, type));
+            }
+        }
+
         public static bool IsPlayingTeam(CCSPlayerController player) =>
             player.Team is CsTeam.Terrorist or CsTeam.CounterTerrorist;
     }

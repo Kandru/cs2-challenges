@@ -18,49 +18,15 @@ namespace Challenges.Extractors
         public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventPlayerChangename)gameEvent;
-            if (need.Keys[0] || need.Keys[1])
-            {
-                string value = e.Newname;
-                if (need.Keys[0])
-                {
-                    d["newname"] = value;
-                }
-                if (need.Keys[1])
-                {
-                    d["new_name"] = value;
-                }
-            }
-            if (need.Keys[2] || need.Keys[3])
-            {
-                string value = e.Oldname;
-                if (need.Keys[2])
-                {
-                    d["oldname"] = value;
-                }
-                if (need.Keys[3])
-                {
-                    d["old_name"] = value;
-                }
-            }
-            if ((need.Prefixes[0] | need.Prefixes[1]) != PlayerFields.None)
-            {
-                EventData.FillPlayer(
-                    d,
-                    e.Userid,
-                    need.PrefixKeys[0],
-                    need.Prefixes[0],
-                    need.PrefixKeys[1],
-                    need.Prefixes[1]);
-            }
+            if (need.Keys[0] || need.Keys[1]) need.WriteAliases(d, 0, "newname", 1, "new_name", e.Newname);
+            if (need.Keys[2] || need.Keys[3]) need.WriteAliases(d, 2, "oldname", 3, "old_name", e.Oldname);
+            if ((need.Prefixes[0] | need.Prefixes[1]) != PlayerFields.None) EventData.FillPlayer(d, e.Userid, need, 0, 1);
         }
 
         public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
             var e = (EventPlayerChangename)gameEvent;
-            if (need.Types[0])
-            {
-                buffer.Add((e.Userid, "player_changed_name"));
-            }
+            if (need.Types[0]) buffer.Add((e.Userid, "player_changed_name"));
         }
     }
 }

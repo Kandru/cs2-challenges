@@ -18,69 +18,24 @@ namespace Challenges.Extractors
         public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventAddBulletHitMarker)gameEvent;
-            if (need.Keys[0])
-            {
-                d["ang_x"] = EventData.Num(e.AngX);
-            }
-            if (need.Keys[1])
-            {
-                d["ang_y"] = EventData.Num(e.AngY);
-            }
-            if (need.Keys[2])
-            {
-                d["ang_z"] = EventData.Num(e.AngZ);
-            }
-            if (need.Keys[3])
-            {
-                d["bone"] = EventData.Num(e.Bone);
-            }
-            if (need.Keys[4])
-            {
-                d["hit"] = EventData.Bool(e.Hit);
-            }
-            if (need.Keys[5])
-            {
-                d["pos_x"] = EventData.Num(e.PosX);
-            }
-            if (need.Keys[6])
-            {
-                d["pos_y"] = EventData.Num(e.PosY);
-            }
-            if (need.Keys[7])
-            {
-                d["pos_z"] = EventData.Num(e.PosZ);
-            }
-            if (need.Keys[8])
-            {
-                d["start_x"] = EventData.Num(e.StartX);
-            }
-            if (need.Keys[9])
-            {
-                d["start_y"] = EventData.Num(e.StartY);
-            }
-            if (need.Keys[10])
-            {
-                d["start_z"] = EventData.Num(e.StartZ);
-            }
-            if ((need.Prefixes[0] | need.Prefixes[1]) != PlayerFields.None)
-            {
-                EventData.FillPlayer(
-                    d,
-                    e.Userid,
-                    need.PrefixKeys[0],
-                    need.Prefixes[0],
-                    need.PrefixKeys[1],
-                    need.Prefixes[1]);
-            }
+            if (need.Keys[0]) d["ang_x"] = EventData.Num(e.AngX);
+            if (need.Keys[1]) d["ang_y"] = EventData.Num(e.AngY);
+            if (need.Keys[2]) d["ang_z"] = EventData.Num(e.AngZ);
+            if (need.Keys[3]) d["bone"] = EventData.Num(e.Bone);
+            if (need.Keys[4]) d["hit"] = EventData.Bool(e.Hit);
+            if (need.Keys[5]) d["pos_x"] = EventData.Num(e.PosX);
+            if (need.Keys[6]) d["pos_y"] = EventData.Num(e.PosY);
+            if (need.Keys[7]) d["pos_z"] = EventData.Num(e.PosZ);
+            if (need.Keys[8]) d["start_x"] = EventData.Num(e.StartX);
+            if (need.Keys[9]) d["start_y"] = EventData.Num(e.StartY);
+            if (need.Keys[10]) d["start_z"] = EventData.Num(e.StartZ);
+            if ((need.Prefixes[0] | need.Prefixes[1]) != PlayerFields.None) EventData.FillPlayer(d, e.Userid, need, 0, 1);
         }
 
         public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
             var e = (EventAddBulletHitMarker)gameEvent;
-            if (need.Types[0])
-            {
-                buffer.Add((e.Userid, "add_bullet_hit_marker"));
-            }
+            if (need.Types[0]) buffer.Add((e.Userid, "add_bullet_hit_marker"));
         }
     }
 }

@@ -63,6 +63,23 @@ namespace Challenges.Utils
             }
         }
 
+        /// <summary>Generated extractors: fills player prefix <paramref name="prefix"/> of <paramref name="need"/>.</summary>
+        public static void FillPlayer(
+            Dictionary<string, string> d,
+            CCSPlayerController? player,
+            FillDemand need,
+            int prefix) =>
+            FillPlayer(d, player, need.PrefixKeys[prefix], need.Prefixes[prefix]);
+
+        /// <summary>Generated extractors: one controller under prefixes <paramref name="a"/> and <paramref name="b"/>.</summary>
+        public static void FillPlayer(
+            Dictionary<string, string> d,
+            CCSPlayerController? player,
+            FillDemand need,
+            int a,
+            int b) =>
+            FillPlayer(d, player, need.PrefixKeys[a], need.Prefixes[a], need.PrefixKeys[b], need.Prefixes[b]);
+
         private static string Read(CCSPlayerController player, PlayerFields field, CSMatchStats_t? stats) =>
             field switch
             {

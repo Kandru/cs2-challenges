@@ -157,26 +157,18 @@ def csharp_list(items: list[str]) -> str:
 def emit_key_group(names: list[str], expr: str, keys: list[str], owner: str, indent: str) -> list[str]:
     """Write one value under its key and key aliases; computed only when one of them is needed."""
     idx = [register(keys, n, owner) for n in names]
-    inner = indent + "    "
     if len(idx) == 1:
-        return [
-            f"{indent}if (need.Keys[{idx[0]}])",
-            f"{indent}{{",
-            f'{inner}d["{names[0]}"] = {expr};',
-            f"{indent}}}",
-        ]
+        return [f'{indent}if (need.Keys[{idx[0]}]) d["{names[0]}"] = {expr};']
 
     cond = " || ".join(f"need.Keys[{i}]" for i in idx)
+    if len(idx) == 2:
+        (a, b), (key_a, key_b) = idx, names
+        return [f'{indent}if ({cond}) need.WriteAliases(d, {a}, "{key_a}", {b}, "{key_b}", {expr});']
+
+    inner = indent + "    "
     lines = [f"{indent}if ({cond})", f"{indent}{{", f"{inner}string value = {expr};"]
     for i, n in zip(idx, names):
-        lines.extend(
-            [
-                f"{inner}if (need.Keys[{i}])",
-                f"{inner}{{",
-                f'{inner}    d["{n}"] = value;',
-                f"{inner}}}",
-            ]
-        )
+        lines.append(f'{inner}if (need.Keys[{i}]) d["{n}"] = value;')
     lines.append(f"{indent}}}")
     return lines
 
@@ -184,28 +176,14 @@ def emit_key_group(names: list[str], expr: str, keys: list[str], owner: str, ind
 def emit_player_fill(expr: str, names: list[str], prefixes: list[str], owner: str, indent: str) -> list[str]:
     """One FillPlayer call per controller; reads each property once even under two prefixes."""
     idx = [register(prefixes, n, owner) for n in names]
-    inner = indent + "    "
     if len(idx) == 1:
         i = idx[0]
-        return [
-            f"{indent}if (need.Prefixes[{i}] != PlayerFields.None)",
-            f"{indent}{{",
-            f"{inner}EventData.FillPlayer(d, {expr}, need.PrefixKeys[{i}], need.Prefixes[{i}]);",
-            f"{indent}}}",
-        ]
+        return [f"{indent}if (need.Prefixes[{i}] != PlayerFields.None) EventData.FillPlayer(d, {expr}, need, {i});"]
     if len(idx) == 2:
         a, b = idx
         return [
-            f"{indent}if ((need.Prefixes[{a}] | need.Prefixes[{b}]) != PlayerFields.None)",
-            f"{indent}{{",
-            f"{inner}EventData.FillPlayer(",
-            f"{inner}    d,",
-            f"{inner}    {expr},",
-            f"{inner}    need.PrefixKeys[{a}],",
-            f"{inner}    need.Prefixes[{a}],",
-            f"{inner}    need.PrefixKeys[{b}],",
-            f"{inner}    need.Prefixes[{b}]);",
-            f"{indent}}}",
+            f"{indent}if ((need.Prefixes[{a}] | need.Prefixes[{b}]) != PlayerFields.None) "
+            f"EventData.FillPlayer(d, {expr}, need, {a}, {b});"
         ]
     raise SystemExit(f"more than two prefixes for one controller in {owner}")
 
@@ -249,37 +227,22 @@ def emit_targets(event: dict, alias: dict, types: list[str], audience: str) -> l
         lines.append(f"            var e = ({event['class_name']})gameEvent;")
 
     def add_player(csharp: str, t: str) -> None:
-        lines.extend(
-            [
-                f"            if (need.Types[{index[t]}])",
-                "            {",
-                f'                buffer.Add((e.{csharp}, "{t}"));',
-                "            }",
-            ]
-        )
+        lines.append(f'            if (need.Types[{index[t]}]) buffer.Add((e.{csharp}, "{t}"));')
 
     if audience == "all":
         broadcast = list(extra.get("_all", [])) if extra else list(types)
         if not broadcast and not player_specific:
             broadcast = list(types)
-        if broadcast:
+        if len(broadcast) == 1:
+            lines.append(f'            if (need.Types[{index[broadcast[0]]}]) Players.AddAll(buffer, "{broadcast[0]}");')
+        elif broadcast:
             cond = " || ".join(f"need.Types[{index[t]}]" for t in broadcast)
             lines.append(f"            if ({cond})")
             lines.append("            {")
             lines.append("                foreach (var entry in Utilities.GetPlayers())")
             lines.append("                {")
-            if len(broadcast) == 1:
-                lines.append(f'                    buffer.Add((entry, "{broadcast[0]}"));')
-            else:
-                for t in broadcast:
-                    lines.extend(
-                        [
-                            f"                    if (need.Types[{index[t]}])",
-                            "                    {",
-                            f'                        buffer.Add((entry, "{t}"));',
-                            "                    }",
-                        ]
-                    )
+            for t in broadcast:
+                lines.append(f'                    if (need.Types[{index[t]}]) buffer.Add((entry, "{t}"));')
             lines.append("                }")
             lines.append("            }")
         for prop in players:
@@ -310,16 +273,12 @@ def generate_event_extractor(event: dict, alias: dict) -> str:
 
     needs_cast = bool(fill_lines)
     if derived:
-        fill_lines.extend(
-            [
-                "            if (need.Derived)",
-                "            {",
-                f'                global::Challenges.Extractors.DerivedKeys.Apply("{derived}", gameEvent, d);',
-                "            }",
-            ]
+        fill_lines.append(
+            f'            if (need.Derived) global::Challenges.Extractors.DerivedKeys.Apply("{derived}", gameEvent, d);'
         )
 
-    needs_utilities = audience == "all"
+    target_lines = emit_targets(event, alias, types, audience)
+    needs_utilities = any("Utilities." in line for line in target_lines)
     usings = [
         "using CounterStrikeSharp.API.Core;",
         "using CounterStrikeSharp.API.Modules.Events;",
@@ -341,7 +300,7 @@ def generate_event_extractor(event: dict, alias: dict) -> str:
     body_targets = "\n".join(
         [
             TARGETS_SIGNATURE,
-            *emit_targets(event, alias, types, audience),
+            *target_lines,
         ]
     )
 
@@ -517,29 +476,14 @@ def generate_listener_method(listener: dict, alias: dict, snapshot: dict) -> str
     target_block: list[str] = []
     if target_exprs:
         for i, t in enumerate(types):
-            target_block.extend(
-                [
-                    f"            if (need.Types[{i}])",
-                    "            {",
-                    f'                targets.Add(({target_exprs[0]}, "{t}"));',
-                    "            }",
-                ]
-            )
+            target_block.append(f'            if (need.Types[{i}]) targets.Add(({target_exprs[0]}, "{t}"));')
+    elif len(types) == 1:
+        target_block.append(f'            Players.AddAll(targets, "{types[0]}");')
     else:
         target_block.append("            foreach (var entry in Utilities.GetPlayers())")
         target_block.append("            {")
-        if len(types) == 1:
-            target_block.append(f'                targets.Add((entry, "{types[0]}"));')
-        else:
-            for i, t in enumerate(types):
-                target_block.extend(
-                    [
-                        f"                if (need.Types[{i}])",
-                        "                {",
-                        f'                    targets.Add((entry, "{t}"));',
-                        "                }",
-                    ]
-                )
+        for i, t in enumerate(types):
+            target_block.append(f'                if (need.Types[{i}]) targets.Add((entry, "{t}"));')
         target_block.append("            }")
 
     lines = [

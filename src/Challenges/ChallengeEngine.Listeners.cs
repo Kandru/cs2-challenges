@@ -19,10 +19,7 @@ namespace Challenges
 
             FillDemand need = plan.Demand;
             List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
-            foreach (var entry in Utilities.GetPlayers())
-            {
-                targets.Add((entry, "on_entity_spawned"));
-            }
+            Players.AddAll(targets, "on_entity_spawned");
 
             if (FilterListenerTargets("OnEntitySpawned", targets, closed) is not { } valid)
             {
@@ -30,14 +27,8 @@ namespace Challenges
             }
 
             Dictionary<string, string> d = new(need.Capacity);
-            if (need.Keys[0])
-            {
-                d["entity.designername"] = entity.DesignerName;
-            }
-            if (need.Keys[1])
-            {
-                d["entity.index"] = EventData.Num(entity.Index);
-            }
+            if (need.Keys[0]) d["entity.designername"] = entity.DesignerName;
+            if (need.Keys[1]) d["entity.index"] = EventData.Num(entity.Index);
             HandleListener("OnEntitySpawned", d, valid, closed);
         }
 
@@ -50,10 +41,7 @@ namespace Challenges
 
             FillDemand need = plan.Demand;
             List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
-            foreach (var entry in Utilities.GetPlayers())
-            {
-                targets.Add((entry, "on_entity_created"));
-            }
+            Players.AddAll(targets, "on_entity_created");
 
             if (FilterListenerTargets("OnEntityCreated", targets, closed) is not { } valid)
             {
@@ -61,14 +49,8 @@ namespace Challenges
             }
 
             Dictionary<string, string> d = new(need.Capacity);
-            if (need.Keys[0])
-            {
-                d["entity.designername"] = entity.DesignerName;
-            }
-            if (need.Keys[1])
-            {
-                d["entity.index"] = EventData.Num(entity.Index);
-            }
+            if (need.Keys[0]) d["entity.designername"] = entity.DesignerName;
+            if (need.Keys[1]) d["entity.index"] = EventData.Num(entity.Index);
             HandleListener("OnEntityCreated", d, valid, closed);
         }
 
@@ -81,10 +63,7 @@ namespace Challenges
 
             FillDemand need = plan.Demand;
             List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
-            foreach (var entry in Utilities.GetPlayers())
-            {
-                targets.Add((entry, "on_entity_deleted"));
-            }
+            Players.AddAll(targets, "on_entity_deleted");
 
             if (FilterListenerTargets("OnEntityDeleted", targets, closed) is not { } valid)
             {
@@ -92,14 +71,8 @@ namespace Challenges
             }
 
             Dictionary<string, string> d = new(need.Capacity);
-            if (need.Keys[0])
-            {
-                d["entity.designername"] = entity.DesignerName;
-            }
-            if (need.Keys[1])
-            {
-                d["entity.index"] = EventData.Num(entity.Index);
-            }
+            if (need.Keys[0]) d["entity.designername"] = entity.DesignerName;
+            if (need.Keys[1]) d["entity.index"] = EventData.Num(entity.Index);
             HandleListener("OnEntityDeleted", d, valid, closed);
         }
 
@@ -112,10 +85,7 @@ namespace Challenges
 
             FillDemand need = plan.Demand;
             List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
-            foreach (var entry in Utilities.GetPlayers())
-            {
-                targets.Add((entry, "on_entity_parent_changed"));
-            }
+            Players.AddAll(targets, "on_entity_parent_changed");
 
             if (FilterListenerTargets("OnEntityParentChanged", targets, closed) is not { } valid)
             {
@@ -123,22 +93,10 @@ namespace Challenges
             }
 
             Dictionary<string, string> d = new(need.Capacity);
-            if (need.Keys[0])
-            {
-                d["entity.designername"] = entity.DesignerName;
-            }
-            if (need.Keys[1])
-            {
-                d["entity.index"] = EventData.Num(entity.Index);
-            }
-            if (need.Keys[2])
-            {
-                d["newParent.designername"] = newParent.DesignerName;
-            }
-            if (need.Keys[3])
-            {
-                d["newParent.index"] = EventData.Num(newParent.Index);
-            }
+            if (need.Keys[0]) d["entity.designername"] = entity.DesignerName;
+            if (need.Keys[1]) d["entity.index"] = EventData.Num(entity.Index);
+            if (need.Keys[2]) d["newParent.designername"] = newParent.DesignerName;
+            if (need.Keys[3]) d["newParent.index"] = EventData.Num(newParent.Index);
             HandleListener("OnEntityParentChanged", d, valid, closed);
         }
 
@@ -151,10 +109,7 @@ namespace Challenges
 
             FillDemand need = plan.Demand;
             List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
-            foreach (var entry in Utilities.GetPlayers())
-            {
-                targets.Add((entry, "on_entity_take_damage_pre"));
-            }
+            Players.AddAll(targets, "on_entity_take_damage_pre");
 
             if (FilterListenerTargets("OnEntityTakeDamagePre", targets, closed) is not { } valid)
             {
@@ -162,70 +117,22 @@ namespace Challenges
             }
 
             Dictionary<string, string> d = new(need.Capacity);
-            if (need.Keys[0])
-            {
-                d["entity.designername"] = entity.DesignerName;
-            }
-            if (need.Keys[1])
-            {
-                d["entity.index"] = EventData.Num(entity.Index);
-            }
-            if (need.Keys[2])
-            {
-                d["damage.damage"] = EventData.Num(info.Damage);
-            }
-            if (need.Keys[3])
-            {
-                d["damage.totalled_damage"] = EventData.Num(info.TotalledDamage);
-            }
-            if (need.Keys[4])
-            {
-                d["damage.bits_damage_type"] = info.BitsDamageType.ToString();
-            }
-            if (need.Keys[5])
-            {
-                d["damage.damage_custom"] = EventData.Num(info.DamageCustom);
-            }
-            if (need.Keys[6])
-            {
-                d["damage.ammo_type"] = EventData.Num(info.AmmoType);
-            }
-            if (need.Keys[7])
-            {
-                d["damage.original_damage"] = EventData.Num(info.OriginalDamage);
-            }
-            if (need.Keys[8])
-            {
-                d["damage.should_bleed"] = EventData.Bool(info.ShouldBleed);
-            }
-            if (need.Keys[9])
-            {
-                d["damage.should_spark"] = EventData.Bool(info.ShouldSpark);
-            }
-            if (need.Keys[10])
-            {
-                d["damage.damage_flags"] = info.DamageFlags.ToString();
-            }
-            if (need.Keys[11])
-            {
-                d["damage.hit_group_id"] = info.HitGroupId.ToString();
-            }
-            if (need.Keys[12])
-            {
-                d["damage.num_objects_penetrated"] = EventData.Num(info.NumObjectsPenetrated);
-            }
-            if (need.Keys[13])
-            {
-                d["damage.friendly_fire_damage_reduction_ratio"] = EventData.Num(info.FriendlyFireDamageReductionRatio);
-            }
-            if (need.Keys[14])
-            {
-                d["damage.stopped_bullet"] = EventData.Bool(info.StoppedBullet);
-            }
-            if (need.Keys[15])
-            {
-                d["damage.in_take_damage_flow"] = EventData.Bool(info.InTakeDamageFlow);
-            }
+            if (need.Keys[0]) d["entity.designername"] = entity.DesignerName;
+            if (need.Keys[1]) d["entity.index"] = EventData.Num(entity.Index);
+            if (need.Keys[2]) d["damage.damage"] = EventData.Num(info.Damage);
+            if (need.Keys[3]) d["damage.totalled_damage"] = EventData.Num(info.TotalledDamage);
+            if (need.Keys[4]) d["damage.bits_damage_type"] = info.BitsDamageType.ToString();
+            if (need.Keys[5]) d["damage.damage_custom"] = EventData.Num(info.DamageCustom);
+            if (need.Keys[6]) d["damage.ammo_type"] = EventData.Num(info.AmmoType);
+            if (need.Keys[7]) d["damage.original_damage"] = EventData.Num(info.OriginalDamage);
+            if (need.Keys[8]) d["damage.should_bleed"] = EventData.Bool(info.ShouldBleed);
+            if (need.Keys[9]) d["damage.should_spark"] = EventData.Bool(info.ShouldSpark);
+            if (need.Keys[10]) d["damage.damage_flags"] = info.DamageFlags.ToString();
+            if (need.Keys[11]) d["damage.hit_group_id"] = info.HitGroupId.ToString();
+            if (need.Keys[12]) d["damage.num_objects_penetrated"] = EventData.Num(info.NumObjectsPenetrated);
+            if (need.Keys[13]) d["damage.friendly_fire_damage_reduction_ratio"] = EventData.Num(info.FriendlyFireDamageReductionRatio);
+            if (need.Keys[14]) d["damage.stopped_bullet"] = EventData.Bool(info.StoppedBullet);
+            if (need.Keys[15]) d["damage.in_take_damage_flow"] = EventData.Bool(info.InTakeDamageFlow);
             HandleListener("OnEntityTakeDamagePre", d, valid, closed);
             return HookResult.Continue;
         }
@@ -239,10 +146,7 @@ namespace Challenges
 
             FillDemand need = plan.Demand;
             List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
-            foreach (var entry in Utilities.GetPlayers())
-            {
-                targets.Add((entry, "on_entity_take_damage_post"));
-            }
+            Players.AddAll(targets, "on_entity_take_damage_post");
 
             if (FilterListenerTargets("OnEntityTakeDamagePost", targets, closed) is not { } valid)
             {
@@ -250,118 +154,34 @@ namespace Challenges
             }
 
             Dictionary<string, string> d = new(need.Capacity);
-            if (need.Keys[0])
-            {
-                d["entity.designername"] = entity.DesignerName;
-            }
-            if (need.Keys[1])
-            {
-                d["entity.index"] = EventData.Num(entity.Index);
-            }
-            if (need.Keys[2])
-            {
-                d["damage.damage"] = EventData.Num(info.Damage);
-            }
-            if (need.Keys[3])
-            {
-                d["damage.totalled_damage"] = EventData.Num(info.TotalledDamage);
-            }
-            if (need.Keys[4])
-            {
-                d["damage.bits_damage_type"] = info.BitsDamageType.ToString();
-            }
-            if (need.Keys[5])
-            {
-                d["damage.damage_custom"] = EventData.Num(info.DamageCustom);
-            }
-            if (need.Keys[6])
-            {
-                d["damage.ammo_type"] = EventData.Num(info.AmmoType);
-            }
-            if (need.Keys[7])
-            {
-                d["damage.original_damage"] = EventData.Num(info.OriginalDamage);
-            }
-            if (need.Keys[8])
-            {
-                d["damage.should_bleed"] = EventData.Bool(info.ShouldBleed);
-            }
-            if (need.Keys[9])
-            {
-                d["damage.should_spark"] = EventData.Bool(info.ShouldSpark);
-            }
-            if (need.Keys[10])
-            {
-                d["damage.damage_flags"] = info.DamageFlags.ToString();
-            }
-            if (need.Keys[11])
-            {
-                d["damage.hit_group_id"] = info.HitGroupId.ToString();
-            }
-            if (need.Keys[12])
-            {
-                d["damage.num_objects_penetrated"] = EventData.Num(info.NumObjectsPenetrated);
-            }
-            if (need.Keys[13])
-            {
-                d["damage.friendly_fire_damage_reduction_ratio"] = EventData.Num(info.FriendlyFireDamageReductionRatio);
-            }
-            if (need.Keys[14])
-            {
-                d["damage.stopped_bullet"] = EventData.Bool(info.StoppedBullet);
-            }
-            if (need.Keys[15])
-            {
-                d["damage.in_take_damage_flow"] = EventData.Bool(info.InTakeDamageFlow);
-            }
-            if (need.Keys[16])
-            {
-                d["result.health_lost"] = EventData.Num(result.HealthLost);
-            }
-            if (need.Keys[17])
-            {
-                d["result.health_before"] = EventData.Num(result.HealthBefore);
-            }
-            if (need.Keys[18])
-            {
-                d["result.damage_dealt"] = EventData.Num(result.DamageDealt);
-            }
-            if (need.Keys[19])
-            {
-                d["result.pre_modified_damage"] = EventData.Num(result.PreModifiedDamage);
-            }
-            if (need.Keys[20])
-            {
-                d["result.totalled_health_lost"] = EventData.Num(result.TotalledHealthLost);
-            }
-            if (need.Keys[21])
-            {
-                d["result.totalled_damage_dealt"] = EventData.Num(result.TotalledDamageDealt);
-            }
-            if (need.Keys[22])
-            {
-                d["result.totalled_pre_modified_damage"] = EventData.Num(result.TotalledPreModifiedDamage);
-            }
-            if (need.Keys[23])
-            {
-                d["result.new_damage_accumulator_value"] = EventData.Num(result.NewDamageAccumulatorValue);
-            }
-            if (need.Keys[24])
-            {
-                d["result.damage_flags"] = result.DamageFlags.ToString();
-            }
-            if (need.Keys[25])
-            {
-                d["result.was_damage_suppressed"] = EventData.Bool(result.WasDamageSuppressed);
-            }
-            if (need.Keys[26])
-            {
-                d["result.suppress_flinch"] = EventData.Bool(result.SuppressFlinch);
-            }
-            if (need.Keys[27])
-            {
-                d["result.override_flinch_hit_group"] = result.OverrideFlinchHitGroup.ToString();
-            }
+            if (need.Keys[0]) d["entity.designername"] = entity.DesignerName;
+            if (need.Keys[1]) d["entity.index"] = EventData.Num(entity.Index);
+            if (need.Keys[2]) d["damage.damage"] = EventData.Num(info.Damage);
+            if (need.Keys[3]) d["damage.totalled_damage"] = EventData.Num(info.TotalledDamage);
+            if (need.Keys[4]) d["damage.bits_damage_type"] = info.BitsDamageType.ToString();
+            if (need.Keys[5]) d["damage.damage_custom"] = EventData.Num(info.DamageCustom);
+            if (need.Keys[6]) d["damage.ammo_type"] = EventData.Num(info.AmmoType);
+            if (need.Keys[7]) d["damage.original_damage"] = EventData.Num(info.OriginalDamage);
+            if (need.Keys[8]) d["damage.should_bleed"] = EventData.Bool(info.ShouldBleed);
+            if (need.Keys[9]) d["damage.should_spark"] = EventData.Bool(info.ShouldSpark);
+            if (need.Keys[10]) d["damage.damage_flags"] = info.DamageFlags.ToString();
+            if (need.Keys[11]) d["damage.hit_group_id"] = info.HitGroupId.ToString();
+            if (need.Keys[12]) d["damage.num_objects_penetrated"] = EventData.Num(info.NumObjectsPenetrated);
+            if (need.Keys[13]) d["damage.friendly_fire_damage_reduction_ratio"] = EventData.Num(info.FriendlyFireDamageReductionRatio);
+            if (need.Keys[14]) d["damage.stopped_bullet"] = EventData.Bool(info.StoppedBullet);
+            if (need.Keys[15]) d["damage.in_take_damage_flow"] = EventData.Bool(info.InTakeDamageFlow);
+            if (need.Keys[16]) d["result.health_lost"] = EventData.Num(result.HealthLost);
+            if (need.Keys[17]) d["result.health_before"] = EventData.Num(result.HealthBefore);
+            if (need.Keys[18]) d["result.damage_dealt"] = EventData.Num(result.DamageDealt);
+            if (need.Keys[19]) d["result.pre_modified_damage"] = EventData.Num(result.PreModifiedDamage);
+            if (need.Keys[20]) d["result.totalled_health_lost"] = EventData.Num(result.TotalledHealthLost);
+            if (need.Keys[21]) d["result.totalled_damage_dealt"] = EventData.Num(result.TotalledDamageDealt);
+            if (need.Keys[22]) d["result.totalled_pre_modified_damage"] = EventData.Num(result.TotalledPreModifiedDamage);
+            if (need.Keys[23]) d["result.new_damage_accumulator_value"] = EventData.Num(result.NewDamageAccumulatorValue);
+            if (need.Keys[24]) d["result.damage_flags"] = result.DamageFlags.ToString();
+            if (need.Keys[25]) d["result.was_damage_suppressed"] = EventData.Bool(result.WasDamageSuppressed);
+            if (need.Keys[26]) d["result.suppress_flinch"] = EventData.Bool(result.SuppressFlinch);
+            if (need.Keys[27]) d["result.override_flinch_hit_group"] = result.OverrideFlinchHitGroup.ToString();
             HandleListener("OnEntityTakeDamagePost", d, valid, closed);
         }
 
@@ -375,10 +195,7 @@ namespace Challenges
             FillDemand need = plan.Demand;
             CCSPlayerController? playerController = player.OriginalController?.Value;
             List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
-            if (need.Types[0])
-            {
-                targets.Add((playerController, "on_player_take_damage_pre"));
-            }
+            if (need.Types[0]) targets.Add((playerController, "on_player_take_damage_pre"));
 
             if (FilterListenerTargets("OnPlayerTakeDamagePre", targets, closed) is not { } valid)
             {
@@ -386,66 +203,21 @@ namespace Challenges
             }
 
             Dictionary<string, string> d = new(need.Capacity);
-            if (need.Prefixes[0] != PlayerFields.None)
-            {
-                EventData.FillPlayer(d, playerController, need.PrefixKeys[0], need.Prefixes[0]);
-            }
-            if (need.Keys[0])
-            {
-                d["damage.damage"] = EventData.Num(info.Damage);
-            }
-            if (need.Keys[1])
-            {
-                d["damage.totalled_damage"] = EventData.Num(info.TotalledDamage);
-            }
-            if (need.Keys[2])
-            {
-                d["damage.bits_damage_type"] = info.BitsDamageType.ToString();
-            }
-            if (need.Keys[3])
-            {
-                d["damage.damage_custom"] = EventData.Num(info.DamageCustom);
-            }
-            if (need.Keys[4])
-            {
-                d["damage.ammo_type"] = EventData.Num(info.AmmoType);
-            }
-            if (need.Keys[5])
-            {
-                d["damage.original_damage"] = EventData.Num(info.OriginalDamage);
-            }
-            if (need.Keys[6])
-            {
-                d["damage.should_bleed"] = EventData.Bool(info.ShouldBleed);
-            }
-            if (need.Keys[7])
-            {
-                d["damage.should_spark"] = EventData.Bool(info.ShouldSpark);
-            }
-            if (need.Keys[8])
-            {
-                d["damage.damage_flags"] = info.DamageFlags.ToString();
-            }
-            if (need.Keys[9])
-            {
-                d["damage.hit_group_id"] = info.HitGroupId.ToString();
-            }
-            if (need.Keys[10])
-            {
-                d["damage.num_objects_penetrated"] = EventData.Num(info.NumObjectsPenetrated);
-            }
-            if (need.Keys[11])
-            {
-                d["damage.friendly_fire_damage_reduction_ratio"] = EventData.Num(info.FriendlyFireDamageReductionRatio);
-            }
-            if (need.Keys[12])
-            {
-                d["damage.stopped_bullet"] = EventData.Bool(info.StoppedBullet);
-            }
-            if (need.Keys[13])
-            {
-                d["damage.in_take_damage_flow"] = EventData.Bool(info.InTakeDamageFlow);
-            }
+            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, playerController, need, 0);
+            if (need.Keys[0]) d["damage.damage"] = EventData.Num(info.Damage);
+            if (need.Keys[1]) d["damage.totalled_damage"] = EventData.Num(info.TotalledDamage);
+            if (need.Keys[2]) d["damage.bits_damage_type"] = info.BitsDamageType.ToString();
+            if (need.Keys[3]) d["damage.damage_custom"] = EventData.Num(info.DamageCustom);
+            if (need.Keys[4]) d["damage.ammo_type"] = EventData.Num(info.AmmoType);
+            if (need.Keys[5]) d["damage.original_damage"] = EventData.Num(info.OriginalDamage);
+            if (need.Keys[6]) d["damage.should_bleed"] = EventData.Bool(info.ShouldBleed);
+            if (need.Keys[7]) d["damage.should_spark"] = EventData.Bool(info.ShouldSpark);
+            if (need.Keys[8]) d["damage.damage_flags"] = info.DamageFlags.ToString();
+            if (need.Keys[9]) d["damage.hit_group_id"] = info.HitGroupId.ToString();
+            if (need.Keys[10]) d["damage.num_objects_penetrated"] = EventData.Num(info.NumObjectsPenetrated);
+            if (need.Keys[11]) d["damage.friendly_fire_damage_reduction_ratio"] = EventData.Num(info.FriendlyFireDamageReductionRatio);
+            if (need.Keys[12]) d["damage.stopped_bullet"] = EventData.Bool(info.StoppedBullet);
+            if (need.Keys[13]) d["damage.in_take_damage_flow"] = EventData.Bool(info.InTakeDamageFlow);
             HandleListener("OnPlayerTakeDamagePre", d, valid, closed);
             return HookResult.Continue;
         }
@@ -460,10 +232,7 @@ namespace Challenges
             FillDemand need = plan.Demand;
             CCSPlayerController? playerController = player.OriginalController?.Value;
             List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
-            if (need.Types[0])
-            {
-                targets.Add((playerController, "on_player_take_damage_post"));
-            }
+            if (need.Types[0]) targets.Add((playerController, "on_player_take_damage_post"));
 
             if (FilterListenerTargets("OnPlayerTakeDamagePost", targets, closed) is not { } valid)
             {
@@ -471,114 +240,33 @@ namespace Challenges
             }
 
             Dictionary<string, string> d = new(need.Capacity);
-            if (need.Prefixes[0] != PlayerFields.None)
-            {
-                EventData.FillPlayer(d, playerController, need.PrefixKeys[0], need.Prefixes[0]);
-            }
-            if (need.Keys[0])
-            {
-                d["damage.damage"] = EventData.Num(info.Damage);
-            }
-            if (need.Keys[1])
-            {
-                d["damage.totalled_damage"] = EventData.Num(info.TotalledDamage);
-            }
-            if (need.Keys[2])
-            {
-                d["damage.bits_damage_type"] = info.BitsDamageType.ToString();
-            }
-            if (need.Keys[3])
-            {
-                d["damage.damage_custom"] = EventData.Num(info.DamageCustom);
-            }
-            if (need.Keys[4])
-            {
-                d["damage.ammo_type"] = EventData.Num(info.AmmoType);
-            }
-            if (need.Keys[5])
-            {
-                d["damage.original_damage"] = EventData.Num(info.OriginalDamage);
-            }
-            if (need.Keys[6])
-            {
-                d["damage.should_bleed"] = EventData.Bool(info.ShouldBleed);
-            }
-            if (need.Keys[7])
-            {
-                d["damage.should_spark"] = EventData.Bool(info.ShouldSpark);
-            }
-            if (need.Keys[8])
-            {
-                d["damage.damage_flags"] = info.DamageFlags.ToString();
-            }
-            if (need.Keys[9])
-            {
-                d["damage.hit_group_id"] = info.HitGroupId.ToString();
-            }
-            if (need.Keys[10])
-            {
-                d["damage.num_objects_penetrated"] = EventData.Num(info.NumObjectsPenetrated);
-            }
-            if (need.Keys[11])
-            {
-                d["damage.friendly_fire_damage_reduction_ratio"] = EventData.Num(info.FriendlyFireDamageReductionRatio);
-            }
-            if (need.Keys[12])
-            {
-                d["damage.stopped_bullet"] = EventData.Bool(info.StoppedBullet);
-            }
-            if (need.Keys[13])
-            {
-                d["damage.in_take_damage_flow"] = EventData.Bool(info.InTakeDamageFlow);
-            }
-            if (need.Keys[14])
-            {
-                d["result.health_lost"] = EventData.Num(result.HealthLost);
-            }
-            if (need.Keys[15])
-            {
-                d["result.health_before"] = EventData.Num(result.HealthBefore);
-            }
-            if (need.Keys[16])
-            {
-                d["result.damage_dealt"] = EventData.Num(result.DamageDealt);
-            }
-            if (need.Keys[17])
-            {
-                d["result.pre_modified_damage"] = EventData.Num(result.PreModifiedDamage);
-            }
-            if (need.Keys[18])
-            {
-                d["result.totalled_health_lost"] = EventData.Num(result.TotalledHealthLost);
-            }
-            if (need.Keys[19])
-            {
-                d["result.totalled_damage_dealt"] = EventData.Num(result.TotalledDamageDealt);
-            }
-            if (need.Keys[20])
-            {
-                d["result.totalled_pre_modified_damage"] = EventData.Num(result.TotalledPreModifiedDamage);
-            }
-            if (need.Keys[21])
-            {
-                d["result.new_damage_accumulator_value"] = EventData.Num(result.NewDamageAccumulatorValue);
-            }
-            if (need.Keys[22])
-            {
-                d["result.damage_flags"] = result.DamageFlags.ToString();
-            }
-            if (need.Keys[23])
-            {
-                d["result.was_damage_suppressed"] = EventData.Bool(result.WasDamageSuppressed);
-            }
-            if (need.Keys[24])
-            {
-                d["result.suppress_flinch"] = EventData.Bool(result.SuppressFlinch);
-            }
-            if (need.Keys[25])
-            {
-                d["result.override_flinch_hit_group"] = result.OverrideFlinchHitGroup.ToString();
-            }
+            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, playerController, need, 0);
+            if (need.Keys[0]) d["damage.damage"] = EventData.Num(info.Damage);
+            if (need.Keys[1]) d["damage.totalled_damage"] = EventData.Num(info.TotalledDamage);
+            if (need.Keys[2]) d["damage.bits_damage_type"] = info.BitsDamageType.ToString();
+            if (need.Keys[3]) d["damage.damage_custom"] = EventData.Num(info.DamageCustom);
+            if (need.Keys[4]) d["damage.ammo_type"] = EventData.Num(info.AmmoType);
+            if (need.Keys[5]) d["damage.original_damage"] = EventData.Num(info.OriginalDamage);
+            if (need.Keys[6]) d["damage.should_bleed"] = EventData.Bool(info.ShouldBleed);
+            if (need.Keys[7]) d["damage.should_spark"] = EventData.Bool(info.ShouldSpark);
+            if (need.Keys[8]) d["damage.damage_flags"] = info.DamageFlags.ToString();
+            if (need.Keys[9]) d["damage.hit_group_id"] = info.HitGroupId.ToString();
+            if (need.Keys[10]) d["damage.num_objects_penetrated"] = EventData.Num(info.NumObjectsPenetrated);
+            if (need.Keys[11]) d["damage.friendly_fire_damage_reduction_ratio"] = EventData.Num(info.FriendlyFireDamageReductionRatio);
+            if (need.Keys[12]) d["damage.stopped_bullet"] = EventData.Bool(info.StoppedBullet);
+            if (need.Keys[13]) d["damage.in_take_damage_flow"] = EventData.Bool(info.InTakeDamageFlow);
+            if (need.Keys[14]) d["result.health_lost"] = EventData.Num(result.HealthLost);
+            if (need.Keys[15]) d["result.health_before"] = EventData.Num(result.HealthBefore);
+            if (need.Keys[16]) d["result.damage_dealt"] = EventData.Num(result.DamageDealt);
+            if (need.Keys[17]) d["result.pre_modified_damage"] = EventData.Num(result.PreModifiedDamage);
+            if (need.Keys[18]) d["result.totalled_health_lost"] = EventData.Num(result.TotalledHealthLost);
+            if (need.Keys[19]) d["result.totalled_damage_dealt"] = EventData.Num(result.TotalledDamageDealt);
+            if (need.Keys[20]) d["result.totalled_pre_modified_damage"] = EventData.Num(result.TotalledPreModifiedDamage);
+            if (need.Keys[21]) d["result.new_damage_accumulator_value"] = EventData.Num(result.NewDamageAccumulatorValue);
+            if (need.Keys[22]) d["result.damage_flags"] = result.DamageFlags.ToString();
+            if (need.Keys[23]) d["result.was_damage_suppressed"] = EventData.Bool(result.WasDamageSuppressed);
+            if (need.Keys[24]) d["result.suppress_flinch"] = EventData.Bool(result.SuppressFlinch);
+            if (need.Keys[25]) d["result.override_flinch_hit_group"] = result.OverrideFlinchHitGroup.ToString();
             HandleListener("OnPlayerTakeDamagePost", d, valid, closed);
         }
 
@@ -591,10 +279,7 @@ namespace Challenges
 
             FillDemand need = plan.Demand;
             List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
-            foreach (var entry in Utilities.GetPlayers())
-            {
-                targets.Add((entry, "on_map_start"));
-            }
+            Players.AddAll(targets, "on_map_start");
 
             if (FilterListenerTargets("OnMapStart", targets, closed) is not { } valid)
             {
@@ -602,10 +287,7 @@ namespace Challenges
             }
 
             Dictionary<string, string> d = new(need.Capacity);
-            if (need.Keys[0])
-            {
-                d["mapname"] = mapName;
-            }
+            if (need.Keys[0]) d["mapname"] = mapName;
             HandleListener("OnMapStart", d, valid, closed);
         }
 
@@ -618,10 +300,7 @@ namespace Challenges
 
             FillDemand need = plan.Demand;
             List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
-            foreach (var entry in Utilities.GetPlayers())
-            {
-                targets.Add((entry, "on_map_end"));
-            }
+            Players.AddAll(targets, "on_map_end");
 
             if (FilterListenerTargets("OnMapEnd", targets, closed) is not { } valid)
             {
@@ -642,10 +321,7 @@ namespace Challenges
             FillDemand need = plan.Demand;
             CCSPlayerController? playerSlotPlayer = Utilities.GetPlayerFromSlot(playerSlot);
             List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
-            if (need.Types[0])
-            {
-                targets.Add((playerSlotPlayer, "on_client_connect"));
-            }
+            if (need.Types[0]) targets.Add((playerSlotPlayer, "on_client_connect"));
 
             if (FilterListenerTargets("OnClientConnect", targets, closed) is not { } valid)
             {
@@ -653,18 +329,9 @@ namespace Challenges
             }
 
             Dictionary<string, string> d = new(need.Capacity);
-            if (need.Prefixes[0] != PlayerFields.None)
-            {
-                EventData.FillPlayer(d, playerSlotPlayer, need.PrefixKeys[0], need.Prefixes[0]);
-            }
-            if (need.Keys[0])
-            {
-                d["name"] = name;
-            }
-            if (need.Keys[1])
-            {
-                d["ipaddress"] = ipAddress;
-            }
+            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, playerSlotPlayer, need, 0);
+            if (need.Keys[0]) d["name"] = name;
+            if (need.Keys[1]) d["ipaddress"] = ipAddress;
             HandleListener("OnClientConnect", d, valid, closed);
         }
 
@@ -678,10 +345,7 @@ namespace Challenges
             FillDemand need = plan.Demand;
             CCSPlayerController? playerSlotPlayer = Utilities.GetPlayerFromSlot(playerSlot);
             List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
-            if (need.Types[0])
-            {
-                targets.Add((playerSlotPlayer, "on_client_connected"));
-            }
+            if (need.Types[0]) targets.Add((playerSlotPlayer, "on_client_connected"));
 
             if (FilterListenerTargets("OnClientConnected", targets, closed) is not { } valid)
             {
@@ -689,10 +353,7 @@ namespace Challenges
             }
 
             Dictionary<string, string> d = new(need.Capacity);
-            if (need.Prefixes[0] != PlayerFields.None)
-            {
-                EventData.FillPlayer(d, playerSlotPlayer, need.PrefixKeys[0], need.Prefixes[0]);
-            }
+            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, playerSlotPlayer, need, 0);
             HandleListener("OnClientConnected", d, valid, closed);
         }
 
@@ -706,10 +367,7 @@ namespace Challenges
             FillDemand need = plan.Demand;
             CCSPlayerController? playerSlotPlayer = Utilities.GetPlayerFromSlot(playerSlot);
             List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
-            if (need.Types[0])
-            {
-                targets.Add((playerSlotPlayer, "on_client_put_in_server"));
-            }
+            if (need.Types[0]) targets.Add((playerSlotPlayer, "on_client_put_in_server"));
 
             if (FilterListenerTargets("OnClientPutInServer", targets, closed) is not { } valid)
             {
@@ -717,10 +375,7 @@ namespace Challenges
             }
 
             Dictionary<string, string> d = new(need.Capacity);
-            if (need.Prefixes[0] != PlayerFields.None)
-            {
-                EventData.FillPlayer(d, playerSlotPlayer, need.PrefixKeys[0], need.Prefixes[0]);
-            }
+            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, playerSlotPlayer, need, 0);
             HandleListener("OnClientPutInServer", d, valid, closed);
         }
 
@@ -734,10 +389,7 @@ namespace Challenges
             FillDemand need = plan.Demand;
             CCSPlayerController? playerSlotPlayer = Utilities.GetPlayerFromSlot(playerSlot);
             List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
-            if (need.Types[0])
-            {
-                targets.Add((playerSlotPlayer, "on_client_disconnect"));
-            }
+            if (need.Types[0]) targets.Add((playerSlotPlayer, "on_client_disconnect"));
 
             if (FilterListenerTargets("OnClientDisconnect", targets, closed) is not { } valid)
             {
@@ -745,10 +397,7 @@ namespace Challenges
             }
 
             Dictionary<string, string> d = new(need.Capacity);
-            if (need.Prefixes[0] != PlayerFields.None)
-            {
-                EventData.FillPlayer(d, playerSlotPlayer, need.PrefixKeys[0], need.Prefixes[0]);
-            }
+            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, playerSlotPlayer, need, 0);
             HandleListener("OnClientDisconnect", d, valid, closed);
         }
 
@@ -762,10 +411,7 @@ namespace Challenges
             FillDemand need = plan.Demand;
             CCSPlayerController? playerSlotPlayer = Utilities.GetPlayerFromSlot(playerSlot);
             List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
-            if (need.Types[0])
-            {
-                targets.Add((playerSlotPlayer, "on_client_disconnect_post"));
-            }
+            if (need.Types[0]) targets.Add((playerSlotPlayer, "on_client_disconnect_post"));
 
             if (FilterListenerTargets("OnClientDisconnectPost", targets, closed) is not { } valid)
             {
@@ -773,10 +419,7 @@ namespace Challenges
             }
 
             Dictionary<string, string> d = new(need.Capacity);
-            if (need.Prefixes[0] != PlayerFields.None)
-            {
-                EventData.FillPlayer(d, playerSlotPlayer, need.PrefixKeys[0], need.Prefixes[0]);
-            }
+            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, playerSlotPlayer, need, 0);
             HandleListener("OnClientDisconnectPost", d, valid, closed);
         }
 
@@ -790,10 +433,7 @@ namespace Challenges
             FillDemand need = plan.Demand;
             CCSPlayerController? playerSlotPlayer = Utilities.GetPlayerFromSlot(playerSlot);
             List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
-            if (need.Types[0])
-            {
-                targets.Add((playerSlotPlayer, "on_client_voice"));
-            }
+            if (need.Types[0]) targets.Add((playerSlotPlayer, "on_client_voice"));
 
             if (FilterListenerTargets("OnClientVoice", targets, closed) is not { } valid)
             {
@@ -801,10 +441,7 @@ namespace Challenges
             }
 
             Dictionary<string, string> d = new(need.Capacity);
-            if (need.Prefixes[0] != PlayerFields.None)
-            {
-                EventData.FillPlayer(d, playerSlotPlayer, need.PrefixKeys[0], need.Prefixes[0]);
-            }
+            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, playerSlotPlayer, need, 0);
             HandleListener("OnClientVoice", d, valid, closed);
         }
 
@@ -818,10 +455,7 @@ namespace Challenges
             FillDemand need = plan.Demand;
             CCSPlayerController? playerSlotPlayer = Utilities.GetPlayerFromSlot(playerSlot);
             List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
-            if (need.Types[0])
-            {
-                targets.Add((playerSlotPlayer, "on_client_authorized"));
-            }
+            if (need.Types[0]) targets.Add((playerSlotPlayer, "on_client_authorized"));
 
             if (FilterListenerTargets("OnClientAuthorized", targets, closed) is not { } valid)
             {
@@ -829,14 +463,8 @@ namespace Challenges
             }
 
             Dictionary<string, string> d = new(need.Capacity);
-            if (need.Prefixes[0] != PlayerFields.None)
-            {
-                EventData.FillPlayer(d, playerSlotPlayer, need.PrefixKeys[0], need.Prefixes[0]);
-            }
-            if (need.Keys[0])
-            {
-                d["steamid"] = steamId.SteamId64.ToString();
-            }
+            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, playerSlotPlayer, need, 0);
+            if (need.Keys[0]) d["steamid"] = steamId.SteamId64.ToString();
             HandleListener("OnClientAuthorized", d, valid, closed);
         }
 
@@ -849,10 +477,7 @@ namespace Challenges
 
             FillDemand need = plan.Demand;
             List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
-            foreach (var entry in Utilities.GetPlayers())
-            {
-                targets.Add((entry, "on_server_hibernation_update"));
-            }
+            Players.AddAll(targets, "on_server_hibernation_update");
 
             if (FilterListenerTargets("OnServerHibernationUpdate", targets, closed) is not { } valid)
             {
@@ -860,10 +485,7 @@ namespace Challenges
             }
 
             Dictionary<string, string> d = new(need.Capacity);
-            if (need.Keys[0])
-            {
-                d["ishibernating"] = EventData.Bool(isHibernating);
-            }
+            if (need.Keys[0]) d["ishibernating"] = EventData.Bool(isHibernating);
             HandleListener("OnServerHibernationUpdate", d, valid, closed);
         }
 
@@ -876,10 +498,7 @@ namespace Challenges
 
             FillDemand need = plan.Demand;
             List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
-            foreach (var entry in Utilities.GetPlayers())
-            {
-                targets.Add((entry, "on_game_server_steam_api_activated"));
-            }
+            Players.AddAll(targets, "on_game_server_steam_api_activated");
 
             if (FilterListenerTargets("OnGameServerSteamAPIActivated", targets, closed) is not { } valid)
             {
@@ -899,10 +518,7 @@ namespace Challenges
 
             FillDemand need = plan.Demand;
             List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
-            foreach (var entry in Utilities.GetPlayers())
-            {
-                targets.Add((entry, "on_game_server_steam_api_deactivated"));
-            }
+            Players.AddAll(targets, "on_game_server_steam_api_deactivated");
 
             if (FilterListenerTargets("OnGameServerSteamAPIDeactivated", targets, closed) is not { } valid)
             {
@@ -922,10 +538,7 @@ namespace Challenges
 
             FillDemand need = plan.Demand;
             List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
-            foreach (var entry in Utilities.GetPlayers())
-            {
-                targets.Add((entry, "on_host_name_changed"));
-            }
+            Players.AddAll(targets, "on_host_name_changed");
 
             if (FilterListenerTargets("OnHostNameChanged", targets, closed) is not { } valid)
             {
@@ -933,10 +546,7 @@ namespace Challenges
             }
 
             Dictionary<string, string> d = new(need.Capacity);
-            if (need.Keys[0])
-            {
-                d["hostname"] = hostname;
-            }
+            if (need.Keys[0]) d["hostname"] = hostname;
             HandleListener("OnHostNameChanged", d, valid, closed);
         }
 
@@ -949,10 +559,7 @@ namespace Challenges
 
             FillDemand need = plan.Demand;
             List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
-            foreach (var entry in Utilities.GetPlayers())
-            {
-                targets.Add((entry, "on_server_pre_fatal_shutdown"));
-            }
+            Players.AddAll(targets, "on_server_pre_fatal_shutdown");
 
             if (FilterListenerTargets("OnServerPreFatalShutdown", targets, closed) is not { } valid)
             {
@@ -972,10 +579,7 @@ namespace Challenges
 
             FillDemand need = plan.Demand;
             List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
-            foreach (var entry in Utilities.GetPlayers())
-            {
-                targets.Add((entry, "on_server_precache_resources"));
-            }
+            Players.AddAll(targets, "on_server_precache_resources");
 
             if (FilterListenerTargets("OnServerPrecacheResources", targets, closed) is not { } valid)
             {
@@ -996,10 +600,7 @@ namespace Challenges
 
             FillDemand need = plan.Demand;
             List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
-            if (need.Types[0])
-            {
-                targets.Add((player, "on_player_buttons_changed"));
-            }
+            if (need.Types[0]) targets.Add((player, "on_player_buttons_changed"));
 
             if (FilterListenerTargets("OnPlayerButtonsChanged", targets, closed) is not { } valid)
             {
@@ -1007,18 +608,9 @@ namespace Challenges
             }
 
             Dictionary<string, string> d = new(need.Capacity);
-            if (need.Prefixes[0] != PlayerFields.None)
-            {
-                EventData.FillPlayer(d, player, need.PrefixKeys[0], need.Prefixes[0]);
-            }
-            if (need.Keys[0])
-            {
-                d["pressed"] = EventData.Num((ulong)pressed);
-            }
-            if (need.Keys[1])
-            {
-                d["released"] = EventData.Num((ulong)released);
-            }
+            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, player, need, 0);
+            if (need.Keys[0]) d["pressed"] = EventData.Num((ulong)pressed);
+            if (need.Keys[1]) d["released"] = EventData.Num((ulong)released);
             HandleListener("OnPlayerButtonsChanged", d, valid, closed);
         }
 
@@ -1031,14 +623,8 @@ namespace Challenges
 
             FillDemand need = plan.Demand;
             List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
-            if (need.Types[0])
-            {
-                targets.Add((player, "on_player_chat"));
-            }
-            if (need.Types[1])
-            {
-                targets.Add((player, "player_chat"));
-            }
+            if (need.Types[0]) targets.Add((player, "on_player_chat"));
+            if (need.Types[1]) targets.Add((player, "player_chat"));
 
             if (FilterListenerTargets("OnPlayerChat", targets, closed) is not { } valid)
             {
@@ -1046,34 +632,9 @@ namespace Challenges
             }
 
             Dictionary<string, string> d = new(need.Capacity);
-            if (need.Prefixes[0] != PlayerFields.None)
-            {
-                EventData.FillPlayer(d, player, need.PrefixKeys[0], need.Prefixes[0]);
-            }
-            if (need.Keys[0] || need.Keys[1])
-            {
-                string value = message;
-                if (need.Keys[0])
-                {
-                    d["message"] = value;
-                }
-                if (need.Keys[1])
-                {
-                    d["text"] = value;
-                }
-            }
-            if (need.Keys[2] || need.Keys[3])
-            {
-                string value = EventData.Bool(teamChat);
-                if (need.Keys[2])
-                {
-                    d["teamchat"] = value;
-                }
-                if (need.Keys[3])
-                {
-                    d["teamonly"] = value;
-                }
-            }
+            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, player, need, 0);
+            if (need.Keys[0] || need.Keys[1]) need.WriteAliases(d, 0, "message", 1, "text", message);
+            if (need.Keys[2] || need.Keys[3]) need.WriteAliases(d, 2, "teamchat", 3, "teamonly", EventData.Bool(teamChat));
             HandleListener("OnPlayerChat", d, valid, closed);
         }
 
@@ -1086,10 +647,7 @@ namespace Challenges
 
             FillDemand need = plan.Demand;
             List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
-            foreach (var entry in Utilities.GetPlayers())
-            {
-                targets.Add((entry, "on_metamod_all_plugins_loaded"));
-            }
+            Players.AddAll(targets, "on_metamod_all_plugins_loaded");
 
             if (FilterListenerTargets("OnMetamodAllPluginsLoaded", targets, closed) is not { } valid)
             {
@@ -1109,10 +667,7 @@ namespace Challenges
 
             FillDemand need = plan.Demand;
             List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
-            if (need.Types[0])
-            {
-                targets.Add((player, "on_custom_hud_clicked"));
-            }
+            if (need.Types[0]) targets.Add((player, "on_custom_hud_clicked"));
 
             if (FilterListenerTargets("OnCustomHudClicked", targets, closed) is not { } valid)
             {
@@ -1120,14 +675,8 @@ namespace Challenges
             }
 
             Dictionary<string, string> d = new(need.Capacity);
-            if (need.Prefixes[0] != PlayerFields.None)
-            {
-                EventData.FillPlayer(d, player, need.PrefixKeys[0], need.Prefixes[0]);
-            }
-            if (need.Keys[0])
-            {
-                d["buttonid"] = buttonId;
-            }
+            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, player, need, 0);
+            if (need.Keys[0]) d["buttonid"] = buttonId;
             HandleListener("OnCustomHudClicked", d, valid, closed);
         }
 

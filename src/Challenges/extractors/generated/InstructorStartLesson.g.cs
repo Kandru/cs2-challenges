@@ -18,45 +18,18 @@ namespace Challenges.Extractors
         public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventInstructorStartLesson)gameEvent;
-            if (need.Keys[0])
-            {
-                d["hint_name"] = e.HintName;
-            }
-            if (need.Keys[1])
-            {
-                d["hint_target"] = EventData.Num(e.HintTarget);
-            }
-            if (need.Keys[2])
-            {
-                d["vr_controller_type"] = EventData.Num(e.VrControllerType);
-            }
-            if (need.Keys[3])
-            {
-                d["vr_movement_type"] = EventData.Num(e.VrMovementType);
-            }
-            if (need.Keys[4])
-            {
-                d["vr_single_controller"] = EventData.Bool(e.VrSingleController);
-            }
-            if ((need.Prefixes[0] | need.Prefixes[1]) != PlayerFields.None)
-            {
-                EventData.FillPlayer(
-                    d,
-                    e.Userid,
-                    need.PrefixKeys[0],
-                    need.Prefixes[0],
-                    need.PrefixKeys[1],
-                    need.Prefixes[1]);
-            }
+            if (need.Keys[0]) d["hint_name"] = e.HintName;
+            if (need.Keys[1]) d["hint_target"] = EventData.Num(e.HintTarget);
+            if (need.Keys[2]) d["vr_controller_type"] = EventData.Num(e.VrControllerType);
+            if (need.Keys[3]) d["vr_movement_type"] = EventData.Num(e.VrMovementType);
+            if (need.Keys[4]) d["vr_single_controller"] = EventData.Bool(e.VrSingleController);
+            if ((need.Prefixes[0] | need.Prefixes[1]) != PlayerFields.None) EventData.FillPlayer(d, e.Userid, need, 0, 1);
         }
 
         public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
             var e = (EventInstructorStartLesson)gameEvent;
-            if (need.Types[0])
-            {
-                buffer.Add((e.Userid, "instructor_start_lesson"));
-            }
+            if (need.Types[0]) buffer.Add((e.Userid, "instructor_start_lesson"));
         }
     }
 }

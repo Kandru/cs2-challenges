@@ -18,37 +18,16 @@ namespace Challenges.Extractors
         public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventBulletImpact)gameEvent;
-            if (need.Keys[0])
-            {
-                d["x"] = EventData.Num(e.X);
-            }
-            if (need.Keys[1])
-            {
-                d["y"] = EventData.Num(e.Y);
-            }
-            if (need.Keys[2])
-            {
-                d["z"] = EventData.Num(e.Z);
-            }
-            if ((need.Prefixes[0] | need.Prefixes[1]) != PlayerFields.None)
-            {
-                EventData.FillPlayer(
-                    d,
-                    e.Userid,
-                    need.PrefixKeys[0],
-                    need.Prefixes[0],
-                    need.PrefixKeys[1],
-                    need.Prefixes[1]);
-            }
+            if (need.Keys[0]) d["x"] = EventData.Num(e.X);
+            if (need.Keys[1]) d["y"] = EventData.Num(e.Y);
+            if (need.Keys[2]) d["z"] = EventData.Num(e.Z);
+            if ((need.Prefixes[0] | need.Prefixes[1]) != PlayerFields.None) EventData.FillPlayer(d, e.Userid, need, 0, 1);
         }
 
         public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
             var e = (EventBulletImpact)gameEvent;
-            if (need.Types[0])
-            {
-                buffer.Add((e.Userid, "bullet_impact"));
-            }
+            if (need.Types[0]) buffer.Add((e.Userid, "bullet_impact"));
         }
     }
 }

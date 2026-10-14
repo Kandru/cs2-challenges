@@ -18,53 +18,18 @@ namespace Challenges.Extractors
         public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventPlayerBlind)gameEvent;
-            if (need.Keys[0] || need.Keys[1])
-            {
-                string value = EventData.Num(e.BlindDuration);
-                if (need.Keys[0])
-                {
-                    d["blind_duration"] = value;
-                }
-                if (need.Keys[1])
-                {
-                    d["blindduration"] = value;
-                }
-            }
-            if (need.Keys[2])
-            {
-                d["entityid"] = EventData.Num(e.Entityid);
-            }
-            if (need.Prefixes[0] != PlayerFields.None)
-            {
-                EventData.FillPlayer(d, e.Attacker, need.PrefixKeys[0], need.Prefixes[0]);
-            }
-            if ((need.Prefixes[1] | need.Prefixes[2]) != PlayerFields.None)
-            {
-                EventData.FillPlayer(
-                    d,
-                    e.Userid,
-                    need.PrefixKeys[1],
-                    need.Prefixes[1],
-                    need.PrefixKeys[2],
-                    need.Prefixes[2]);
-            }
-            if (need.Derived)
-            {
-                global::Challenges.Extractors.DerivedKeys.Apply("team_self_flash", gameEvent, d);
-            }
+            if (need.Keys[0] || need.Keys[1]) need.WriteAliases(d, 0, "blind_duration", 1, "blindduration", EventData.Num(e.BlindDuration));
+            if (need.Keys[2]) d["entityid"] = EventData.Num(e.Entityid);
+            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, e.Attacker, need, 0);
+            if ((need.Prefixes[1] | need.Prefixes[2]) != PlayerFields.None) EventData.FillPlayer(d, e.Userid, need, 1, 2);
+            if (need.Derived) global::Challenges.Extractors.DerivedKeys.Apply("team_self_flash", gameEvent, d);
         }
 
         public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
             var e = (EventPlayerBlind)gameEvent;
-            if (need.Types[0])
-            {
-                buffer.Add((e.Attacker, "player_has_blinded"));
-            }
-            if (need.Types[1])
-            {
-                buffer.Add((e.Userid, "player_got_blinded"));
-            }
+            if (need.Types[0]) buffer.Add((e.Attacker, "player_has_blinded"));
+            if (need.Types[1]) buffer.Add((e.Userid, "player_got_blinded"));
         }
     }
 }

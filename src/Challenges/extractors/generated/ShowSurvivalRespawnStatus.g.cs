@@ -18,33 +18,15 @@ namespace Challenges.Extractors
         public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventShowSurvivalRespawnStatus)gameEvent;
-            if (need.Keys[0])
-            {
-                d["duration"] = EventData.Num(e.Duration);
-            }
-            if (need.Keys[1])
-            {
-                d["loc_token"] = e.LocToken;
-            }
-            if ((need.Prefixes[0] | need.Prefixes[1]) != PlayerFields.None)
-            {
-                EventData.FillPlayer(
-                    d,
-                    e.Userid,
-                    need.PrefixKeys[0],
-                    need.Prefixes[0],
-                    need.PrefixKeys[1],
-                    need.Prefixes[1]);
-            }
+            if (need.Keys[0]) d["duration"] = EventData.Num(e.Duration);
+            if (need.Keys[1]) d["loc_token"] = e.LocToken;
+            if ((need.Prefixes[0] | need.Prefixes[1]) != PlayerFields.None) EventData.FillPlayer(d, e.Userid, need, 0, 1);
         }
 
         public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
             var e = (EventShowSurvivalRespawnStatus)gameEvent;
-            if (need.Types[0])
-            {
-                buffer.Add((e.Userid, "show_survival_respawn_status"));
-            }
+            if (need.Types[0]) buffer.Add((e.Userid, "show_survival_respawn_status"));
         }
     }
 }

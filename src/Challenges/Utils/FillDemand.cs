@@ -162,6 +162,20 @@ namespace Challenges.Utils
             Capacity = Derived ? count + derivedKeys : count;
         }
 
+        /// <summary>Generated extractors: writes one value under whichever of two alias keys is requested.</summary>
+        public void WriteAliases(Dictionary<string, string> d, int a, string keyA, int b, string keyB, string value)
+        {
+            if (Keys[a])
+            {
+                d[keyA] = value;
+            }
+
+            if (Keys[b])
+            {
+                d[keyB] = value;
+            }
+        }
+
         /// <summary>Marks what <paramref name="key"/> needs. Keys the extractor never writes are ignored.</summary>
         public void Add(
             string key,

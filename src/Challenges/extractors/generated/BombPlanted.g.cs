@@ -18,37 +18,14 @@ namespace Challenges.Extractors
         public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventBombPlanted)gameEvent;
-            if (need.Keys[0] || need.Keys[1])
-            {
-                string value = EventData.Num(e.Site);
-                if (need.Keys[0])
-                {
-                    d["site"] = value;
-                }
-                if (need.Keys[1])
-                {
-                    d["bomb_site"] = value;
-                }
-            }
-            if ((need.Prefixes[0] | need.Prefixes[1]) != PlayerFields.None)
-            {
-                EventData.FillPlayer(
-                    d,
-                    e.Userid,
-                    need.PrefixKeys[0],
-                    need.Prefixes[0],
-                    need.PrefixKeys[1],
-                    need.Prefixes[1]);
-            }
+            if (need.Keys[0] || need.Keys[1]) need.WriteAliases(d, 0, "site", 1, "bomb_site", EventData.Num(e.Site));
+            if ((need.Prefixes[0] | need.Prefixes[1]) != PlayerFields.None) EventData.FillPlayer(d, e.Userid, need, 0, 1);
         }
 
         public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
             var e = (EventBombPlanted)gameEvent;
-            if (need.Types[0])
-            {
-                buffer.Add((e.Userid, "player_bomb_planted"));
-            }
+            if (need.Types[0]) buffer.Add((e.Userid, "player_bomb_planted"));
         }
     }
 }

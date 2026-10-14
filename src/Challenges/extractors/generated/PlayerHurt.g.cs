@@ -18,77 +18,22 @@ namespace Challenges.Extractors
         public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventPlayerHurt)gameEvent;
-            if (need.Keys[0])
-            {
-                d["armor"] = EventData.Num(e.Armor);
-            }
-            if (need.Keys[1] || need.Keys[2])
-            {
-                string value = EventData.Num(e.DmgArmor);
-                if (need.Keys[1])
-                {
-                    d["dmg_armor"] = value;
-                }
-                if (need.Keys[2])
-                {
-                    d["dmgarmor"] = value;
-                }
-            }
-            if (need.Keys[3] || need.Keys[4])
-            {
-                string value = EventData.Num(e.DmgHealth);
-                if (need.Keys[3])
-                {
-                    d["dmg_health"] = value;
-                }
-                if (need.Keys[4])
-                {
-                    d["dmghealth"] = value;
-                }
-            }
-            if (need.Keys[5])
-            {
-                d["health"] = EventData.Num(e.Health);
-            }
-            if (need.Keys[6])
-            {
-                d["hitgroup"] = EventData.Num(e.Hitgroup);
-            }
-            if (need.Keys[7])
-            {
-                d["weapon"] = e.Weapon;
-            }
-            if (need.Prefixes[0] != PlayerFields.None)
-            {
-                EventData.FillPlayer(d, e.Attacker, need.PrefixKeys[0], need.Prefixes[0]);
-            }
-            if ((need.Prefixes[1] | need.Prefixes[2]) != PlayerFields.None)
-            {
-                EventData.FillPlayer(
-                    d,
-                    e.Userid,
-                    need.PrefixKeys[1],
-                    need.Prefixes[1],
-                    need.PrefixKeys[2],
-                    need.Prefixes[2]);
-            }
-            if (need.Derived)
-            {
-                global::Challenges.Extractors.DerivedKeys.Apply("team_self_damage", gameEvent, d);
-            }
+            if (need.Keys[0]) d["armor"] = EventData.Num(e.Armor);
+            if (need.Keys[1] || need.Keys[2]) need.WriteAliases(d, 1, "dmg_armor", 2, "dmgarmor", EventData.Num(e.DmgArmor));
+            if (need.Keys[3] || need.Keys[4]) need.WriteAliases(d, 3, "dmg_health", 4, "dmghealth", EventData.Num(e.DmgHealth));
+            if (need.Keys[5]) d["health"] = EventData.Num(e.Health);
+            if (need.Keys[6]) d["hitgroup"] = EventData.Num(e.Hitgroup);
+            if (need.Keys[7]) d["weapon"] = e.Weapon;
+            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, e.Attacker, need, 0);
+            if ((need.Prefixes[1] | need.Prefixes[2]) != PlayerFields.None) EventData.FillPlayer(d, e.Userid, need, 1, 2);
+            if (need.Derived) global::Challenges.Extractors.DerivedKeys.Apply("team_self_damage", gameEvent, d);
         }
 
         public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
             var e = (EventPlayerHurt)gameEvent;
-            if (need.Types[0])
-            {
-                buffer.Add((e.Attacker, "player_hurt_attacker"));
-            }
-            if (need.Types[1])
-            {
-                buffer.Add((e.Userid, "player_hurt_victim"));
-            }
+            if (need.Types[0]) buffer.Add((e.Attacker, "player_hurt_attacker"));
+            if (need.Types[1]) buffer.Add((e.Userid, "player_hurt_victim"));
         }
     }
 }

@@ -18,39 +18,18 @@ namespace Challenges.Extractors
         public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventGgKilledEnemy)gameEvent;
-            if (need.Keys[0])
-            {
-                d["bonus"] = EventData.Bool(e.Bonus);
-            }
-            if (need.Keys[1])
-            {
-                d["dominated"] = EventData.Num(e.Dominated);
-            }
-            if (need.Keys[2])
-            {
-                d["revenge"] = EventData.Num(e.Revenge);
-            }
-            if (need.Prefixes[0] != PlayerFields.None)
-            {
-                EventData.FillPlayer(d, e.Attackerid, need.PrefixKeys[0], need.Prefixes[0]);
-            }
-            if (need.Prefixes[1] != PlayerFields.None)
-            {
-                EventData.FillPlayer(d, e.Victimid, need.PrefixKeys[1], need.Prefixes[1]);
-            }
+            if (need.Keys[0]) d["bonus"] = EventData.Bool(e.Bonus);
+            if (need.Keys[1]) d["dominated"] = EventData.Num(e.Dominated);
+            if (need.Keys[2]) d["revenge"] = EventData.Num(e.Revenge);
+            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, e.Attackerid, need, 0);
+            if (need.Prefixes[1] != PlayerFields.None) EventData.FillPlayer(d, e.Victimid, need, 1);
         }
 
         public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
             var e = (EventGgKilledEnemy)gameEvent;
-            if (need.Types[0])
-            {
-                buffer.Add((e.Attackerid, "gg_killed_enemy_attackerid"));
-            }
-            if (need.Types[1])
-            {
-                buffer.Add((e.Victimid, "gg_killed_enemy_victimid"));
-            }
+            if (need.Types[0]) buffer.Add((e.Attackerid, "gg_killed_enemy_attackerid"));
+            if (need.Types[1]) buffer.Add((e.Victimid, "gg_killed_enemy_victimid"));
         }
     }
 }

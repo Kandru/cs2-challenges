@@ -18,131 +18,41 @@ namespace Challenges.Extractors
         public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventInstructorServerHintCreate)gameEvent;
-            if (need.Keys[0])
-            {
-                d["hint_activator_caption"] = e.HintActivatorCaption;
-            }
-            if (need.Keys[1])
-            {
-                d["hint_allow_nodraw_target"] = EventData.Bool(e.HintAllowNodrawTarget);
-            }
-            if (need.Keys[2])
-            {
-                d["hint_binding"] = e.HintBinding;
-            }
-            if (need.Keys[3])
-            {
-                d["hint_caption"] = e.HintCaption;
-            }
-            if (need.Keys[4])
-            {
-                d["hint_color"] = e.HintColor;
-            }
-            if (need.Keys[5])
-            {
-                d["hint_entindex"] = EventData.Num(e.HintEntindex);
-            }
-            if (need.Keys[6])
-            {
-                d["hint_flags"] = EventData.Num(e.HintFlags);
-            }
-            if (need.Keys[7])
-            {
-                d["hint_forcecaption"] = EventData.Bool(e.HintForcecaption);
-            }
-            if (need.Keys[8])
-            {
-                d["hint_gamepad_binding"] = e.HintGamepadBinding;
-            }
-            if (need.Keys[9])
-            {
-                d["hint_icon_offscreen"] = e.HintIconOffscreen;
-            }
-            if (need.Keys[10])
-            {
-                d["hint_icon_offset"] = EventData.Num(e.HintIconOffset);
-            }
-            if (need.Keys[11])
-            {
-                d["hint_icon_onscreen"] = e.HintIconOnscreen;
-            }
-            if (need.Keys[12])
-            {
-                d["hint_layoutfile"] = e.HintLayoutfile;
-            }
-            if (need.Keys[13])
-            {
-                d["hint_local_player_only"] = EventData.Bool(e.HintLocalPlayerOnly);
-            }
-            if (need.Keys[14])
-            {
-                d["hint_name"] = e.HintName;
-            }
-            if (need.Keys[15])
-            {
-                d["hint_nooffscreen"] = EventData.Bool(e.HintNooffscreen);
-            }
-            if (need.Keys[16])
-            {
-                d["hint_range"] = EventData.Num(e.HintRange);
-            }
-            if (need.Keys[17])
-            {
-                d["hint_replace_key"] = e.HintReplaceKey;
-            }
-            if (need.Keys[18])
-            {
-                d["hint_start_sound"] = e.HintStartSound;
-            }
-            if (need.Keys[19])
-            {
-                d["hint_target"] = EventData.Num(e.HintTarget);
-            }
-            if (need.Keys[20])
-            {
-                d["hint_timeout"] = EventData.Num(e.HintTimeout);
-            }
-            if (need.Keys[21])
-            {
-                d["hint_vr_height_offset"] = EventData.Num(e.HintVrHeightOffset);
-            }
-            if (need.Keys[22])
-            {
-                d["hint_vr_offset_x"] = EventData.Num(e.HintVrOffsetX);
-            }
-            if (need.Keys[23])
-            {
-                d["hint_vr_offset_y"] = EventData.Num(e.HintVrOffsetY);
-            }
-            if (need.Keys[24])
-            {
-                d["hint_vr_offset_z"] = EventData.Num(e.HintVrOffsetZ);
-            }
-            if (need.Keys[25])
-            {
-                d["hint_vr_panel_type"] = EventData.Num(e.HintVrPanelType);
-            }
-            if (need.Prefixes[0] != PlayerFields.None)
-            {
-                EventData.FillPlayer(d, e.HintActivatorUserid, need.PrefixKeys[0], need.Prefixes[0]);
-            }
-            if (need.Prefixes[1] != PlayerFields.None)
-            {
-                EventData.FillPlayer(d, e.Userid, need.PrefixKeys[1], need.Prefixes[1]);
-            }
+            if (need.Keys[0]) d["hint_activator_caption"] = e.HintActivatorCaption;
+            if (need.Keys[1]) d["hint_allow_nodraw_target"] = EventData.Bool(e.HintAllowNodrawTarget);
+            if (need.Keys[2]) d["hint_binding"] = e.HintBinding;
+            if (need.Keys[3]) d["hint_caption"] = e.HintCaption;
+            if (need.Keys[4]) d["hint_color"] = e.HintColor;
+            if (need.Keys[5]) d["hint_entindex"] = EventData.Num(e.HintEntindex);
+            if (need.Keys[6]) d["hint_flags"] = EventData.Num(e.HintFlags);
+            if (need.Keys[7]) d["hint_forcecaption"] = EventData.Bool(e.HintForcecaption);
+            if (need.Keys[8]) d["hint_gamepad_binding"] = e.HintGamepadBinding;
+            if (need.Keys[9]) d["hint_icon_offscreen"] = e.HintIconOffscreen;
+            if (need.Keys[10]) d["hint_icon_offset"] = EventData.Num(e.HintIconOffset);
+            if (need.Keys[11]) d["hint_icon_onscreen"] = e.HintIconOnscreen;
+            if (need.Keys[12]) d["hint_layoutfile"] = e.HintLayoutfile;
+            if (need.Keys[13]) d["hint_local_player_only"] = EventData.Bool(e.HintLocalPlayerOnly);
+            if (need.Keys[14]) d["hint_name"] = e.HintName;
+            if (need.Keys[15]) d["hint_nooffscreen"] = EventData.Bool(e.HintNooffscreen);
+            if (need.Keys[16]) d["hint_range"] = EventData.Num(e.HintRange);
+            if (need.Keys[17]) d["hint_replace_key"] = e.HintReplaceKey;
+            if (need.Keys[18]) d["hint_start_sound"] = e.HintStartSound;
+            if (need.Keys[19]) d["hint_target"] = EventData.Num(e.HintTarget);
+            if (need.Keys[20]) d["hint_timeout"] = EventData.Num(e.HintTimeout);
+            if (need.Keys[21]) d["hint_vr_height_offset"] = EventData.Num(e.HintVrHeightOffset);
+            if (need.Keys[22]) d["hint_vr_offset_x"] = EventData.Num(e.HintVrOffsetX);
+            if (need.Keys[23]) d["hint_vr_offset_y"] = EventData.Num(e.HintVrOffsetY);
+            if (need.Keys[24]) d["hint_vr_offset_z"] = EventData.Num(e.HintVrOffsetZ);
+            if (need.Keys[25]) d["hint_vr_panel_type"] = EventData.Num(e.HintVrPanelType);
+            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, e.HintActivatorUserid, need, 0);
+            if (need.Prefixes[1] != PlayerFields.None) EventData.FillPlayer(d, e.Userid, need, 1);
         }
 
         public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
             var e = (EventInstructorServerHintCreate)gameEvent;
-            if (need.Types[0])
-            {
-                buffer.Add((e.HintActivatorUserid, "instructor_server_hint_create_hint_activator_userid"));
-            }
-            if (need.Types[1])
-            {
-                buffer.Add((e.Userid, "instructor_server_hint_create_userid"));
-            }
+            if (need.Types[0]) buffer.Add((e.HintActivatorUserid, "instructor_server_hint_create_hint_activator_userid"));
+            if (need.Types[1]) buffer.Add((e.Userid, "instructor_server_hint_create_userid"));
         }
     }
 }
