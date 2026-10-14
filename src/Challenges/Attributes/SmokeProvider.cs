@@ -60,18 +60,10 @@ namespace Challenges.Attributes
             {
                 case "EventSmokegrenadeDetonate":
                     EventSmokegrenadeDetonate detonate = (EventSmokegrenadeDetonate)gameEvent;
-                    _smokes.Add(new LiveSmoke(detonate.Entityid, detonate.X, detonate.Y, detonate.Z, RoundClock.NowSeconds()));
+                    AddSmoke(detonate.Entityid, detonate.X, detonate.Y, detonate.Z, RoundClock.NowSeconds());
                     return;
                 case "EventSmokegrenadeExpired":
-                    int entityId = ((EventSmokegrenadeExpired)gameEvent).Entityid;
-                    for (int i = _smokes.Count - 1; i >= 0; i--)
-                    {
-                        if (_smokes[i].EntityId == entityId)
-                        {
-                            _smokes.RemoveAt(i);
-                        }
-                    }
-
+                    RemoveSmoke(((EventSmokegrenadeExpired)gameEvent).Entityid);
                     return;
                 case "EventBombBegindefuse":
                 case "EventBombDefused":
@@ -82,16 +74,18 @@ namespace Challenges.Attributes
 
         public void WritePlayer(Dictionary<string, EventValue> d, string[] keys, uint suffixes, CCSPlayerController? player)
         {
-            PruneSmokes(RoundClock.NowSeconds());
-            ProbePlayer(player, out bool inside);
+            double now = RoundClock.NowSeconds();
+            PruneSmokes(now);
+            ProbePlayer(player, now, out bool inside);
             d[keys[0]] = EventValue.Of(inside);
         }
 
         public void WriteEvent(string eventName, GameEvent gameEvent, Dictionary<string, EventValue> d, uint keys)
         {
-            PruneSmokes(RoundClock.NowSeconds());
+            double now = RoundClock.NowSeconds();
+            PruneSmokes(now);
             TryCacheBombOrigin();
-            ProbeBomb(out bool inside, out float distance, out float age);
+            ProbeBomb(now, out bool inside, out float distance, out float age);
             for (int i = 0; i < Keys.Length; i++)
             {
                 if ((keys & (1u << i)) == 0)
@@ -115,7 +109,7 @@ namespace Challenges.Attributes
             _hasBombOrigin = false;
         }
 
-        private void ProbeBomb(out bool inside, out float distance, out float age)
+        private void ProbeBomb(double now, out bool inside, out float distance, out float age)
         {
             if (!_hasBombOrigin)
             {
@@ -125,10 +119,10 @@ namespace Challenges.Attributes
                 return;
             }
 
-            Probe(_bombX, _bombY, _bombZ, out inside, out distance, out age);
+            Probe(_bombX, _bombY, _bombZ, now, out inside, out distance, out age);
         }
 
-        private void ProbePlayer(CCSPlayerController? player, out bool inside)
+        private void ProbePlayer(CCSPlayerController? player, double now, out bool inside)
         {
             if (!TryOrigin(player, out float x, out float y, out float z))
             {
@@ -136,10 +130,10 @@ namespace Challenges.Attributes
                 return;
             }
 
-            Probe(x, y, z, out inside, out _, out _);
+            Probe(x, y, z, now, out inside, out _, out _);
         }
 
-        private void Probe(float x, float y, float z, out bool inside, out float distance, out float age)
+        private void Probe(float x, float y, float z, double now, out bool inside, out float distance, out float age)
         {
             if (_smokes.Count == 0)
             {
@@ -149,7 +143,6 @@ namespace Challenges.Attributes
                 return;
             }
 
-            double now = RoundClock.NowSeconds();
             float bestCoveringSq = float.MaxValue;
             float bestCoveringAge = 0f;
             float bestAnySq = float.MaxValue;
@@ -192,8 +185,14 @@ namespace Challenges.Attributes
             age = bestAnyAge;
         }
 
+        /// <summary>Looks the planted bomb up once per round; it does not move.</summary>
         private void TryCacheBombOrigin()
         {
+            if (_hasBombOrigin)
+            {
+                return;
+            }
+
             foreach (CPlantedC4 bomb in Utilities.FindAllEntitiesByDesignerName<CPlantedC4>("planted_c4"))
             {
                 if (bomb is not { IsValid: true, AbsOrigin: { } origin })
@@ -222,6 +221,24 @@ namespace Challenges.Attributes
             y = origin.Y;
             z = origin.Z;
             return true;
+        }
+
+        /// <summary>Prunes first, so smokes do not pile up while no rule reads them.</summary>
+        private void AddSmoke(int entityId, float x, float y, float z, double at)
+        {
+            PruneSmokes(at);
+            _smokes.Add(new LiveSmoke(entityId, x, y, z, at));
+        }
+
+        private void RemoveSmoke(int entityId)
+        {
+            for (int i = _smokes.Count - 1; i >= 0; i--)
+            {
+                if (_smokes[i].EntityId == entityId)
+                {
+                    _smokes.RemoveAt(i);
+                }
+            }
         }
 
         private void PruneSmokes(double now)

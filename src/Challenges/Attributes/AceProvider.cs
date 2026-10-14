@@ -16,11 +16,15 @@ namespace Challenges.Attributes
             new AttributeEventKey("EventPlayerDeath", "isace", "bool"),
         ];
 
+        /// <summary>One credit bit per bound and slot.</summary>
+        private const int MaxBounds = 64;
+
         private static readonly string[] Watched = ["EventPlayerDeath"];
 
         private readonly List<AceBound> _bounds = [];
         private readonly int[] _kills = new int[RoundRoster.MaxSlots];
-        private readonly HashSet<(int Slot, int Min, int Max)> _credited = [];
+        /// <summary>Bit i set: the slot was credited for bound i this round.</summary>
+        private readonly ulong[] _credited = new ulong[RoundRoster.MaxSlots];
         /// <summary>Bounds the current death completes, indexed like <see cref="_bounds"/>.</summary>
         private bool[] _hits = [];
         /// <summary>Smallest loaded <c>min_players</c>; fewer kills can never complete a bound.</summary>
@@ -43,10 +47,18 @@ namespace Challenges.Attributes
                     }
 
                     (int min, int max) = AceBounds.Resolve(rule.Source, warn: true);
-                    if (seen.Add((min, max)))
+                    if (!seen.Add((min, max)))
                     {
-                        _bounds.Add(new AceBound(min, max, AceBounds.DataKey(min, max)));
+                        continue;
                     }
+
+                    if (_bounds.Count == MaxBounds)
+                    {
+                        Console.WriteLine($"[Challenges] more than {MaxBounds} isace bound pairs; ignoring isace.{min}.{max}");
+                        continue;
+                    }
+
+                    _bounds.Add(new AceBound(min, max, AceBounds.DataKey(min, max)));
                 }
             }
 
@@ -60,6 +72,7 @@ namespace Challenges.Attributes
             }
 
             _hits = new bool[_bounds.Count];
+            Array.Clear(_credited);
             return _bounds.Count > 0;
         }
 
@@ -82,7 +95,7 @@ namespace Challenges.Attributes
         public void Clear()
         {
             Array.Clear(_kills);
-            _credited.Clear();
+            Array.Clear(_credited);
             Array.Clear(_hits);
         }
 
@@ -91,9 +104,8 @@ namespace Challenges.Attributes
             if ((uint)slot < (uint)_kills.Length)
             {
                 _kills[slot] = 0;
+                _credited[slot] = 0;
             }
-
-            _credited.RemoveWhere(entry => entry.Slot == slot);
         }
 
         private void OnDeath(EventPlayerDeath e)
@@ -136,11 +148,13 @@ namespace Challenges.Attributes
                     continue;
                 }
 
-                if (!_credited.Add((slot, bound.Min, bound.Max)))
+                ulong bit = 1UL << i;
+                if ((_credited[slot] & bit) != 0)
                 {
                     continue;
                 }
 
+                _credited[slot] |= bit;
                 _hits[i] = true;
             }
         }

@@ -49,8 +49,9 @@ namespace Challenges.Attributes
         /// <summary>Grenade short name with the pin pulled, per slot; null when none.</summary>
         private readonly string?[] _holding = new string?[RoundRoster.MaxSlots];
         private readonly List<ThrownGrenade> _thrown = [];
-        private readonly HashSet<int> _pendingThrownRemove = [];
-        private readonly StringBuilder _thrownScratch = new(32);
+        /// <summary>Names of one grenade list being built; joined by <see cref="JoinNames"/>.</summary>
+        private readonly List<string> _names = [];
+        private readonly StringBuilder _scratch = new(32);
         private bool _thrownFlushScheduled;
 
         public IReadOnlyList<AttributeSuffix> PlayerSuffixes => Suffixes;
@@ -109,7 +110,8 @@ namespace Challenges.Attributes
             int slot = player.Slot;
             string? holdWeapon = HoldingOf(slot);
             bool holding = holdWeapon != null;
-            string thrown = (suffixes & (StateBit | ThrownBit)) != 0 ? BuildThrownList(slot) : "";
+            double now = RoundClock.NowSeconds();
+            string thrown = (suffixes & (StateBit | ThrownBit)) != 0 ? BuildThrownList(slot, now) : "";
             if ((suffixes & StateBit) != 0)
             {
                 d[keys[0]] = EventValue.Of((holding, thrown.Length > 0) switch
@@ -125,7 +127,7 @@ namespace Challenges.Attributes
             WriteIf(d, keys, suffixes, ThrownBit, 2, thrown);
             if ((suffixes & ThrowingBit) != 0)
             {
-                d[keys[3]] = EventValue.Of(BuildThrowingList(player, slot, holding, holdWeapon));
+                d[keys[3]] = EventValue.Of(BuildThrowingList(player, slot, holding, holdWeapon, now));
             }
         }
 
@@ -165,7 +167,6 @@ namespace Challenges.Attributes
         {
             Array.Clear(_holding);
             _thrown.Clear();
-            _pendingThrownRemove.Clear();
             _thrownFlushScheduled = false;
         }
 
@@ -214,7 +215,7 @@ namespace Challenges.Attributes
 
             int slot = player.Slot;
             SetHolding(slot, null);
-            _thrown.Add(new ThrownGrenade(slot, shortName, RoundClock.NowSeconds()));
+            _thrown.Add(new ThrownGrenade(slot, shortName, RoundClock.NowSeconds(), Detonated: false));
         }
 
         private void OnItemEquip(EventItemEquip e)
@@ -251,55 +252,47 @@ namespace Challenges.Attributes
                 }
             }
 
-            if (index < 0 || !_pendingThrownRemove.Add(_thrown[index].Id) || _thrownFlushScheduled)
+            if (index < 0)
+            {
+                return;
+            }
+
+            // Still listed for the detonate event itself; dropped on the next frame.
+            _thrown[index] = _thrown[index] with { Detonated = true };
+            if (_thrownFlushScheduled)
             {
                 return;
             }
 
             _thrownFlushScheduled = true;
-            Server.NextFrame(FlushPendingThrownRemovals);
+            Server.NextFrame(FlushDetonatedThrown);
         }
 
-        private void FlushPendingThrownRemovals()
+        private void FlushDetonatedThrown()
         {
             _thrownFlushScheduled = false;
-            if (_pendingThrownRemove.Count == 0)
-            {
-                return;
-            }
-
             for (int i = _thrown.Count - 1; i >= 0; i--)
             {
-                if (_pendingThrownRemove.Contains(_thrown[i].Id))
+                if (_thrown[i].Detonated)
                 {
                     _thrown.RemoveAt(i);
                 }
             }
-
-            _pendingThrownRemove.Clear();
         }
 
-        private string BuildThrownList(int slot)
+        private string BuildThrownList(int slot, double now)
         {
-            _thrownScratch.Clear();
-            double now = RoundClock.NowSeconds();
+            _names.Clear();
             for (int i = 0; i < _thrown.Count; i++)
             {
                 ThrownGrenade t = _thrown[i];
-                if (t.Slot != slot || now - t.At > ThrownExpireSeconds)
+                if (t.Slot == slot && now - t.At <= ThrownExpireSeconds)
                 {
-                    continue;
+                    _names.Add(t.ShortName);
                 }
-
-                if (_thrownScratch.Length > 0)
-                {
-                    _thrownScratch.Append(',');
-                }
-
-                _thrownScratch.Append(t.ShortName);
             }
 
-            return _thrownScratch.Length == 0 ? "" : _thrownScratch.ToString();
+            return JoinNames();
         }
 
         /// <summary>
@@ -310,57 +303,73 @@ namespace Challenges.Attributes
             CCSPlayerController player,
             int slot,
             bool holding,
-            string? holdWeapon)
+            string? holdWeapon,
+            double now)
         {
-            _thrownScratch.Clear();
+            _names.Clear();
             if (TryActiveGrenade(player, out string? active, out _))
             {
-                AppendUniqueName(_thrownScratch, active);
+                AddUniqueName(active);
             }
 
             if (holding)
             {
-                AppendUniqueName(_thrownScratch, holdWeapon);
+                AddUniqueName(holdWeapon);
             }
 
-            double now = RoundClock.NowSeconds();
             for (int i = 0; i < _thrown.Count; i++)
             {
                 ThrownGrenade t = _thrown[i];
-                if (t.Slot != slot || now - t.At > ThrowingExpireSeconds)
+                if (t.Slot == slot && now - t.At <= ThrowingExpireSeconds)
                 {
-                    continue;
+                    AddUniqueName(t.ShortName);
                 }
-
-                AppendUniqueName(_thrownScratch, t.ShortName);
             }
 
-            return _thrownScratch.Length == 0 ? "" : _thrownScratch.ToString();
+            return JoinNames();
         }
 
-        private static void AppendUniqueName(StringBuilder sb, string? name)
+        private void AddUniqueName(string? name)
         {
             if (string.IsNullOrEmpty(name))
             {
                 return;
             }
 
-            if (sb.Length == 0)
+            foreach (string listed in _names)
             {
-                sb.Append(name);
-                return;
-            }
-
-            string current = sb.ToString();
-            foreach (string part in current.Split(','))
-            {
-                if (string.Equals(part, name, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(listed, name, StringComparison.OrdinalIgnoreCase))
                 {
                     return;
                 }
             }
 
-            sb.Append(',').Append(name);
+            _names.Add(name);
+        }
+
+        /// <summary><see cref="_names"/> comma separated; a single name is returned as is.</summary>
+        private string JoinNames()
+        {
+            switch (_names.Count)
+            {
+                case 0:
+                    return "";
+                case 1:
+                    return _names[0];
+            }
+
+            _scratch.Clear();
+            foreach (string name in _names)
+            {
+                if (_scratch.Length > 0)
+                {
+                    _scratch.Append(',');
+                }
+
+                _scratch.Append(name);
+            }
+
+            return _scratch.ToString();
         }
 
         private void PruneThrown(double now)
@@ -381,7 +390,7 @@ namespace Challenges.Attributes
             for (int i = 0; i < _thrown.Count; i++)
             {
                 ThrownGrenade t = _thrown[i];
-                if (_pendingThrownRemove.Contains(t.Id)
+                if (t.Detonated
                     || t.At >= bestAt
                     || !string.Equals(t.ShortName, shortName, StringComparison.OrdinalIgnoreCase))
                 {
@@ -416,13 +425,7 @@ namespace Challenges.Attributes
             return true;
         }
 
-        private sealed class ThrownGrenade(int slot, string shortName, double at)
-        {
-            private static int _nextId;
-            public int Id { get; } = Interlocked.Increment(ref _nextId);
-            public int Slot { get; } = slot;
-            public string ShortName { get; } = shortName;
-            public double At { get; } = at;
-        }
+        /// <summary>A grenade thrown by <paramref name="Slot"/>; <paramref name="Detonated"/> marks it for removal on the next frame.</summary>
+        private readonly record struct ThrownGrenade(int Slot, string ShortName, double At, bool Detonated);
     }
 }
