@@ -11,18 +11,20 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventInspectWeapon";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["inspect_weapon"];
+        public IReadOnlyList<string> Keys { get; } = [];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = ["userid", "player"];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventInspectWeapon)gameEvent;
-            EventData.FillPlayer(d, e.Userid, "userid");
-            EventData.FillPlayer(d, e.Userid, "player");
+            if ((need.Prefixes[0] | need.Prefixes[1]) != PlayerFields.None) EventData.FillPlayer(d, e.Userid, need, 0, 1);
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
             var e = (EventInspectWeapon)gameEvent;
-            yield return (e.Userid, "inspect_weapon");
+            if (need.Types[0]) buffer.Add((e.Userid, "inspect_weapon"));
         }
     }
 }

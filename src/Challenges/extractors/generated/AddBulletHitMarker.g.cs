@@ -11,29 +11,31 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventAddBulletHitMarker";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["add_bullet_hit_marker"];
+        public IReadOnlyList<string> Keys { get; } = ["ang_x", "ang_y", "ang_z", "bone", "hit", "pos_x", "pos_y", "pos_z", "start_x", "start_y", "start_z"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = ["userid", "player"];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventAddBulletHitMarker)gameEvent;
-            d["ang_x"] = EventData.Num(e.AngX);
-            d["ang_y"] = EventData.Num(e.AngY);
-            d["ang_z"] = EventData.Num(e.AngZ);
-            d["bone"] = EventData.Num(e.Bone);
-            d["hit"] = EventData.Bool(e.Hit);
-            d["pos_x"] = EventData.Num(e.PosX);
-            d["pos_y"] = EventData.Num(e.PosY);
-            d["pos_z"] = EventData.Num(e.PosZ);
-            d["start_x"] = EventData.Num(e.StartX);
-            d["start_y"] = EventData.Num(e.StartY);
-            d["start_z"] = EventData.Num(e.StartZ);
-            EventData.FillPlayer(d, e.Userid, "userid");
-            EventData.FillPlayer(d, e.Userid, "player");
+            if (need.Keys[0]) d["ang_x"] = EventData.Num(e.AngX);
+            if (need.Keys[1]) d["ang_y"] = EventData.Num(e.AngY);
+            if (need.Keys[2]) d["ang_z"] = EventData.Num(e.AngZ);
+            if (need.Keys[3]) d["bone"] = EventData.Num(e.Bone);
+            if (need.Keys[4]) d["hit"] = EventData.Bool(e.Hit);
+            if (need.Keys[5]) d["pos_x"] = EventData.Num(e.PosX);
+            if (need.Keys[6]) d["pos_y"] = EventData.Num(e.PosY);
+            if (need.Keys[7]) d["pos_z"] = EventData.Num(e.PosZ);
+            if (need.Keys[8]) d["start_x"] = EventData.Num(e.StartX);
+            if (need.Keys[9]) d["start_y"] = EventData.Num(e.StartY);
+            if (need.Keys[10]) d["start_z"] = EventData.Num(e.StartZ);
+            if ((need.Prefixes[0] | need.Prefixes[1]) != PlayerFields.None) EventData.FillPlayer(d, e.Userid, need, 0, 1);
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
             var e = (EventAddBulletHitMarker)gameEvent;
-            yield return (e.Userid, "add_bullet_hit_marker");
+            if (need.Types[0]) buffer.Add((e.Userid, "add_bullet_hit_marker"));
         }
     }
 }

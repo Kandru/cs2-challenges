@@ -40,10 +40,14 @@ namespace Challenges
         /// <summary>Null until the first <see cref="AddRemoval"/>.</summary>
         public List<(string ChallengeId, string TaskId)>? Removals { get; private set; }
         public int? SolvedAbsolute { get; set; }
+        /// <summary>True when an upsert brought a task to its goal; with removals, the only change that can close a type.</summary>
+        public bool CompletesTask { get; set; }
         /// <summary>Null until the first <see cref="AddEffect"/>.</summary>
         public List<ProgressEffect>? Effects { get; private set; }
         public List<TrackerProgressItem>? Touched { get; set; }
         public List<string>? DebugLines { get; set; }
+        /// <summary>Completion-only result of a target the worker could not simulate; the shadow is suspect.</summary>
+        public bool Failed { get; init; }
 
         public bool HasChanges =>
             Upserts != null
@@ -54,13 +58,19 @@ namespace Challenges
         /// <summary>
         /// Completion-only result: tells the game thread that one in-flight target finished without changes.
         /// </summary>
-        public static ProgressPatch Done(string steamId, int slot, string scheduleKey, RunningSchedule schedule) =>
+        public static ProgressPatch Done(
+            string steamId,
+            int slot,
+            string scheduleKey,
+            RunningSchedule schedule,
+            bool failed = false) =>
             new()
             {
                 SteamId = steamId,
                 Slot = slot,
                 ScheduleKey = scheduleKey,
                 Schedule = schedule,
+                Failed = failed,
             };
 
         public void Upsert(string challengeId, string taskId, TaskProgress progress)

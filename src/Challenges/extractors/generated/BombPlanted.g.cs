@@ -11,20 +11,21 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventBombPlanted";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["player_bomb_planted"];
+        public IReadOnlyList<string> Keys { get; } = ["site", "bomb_site"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = ["userid", "planter"];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventBombPlanted)gameEvent;
-            d["site"] = EventData.Num(e.Site);
-            d["bomb_site"] = d["site"];
-            EventData.FillPlayer(d, e.Userid, "userid");
-            EventData.FillPlayer(d, e.Userid, "planter");
+            if (need.Keys[0] || need.Keys[1]) need.WriteAliases(d, 0, "site", 1, "bomb_site", EventData.Num(e.Site));
+            if ((need.Prefixes[0] | need.Prefixes[1]) != PlayerFields.None) EventData.FillPlayer(d, e.Userid, need, 0, 1);
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
             var e = (EventBombPlanted)gameEvent;
-            yield return (e.Userid, "player_bomb_planted");
+            if (need.Types[0]) buffer.Add((e.Userid, "player_bomb_planted"));
         }
     }
 }

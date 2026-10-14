@@ -12,412 +12,672 @@ namespace Challenges
     {
         public void OnEntitySpawned(CEntityInstance entity)
         {
-            Dictionary<string, string> d = [];
-            d["entity.designername"] = entity.DesignerName;
-            d["entity.index"] = EventData.Num(entity.Index);
-            List<(CCSPlayerController? Player, string Type)> targets = [];
-            foreach (var entry in Utilities.GetPlayers())
+            if (!BeginListener("OnEntitySpawned", out ExtractorPlan? plan, out GlobalGate closed))
             {
-                targets.Add((entry, "on_entity_spawned"));
+                return;
             }
-            HandleListener("OnEntitySpawned", d, targets);
+
+            FillDemand need = plan.Demand;
+            List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
+            Players.AddAll(targets, "on_entity_spawned");
+
+            if (FilterListenerTargets("OnEntitySpawned", targets, closed) is not { } valid)
+            {
+                return;
+            }
+
+            Dictionary<string, string> d = new(need.Capacity);
+            if (need.Keys[0]) d["entity.designername"] = entity.DesignerName;
+            if (need.Keys[1]) d["entity.index"] = EventData.Num(entity.Index);
+            HandleListener("OnEntitySpawned", d, valid, closed);
         }
 
         public void OnEntityCreated(CEntityInstance entity)
         {
-            Dictionary<string, string> d = [];
-            d["entity.designername"] = entity.DesignerName;
-            d["entity.index"] = EventData.Num(entity.Index);
-            List<(CCSPlayerController? Player, string Type)> targets = [];
-            foreach (var entry in Utilities.GetPlayers())
+            if (!BeginListener("OnEntityCreated", out ExtractorPlan? plan, out GlobalGate closed))
             {
-                targets.Add((entry, "on_entity_created"));
+                return;
             }
-            HandleListener("OnEntityCreated", d, targets);
+
+            FillDemand need = plan.Demand;
+            List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
+            Players.AddAll(targets, "on_entity_created");
+
+            if (FilterListenerTargets("OnEntityCreated", targets, closed) is not { } valid)
+            {
+                return;
+            }
+
+            Dictionary<string, string> d = new(need.Capacity);
+            if (need.Keys[0]) d["entity.designername"] = entity.DesignerName;
+            if (need.Keys[1]) d["entity.index"] = EventData.Num(entity.Index);
+            HandleListener("OnEntityCreated", d, valid, closed);
         }
 
         public void OnEntityDeleted(CEntityInstance entity)
         {
-            Dictionary<string, string> d = [];
-            d["entity.designername"] = entity.DesignerName;
-            d["entity.index"] = EventData.Num(entity.Index);
-            List<(CCSPlayerController? Player, string Type)> targets = [];
-            foreach (var entry in Utilities.GetPlayers())
+            if (!BeginListener("OnEntityDeleted", out ExtractorPlan? plan, out GlobalGate closed))
             {
-                targets.Add((entry, "on_entity_deleted"));
+                return;
             }
-            HandleListener("OnEntityDeleted", d, targets);
+
+            FillDemand need = plan.Demand;
+            List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
+            Players.AddAll(targets, "on_entity_deleted");
+
+            if (FilterListenerTargets("OnEntityDeleted", targets, closed) is not { } valid)
+            {
+                return;
+            }
+
+            Dictionary<string, string> d = new(need.Capacity);
+            if (need.Keys[0]) d["entity.designername"] = entity.DesignerName;
+            if (need.Keys[1]) d["entity.index"] = EventData.Num(entity.Index);
+            HandleListener("OnEntityDeleted", d, valid, closed);
         }
 
         public void OnEntityParentChanged(CEntityInstance entity, CEntityInstance newParent)
         {
-            Dictionary<string, string> d = [];
-            d["entity.designername"] = entity.DesignerName;
-            d["entity.index"] = EventData.Num(entity.Index);
-            d["newParent.designername"] = newParent.DesignerName;
-            d["newParent.index"] = EventData.Num(newParent.Index);
-            List<(CCSPlayerController? Player, string Type)> targets = [];
-            foreach (var entry in Utilities.GetPlayers())
+            if (!BeginListener("OnEntityParentChanged", out ExtractorPlan? plan, out GlobalGate closed))
             {
-                targets.Add((entry, "on_entity_parent_changed"));
+                return;
             }
-            HandleListener("OnEntityParentChanged", d, targets);
+
+            FillDemand need = plan.Demand;
+            List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
+            Players.AddAll(targets, "on_entity_parent_changed");
+
+            if (FilterListenerTargets("OnEntityParentChanged", targets, closed) is not { } valid)
+            {
+                return;
+            }
+
+            Dictionary<string, string> d = new(need.Capacity);
+            if (need.Keys[0]) d["entity.designername"] = entity.DesignerName;
+            if (need.Keys[1]) d["entity.index"] = EventData.Num(entity.Index);
+            if (need.Keys[2]) d["newParent.designername"] = newParent.DesignerName;
+            if (need.Keys[3]) d["newParent.index"] = EventData.Num(newParent.Index);
+            HandleListener("OnEntityParentChanged", d, valid, closed);
         }
 
         public HookResult OnEntityTakeDamagePre(CBaseEntity entity, CTakeDamageInfo info)
         {
-            Dictionary<string, string> d = [];
-            d["entity.designername"] = entity.DesignerName;
-            d["entity.index"] = EventData.Num(entity.Index);
-            d["damage.damage"] = EventData.Num(info.Damage);
-            d["damage.totalled_damage"] = EventData.Num(info.TotalledDamage);
-            d["damage.bits_damage_type"] = info.BitsDamageType.ToString();
-            d["damage.damage_custom"] = EventData.Num(info.DamageCustom);
-            d["damage.ammo_type"] = EventData.Num(info.AmmoType);
-            d["damage.original_damage"] = EventData.Num(info.OriginalDamage);
-            d["damage.should_bleed"] = EventData.Bool(info.ShouldBleed);
-            d["damage.should_spark"] = EventData.Bool(info.ShouldSpark);
-            d["damage.damage_flags"] = info.DamageFlags.ToString();
-            d["damage.hit_group_id"] = info.HitGroupId.ToString();
-            d["damage.num_objects_penetrated"] = EventData.Num(info.NumObjectsPenetrated);
-            d["damage.friendly_fire_damage_reduction_ratio"] = EventData.Num(info.FriendlyFireDamageReductionRatio);
-            d["damage.stopped_bullet"] = EventData.Bool(info.StoppedBullet);
-            d["damage.in_take_damage_flow"] = EventData.Bool(info.InTakeDamageFlow);
-            List<(CCSPlayerController? Player, string Type)> targets = [];
-            foreach (var entry in Utilities.GetPlayers())
+            if (!BeginListener("OnEntityTakeDamagePre", out ExtractorPlan? plan, out GlobalGate closed))
             {
-                targets.Add((entry, "on_entity_take_damage_pre"));
+                return HookResult.Continue;
             }
-            HandleListener("OnEntityTakeDamagePre", d, targets);
+
+            FillDemand need = plan.Demand;
+            List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
+            Players.AddAll(targets, "on_entity_take_damage_pre");
+
+            if (FilterListenerTargets("OnEntityTakeDamagePre", targets, closed) is not { } valid)
+            {
+                return HookResult.Continue;
+            }
+
+            Dictionary<string, string> d = new(need.Capacity);
+            if (need.Keys[0]) d["entity.designername"] = entity.DesignerName;
+            if (need.Keys[1]) d["entity.index"] = EventData.Num(entity.Index);
+            if (need.Keys[2]) d["damage.damage"] = EventData.Num(info.Damage);
+            if (need.Keys[3]) d["damage.totalled_damage"] = EventData.Num(info.TotalledDamage);
+            if (need.Keys[4]) d["damage.bits_damage_type"] = info.BitsDamageType.ToString();
+            if (need.Keys[5]) d["damage.damage_custom"] = EventData.Num(info.DamageCustom);
+            if (need.Keys[6]) d["damage.ammo_type"] = EventData.Num(info.AmmoType);
+            if (need.Keys[7]) d["damage.original_damage"] = EventData.Num(info.OriginalDamage);
+            if (need.Keys[8]) d["damage.should_bleed"] = EventData.Bool(info.ShouldBleed);
+            if (need.Keys[9]) d["damage.should_spark"] = EventData.Bool(info.ShouldSpark);
+            if (need.Keys[10]) d["damage.damage_flags"] = info.DamageFlags.ToString();
+            if (need.Keys[11]) d["damage.hit_group_id"] = info.HitGroupId.ToString();
+            if (need.Keys[12]) d["damage.num_objects_penetrated"] = EventData.Num(info.NumObjectsPenetrated);
+            if (need.Keys[13]) d["damage.friendly_fire_damage_reduction_ratio"] = EventData.Num(info.FriendlyFireDamageReductionRatio);
+            if (need.Keys[14]) d["damage.stopped_bullet"] = EventData.Bool(info.StoppedBullet);
+            if (need.Keys[15]) d["damage.in_take_damage_flow"] = EventData.Bool(info.InTakeDamageFlow);
+            HandleListener("OnEntityTakeDamagePre", d, valid, closed);
             return HookResult.Continue;
         }
 
         public void OnEntityTakeDamagePost(CBaseEntity entity, CTakeDamageInfo info, CTakeDamageResult result)
         {
-            Dictionary<string, string> d = [];
-            d["entity.designername"] = entity.DesignerName;
-            d["entity.index"] = EventData.Num(entity.Index);
-            d["damage.damage"] = EventData.Num(info.Damage);
-            d["damage.totalled_damage"] = EventData.Num(info.TotalledDamage);
-            d["damage.bits_damage_type"] = info.BitsDamageType.ToString();
-            d["damage.damage_custom"] = EventData.Num(info.DamageCustom);
-            d["damage.ammo_type"] = EventData.Num(info.AmmoType);
-            d["damage.original_damage"] = EventData.Num(info.OriginalDamage);
-            d["damage.should_bleed"] = EventData.Bool(info.ShouldBleed);
-            d["damage.should_spark"] = EventData.Bool(info.ShouldSpark);
-            d["damage.damage_flags"] = info.DamageFlags.ToString();
-            d["damage.hit_group_id"] = info.HitGroupId.ToString();
-            d["damage.num_objects_penetrated"] = EventData.Num(info.NumObjectsPenetrated);
-            d["damage.friendly_fire_damage_reduction_ratio"] = EventData.Num(info.FriendlyFireDamageReductionRatio);
-            d["damage.stopped_bullet"] = EventData.Bool(info.StoppedBullet);
-            d["damage.in_take_damage_flow"] = EventData.Bool(info.InTakeDamageFlow);
-            d["result.health_lost"] = EventData.Num(result.HealthLost);
-            d["result.health_before"] = EventData.Num(result.HealthBefore);
-            d["result.damage_dealt"] = EventData.Num(result.DamageDealt);
-            d["result.pre_modified_damage"] = EventData.Num(result.PreModifiedDamage);
-            d["result.totalled_health_lost"] = EventData.Num(result.TotalledHealthLost);
-            d["result.totalled_damage_dealt"] = EventData.Num(result.TotalledDamageDealt);
-            d["result.totalled_pre_modified_damage"] = EventData.Num(result.TotalledPreModifiedDamage);
-            d["result.new_damage_accumulator_value"] = EventData.Num(result.NewDamageAccumulatorValue);
-            d["result.damage_flags"] = result.DamageFlags.ToString();
-            d["result.was_damage_suppressed"] = EventData.Bool(result.WasDamageSuppressed);
-            d["result.suppress_flinch"] = EventData.Bool(result.SuppressFlinch);
-            d["result.override_flinch_hit_group"] = result.OverrideFlinchHitGroup.ToString();
-            List<(CCSPlayerController? Player, string Type)> targets = [];
-            foreach (var entry in Utilities.GetPlayers())
+            if (!BeginListener("OnEntityTakeDamagePost", out ExtractorPlan? plan, out GlobalGate closed))
             {
-                targets.Add((entry, "on_entity_take_damage_post"));
+                return;
             }
-            HandleListener("OnEntityTakeDamagePost", d, targets);
+
+            FillDemand need = plan.Demand;
+            List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
+            Players.AddAll(targets, "on_entity_take_damage_post");
+
+            if (FilterListenerTargets("OnEntityTakeDamagePost", targets, closed) is not { } valid)
+            {
+                return;
+            }
+
+            Dictionary<string, string> d = new(need.Capacity);
+            if (need.Keys[0]) d["entity.designername"] = entity.DesignerName;
+            if (need.Keys[1]) d["entity.index"] = EventData.Num(entity.Index);
+            if (need.Keys[2]) d["damage.damage"] = EventData.Num(info.Damage);
+            if (need.Keys[3]) d["damage.totalled_damage"] = EventData.Num(info.TotalledDamage);
+            if (need.Keys[4]) d["damage.bits_damage_type"] = info.BitsDamageType.ToString();
+            if (need.Keys[5]) d["damage.damage_custom"] = EventData.Num(info.DamageCustom);
+            if (need.Keys[6]) d["damage.ammo_type"] = EventData.Num(info.AmmoType);
+            if (need.Keys[7]) d["damage.original_damage"] = EventData.Num(info.OriginalDamage);
+            if (need.Keys[8]) d["damage.should_bleed"] = EventData.Bool(info.ShouldBleed);
+            if (need.Keys[9]) d["damage.should_spark"] = EventData.Bool(info.ShouldSpark);
+            if (need.Keys[10]) d["damage.damage_flags"] = info.DamageFlags.ToString();
+            if (need.Keys[11]) d["damage.hit_group_id"] = info.HitGroupId.ToString();
+            if (need.Keys[12]) d["damage.num_objects_penetrated"] = EventData.Num(info.NumObjectsPenetrated);
+            if (need.Keys[13]) d["damage.friendly_fire_damage_reduction_ratio"] = EventData.Num(info.FriendlyFireDamageReductionRatio);
+            if (need.Keys[14]) d["damage.stopped_bullet"] = EventData.Bool(info.StoppedBullet);
+            if (need.Keys[15]) d["damage.in_take_damage_flow"] = EventData.Bool(info.InTakeDamageFlow);
+            if (need.Keys[16]) d["result.health_lost"] = EventData.Num(result.HealthLost);
+            if (need.Keys[17]) d["result.health_before"] = EventData.Num(result.HealthBefore);
+            if (need.Keys[18]) d["result.damage_dealt"] = EventData.Num(result.DamageDealt);
+            if (need.Keys[19]) d["result.pre_modified_damage"] = EventData.Num(result.PreModifiedDamage);
+            if (need.Keys[20]) d["result.totalled_health_lost"] = EventData.Num(result.TotalledHealthLost);
+            if (need.Keys[21]) d["result.totalled_damage_dealt"] = EventData.Num(result.TotalledDamageDealt);
+            if (need.Keys[22]) d["result.totalled_pre_modified_damage"] = EventData.Num(result.TotalledPreModifiedDamage);
+            if (need.Keys[23]) d["result.new_damage_accumulator_value"] = EventData.Num(result.NewDamageAccumulatorValue);
+            if (need.Keys[24]) d["result.damage_flags"] = result.DamageFlags.ToString();
+            if (need.Keys[25]) d["result.was_damage_suppressed"] = EventData.Bool(result.WasDamageSuppressed);
+            if (need.Keys[26]) d["result.suppress_flinch"] = EventData.Bool(result.SuppressFlinch);
+            if (need.Keys[27]) d["result.override_flinch_hit_group"] = result.OverrideFlinchHitGroup.ToString();
+            HandleListener("OnEntityTakeDamagePost", d, valid, closed);
         }
 
         public HookResult OnPlayerTakeDamagePre(CCSPlayerPawn player, CTakeDamageInfo info)
         {
-            Dictionary<string, string> d = [];
+            if (!BeginListener("OnPlayerTakeDamagePre", out ExtractorPlan? plan, out GlobalGate closed))
+            {
+                return HookResult.Continue;
+            }
+
+            FillDemand need = plan.Demand;
             CCSPlayerController? playerController = player.OriginalController?.Value;
-            EventData.FillPlayer(d, playerController, "player");
-            d["damage.damage"] = EventData.Num(info.Damage);
-            d["damage.totalled_damage"] = EventData.Num(info.TotalledDamage);
-            d["damage.bits_damage_type"] = info.BitsDamageType.ToString();
-            d["damage.damage_custom"] = EventData.Num(info.DamageCustom);
-            d["damage.ammo_type"] = EventData.Num(info.AmmoType);
-            d["damage.original_damage"] = EventData.Num(info.OriginalDamage);
-            d["damage.should_bleed"] = EventData.Bool(info.ShouldBleed);
-            d["damage.should_spark"] = EventData.Bool(info.ShouldSpark);
-            d["damage.damage_flags"] = info.DamageFlags.ToString();
-            d["damage.hit_group_id"] = info.HitGroupId.ToString();
-            d["damage.num_objects_penetrated"] = EventData.Num(info.NumObjectsPenetrated);
-            d["damage.friendly_fire_damage_reduction_ratio"] = EventData.Num(info.FriendlyFireDamageReductionRatio);
-            d["damage.stopped_bullet"] = EventData.Bool(info.StoppedBullet);
-            d["damage.in_take_damage_flow"] = EventData.Bool(info.InTakeDamageFlow);
-            List<(CCSPlayerController? Player, string Type)> targets = [];
-            CCSPlayerController? targetPlayer = playerController;
-            targets.Add((targetPlayer, "on_player_take_damage_pre"));
-            HandleListener("OnPlayerTakeDamagePre", d, targets);
+            List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
+            if (need.Types[0]) targets.Add((playerController, "on_player_take_damage_pre"));
+
+            if (FilterListenerTargets("OnPlayerTakeDamagePre", targets, closed) is not { } valid)
+            {
+                return HookResult.Continue;
+            }
+
+            Dictionary<string, string> d = new(need.Capacity);
+            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, playerController, need, 0);
+            if (need.Keys[0]) d["damage.damage"] = EventData.Num(info.Damage);
+            if (need.Keys[1]) d["damage.totalled_damage"] = EventData.Num(info.TotalledDamage);
+            if (need.Keys[2]) d["damage.bits_damage_type"] = info.BitsDamageType.ToString();
+            if (need.Keys[3]) d["damage.damage_custom"] = EventData.Num(info.DamageCustom);
+            if (need.Keys[4]) d["damage.ammo_type"] = EventData.Num(info.AmmoType);
+            if (need.Keys[5]) d["damage.original_damage"] = EventData.Num(info.OriginalDamage);
+            if (need.Keys[6]) d["damage.should_bleed"] = EventData.Bool(info.ShouldBleed);
+            if (need.Keys[7]) d["damage.should_spark"] = EventData.Bool(info.ShouldSpark);
+            if (need.Keys[8]) d["damage.damage_flags"] = info.DamageFlags.ToString();
+            if (need.Keys[9]) d["damage.hit_group_id"] = info.HitGroupId.ToString();
+            if (need.Keys[10]) d["damage.num_objects_penetrated"] = EventData.Num(info.NumObjectsPenetrated);
+            if (need.Keys[11]) d["damage.friendly_fire_damage_reduction_ratio"] = EventData.Num(info.FriendlyFireDamageReductionRatio);
+            if (need.Keys[12]) d["damage.stopped_bullet"] = EventData.Bool(info.StoppedBullet);
+            if (need.Keys[13]) d["damage.in_take_damage_flow"] = EventData.Bool(info.InTakeDamageFlow);
+            HandleListener("OnPlayerTakeDamagePre", d, valid, closed);
             return HookResult.Continue;
         }
 
         public void OnPlayerTakeDamagePost(CCSPlayerPawn player, CTakeDamageInfo info, CTakeDamageResult result)
         {
-            Dictionary<string, string> d = [];
+            if (!BeginListener("OnPlayerTakeDamagePost", out ExtractorPlan? plan, out GlobalGate closed))
+            {
+                return;
+            }
+
+            FillDemand need = plan.Demand;
             CCSPlayerController? playerController = player.OriginalController?.Value;
-            EventData.FillPlayer(d, playerController, "player");
-            d["damage.damage"] = EventData.Num(info.Damage);
-            d["damage.totalled_damage"] = EventData.Num(info.TotalledDamage);
-            d["damage.bits_damage_type"] = info.BitsDamageType.ToString();
-            d["damage.damage_custom"] = EventData.Num(info.DamageCustom);
-            d["damage.ammo_type"] = EventData.Num(info.AmmoType);
-            d["damage.original_damage"] = EventData.Num(info.OriginalDamage);
-            d["damage.should_bleed"] = EventData.Bool(info.ShouldBleed);
-            d["damage.should_spark"] = EventData.Bool(info.ShouldSpark);
-            d["damage.damage_flags"] = info.DamageFlags.ToString();
-            d["damage.hit_group_id"] = info.HitGroupId.ToString();
-            d["damage.num_objects_penetrated"] = EventData.Num(info.NumObjectsPenetrated);
-            d["damage.friendly_fire_damage_reduction_ratio"] = EventData.Num(info.FriendlyFireDamageReductionRatio);
-            d["damage.stopped_bullet"] = EventData.Bool(info.StoppedBullet);
-            d["damage.in_take_damage_flow"] = EventData.Bool(info.InTakeDamageFlow);
-            d["result.health_lost"] = EventData.Num(result.HealthLost);
-            d["result.health_before"] = EventData.Num(result.HealthBefore);
-            d["result.damage_dealt"] = EventData.Num(result.DamageDealt);
-            d["result.pre_modified_damage"] = EventData.Num(result.PreModifiedDamage);
-            d["result.totalled_health_lost"] = EventData.Num(result.TotalledHealthLost);
-            d["result.totalled_damage_dealt"] = EventData.Num(result.TotalledDamageDealt);
-            d["result.totalled_pre_modified_damage"] = EventData.Num(result.TotalledPreModifiedDamage);
-            d["result.new_damage_accumulator_value"] = EventData.Num(result.NewDamageAccumulatorValue);
-            d["result.damage_flags"] = result.DamageFlags.ToString();
-            d["result.was_damage_suppressed"] = EventData.Bool(result.WasDamageSuppressed);
-            d["result.suppress_flinch"] = EventData.Bool(result.SuppressFlinch);
-            d["result.override_flinch_hit_group"] = result.OverrideFlinchHitGroup.ToString();
-            List<(CCSPlayerController? Player, string Type)> targets = [];
-            CCSPlayerController? targetPlayer = playerController;
-            targets.Add((targetPlayer, "on_player_take_damage_post"));
-            HandleListener("OnPlayerTakeDamagePost", d, targets);
+            List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
+            if (need.Types[0]) targets.Add((playerController, "on_player_take_damage_post"));
+
+            if (FilterListenerTargets("OnPlayerTakeDamagePost", targets, closed) is not { } valid)
+            {
+                return;
+            }
+
+            Dictionary<string, string> d = new(need.Capacity);
+            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, playerController, need, 0);
+            if (need.Keys[0]) d["damage.damage"] = EventData.Num(info.Damage);
+            if (need.Keys[1]) d["damage.totalled_damage"] = EventData.Num(info.TotalledDamage);
+            if (need.Keys[2]) d["damage.bits_damage_type"] = info.BitsDamageType.ToString();
+            if (need.Keys[3]) d["damage.damage_custom"] = EventData.Num(info.DamageCustom);
+            if (need.Keys[4]) d["damage.ammo_type"] = EventData.Num(info.AmmoType);
+            if (need.Keys[5]) d["damage.original_damage"] = EventData.Num(info.OriginalDamage);
+            if (need.Keys[6]) d["damage.should_bleed"] = EventData.Bool(info.ShouldBleed);
+            if (need.Keys[7]) d["damage.should_spark"] = EventData.Bool(info.ShouldSpark);
+            if (need.Keys[8]) d["damage.damage_flags"] = info.DamageFlags.ToString();
+            if (need.Keys[9]) d["damage.hit_group_id"] = info.HitGroupId.ToString();
+            if (need.Keys[10]) d["damage.num_objects_penetrated"] = EventData.Num(info.NumObjectsPenetrated);
+            if (need.Keys[11]) d["damage.friendly_fire_damage_reduction_ratio"] = EventData.Num(info.FriendlyFireDamageReductionRatio);
+            if (need.Keys[12]) d["damage.stopped_bullet"] = EventData.Bool(info.StoppedBullet);
+            if (need.Keys[13]) d["damage.in_take_damage_flow"] = EventData.Bool(info.InTakeDamageFlow);
+            if (need.Keys[14]) d["result.health_lost"] = EventData.Num(result.HealthLost);
+            if (need.Keys[15]) d["result.health_before"] = EventData.Num(result.HealthBefore);
+            if (need.Keys[16]) d["result.damage_dealt"] = EventData.Num(result.DamageDealt);
+            if (need.Keys[17]) d["result.pre_modified_damage"] = EventData.Num(result.PreModifiedDamage);
+            if (need.Keys[18]) d["result.totalled_health_lost"] = EventData.Num(result.TotalledHealthLost);
+            if (need.Keys[19]) d["result.totalled_damage_dealt"] = EventData.Num(result.TotalledDamageDealt);
+            if (need.Keys[20]) d["result.totalled_pre_modified_damage"] = EventData.Num(result.TotalledPreModifiedDamage);
+            if (need.Keys[21]) d["result.new_damage_accumulator_value"] = EventData.Num(result.NewDamageAccumulatorValue);
+            if (need.Keys[22]) d["result.damage_flags"] = result.DamageFlags.ToString();
+            if (need.Keys[23]) d["result.was_damage_suppressed"] = EventData.Bool(result.WasDamageSuppressed);
+            if (need.Keys[24]) d["result.suppress_flinch"] = EventData.Bool(result.SuppressFlinch);
+            if (need.Keys[25]) d["result.override_flinch_hit_group"] = result.OverrideFlinchHitGroup.ToString();
+            HandleListener("OnPlayerTakeDamagePost", d, valid, closed);
         }
 
         public void OnMapStart(string mapName)
         {
-            Dictionary<string, string> d = [];
-            d["mapname"] = mapName;
-            List<(CCSPlayerController? Player, string Type)> targets = [];
-            foreach (var entry in Utilities.GetPlayers())
+            if (!BeginListener("OnMapStart", out ExtractorPlan? plan, out GlobalGate closed))
             {
-                targets.Add((entry, "on_map_start"));
+                return;
             }
-            HandleListener("OnMapStart", d, targets);
+
+            FillDemand need = plan.Demand;
+            List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
+            Players.AddAll(targets, "on_map_start");
+
+            if (FilterListenerTargets("OnMapStart", targets, closed) is not { } valid)
+            {
+                return;
+            }
+
+            Dictionary<string, string> d = new(need.Capacity);
+            if (need.Keys[0]) d["mapname"] = mapName;
+            HandleListener("OnMapStart", d, valid, closed);
         }
 
         public void OnMapEnd()
         {
-            Dictionary<string, string> d = [];
-            List<(CCSPlayerController? Player, string Type)> targets = [];
-            foreach (var entry in Utilities.GetPlayers())
+            if (!BeginListener("OnMapEnd", out ExtractorPlan? plan, out GlobalGate closed))
             {
-                targets.Add((entry, "on_map_end"));
+                return;
             }
-            HandleListener("OnMapEnd", d, targets);
+
+            FillDemand need = plan.Demand;
+            List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
+            Players.AddAll(targets, "on_map_end");
+
+            if (FilterListenerTargets("OnMapEnd", targets, closed) is not { } valid)
+            {
+                return;
+            }
+
+            Dictionary<string, string> d = new(need.Capacity);
+            HandleListener("OnMapEnd", d, valid, closed);
         }
 
         public void OnClientConnect(int playerSlot, string name, string ipAddress)
         {
-            Dictionary<string, string> d = [];
+            if (!BeginListener("OnClientConnect", out ExtractorPlan? plan, out GlobalGate closed))
+            {
+                return;
+            }
+
+            FillDemand need = plan.Demand;
             CCSPlayerController? playerSlotPlayer = Utilities.GetPlayerFromSlot(playerSlot);
-            EventData.FillPlayer(d, playerSlotPlayer, "player");
-            d["name"] = name;
-            d["ipaddress"] = ipAddress;
-            List<(CCSPlayerController? Player, string Type)> targets = [];
-            CCSPlayerController? targetPlayer = playerSlotPlayer;
-            targets.Add((targetPlayer, "on_client_connect"));
-            HandleListener("OnClientConnect", d, targets);
+            List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
+            if (need.Types[0]) targets.Add((playerSlotPlayer, "on_client_connect"));
+
+            if (FilterListenerTargets("OnClientConnect", targets, closed) is not { } valid)
+            {
+                return;
+            }
+
+            Dictionary<string, string> d = new(need.Capacity);
+            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, playerSlotPlayer, need, 0);
+            if (need.Keys[0]) d["name"] = name;
+            if (need.Keys[1]) d["ipaddress"] = ipAddress;
+            HandleListener("OnClientConnect", d, valid, closed);
         }
 
         public void OnClientConnected(int playerSlot)
         {
-            Dictionary<string, string> d = [];
+            if (!BeginListener("OnClientConnected", out ExtractorPlan? plan, out GlobalGate closed))
+            {
+                return;
+            }
+
+            FillDemand need = plan.Demand;
             CCSPlayerController? playerSlotPlayer = Utilities.GetPlayerFromSlot(playerSlot);
-            EventData.FillPlayer(d, playerSlotPlayer, "player");
-            List<(CCSPlayerController? Player, string Type)> targets = [];
-            CCSPlayerController? targetPlayer = playerSlotPlayer;
-            targets.Add((targetPlayer, "on_client_connected"));
-            HandleListener("OnClientConnected", d, targets);
+            List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
+            if (need.Types[0]) targets.Add((playerSlotPlayer, "on_client_connected"));
+
+            if (FilterListenerTargets("OnClientConnected", targets, closed) is not { } valid)
+            {
+                return;
+            }
+
+            Dictionary<string, string> d = new(need.Capacity);
+            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, playerSlotPlayer, need, 0);
+            HandleListener("OnClientConnected", d, valid, closed);
         }
 
         public void OnClientPutInServer(int playerSlot)
         {
-            Dictionary<string, string> d = [];
+            if (!BeginListener("OnClientPutInServer", out ExtractorPlan? plan, out GlobalGate closed))
+            {
+                return;
+            }
+
+            FillDemand need = plan.Demand;
             CCSPlayerController? playerSlotPlayer = Utilities.GetPlayerFromSlot(playerSlot);
-            EventData.FillPlayer(d, playerSlotPlayer, "player");
-            List<(CCSPlayerController? Player, string Type)> targets = [];
-            CCSPlayerController? targetPlayer = playerSlotPlayer;
-            targets.Add((targetPlayer, "on_client_put_in_server"));
-            HandleListener("OnClientPutInServer", d, targets);
+            List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
+            if (need.Types[0]) targets.Add((playerSlotPlayer, "on_client_put_in_server"));
+
+            if (FilterListenerTargets("OnClientPutInServer", targets, closed) is not { } valid)
+            {
+                return;
+            }
+
+            Dictionary<string, string> d = new(need.Capacity);
+            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, playerSlotPlayer, need, 0);
+            HandleListener("OnClientPutInServer", d, valid, closed);
         }
 
         public void OnClientDisconnect(int playerSlot)
         {
-            Dictionary<string, string> d = [];
+            if (!BeginListener("OnClientDisconnect", out ExtractorPlan? plan, out GlobalGate closed))
+            {
+                return;
+            }
+
+            FillDemand need = plan.Demand;
             CCSPlayerController? playerSlotPlayer = Utilities.GetPlayerFromSlot(playerSlot);
-            EventData.FillPlayer(d, playerSlotPlayer, "player");
-            List<(CCSPlayerController? Player, string Type)> targets = [];
-            CCSPlayerController? targetPlayer = playerSlotPlayer;
-            targets.Add((targetPlayer, "on_client_disconnect"));
-            HandleListener("OnClientDisconnect", d, targets);
+            List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
+            if (need.Types[0]) targets.Add((playerSlotPlayer, "on_client_disconnect"));
+
+            if (FilterListenerTargets("OnClientDisconnect", targets, closed) is not { } valid)
+            {
+                return;
+            }
+
+            Dictionary<string, string> d = new(need.Capacity);
+            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, playerSlotPlayer, need, 0);
+            HandleListener("OnClientDisconnect", d, valid, closed);
         }
 
         public void OnClientDisconnectPost(int playerSlot)
         {
-            Dictionary<string, string> d = [];
+            if (!BeginListener("OnClientDisconnectPost", out ExtractorPlan? plan, out GlobalGate closed))
+            {
+                return;
+            }
+
+            FillDemand need = plan.Demand;
             CCSPlayerController? playerSlotPlayer = Utilities.GetPlayerFromSlot(playerSlot);
-            EventData.FillPlayer(d, playerSlotPlayer, "player");
-            List<(CCSPlayerController? Player, string Type)> targets = [];
-            CCSPlayerController? targetPlayer = playerSlotPlayer;
-            targets.Add((targetPlayer, "on_client_disconnect_post"));
-            HandleListener("OnClientDisconnectPost", d, targets);
+            List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
+            if (need.Types[0]) targets.Add((playerSlotPlayer, "on_client_disconnect_post"));
+
+            if (FilterListenerTargets("OnClientDisconnectPost", targets, closed) is not { } valid)
+            {
+                return;
+            }
+
+            Dictionary<string, string> d = new(need.Capacity);
+            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, playerSlotPlayer, need, 0);
+            HandleListener("OnClientDisconnectPost", d, valid, closed);
         }
 
         public void OnClientVoice(int playerSlot)
         {
-            Dictionary<string, string> d = [];
+            if (!BeginListener("OnClientVoice", out ExtractorPlan? plan, out GlobalGate closed))
+            {
+                return;
+            }
+
+            FillDemand need = plan.Demand;
             CCSPlayerController? playerSlotPlayer = Utilities.GetPlayerFromSlot(playerSlot);
-            EventData.FillPlayer(d, playerSlotPlayer, "player");
-            List<(CCSPlayerController? Player, string Type)> targets = [];
-            CCSPlayerController? targetPlayer = playerSlotPlayer;
-            targets.Add((targetPlayer, "on_client_voice"));
-            HandleListener("OnClientVoice", d, targets);
+            List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
+            if (need.Types[0]) targets.Add((playerSlotPlayer, "on_client_voice"));
+
+            if (FilterListenerTargets("OnClientVoice", targets, closed) is not { } valid)
+            {
+                return;
+            }
+
+            Dictionary<string, string> d = new(need.Capacity);
+            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, playerSlotPlayer, need, 0);
+            HandleListener("OnClientVoice", d, valid, closed);
         }
 
         public void OnClientAuthorized(int playerSlot, SteamID steamId)
         {
-            Dictionary<string, string> d = [];
+            if (!BeginListener("OnClientAuthorized", out ExtractorPlan? plan, out GlobalGate closed))
+            {
+                return;
+            }
+
+            FillDemand need = plan.Demand;
             CCSPlayerController? playerSlotPlayer = Utilities.GetPlayerFromSlot(playerSlot);
-            EventData.FillPlayer(d, playerSlotPlayer, "player");
-            d["steamid"] = steamId.SteamId64.ToString();
-            List<(CCSPlayerController? Player, string Type)> targets = [];
-            CCSPlayerController? targetPlayer = playerSlotPlayer;
-            targets.Add((targetPlayer, "on_client_authorized"));
-            HandleListener("OnClientAuthorized", d, targets);
+            List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
+            if (need.Types[0]) targets.Add((playerSlotPlayer, "on_client_authorized"));
+
+            if (FilterListenerTargets("OnClientAuthorized", targets, closed) is not { } valid)
+            {
+                return;
+            }
+
+            Dictionary<string, string> d = new(need.Capacity);
+            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, playerSlotPlayer, need, 0);
+            if (need.Keys[0]) d["steamid"] = steamId.SteamId64.ToString();
+            HandleListener("OnClientAuthorized", d, valid, closed);
         }
 
         public void OnServerHibernationUpdate(bool isHibernating)
         {
-            Dictionary<string, string> d = [];
-            d["ishibernating"] = EventData.Bool(isHibernating);
-            List<(CCSPlayerController? Player, string Type)> targets = [];
-            foreach (var entry in Utilities.GetPlayers())
+            if (!BeginListener("OnServerHibernationUpdate", out ExtractorPlan? plan, out GlobalGate closed))
             {
-                targets.Add((entry, "on_server_hibernation_update"));
+                return;
             }
-            HandleListener("OnServerHibernationUpdate", d, targets);
+
+            FillDemand need = plan.Demand;
+            List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
+            Players.AddAll(targets, "on_server_hibernation_update");
+
+            if (FilterListenerTargets("OnServerHibernationUpdate", targets, closed) is not { } valid)
+            {
+                return;
+            }
+
+            Dictionary<string, string> d = new(need.Capacity);
+            if (need.Keys[0]) d["ishibernating"] = EventData.Bool(isHibernating);
+            HandleListener("OnServerHibernationUpdate", d, valid, closed);
         }
 
         public void OnGameServerSteamAPIActivated()
         {
-            Dictionary<string, string> d = [];
-            List<(CCSPlayerController? Player, string Type)> targets = [];
-            foreach (var entry in Utilities.GetPlayers())
+            if (!BeginListener("OnGameServerSteamAPIActivated", out ExtractorPlan? plan, out GlobalGate closed))
             {
-                targets.Add((entry, "on_game_server_steam_api_activated"));
+                return;
             }
-            HandleListener("OnGameServerSteamAPIActivated", d, targets);
+
+            FillDemand need = plan.Demand;
+            List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
+            Players.AddAll(targets, "on_game_server_steam_api_activated");
+
+            if (FilterListenerTargets("OnGameServerSteamAPIActivated", targets, closed) is not { } valid)
+            {
+                return;
+            }
+
+            Dictionary<string, string> d = new(need.Capacity);
+            HandleListener("OnGameServerSteamAPIActivated", d, valid, closed);
         }
 
         public void OnGameServerSteamAPIDeactivated()
         {
-            Dictionary<string, string> d = [];
-            List<(CCSPlayerController? Player, string Type)> targets = [];
-            foreach (var entry in Utilities.GetPlayers())
+            if (!BeginListener("OnGameServerSteamAPIDeactivated", out ExtractorPlan? plan, out GlobalGate closed))
             {
-                targets.Add((entry, "on_game_server_steam_api_deactivated"));
+                return;
             }
-            HandleListener("OnGameServerSteamAPIDeactivated", d, targets);
+
+            FillDemand need = plan.Demand;
+            List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
+            Players.AddAll(targets, "on_game_server_steam_api_deactivated");
+
+            if (FilterListenerTargets("OnGameServerSteamAPIDeactivated", targets, closed) is not { } valid)
+            {
+                return;
+            }
+
+            Dictionary<string, string> d = new(need.Capacity);
+            HandleListener("OnGameServerSteamAPIDeactivated", d, valid, closed);
         }
 
         public void OnHostNameChanged(string hostname)
         {
-            Dictionary<string, string> d = [];
-            d["hostname"] = hostname;
-            List<(CCSPlayerController? Player, string Type)> targets = [];
-            foreach (var entry in Utilities.GetPlayers())
+            if (!BeginListener("OnHostNameChanged", out ExtractorPlan? plan, out GlobalGate closed))
             {
-                targets.Add((entry, "on_host_name_changed"));
+                return;
             }
-            HandleListener("OnHostNameChanged", d, targets);
+
+            FillDemand need = plan.Demand;
+            List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
+            Players.AddAll(targets, "on_host_name_changed");
+
+            if (FilterListenerTargets("OnHostNameChanged", targets, closed) is not { } valid)
+            {
+                return;
+            }
+
+            Dictionary<string, string> d = new(need.Capacity);
+            if (need.Keys[0]) d["hostname"] = hostname;
+            HandleListener("OnHostNameChanged", d, valid, closed);
         }
 
         public void OnServerPreFatalShutdown()
         {
-            Dictionary<string, string> d = [];
-            List<(CCSPlayerController? Player, string Type)> targets = [];
-            foreach (var entry in Utilities.GetPlayers())
+            if (!BeginListener("OnServerPreFatalShutdown", out ExtractorPlan? plan, out GlobalGate closed))
             {
-                targets.Add((entry, "on_server_pre_fatal_shutdown"));
+                return;
             }
-            HandleListener("OnServerPreFatalShutdown", d, targets);
+
+            FillDemand need = plan.Demand;
+            List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
+            Players.AddAll(targets, "on_server_pre_fatal_shutdown");
+
+            if (FilterListenerTargets("OnServerPreFatalShutdown", targets, closed) is not { } valid)
+            {
+                return;
+            }
+
+            Dictionary<string, string> d = new(need.Capacity);
+            HandleListener("OnServerPreFatalShutdown", d, valid, closed);
         }
 
         public void OnServerPrecacheResources(ResourceManifest manifest)
         {
-            Dictionary<string, string> d = [];
-            List<(CCSPlayerController? Player, string Type)> targets = [];
-            foreach (var entry in Utilities.GetPlayers())
+            if (!BeginListener("OnServerPrecacheResources", out ExtractorPlan? plan, out GlobalGate closed))
             {
-                targets.Add((entry, "on_server_precache_resources"));
+                return;
             }
-            HandleListener("OnServerPrecacheResources", d, targets);
+
+            FillDemand need = plan.Demand;
+            List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
+            Players.AddAll(targets, "on_server_precache_resources");
+
+            if (FilterListenerTargets("OnServerPrecacheResources", targets, closed) is not { } valid)
+            {
+                return;
+            }
+
+            Dictionary<string, string> d = new(need.Capacity);
+            HandleListener("OnServerPrecacheResources", d, valid, closed);
         }
 
         public void OnPlayerButtonsChanged(CCSPlayerController player, PlayerButtons pressed, PlayerButtons released)
         {
             Situations.OnButtonsChanged(player, pressed, released);
-            if (!_tasksByType.ContainsKey("on_player_buttons_changed"))
+            if (!BeginListener("OnPlayerButtonsChanged", out ExtractorPlan? plan, out GlobalGate closed))
             {
                 return;
             }
 
-            Dictionary<string, string> d = [];
-            EventData.FillPlayer(d, player, "player");
-            d["pressed"] = EventData.Num((ulong)pressed);
-            d["released"] = EventData.Num((ulong)released);
-            List<(CCSPlayerController? Player, string Type)> targets = [];
-            CCSPlayerController? targetPlayer = player;
-            targets.Add((targetPlayer, "on_player_buttons_changed"));
-            HandleListener("OnPlayerButtonsChanged", d, targets);
+            FillDemand need = plan.Demand;
+            List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
+            if (need.Types[0]) targets.Add((player, "on_player_buttons_changed"));
+
+            if (FilterListenerTargets("OnPlayerButtonsChanged", targets, closed) is not { } valid)
+            {
+                return;
+            }
+
+            Dictionary<string, string> d = new(need.Capacity);
+            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, player, need, 0);
+            if (need.Keys[0]) d["pressed"] = EventData.Num((ulong)pressed);
+            if (need.Keys[1]) d["released"] = EventData.Num((ulong)released);
+            HandleListener("OnPlayerButtonsChanged", d, valid, closed);
         }
 
         public void OnPlayerChat(CCSPlayerController player, string message, bool teamChat)
         {
-            Dictionary<string, string> d = [];
-            EventData.FillPlayer(d, player, "player");
-            d["message"] = message;
-            d["text"] = d["message"];
-            d["teamchat"] = EventData.Bool(teamChat);
-            d["teamonly"] = d["teamchat"];
-            List<(CCSPlayerController? Player, string Type)> targets = [];
-            CCSPlayerController? targetPlayer = player;
-            targets.Add((targetPlayer, "on_player_chat"));
-            targets.Add((targetPlayer, "player_chat"));
-            HandleListener("OnPlayerChat", d, targets);
+            if (!BeginListener("OnPlayerChat", out ExtractorPlan? plan, out GlobalGate closed))
+            {
+                return;
+            }
+
+            FillDemand need = plan.Demand;
+            List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
+            if (need.Types[0]) targets.Add((player, "on_player_chat"));
+            if (need.Types[1]) targets.Add((player, "player_chat"));
+
+            if (FilterListenerTargets("OnPlayerChat", targets, closed) is not { } valid)
+            {
+                return;
+            }
+
+            Dictionary<string, string> d = new(need.Capacity);
+            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, player, need, 0);
+            if (need.Keys[0] || need.Keys[1]) need.WriteAliases(d, 0, "message", 1, "text", message);
+            if (need.Keys[2] || need.Keys[3]) need.WriteAliases(d, 2, "teamchat", 3, "teamonly", EventData.Bool(teamChat));
+            HandleListener("OnPlayerChat", d, valid, closed);
         }
 
         public void OnMetamodAllPluginsLoaded()
         {
-            Dictionary<string, string> d = [];
-            List<(CCSPlayerController? Player, string Type)> targets = [];
-            foreach (var entry in Utilities.GetPlayers())
+            if (!BeginListener("OnMetamodAllPluginsLoaded", out ExtractorPlan? plan, out GlobalGate closed))
             {
-                targets.Add((entry, "on_metamod_all_plugins_loaded"));
+                return;
             }
-            HandleListener("OnMetamodAllPluginsLoaded", d, targets);
+
+            FillDemand need = plan.Demand;
+            List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
+            Players.AddAll(targets, "on_metamod_all_plugins_loaded");
+
+            if (FilterListenerTargets("OnMetamodAllPluginsLoaded", targets, closed) is not { } valid)
+            {
+                return;
+            }
+
+            Dictionary<string, string> d = new(need.Capacity);
+            HandleListener("OnMetamodAllPluginsLoaded", d, valid, closed);
         }
 
         public void OnCustomHudClicked(CCSPlayerController player, CCSCustomHudLayout customLayout, string buttonId)
         {
-            Dictionary<string, string> d = [];
-            EventData.FillPlayer(d, player, "player");
-            d["buttonid"] = buttonId;
-            List<(CCSPlayerController? Player, string Type)> targets = [];
-            CCSPlayerController? targetPlayer = player;
-            targets.Add((targetPlayer, "on_custom_hud_clicked"));
-            HandleListener("OnCustomHudClicked", d, targets);
+            if (!BeginListener("OnCustomHudClicked", out ExtractorPlan? plan, out GlobalGate closed))
+            {
+                return;
+            }
+
+            FillDemand need = plan.Demand;
+            List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();
+            if (need.Types[0]) targets.Add((player, "on_custom_hud_clicked"));
+
+            if (FilterListenerTargets("OnCustomHudClicked", targets, closed) is not { } valid)
+            {
+                return;
+            }
+
+            Dictionary<string, string> d = new(need.Capacity);
+            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, player, need, 0);
+            if (need.Keys[0]) d["buttonid"] = buttonId;
+            HandleListener("OnCustomHudClicked", d, valid, closed);
         }
 
     }

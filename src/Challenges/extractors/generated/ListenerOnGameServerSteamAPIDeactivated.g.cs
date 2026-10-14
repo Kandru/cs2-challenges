@@ -2,22 +2,26 @@
 #nullable enable
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Events;
+using Challenges.Utils;
 
 namespace Challenges.Extractors
 {
+    /// <summary>Key layout of the <c>OnGameServerSteamAPIDeactivated</c> listener; filled by <c>ChallengeEngine.OnGameServerSteamAPIDeactivated</c>.</summary>
     public sealed class ListenerOnGameServerSteamAPIDeactivated : IExtractor
     {
         public ExtractorKind Kind => ExtractorKind.Listener;
         public string EventClassName => "OnGameServerSteamAPIDeactivated";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["on_game_server_steam_api_deactivated"];
+        public IReadOnlyList<string> Keys { get; } = [];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = [];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
-            yield break;
         }
     }
 }

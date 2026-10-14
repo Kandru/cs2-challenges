@@ -9,6 +9,9 @@ namespace Challenges
             Completed,
         }
 
+        /// <summary>Reused candidate scratch list of <see cref="SimulateTarget"/>. Worker thread only.</summary>
+        private readonly List<(ChallengeDefinition Challenge, ChallengeTask Task)> _eligible = [];
+
         private void SimulateWorkItem(ProgressWorkItem item)
         {
             foreach (ProgressTarget target in item.Targets)
@@ -20,17 +23,24 @@ namespace Challenges
                 catch (Exception ex)
                 {
                     Log($"progress simulate failed: {ex.Message}");
-                    PostDone(item, target);
+                    PostDone(item, target, failed: true);
                 }
             }
         }
 
         private void SimulateTarget(ProgressWorkItem item, ProgressTarget target)
         {
-            PlayerState shadow = GetOrInstallShadow(target);
+            if (GetOrInstallShadow(target) is not { } shadow)
+            {
+                Log($"progress shadow missing for {target.SteamId}; skipping one event");
+                PostDone(item, target, failed: true);
+                return;
+            }
+
             string scheduleKey = item.ScheduleKey;
 
-            List<(ChallengeDefinition Challenge, ChallengeTask Task)> eligible = [];
+            List<(ChallengeDefinition Challenge, ChallengeTask Task)> eligible = _eligible;
+            eligible.Clear();
             foreach ((ChallengeDefinition challenge, ChallengeTask task) in target.Candidates)
             {
                 if (!ChallengeRules.IsSkipped(
@@ -99,10 +109,14 @@ namespace Challenges
             PostPatch(patch);
         }
 
-        private void PostDone(ProgressWorkItem item, ProgressTarget target) =>
-            PostPatch(ProgressPatch.Done(target.SteamId, target.Slot, item.ScheduleKey, item.Schedule));
+        private void PostDone(ProgressWorkItem item, ProgressTarget target, bool failed = false) =>
+            PostPatch(ProgressPatch.Done(target.SteamId, target.Slot, item.ScheduleKey, item.Schedule, failed));
 
-        private PlayerState GetOrInstallShadow(ProgressTarget target)
+        /// <summary>
+        /// Installs the seed when the item carries one, else returns the kept shadow. Null when neither
+        /// exists (must not happen; simulating on an empty shadow would overwrite real progress).
+        /// </summary>
+        private PlayerState? GetOrInstallShadow(ProgressTarget target)
         {
             if (target.Seed is { } seed)
             {
@@ -116,14 +130,7 @@ namespace Challenges
                 return fresh;
             }
 
-            if (_shadows.TryGetValue(target.SteamId, out PlayerState? existing))
-            {
-                return existing;
-            }
-
-            PlayerState empty = new() { SteamId = target.SteamId };
-            _shadows[target.SteamId] = empty;
-            return empty;
+            return _shadows.TryGetValue(target.SteamId, out PlayerState? existing) ? existing : null;
         }
 
         private TrackerProgressKind SimulateProgress(
@@ -151,6 +158,7 @@ namespace Challenges
                 return TrackerProgressKind.Progress;
             }
 
+            patch.CompletesTask = true;
             bool solvedNow = task.Visible
                 && !wasSolved
                 && ChallengeProgress.IsChallengeSolved(shadow, scheduleKey, challenge);
@@ -296,6 +304,7 @@ namespace Challenges
             progress.Amount = Math.Max(progress.Amount, Math.Max(1, markTarget.Amount));
             progress.LastUpdate = item.Now;
             patch.Upsert(challenge.Id, taskId, progress);
+            patch.CompletesTask = true;
             if (item.Debug)
             {
                 patch.AddDebug($"{target.Name} task.mark_completed {challenge.Id}/{owner.Id} mark {taskId}");

@@ -11,45 +11,44 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventPlayerDeath";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["player_kill", "player_kill_assist", "player_death"];
+        public IReadOnlyList<string> Keys { get; } = ["assistedflash", "attackerblind", "attackerinair", "distance", "dmg_armor", "dmgarmor", "dmg_health", "dmghealth", "dominated", "headshot", "hitgroup", "noreplay", "noscope", "penetrated", "revenge", "thrusmoke", "weapon", "weapon_fauxitemid", "weapon_itemid", "weaponitemid", "weapon_originalowner_xuid", "wipe"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = ["assister", "attacker", "userid", "victim"];
+        public IReadOnlyList<string> DerivedKeys { get; } = ["isteamkill", "isselfkill"];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventPlayerDeath)gameEvent;
-            d["assistedflash"] = EventData.Bool(e.Assistedflash);
-            d["attackerblind"] = EventData.Bool(e.Attackerblind);
-            d["attackerinair"] = EventData.Bool(e.Attackerinair);
-            d["distance"] = EventData.Num(e.Distance);
-            d["dmg_armor"] = EventData.Num(e.DmgArmor);
-            d["dmgarmor"] = d["dmg_armor"];
-            d["dmg_health"] = EventData.Num(e.DmgHealth);
-            d["dmghealth"] = d["dmg_health"];
-            d["dominated"] = EventData.Bool(e.Dominated > 0);
-            d["headshot"] = EventData.Bool(e.Headshot);
-            d["hitgroup"] = EventData.Num(e.Hitgroup);
-            d["noreplay"] = EventData.Bool(e.Noreplay);
-            d["noscope"] = EventData.Bool(e.Noscope);
-            d["penetrated"] = EventData.Bool(e.Penetrated > 0);
-            d["revenge"] = EventData.Bool(e.Revenge > 0);
-            d["thrusmoke"] = EventData.Bool(e.Thrusmoke);
-            d["weapon"] = e.Weapon;
-            d["weapon_fauxitemid"] = e.WeaponFauxitemid;
-            d["weapon_itemid"] = e.WeaponItemid;
-            d["weaponitemid"] = d["weapon_itemid"];
-            d["weapon_originalowner_xuid"] = e.WeaponOriginalownerXuid;
-            d["wipe"] = EventData.Num(e.Wipe);
-            EventData.FillPlayer(d, e.Assister, "assister");
-            EventData.FillPlayer(d, e.Attacker, "attacker");
-            EventData.FillPlayer(d, e.Userid, "userid");
-            EventData.FillPlayer(d, e.Userid, "victim");
-            DerivedKeys.Apply("team_self_kill", gameEvent, d);
+            if (need.Keys[0]) d["assistedflash"] = EventData.Bool(e.Assistedflash);
+            if (need.Keys[1]) d["attackerblind"] = EventData.Bool(e.Attackerblind);
+            if (need.Keys[2]) d["attackerinair"] = EventData.Bool(e.Attackerinair);
+            if (need.Keys[3]) d["distance"] = EventData.Num(e.Distance);
+            if (need.Keys[4] || need.Keys[5]) need.WriteAliases(d, 4, "dmg_armor", 5, "dmgarmor", EventData.Num(e.DmgArmor));
+            if (need.Keys[6] || need.Keys[7]) need.WriteAliases(d, 6, "dmg_health", 7, "dmghealth", EventData.Num(e.DmgHealth));
+            if (need.Keys[8]) d["dominated"] = EventData.Bool(e.Dominated > 0);
+            if (need.Keys[9]) d["headshot"] = EventData.Bool(e.Headshot);
+            if (need.Keys[10]) d["hitgroup"] = EventData.Num(e.Hitgroup);
+            if (need.Keys[11]) d["noreplay"] = EventData.Bool(e.Noreplay);
+            if (need.Keys[12]) d["noscope"] = EventData.Bool(e.Noscope);
+            if (need.Keys[13]) d["penetrated"] = EventData.Bool(e.Penetrated > 0);
+            if (need.Keys[14]) d["revenge"] = EventData.Bool(e.Revenge > 0);
+            if (need.Keys[15]) d["thrusmoke"] = EventData.Bool(e.Thrusmoke);
+            if (need.Keys[16]) d["weapon"] = e.Weapon;
+            if (need.Keys[17]) d["weapon_fauxitemid"] = e.WeaponFauxitemid;
+            if (need.Keys[18] || need.Keys[19]) need.WriteAliases(d, 18, "weapon_itemid", 19, "weaponitemid", e.WeaponItemid);
+            if (need.Keys[20]) d["weapon_originalowner_xuid"] = e.WeaponOriginalownerXuid;
+            if (need.Keys[21]) d["wipe"] = EventData.Num(e.Wipe);
+            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, e.Assister, need, 0);
+            if (need.Prefixes[1] != PlayerFields.None) EventData.FillPlayer(d, e.Attacker, need, 1);
+            if ((need.Prefixes[2] | need.Prefixes[3]) != PlayerFields.None) EventData.FillPlayer(d, e.Userid, need, 2, 3);
+            if (need.Derived) global::Challenges.Extractors.DerivedKeys.Apply("team_self_kill", gameEvent, d);
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
             var e = (EventPlayerDeath)gameEvent;
-            yield return (e.Assister, "player_kill_assist");
-            yield return (e.Attacker, "player_kill");
-            yield return (e.Userid, "player_death");
+            if (need.Types[1]) buffer.Add((e.Assister, "player_kill_assist"));
+            if (need.Types[0]) buffer.Add((e.Attacker, "player_kill"));
+            if (need.Types[2]) buffer.Add((e.Userid, "player_death"));
         }
     }
 }

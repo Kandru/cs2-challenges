@@ -14,6 +14,19 @@ namespace Challenges
         [JsonPropertyName("statistics")] public PlayerStatistics Statistics { get; set; } = new();
 
         [JsonIgnore] public bool Dirty;
+        /// <summary>
+        /// Bumped by every progress change outside the pipeline's own patches (prune, placeholder adoption).
+        /// The engine reseeds its worker shadow when this differs from the seeded version. Game thread only.
+        /// </summary>
+        [JsonIgnore] public int ProgressVersion;
+        /// <summary>
+        /// Engine cache, indexed by type id: true while the type has a task this player has not completed.
+        /// Valid for <see cref="OpenTypesLayout"/> and <see cref="OpenTypesVersion"/> unless dirty. Game thread only.
+        /// </summary>
+        [JsonIgnore] public bool[]? OpenTypes;
+        [JsonIgnore] public int OpenTypesLayout;
+        [JsonIgnore] public int OpenTypesVersion;
+        [JsonIgnore] public bool OpenTypesDirty;
         /// <summary>Cheap progress probe for placeholder adoption (not a full weight walk).</summary>
         [JsonIgnore]
         public bool HasProgress =>

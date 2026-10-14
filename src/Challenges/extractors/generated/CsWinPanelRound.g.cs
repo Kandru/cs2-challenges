@@ -11,26 +11,28 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventCsWinPanelRound";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["cs_win_panel_round"];
+        public IReadOnlyList<string> Keys { get; } = ["final_event", "funfact_data1", "funfact_data2", "funfact_data3", "funfact_token", "show_timer_attack", "show_timer_defend", "timer_time"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = ["funfact_player", "player"];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventCsWinPanelRound)gameEvent;
-            d["final_event"] = EventData.Num(e.FinalEvent);
-            d["funfact_data1"] = EventData.Num(e.FunfactData1);
-            d["funfact_data2"] = EventData.Num(e.FunfactData2);
-            d["funfact_data3"] = EventData.Num(e.FunfactData3);
-            d["funfact_token"] = e.FunfactToken;
-            d["show_timer_attack"] = EventData.Bool(e.ShowTimerAttack);
-            d["show_timer_defend"] = EventData.Bool(e.ShowTimerDefend);
-            d["timer_time"] = EventData.Num(e.TimerTime);
-            EventData.FillPlayer(d, e.FunfactPlayer, "funfact_player");
-            EventData.FillPlayer(d, e.FunfactPlayer, "player");
+            if (need.Keys[0]) d["final_event"] = EventData.Num(e.FinalEvent);
+            if (need.Keys[1]) d["funfact_data1"] = EventData.Num(e.FunfactData1);
+            if (need.Keys[2]) d["funfact_data2"] = EventData.Num(e.FunfactData2);
+            if (need.Keys[3]) d["funfact_data3"] = EventData.Num(e.FunfactData3);
+            if (need.Keys[4]) d["funfact_token"] = e.FunfactToken;
+            if (need.Keys[5]) d["show_timer_attack"] = EventData.Bool(e.ShowTimerAttack);
+            if (need.Keys[6]) d["show_timer_defend"] = EventData.Bool(e.ShowTimerDefend);
+            if (need.Keys[7]) d["timer_time"] = EventData.Num(e.TimerTime);
+            if ((need.Prefixes[0] | need.Prefixes[1]) != PlayerFields.None) EventData.FillPlayer(d, e.FunfactPlayer, need, 0, 1);
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
             var e = (EventCsWinPanelRound)gameEvent;
-            yield return (e.FunfactPlayer, "cs_win_panel_round");
+            if (need.Types[0]) buffer.Add((e.FunfactPlayer, "cs_win_panel_round"));
         }
     }
 }

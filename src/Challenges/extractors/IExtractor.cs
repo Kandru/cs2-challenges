@@ -1,5 +1,6 @@
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Events;
+using Challenges.Utils;
 
 namespace Challenges.Extractors
 {
@@ -16,9 +17,18 @@ namespace Challenges.Extractors
         string EventClassName { get; }
         /// <summary>Challenge type strings this source can feed.</summary>
         IReadOnlyList<string> ChallengeTypes { get; }
-        /// <summary>Fill challengeData from the game event. No-op for listeners.</summary>
-        void Fill(GameEvent gameEvent, Dictionary<string, string> challengeData);
-        /// <summary>Players to check for each challenge type. Empty for listeners.</summary>
-        IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent);
+        /// <summary>Event keys (including key aliases) the source can write; indexes <see cref="FillDemand.Keys"/>.</summary>
+        IReadOnlyList<string> Keys { get; }
+        /// <summary>Player key prefixes the source can write; indexes <see cref="FillDemand.Prefixes"/>.</summary>
+        IReadOnlyList<string> PlayerPrefixes { get; }
+        /// <summary>Keys written by <see cref="Extractors.DerivedKeys.Apply"/>; any of them sets <see cref="FillDemand.Derived"/>.</summary>
+        IReadOnlyList<string> DerivedKeys { get; }
+        /// <summary>Writes the keys <paramref name="need"/> asks for. No-op for listeners.</summary>
+        void Fill(GameEvent gameEvent, Dictionary<string, string> challengeData, FillDemand need);
+        /// <summary>Appends the players to check for each type <paramref name="need"/> marks active. No-op for listeners.</summary>
+        void Targets(
+            GameEvent gameEvent,
+            List<(CCSPlayerController? Player, string ChallengeType)> buffer,
+            FillDemand need);
     }
 }

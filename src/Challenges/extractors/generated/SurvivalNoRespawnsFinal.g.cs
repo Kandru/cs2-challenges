@@ -11,18 +11,20 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventSurvivalNoRespawnsFinal";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["survival_no_respawns_final"];
+        public IReadOnlyList<string> Keys { get; } = [];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = ["userid", "player"];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventSurvivalNoRespawnsFinal)gameEvent;
-            EventData.FillPlayer(d, e.Userid, "userid");
-            EventData.FillPlayer(d, e.Userid, "player");
+            if ((need.Prefixes[0] | need.Prefixes[1]) != PlayerFields.None) EventData.FillPlayer(d, e.Userid, need, 0, 1);
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
             var e = (EventSurvivalNoRespawnsFinal)gameEvent;
-            yield return (e.Userid, "survival_no_respawns_final");
+            if (need.Types[0]) buffer.Add((e.Userid, "survival_no_respawns_final"));
         }
     }
 }

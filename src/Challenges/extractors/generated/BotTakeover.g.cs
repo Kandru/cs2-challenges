@@ -11,22 +11,24 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventBotTakeover";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["player_bot_takeover"];
+        public IReadOnlyList<string> Keys { get; } = ["p", "r", "y"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = ["botid", "userid", "player"];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventBotTakeover)gameEvent;
-            d["p"] = EventData.Num(e.P);
-            d["r"] = EventData.Num(e.R);
-            d["y"] = EventData.Num(e.Y);
-            EventData.FillPlayer(d, e.Botid, "botid");
-            EventData.FillPlayer(d, e.Userid, "userid");
-            EventData.FillPlayer(d, e.Userid, "player");
+            if (need.Keys[0]) d["p"] = EventData.Num(e.P);
+            if (need.Keys[1]) d["r"] = EventData.Num(e.R);
+            if (need.Keys[2]) d["y"] = EventData.Num(e.Y);
+            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, e.Botid, need, 0);
+            if ((need.Prefixes[1] | need.Prefixes[2]) != PlayerFields.None) EventData.FillPlayer(d, e.Userid, need, 1, 2);
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
             var e = (EventBotTakeover)gameEvent;
-            yield return (e.Userid, "player_bot_takeover");
+            if (need.Types[0]) buffer.Add((e.Userid, "player_bot_takeover"));
         }
     }
 }

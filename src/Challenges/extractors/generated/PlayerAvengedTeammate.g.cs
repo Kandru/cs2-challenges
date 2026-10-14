@@ -11,22 +11,23 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventPlayerAvengedTeammate";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["player_has_avenged_teammate", "player_got_avenged_teammate"];
+        public IReadOnlyList<string> Keys { get; } = [];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = ["avenged_player_id", "victim", "avenger_id", "avenger"];
+        public IReadOnlyList<string> DerivedKeys { get; } = ["isselfavenged"];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventPlayerAvengedTeammate)gameEvent;
-            EventData.FillPlayer(d, e.AvengedPlayerId, "avenged_player_id");
-            EventData.FillPlayer(d, e.AvengedPlayerId, "victim");
-            EventData.FillPlayer(d, e.AvengerId, "avenger_id");
-            EventData.FillPlayer(d, e.AvengerId, "avenger");
-            DerivedKeys.Apply("self_avenged", gameEvent, d);
+            if ((need.Prefixes[0] | need.Prefixes[1]) != PlayerFields.None) EventData.FillPlayer(d, e.AvengedPlayerId, need, 0, 1);
+            if ((need.Prefixes[2] | need.Prefixes[3]) != PlayerFields.None) EventData.FillPlayer(d, e.AvengerId, need, 2, 3);
+            if (need.Derived) global::Challenges.Extractors.DerivedKeys.Apply("self_avenged", gameEvent, d);
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
             var e = (EventPlayerAvengedTeammate)gameEvent;
-            yield return (e.AvengedPlayerId, "player_got_avenged_teammate");
-            yield return (e.AvengerId, "player_has_avenged_teammate");
+            if (need.Types[1]) buffer.Add((e.AvengedPlayerId, "player_got_avenged_teammate"));
+            if (need.Types[0]) buffer.Add((e.AvengerId, "player_has_avenged_teammate"));
         }
     }
 }

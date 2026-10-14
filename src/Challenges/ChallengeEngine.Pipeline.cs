@@ -22,10 +22,20 @@ namespace Challenges
         private readonly Dictionary<string, int> _pending =
             new(StringComparer.OrdinalIgnoreCase);
         /// <summary>
-        /// Worker-side progress snapshots. The worker reads and writes; the game thread removes an entry
-        /// only when its pending count reached zero, so no item for that steam id is in flight.
+        /// Worker-side progress snapshots, kept across bursts. The worker reads and writes; the game thread
+        /// removes an entry only when its pending count is zero, so no item for that steam id is in flight.
         /// </summary>
         private readonly ConcurrentDictionary<string, PlayerState> _shadows =
+            new(StringComparer.OrdinalIgnoreCase);
+        /// <summary>
+        /// Archive <see cref="PlayerState.ProgressVersion"/> each shadow was seeded from. The archive keeps one
+        /// state object per steam id for the plugin's life, so the version alone identifies the seed.
+        /// Game thread only.
+        /// </summary>
+        private readonly Dictionary<string, int> _seeds =
+            new(StringComparer.OrdinalIgnoreCase);
+        /// <summary>Shadows to drop (with their seed version) once their steam id goes idle. Game thread only.</summary>
+        private readonly HashSet<string> _discardWhenIdle =
             new(StringComparer.OrdinalIgnoreCase);
         /// <summary>Saves deferred until the steam id has no pending work. Game thread only.</summary>
         private readonly Dictionary<string, Action> _saveWhenIdle =
@@ -91,6 +101,8 @@ namespace Challenges
             DrainPatches(int.MaxValue);
             FlushDeferredSaves();
             _shadows.Clear();
+            _seeds.Clear();
+            _discardWhenIdle.Clear();
             _pending.Clear();
         }
 
@@ -126,11 +138,11 @@ namespace Challenges
             EnsureWorker();
             foreach (ProgressTarget target in item.Targets)
             {
-                // First in-flight item for this steam id carries the live snapshot.
+                // Only an idle steam id may be reseeded: in-flight work means the shadow is ahead of the archive.
                 ref int count = ref CollectionsMarshal.GetValueRefOrAddDefault(_pending, target.SteamId, out _);
                 if (++count == 1)
                 {
-                    target.Seed = CloneSeed(target.SteamId, item.ScheduleKey);
+                    target.Seed = SeedIfStale(target.SteamId, item.ScheduleKey);
                 }
             }
 
@@ -139,10 +151,20 @@ namespace Challenges
             return true;
         }
 
-        private ProgressSeed CloneSeed(string steamId, string scheduleKey)
+        /// <summary>
+        /// Game thread, steam id idle: a fresh snapshot when the worker has no shadow for it yet or the
+        /// archive changed outside the pipeline since the last seed; otherwise null (keep the shadow).
+        /// </summary>
+        private ProgressSeed? SeedIfStale(string steamId, string scheduleKey)
         {
             PlayerState state = Archive.GetOrCreate(steamId);
             PruneOutdated(state, scheduleKey);
+            if (_seeds.TryGetValue(steamId, out int version) && version == state.ProgressVersion)
+            {
+                return null;
+            }
+
+            _seeds[steamId] = state.ProgressVersion;
             return new ProgressSeed
             {
                 Challenges = ChallengeProgress.CloneChallenges(state.Challenges),
@@ -184,6 +206,7 @@ namespace Challenges
                 catch (Exception ex)
                 {
                     Log($"progress apply failed: {ex.Message}");
+                    DiscardShadow(patch.SteamId);
                     FinishPending(patch.SteamId);
                 }
             }
@@ -199,13 +222,38 @@ namespace Challenges
             }
 
             _pending.Remove(steamId);
-            _shadows.TryRemove(steamId, out _);
+            if (_discardWhenIdle.Remove(steamId))
+            {
+                RemoveShadow(steamId);
+            }
+
             if (!_saveWhenIdle.Remove(steamId, out Action? save))
             {
                 return;
             }
 
             RunDeferredSave(steamId, save);
+        }
+
+        /// <summary>
+        /// Game thread: drops the worker shadow for <paramref name="steamId"/> now when idle, otherwise once
+        /// its last in-flight target finished. The next enqueue reseeds from the archive.
+        /// </summary>
+        private void DiscardShadow(string steamId)
+        {
+            if (HasPending(steamId))
+            {
+                _discardWhenIdle.Add(steamId);
+                return;
+            }
+
+            RemoveShadow(steamId);
+        }
+
+        private void RemoveShadow(string steamId)
+        {
+            _seeds.Remove(steamId);
+            _shadows.TryRemove(steamId, out _);
         }
 
         private static void RunDeferredSave(string steamId, Action save)

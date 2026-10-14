@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Events;
@@ -13,16 +15,27 @@ namespace Challenges
     /// </summary>
     public partial class ChallengeEngine : Module
     {
-        private readonly Dictionary<string, List<IExtractor>> _extractorsByEvent;
+        private const int MaxSlots = 65;
+
+        /// <summary>Reused target scratch list. Game thread only, not reentrant.</summary>
+        private readonly List<(CCSPlayerController? Player, string Type)> _targetBuffer = [];
+        /// <summary>Same for generated listener handlers, so a listener can never clobber an event's list.</summary>
+        private readonly List<(CCSPlayerController? Player, string Type)> _listenerTargets = [];
+        /// <summary>Resolved identity per player slot, keyed by user id. Game thread only.</summary>
+        private readonly SlotIdentity?[] _slots = new SlotIdentity?[MaxSlots];
         private readonly HashSet<PlayerState> _pruned = [];
         private readonly List<string> _pruneScratch = [];
         private readonly SituationMemory _situations = new();
-        private Dictionary<string, List<(ChallengeDefinition Challenge, ChallengeTask Task)>> _tasksByType =
-            new(StringComparer.Ordinal);
+        private Dictionary<string, TypePlan> _types = new(StringComparer.Ordinal);
+        private Dictionary<string, ExtractorPlan[]> _activeExtractorsByEvent = new(StringComparer.Ordinal);
+        private Dictionary<string, ExtractorPlan> _activeListeners = new(StringComparer.Ordinal);
         private List<string> _boundEvents = [];
         private List<string> _boundListeners = [];
-        private bool _usesHostageKey;
+        /// <summary>The <c>global.*</c> keys some loaded rule reads; only these are written per event.</summary>
+        private GlobalKeyFlags _globalKeys;
         private bool? _hasHostages;
+        /// <summary>Read once on first use; the engine lives for one map.</summary>
+        private string? _mapName;
         private CCSGameRulesProxy? _gameRulesProxy;
         private Notifications? _notifications;
         private bool _destroyed;
@@ -30,9 +43,6 @@ namespace Challenges
         public ChallengeEngine(State state, IStringLocalizer localizer, bool isHotReloaded)
             : base(state, localizer)
         {
-            _extractorsByEvent = Registry.All
-                .GroupBy(e => e.EventClassName, StringComparer.Ordinal)
-                .ToDictionary(g => g.Key, g => g.ToList(), StringComparer.Ordinal);
             RebuildEvents();
         }
 
@@ -52,10 +62,9 @@ namespace Challenges
         /// </summary>
         public void RebuildEvents()
         {
-            Dictionary<string, List<(ChallengeDefinition Challenge, ChallengeTask Task)>> byType =
-                new(StringComparer.Ordinal);
-            bool hostageKey = false;
-            bool isBotKey = false;
+            Dictionary<string, TypePlan> byType = new(StringComparer.Ordinal);
+            List<ChallengeTask> allTasks = [];
+            GlobalKeyFlags globalKeys = GlobalKeyFlags.None;
 
             if (CurrentSchedule is { } schedule)
             {
@@ -63,49 +72,75 @@ namespace Challenges
                 {
                     foreach (ChallengeTask task in challenge.Tasks)
                     {
-                        if (!byType.TryGetValue(task.Type, out List<(ChallengeDefinition, ChallengeTask)>? list))
+                        GlobalGate gate = TaskGate(task);
+                        if (!byType.TryGetValue(task.Type, out TypePlan? plan))
                         {
-                            byType[task.Type] = list = [];
+                            byType[task.Type] = plan = new TypePlan(byType.Count, task.Type) { Gate = gate };
+                        }
+                        else
+                        {
+                            plan.Gate &= gate;
                         }
 
-                        list.Add((challenge, task));
-
-                        if (hostageKey && isBotKey)
-                        {
-                            continue;
-                        }
-
+                        plan.Tasks.Add((challenge, task));
+                        allTasks.Add(task);
                         foreach (ChallengeRule rule in task.Rules)
                         {
-                            if (!hostageKey && rule.Key == "global.hashostages")
-                            {
-                                hostageKey = true;
-                            }
-                            else if (!isBotKey && rule.Key.EndsWith(".isbot", StringComparison.Ordinal))
-                            {
-                                isBotKey = true;
-                            }
-
-                            if (hostageKey && isBotKey)
-                            {
-                                break;
-                            }
+                            globalKeys |= GlobalKey(rule.Key);
                         }
                     }
                 }
             }
 
-            _tasksByType = byType;
-            _usesHostageKey = hostageKey;
-            EventData.IncludeIsBot = isBotKey;
-            _situations.Configure(byType.Values.SelectMany(static list => list.Select(static t => t.Task)));
+            GlobalGate gateUnion = GlobalGate.None;
+            foreach (TypePlan plan in byType.Values)
+            {
+                gateUnion |= plan.Gate;
+            }
+
+            TypePlan[] typeList = new TypePlan[byType.Count];
+            foreach (TypePlan plan in byType.Values)
+            {
+                typeList[plan.Id] = plan;
+            }
+
+            _types = byType;
+            _typeList = typeList;
+            _typeLayout = Interlocked.Increment(ref _nextTypeLayout);
+            _scheduleKey = CurrentSchedule?.Key ?? string.Empty;
+            _gateUnion = gateUnion;
+            _gateReads = (globalKeys & GlobalKeyFlags.IsWarmup) != 0
+                ? gateUnion | GlobalGate.WarmupBits
+                : gateUnion;
+            _globalKeys = globalKeys;
+            _situations.Configure(allTasks);
 
             HashSet<string> bound = new(StringComparer.Ordinal);
             List<string> events = [];
             List<string> listeners = [];
+            Dictionary<string, List<ExtractorPlan>> active = new(StringComparer.Ordinal);
+            Dictionary<string, ExtractorPlan> activeListeners = new(StringComparer.Ordinal);
+            int globalKeyCount = BitOperations.PopCount((uint)globalKeys);
             foreach (IExtractor extractor in Registry.All)
             {
-                if ((!UsesAnyType(extractor) && !_situations.Watches(extractor.EventClassName))
+                TypePlan[] types = ActiveTypes(extractor, byType);
+                bool used = types.Length > 0;
+                if (used && extractor.Kind == ExtractorKind.Listener)
+                {
+                    activeListeners[extractor.EventClassName] = new ExtractorPlan(extractor, types, globalKeyCount);
+                }
+                else if (used)
+                {
+                    if (!active.TryGetValue(extractor.EventClassName, out List<ExtractorPlan>? list))
+                    {
+                        active[extractor.EventClassName] = list = [];
+                    }
+
+                    int extraKeys = globalKeyCount + _situations.EnrichKeyCount(extractor.EventClassName);
+                    list.Add(new ExtractorPlan(extractor, types, extraKeys));
+                }
+
+                if ((!used && !_situations.Watches(extractor.EventClassName))
                     || !bound.Add(extractor.EventClassName))
                 {
                     continue;
@@ -121,6 +156,14 @@ namespace Challenges
                 }
             }
 
+            Dictionary<string, ExtractorPlan[]> activeByEvent = new(active.Count, StringComparer.Ordinal);
+            foreach ((string eventName, List<ExtractorPlan> list) in active)
+            {
+                activeByEvent[eventName] = [.. list];
+            }
+
+            _activeExtractorsByEvent = activeByEvent;
+            _activeListeners = activeListeners;
             _boundEvents = events;
             _boundListeners = listeners;
         }
@@ -129,6 +172,17 @@ namespace Challenges
         public void ForgetPlayer(CCSPlayerController player, PlayerState state)
         {
             _pruned.Remove(state);
+            if (SteamIds.IsCreditable(state.SteamId))
+            {
+                DiscardShadow(state.SteamId);
+            }
+
+            int slot = player.Slot;
+            if ((uint)slot < MaxSlots)
+            {
+                _slots[slot] = null;
+            }
+
             _situations.ForgetPlayer(player);
         }
 
@@ -142,40 +196,91 @@ namespace Challenges
         public override void Destroy()
         {
             _destroyed = true;
-            _tasksByType = new(StringComparer.Ordinal);
+            _types = new(StringComparer.Ordinal);
+            _gateUnion = GlobalGate.None;
+            _gateReads = GlobalGate.None;
+            _globalKeys = GlobalKeyFlags.None;
+            _typeList = [];
+            _activeExtractorsByEvent = new(StringComparer.Ordinal);
+            _activeListeners = new(StringComparer.Ordinal);
             _boundEvents = [];
             _boundListeners = [];
             _pruned.Clear();
+            Array.Clear(_slots);
             _gameRulesProxy = null;
             _situations.Clear();
-            EventData.IncludeIsBot = false;
         }
 
-        /// <summary>Listener entry point used by generated <c>ChallengeEngine.Listeners.cs</c> handlers.</summary>
+        /// <summary>
+        /// First step of a generated listener handler: one dictionary lookup when no loaded type uses the
+        /// listener, then the global gates. False means the handler returns without reading anything.
+        /// </summary>
+        private bool BeginListener(
+            string listenerName,
+            [NotNullWhen(true)] out ExtractorPlan? plan,
+            out GlobalGate closed)
+        {
+            closed = GlobalGate.None;
+            if (!CanHandle() || !_activeListeners.TryGetValue(listenerName, out plan))
+            {
+                plan = null;
+                return false;
+            }
+
+            closed = ReadClosedGates();
+            if (!plan.AllClosed(closed))
+            {
+                return true;
+            }
+
+            if (GlobalConfig.Debug.Enable)
+            {
+                DebugPrint($"{listenerName} gated");
+            }
+
+            return false;
+        }
+
+        /// <summary>Cleared target scratch list for generated listener handlers.</summary>
+        private List<(CCSPlayerController? Player, string Type)> ListenerTargets()
+        {
+            _listenerTargets.Clear();
+            return _listenerTargets;
+        }
+
+        /// <summary>Generated listener handlers: valid targets, or null when the handler can stop.</summary>
+        private List<ProgressTarget>? FilterListenerTargets(
+            string listenerName,
+            List<(CCSPlayerController? Player, string Type)> targets,
+            GlobalGate closed)
+        {
+            try
+            {
+                List<ProgressTarget>? valid = FilterTargets(targets, closed);
+                if (valid == null && GlobalConfig.Debug.Enable)
+                {
+                    DebugPrint($"{listenerName} no targets");
+                }
+
+                return valid;
+            }
+            catch (Exception ex)
+            {
+                Log($"{listenerName} failed: {ex.Message}");
+                return null;
+            }
+        }
+
+        /// <summary>Last step of a generated listener handler.</summary>
         private void HandleListener(
             string listenerName,
             Dictionary<string, string> data,
-            List<(CCSPlayerController? Player, string Type)> targets)
+            List<ProgressTarget> targets,
+            GlobalGate closed)
         {
-            if (!CanHandle())
-            {
-                return;
-            }
-
             try
             {
-                List<ProgressTarget>? valid = FilterTargets(targets);
-                if (valid == null)
-                {
-                    if (GlobalConfig.Debug.Enable)
-                    {
-                        DebugPrint($"{listenerName} no targets");
-                    }
-
-                    return;
-                }
-
-                Enqueue(listenerName, data, valid);
+                Enqueue(listenerName, data, targets, closed);
             }
             catch (Exception ex)
             {
@@ -190,7 +295,7 @@ namespace Challenges
                 return HookResult.Continue;
             }
 
-            bool hasTasks = _tasksByType.Count > 0;
+            bool hasTasks = _types.Count > 0;
             if (!hasTasks && !_situations.AnyEnabled)
             {
                 return HookResult.Continue;
@@ -209,22 +314,31 @@ namespace Challenges
             }
 
             if (!hasTasks
-                || !_extractorsByEvent.TryGetValue(eventName, out List<IExtractor>? extractors))
+                || !_activeExtractorsByEvent.TryGetValue(eventName, out ExtractorPlan[]? extractors))
             {
                 return HookResult.Continue;
             }
 
             bool enrich = _situations.AnyEnabled;
-            foreach (IExtractor extractor in extractors)
+            GlobalGate closed = ReadClosedGates();
+            foreach (ExtractorPlan plan in extractors)
             {
-                if (!UsesAnyType(extractor))
+                if (plan.AllClosed(closed))
                 {
+                    if (GlobalConfig.Debug.Enable)
+                    {
+                        DebugPrint($"{eventName} gated");
+                    }
+
                     continue;
                 }
 
+                IExtractor extractor = plan.Extractor;
                 try
                 {
-                    List<ProgressTarget>? targets = FilterTargets(extractor.Targets(gameEvent));
+                    _targetBuffer.Clear();
+                    extractor.Targets(gameEvent, _targetBuffer, plan.Demand);
+                    List<ProgressTarget>? targets = FilterTargets(_targetBuffer, closed);
                     if (targets == null)
                     {
                         if (GlobalConfig.Debug.Enable)
@@ -235,14 +349,14 @@ namespace Challenges
                         continue;
                     }
 
-                    Dictionary<string, string> data = [];
-                    extractor.Fill(gameEvent, data);
+                    Dictionary<string, string> data = new(plan.Demand.Capacity);
+                    extractor.Fill(gameEvent, data, plan.Demand);
                     if (enrich)
                     {
                         _situations.Enrich(eventName, gameEvent, data);
                     }
 
-                    Enqueue(eventName, data, targets);
+                    Enqueue(eventName, data, targets, closed);
                 }
                 catch (Exception ex)
                 {
@@ -254,55 +368,99 @@ namespace Challenges
         }
 
         private bool CanHandle() =>
-            !_destroyed && !_flushed && _tasksByType.Count > 0 && GlobalConfig.Enabled;
+            !_destroyed && !_flushed && _types.Count > 0 && GlobalConfig.Enabled;
 
+        /// <summary>
+        /// Valid, creditable targets whose type is loaded and not closed by <paramref name="closed"/>.
+        /// Null when none remain. Clears <paramref name="targets"/>.
+        /// </summary>
         private List<ProgressTarget>? FilterTargets(
-            IEnumerable<(CCSPlayerController? Player, string Type)> targets)
+            List<(CCSPlayerController? Player, string Type)> targets,
+            GlobalGate closed)
         {
             List<ProgressTarget>? valid = null;
-            foreach ((CCSPlayerController? player, string type) in targets)
+            for (int i = 0; i < targets.Count; i++)
             {
-                if (player is not { IsValid: true }
-                    || !_tasksByType.TryGetValue(type, out List<(ChallengeDefinition Challenge, ChallengeTask Task)>? candidates))
+                (CCSPlayerController? player, string type) = targets[i];
+                if (!_types.TryGetValue(type, out TypePlan? plan)
+                    || plan.IsClosed(closed)
+                    || player is not { IsValid: true }
+                    || ResolveIdentity(player) is not { } identity)
                 {
                     continue;
                 }
 
-                string? steamId = player.NetworkIDString;
-                if (!SteamIds.IsCreditable(steamId))
+                // Nothing left to earn for this type; in-flight work may still reset tasks, so never skip then.
+                if (!IsTypeOpen(identity.State, plan) && !HasPending(identity.SteamId))
                 {
                     continue;
-                }
-
-                if (!PlayerStates.TryGetValue(player, out PlayerState? state)
-                    || state.SteamId.Length == 0
-                    || !state.SteamId.Equals(steamId, StringComparison.OrdinalIgnoreCase))
-                {
-                    BindPlayer(player, steamId);
                 }
 
                 (valid ??= []).Add(new ProgressTarget
                 {
-                    SteamId = steamId,
-                    Slot = player.Slot,
-                    UserId = player.UserId,
-                    Name = player.PlayerName ?? string.Empty,
-                    Index = player.Index,
-                    Candidates = candidates,
+                    SteamId = identity.SteamId,
+                    Slot = identity.Slot,
+                    UserId = identity.UserId,
+                    Name = GlobalConfig.Debug.Enable ? player.PlayerName ?? string.Empty : string.Empty,
+                    Index = (uint)(identity.Slot + 1),
+                    Candidates = plan.Tasks,
                 });
             }
 
+            // Scratch lists must not keep controller wrappers alive until the next event.
+            targets.Clear();
             return valid;
         }
 
-        private void Enqueue(string source, Dictionary<string, string> data, List<ProgressTarget> targets)
+        /// <summary>
+        /// Steam id and bound state for a valid controller. A cached slot entry is reused while the
+        /// user id matches, so the steam id string and the session dictionary are not read again.
+        /// </summary>
+        private SlotIdentity? ResolveIdentity(CCSPlayerController player)
+        {
+            int slot = player.Slot;
+            int? userId = player.UserId;
+            bool cacheable = userId != null && (uint)slot < MaxSlots;
+            if (cacheable && _slots[slot] is { } cached && cached.UserId == userId)
+            {
+                return cached;
+            }
+
+            string? steamId = player.NetworkIDString;
+            if (!SteamIds.IsCreditable(steamId))
+            {
+                return null;
+            }
+
+            if (!PlayerStates.TryGetValue(player, out PlayerState? state)
+                || state.SteamId.Length == 0
+                || !state.SteamId.Equals(steamId, StringComparison.OrdinalIgnoreCase))
+            {
+                state = BindPlayer(player, steamId);
+            }
+
+            SlotIdentity identity = new(slot, userId, steamId, state);
+            if (cacheable)
+            {
+                _slots[slot] = identity;
+            }
+
+            return identity;
+        }
+
+        /// <summary><paramref name="closed"/> is the event's <see cref="ReadClosedGates"/> result.</summary>
+        private void Enqueue(
+            string source,
+            Dictionary<string, string> data,
+            List<ProgressTarget> targets,
+            GlobalGate closed)
         {
             if (CurrentSchedule is not { } schedule || targets.Count == 0)
             {
                 return;
             }
 
-            MergeGlobalData(data);
+            MergeGlobalData(data, closed);
             _ = TryEnqueueWork(new ProgressWorkItem
             {
                 Source = source,
@@ -319,37 +477,61 @@ namespace Challenges
         /// <summary>Enqueue progress for a single player (e.g. synthetic <c>player_trade</c>).</summary>
         private void EnqueueOne(CCSPlayerController player, string type, Dictionary<string, string> data)
         {
-            if (FilterTargets([(player, type)]) is { } targets)
+            _targetBuffer.Clear();
+            _targetBuffer.Add((player, type));
+            GlobalGate closed = ReadClosedGates();
+            if (FilterTargets(_targetBuffer, closed) is { } targets)
             {
-                Enqueue(type, data, targets);
+                Enqueue(type, data, targets, closed);
             }
         }
 
-        private bool UsesAnyType(IExtractor extractor)
+        private static TypePlan[] ActiveTypes(IExtractor extractor, Dictionary<string, TypePlan> types)
         {
+            List<TypePlan>? active = null;
             foreach (string type in extractor.ChallengeTypes)
             {
-                if (_tasksByType.ContainsKey(type))
+                if (types.TryGetValue(type, out TypePlan? plan))
                 {
-                    return true;
+                    (active ??= []).Add(plan);
                 }
             }
 
-            return false;
+            return active == null ? [] : [.. active];
         }
 
-        private void MergeGlobalData(Dictionary<string, string> data)
+        /// <summary>
+        /// Writes the <c>global.*</c> keys loaded rules read. The warmup value comes from
+        /// <paramref name="closed"/>, which <see cref="ReadClosedGates"/> fills whenever that key is read.
+        /// </summary>
+        private void MergeGlobalData(Dictionary<string, string> data, GlobalGate closed)
         {
-            data["global.iswarmup"] = EventData.Bool(GetGameRules()?.WarmupPeriod ?? false);
-            data["global.isduringround"] = EventData.Bool(State.DuringRound);
-            data["global.mapname"] = Server.MapName;
-            if (!_usesHostageKey)
+            GlobalKeyFlags keys = _globalKeys;
+            if (keys == GlobalKeyFlags.None)
             {
                 return;
             }
 
-            _hasHostages ??= Utilities.FindAllEntitiesByDesignerName<CBaseEntity>("hostage_entity").Any();
-            data["global.hashostages"] = EventData.Bool(_hasHostages.Value);
+            if ((keys & GlobalKeyFlags.IsWarmup) != 0)
+            {
+                data["global.iswarmup"] = EventData.Bool((closed & GlobalGate.NoWarmup) != 0);
+            }
+
+            if ((keys & GlobalKeyFlags.IsDuringRound) != 0)
+            {
+                data["global.isduringround"] = EventData.Bool(State.DuringRound);
+            }
+
+            if ((keys & GlobalKeyFlags.MapName) != 0)
+            {
+                data["global.mapname"] = _mapName ??= Server.MapName;
+            }
+
+            if ((keys & GlobalKeyFlags.HasHostages) != 0)
+            {
+                _hasHostages ??= Utilities.FindAllEntitiesByDesignerName<CBaseEntity>("hostage_entity").Any();
+                data["global.hashostages"] = EventData.Bool(_hasHostages.Value);
+            }
         }
 
         private CCSGameRules? GetGameRules()
@@ -395,6 +577,15 @@ namespace Challenges
             }
 
             state.Dirty = true;
+            state.ProgressVersion++;
+        }
+
+        private sealed class SlotIdentity(int slot, int? userId, string steamId, PlayerState state)
+        {
+            public int Slot { get; } = slot;
+            public int? UserId { get; } = userId;
+            public string SteamId { get; } = steamId;
+            public PlayerState State { get; } = state;
         }
     }
 }

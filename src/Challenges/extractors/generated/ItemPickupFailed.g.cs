@@ -11,21 +11,23 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventItemPickupFailed";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["item_pickup_failed"];
+        public IReadOnlyList<string> Keys { get; } = ["item", "limit", "reason"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = ["userid", "player"];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventItemPickupFailed)gameEvent;
-            d["item"] = e.Item;
-            d["limit"] = EventData.Num(e.Limit);
-            d["reason"] = EventData.Num(e.Reason);
-            EventData.FillPlayer(d, e.Userid, "userid");
-            EventData.FillPlayer(d, e.Userid, "player");
+            if (need.Keys[0]) d["item"] = e.Item;
+            if (need.Keys[1]) d["limit"] = EventData.Num(e.Limit);
+            if (need.Keys[2]) d["reason"] = EventData.Num(e.Reason);
+            if ((need.Prefixes[0] | need.Prefixes[1]) != PlayerFields.None) EventData.FillPlayer(d, e.Userid, need, 0, 1);
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
             var e = (EventItemPickupFailed)gameEvent;
-            yield return (e.Userid, "item_pickup_failed");
+            if (need.Types[0]) buffer.Add((e.Userid, "item_pickup_failed"));
         }
     }
 }

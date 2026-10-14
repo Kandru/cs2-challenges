@@ -9,12 +9,22 @@ namespace Challenges
         {
             if (!patch.HasChanges)
             {
+                if (patch.Failed)
+                {
+                    DiscardShadow(patch.SteamId);
+                }
+
                 FinishPending(patch.SteamId);
                 return;
             }
 
             PlayerState state = Archive.GetOrCreate(patch.SteamId);
             string scheduleKey = patch.ScheduleKey;
+            // Progress below the goal never closes or reopens a type, so the open-type cache stays valid then.
+            if (patch.CompletesTask || patch.Removals != null)
+            {
+                state.OpenTypesDirty = true;
+            }
 
             if (patch.Removals != null)
             {

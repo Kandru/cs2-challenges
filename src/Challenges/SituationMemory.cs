@@ -20,6 +20,14 @@ namespace Challenges
         private const double ThrowingExpireSeconds = 1.0;
         private const double SmokeExpireSeconds = 22.0;
         private const PlayerButtons AttackMask = PlayerButtons.Attack | PlayerButtons.Attack2;
+        /// <summary>Four grenade keys for each of attacker, victim and userid.</summary>
+        private const int GrenadeKeyCount = 12;
+        /// <summary>insmoke, smoke.distance, smoke.age, {player}.insmoke, userid.insmoke.</summary>
+        private const int SmokeKeyCount = 5;
+
+        private static readonly string[] TradeAttackerKeys = PlayerKeys.For("attacker");
+        private static readonly string[] TradeVictimKeys = PlayerKeys.For("victim");
+        private static readonly string[] TradeUseridKeys = PlayerKeys.For("userid");
 
         private static readonly HashSet<string> GrenadeNames = new(StringComparer.OrdinalIgnoreCase)
         {
@@ -37,6 +45,7 @@ namespace Challenges
         private readonly HashSet<(int Slot, int Min, int Max)> _aceCredited = [];
         private readonly HashSet<string> _aceHits = new(StringComparer.Ordinal);
         private readonly StringBuilder _thrownScratch = new(32);
+        private readonly RoundRoster _roster = new();
 
         private float _bombX;
         private float _bombY;
@@ -45,11 +54,19 @@ namespace Challenges
         private bool _thrownFlushScheduled;
         private double _tradeRetentionSeconds = DefaultTradeSeconds;
         private int _aceMinKills;
+        /// <summary>Player fields the loaded <c>player_trade</c> rules read, per trade prefix.</summary>
+        private PlayerFields _tradeAttackerFields;
+        private PlayerFields _tradeVictimFields;
+        private PlayerFields _tradeUseridFields;
 
         public bool TradeEnabled { get; private set; }
         public bool GrenadeEnabled { get; private set; }
         public bool SmokeEnabled { get; private set; }
         public bool AceEnabled { get; private set; }
+        /// <summary>True while a consumer (today: ace) needs <see cref="Roster"/> kept current.</summary>
+        public bool RosterEnabled { get; private set; }
+        /// <summary>Per-slot team and human state; only maintained while <see cref="RosterEnabled"/>.</summary>
+        public RoundRoster Roster => _roster;
         public bool AnyEnabled => TradeEnabled | GrenadeEnabled | SmokeEnabled | AceEnabled;
 
         public void Configure(IEnumerable<ChallengeTask> tasks)
@@ -59,6 +76,9 @@ namespace Challenges
             bool smoke = false;
             bool ace = false;
             double maxTrade = 0;
+            PlayerFields tradeAttacker = PlayerFields.None;
+            PlayerFields tradeVictim = PlayerFields.None;
+            PlayerFields tradeUserid = PlayerFields.None;
             HashSet<(int Min, int Max)> aceSeen = [];
 
             _aceBounds.Clear();
@@ -74,6 +94,13 @@ namespace Challenges
                 foreach (ChallengeRule rule in task.Rules)
                 {
                     string key = rule.Key;
+                    if (isTrade)
+                    {
+                        tradeAttacker |= PlayerKeys.TryMatch(key, "attacker", out PlayerFields a) ? a : PlayerFields.None;
+                        tradeVictim |= PlayerKeys.TryMatch(key, "victim", out PlayerFields v) ? v : PlayerFields.None;
+                        tradeUserid |= PlayerKeys.TryMatch(key, "userid", out PlayerFields u) ? u : PlayerFields.None;
+                    }
+
                     if (!grenade && key.Contains(".grenade", StringComparison.Ordinal))
                     {
                         grenade = true;
@@ -117,6 +144,9 @@ namespace Challenges
             }
 
             TradeEnabled = trade;
+            _tradeAttackerFields = tradeAttacker;
+            _tradeVictimFields = tradeVictim;
+            _tradeUseridFields = tradeUserid;
             GrenadeEnabled = grenade;
             SmokeEnabled = smoke;
             AceEnabled = ace;
@@ -131,10 +161,20 @@ namespace Challenges
 
             _tradeRetentionSeconds = trade && maxTrade > 0 ? maxTrade : DefaultTradeSeconds;
 
+            RosterEnabled = ace;
+            _roster.Invalidate();
+
             _watchEvents.Clear();
             if (trade | grenade | ace)
             {
                 _watchEvents.Add("EventPlayerDeath");
+            }
+
+            if (RosterEnabled)
+            {
+                _watchEvents.Add("EventRoundStart");
+                _watchEvents.Add("EventPlayerTeam");
+                _watchEvents.Add("EventPlayerDisconnect");
             }
 
             if (grenade)
@@ -160,6 +200,15 @@ namespace Challenges
 
         public bool Watches(string eventClassName) => _watchEvents.Contains(eventClassName);
 
+        /// <summary>Upper bound of the keys <see cref="Enrich"/> adds to <paramref name="eventClassName"/> data.</summary>
+        public int EnrichKeyCount(string eventClassName) =>
+            eventClassName switch
+            {
+                "EventPlayerDeath" => (AceEnabled ? _aceBounds.Count : 0) + (GrenadeEnabled ? GrenadeKeyCount : 0),
+                "EventBombBegindefuse" or "EventBombDefused" => SmokeEnabled ? SmokeKeyCount : 0,
+                _ => 0,
+            };
+
         public void Clear()
         {
             _kills.Clear();
@@ -181,6 +230,7 @@ namespace Challenges
             _thrown.RemoveAll(t => t.Slot == slot);
             _aceKills.Remove(slot);
             _aceCredited.RemoveWhere(entry => entry.Slot == slot);
+            _roster.Remove(slot);
             for (int i = _kills.Count - 1; i >= 0; i--)
             {
                 KillRecord k = _kills[i];
@@ -207,6 +257,20 @@ namespace Challenges
                     if (TradeEnabled)
                     {
                         OnPlayerDeath((EventPlayerDeath)gameEvent, enqueueOne);
+                    }
+
+                    return;
+                case "EventRoundStart":
+                    _roster.Rebuild();
+                    return;
+                case "EventPlayerTeam":
+                    EventPlayerTeam team = (EventPlayerTeam)gameEvent;
+                    _roster.OnTeam(team.Userid, team.Team, team.Disconnect);
+                    return;
+                case "EventPlayerDisconnect":
+                    if (((EventPlayerDisconnect)gameEvent).Userid is { IsValid: true } gone)
+                    {
+                        _roster.Remove(gone.Slot);
                     }
 
                     return;
@@ -343,7 +407,7 @@ namespace Challenges
                 return;
             }
 
-            int enemies = CountEnemyHumans(victim, enemyTeam);
+            int enemies = CountEnemyHumans(victim.Slot, enemyTeam);
             foreach (AceBound bound in _aceBounds)
             {
                 if (enemies < bound.Min || kills != Math.Min(enemies, bound.Max))
@@ -360,19 +424,11 @@ namespace Challenges
             }
         }
 
-        private static int CountEnemyHumans(CCSPlayerController victim, int team)
+        /// <summary>Humans in the victim's team, dead or alive; the victim counts exactly once.</summary>
+        private int CountEnemyHumans(int victimSlot, int team)
         {
-            int count = 1;
-            int victimSlot = victim.Slot;
-            foreach (CCSPlayerController player in Players.GetHumans())
-            {
-                if (player.TeamNum == team && player.Slot != victimSlot)
-                {
-                    count++;
-                }
-            }
-
-            return count;
+            int count = _roster.HumansInTeam(team);
+            return _roster.IsHumanInTeam(victimSlot, team) ? count : count + 1;
         }
 
         private void OnPlayerDeath(
@@ -424,7 +480,7 @@ namespace Challenges
             EmitTrade(enqueueOne, second, first, seconds);
         }
 
-        private static void EmitTrade(
+        private void EmitTrade(
             Action<CCSPlayerController, string, Dictionary<string, string>> enqueueOne,
             KillRecord mine,
             KillRecord theirs,
@@ -450,9 +506,8 @@ namespace Challenges
                 ["isteamkill"] = EventData.Bool(mine.TeamKill | theirs.TeamKill),
                 ["isselfkill"] = "false",
             };
-            EventData.FillPlayer(d, player, "attacker");
-            EventData.FillPlayer(d, other, "victim");
-            EventData.FillPlayer(d, other, "userid");
+            EventData.FillPlayer(d, player, TradeAttackerKeys, _tradeAttackerFields);
+            EventData.FillPlayer(d, other, TradeVictimKeys, _tradeVictimFields, TradeUseridKeys, _tradeUseridFields);
             enqueueOne(player, "player_trade", d);
         }
 

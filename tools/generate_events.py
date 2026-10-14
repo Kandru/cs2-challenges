@@ -17,7 +17,8 @@ ENGINE_DIR = ROOT / "src" / "Challenges"
 DOCS_EVENTS = ROOT / "documentation" / "reference" / "events"
 DOCS_EVENTS_INDEX = ROOT / "documentation" / "reference" / "events.md"
 DOCS_LISTENERS_INDEX = ROOT / "documentation" / "reference" / "listeners.md"
-EVENT_DATA = ROOT / "src" / "Challenges" / "Utils" / "EventData.cs"
+# PlayerKeys.Suffixes: player property suffixes, bits, and catalog types.
+FILL_DEMAND = ROOT / "src" / "Challenges" / "Utils" / "FillDemand.cs"
 # Rule operators live in ChallengeRules; action type cases in ChallengeEngine.Simulate.
 RULES = ROOT / "src" / "Challenges" / "Utils" / "ChallengeRules.cs"
 ACTIONS = ROOT / "src" / "Challenges" / "ChallengeEngine.Simulate.cs"
@@ -31,7 +32,7 @@ SKIP_EVENT_NAME_PREFIXES = (
     "hltv_",
 )
 
-RE_SUFFIX = re.compile(r'd\s*\[\s*\$"\{prefix\}\.([^"]+)"\s*\]\s*=\s*(.+);')
+RE_SUFFIX = re.compile(r'new\s*\(\s*"([^"]+)"\s*,\s*PlayerFields\.(\w+)\s*,\s*"(\w+)"\s*\)')
 RE_CASE = re.compile(r'case\s+"([^"]+)"')
 
 KIND_TO_TYPE = {
@@ -107,6 +108,22 @@ def listener_challenge_types(listener: dict, alias: dict) -> list[str]:
     return ordered_unique(types)
 
 
+# Derived key kinds handled by DerivedKeys.Apply, with catalog value types.
+DERIVED_KEYS: dict[str, list[tuple[str, str]]] = {
+    "team_self_kill": [("isteamkill", "bool"), ("isselfkill", "bool")],
+    "team_self_damage": [("isteamdamage", "bool"), ("isselfdamage", "bool")],
+    "team_self_flash": [("isteamflash", "bool"), ("isselfflash", "bool")],
+    "self_avenged": [("isselfavenged", "bool")],
+    "player_team_names": [("old_team", "string"), ("new_team", "string")],
+}
+
+FILL_SIGNATURE = "        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)"
+TARGETS_SIGNATURE = (
+    "        public void Targets(GameEvent gameEvent, "
+    "List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)"
+)
+
+
 def csharp_expr_for_prop(prop: dict, bool_coerce: set[str]) -> str:
     field = prop["field"]
     csharp = prop["csharp"]
@@ -126,35 +143,79 @@ def csharp_expr_for_prop(prop: dict, bool_coerce: set[str]) -> str:
     raise SystemExit(f"unsupported property kind {kind} for {field}")
 
 
-def emit_fill_keys(props: list[dict], alias: dict, indent: str = "            ") -> list[str]:
+def register(names: list[str], name: str, owner: str) -> int:
+    if name in names:
+        raise SystemExit(f"duplicate key or prefix {name} in {owner}")
+    names.append(name)
+    return len(names) - 1
+
+
+def csharp_list(items: list[str]) -> str:
+    return "[" + ", ".join(f'"{i}"' for i in items) + "]"
+
+
+def emit_key_group(names: list[str], expr: str, keys: list[str], owner: str, indent: str) -> list[str]:
+    """Write one value under its key and key aliases; computed only when one of them is needed."""
+    idx = [register(keys, n, owner) for n in names]
+    if len(idx) == 1:
+        return [f'{indent}if (need.Keys[{idx[0]}]) d["{names[0]}"] = {expr};']
+
+    cond = " || ".join(f"need.Keys[{i}]" for i in idx)
+    if len(idx) == 2:
+        (a, b), (key_a, key_b) = idx, names
+        return [f'{indent}if ({cond}) need.WriteAliases(d, {a}, "{key_a}", {b}, "{key_b}", {expr});']
+
+    inner = indent + "    "
+    lines = [f"{indent}if ({cond})", f"{indent}{{", f"{inner}string value = {expr};"]
+    for i, n in zip(idx, names):
+        lines.append(f'{inner}if (need.Keys[{i}]) d["{n}"] = value;')
+    lines.append(f"{indent}}}")
+    return lines
+
+
+def emit_player_fill(expr: str, names: list[str], prefixes: list[str], owner: str, indent: str) -> list[str]:
+    """One FillPlayer call per controller; reads each property once even under two prefixes."""
+    idx = [register(prefixes, n, owner) for n in names]
+    if len(idx) == 1:
+        i = idx[0]
+        return [f"{indent}if (need.Prefixes[{i}] != PlayerFields.None) EventData.FillPlayer(d, {expr}, need, {i});"]
+    if len(idx) == 2:
+        a, b = idx
+        return [
+            f"{indent}if ((need.Prefixes[{a}] | need.Prefixes[{b}]) != PlayerFields.None) "
+            f"EventData.FillPlayer(d, {expr}, need, {a}, {b});"
+        ]
+    raise SystemExit(f"more than two prefixes for one controller in {owner}")
+
+
+def emit_event_fill(event: dict, alias: dict) -> tuple[list[str], list[str], list[str]]:
+    """Return (keys, prefixes, fill_lines) for a game event extractor."""
+    owner = event["class_name"]
+    indent = "            "
     bool_coerce = set(alias.get("bool_coerce", []))
     key_aliases: dict[str, list[str]] = alias.get("key_aliases", {})
+    keys: list[str] = []
+    prefixes: list[str] = []
     lines: list[str] = []
+    props = event["properties"]
     for prop in props:
         if prop["kind"] == "player":
             continue
-        expr = csharp_expr_for_prop(prop, bool_coerce)
         field = prop["field"]
-        lines.append(f'{indent}d["{field}"] = {expr};')
-        for alt in key_aliases.get(field, []):
-            lines.append(f'{indent}d["{alt}"] = d["{field}"];')
-    return lines
+        names = [field, *key_aliases.get(field, [])]
+        lines.extend(emit_key_group(names, csharp_expr_for_prop(prop, bool_coerce), keys, owner, indent))
 
-
-def emit_fill_players(props: list[dict], alias: dict, indent: str = "            ") -> list[str]:
     players = [p for p in props if p["kind"] == "player"]
-    lines: list[str] = []
     for prop in players:
-        field = prop["field"]
-        csharp = prop["csharp"]
-        for prefix in player_prefixes_for(field, players, alias):
-            lines.append(f'{indent}EventData.FillPlayer(d, e.{csharp}, "{prefix}");')
-    return lines
+        names = player_prefixes_for(prop["field"], players, alias)
+        lines.extend(emit_player_fill(f"e.{prop['csharp']}", names, prefixes, owner, indent))
+    return keys, prefixes, lines
 
 
 def emit_targets(event: dict, alias: dict, types: list[str], audience: str) -> list[str]:
     players = player_props(event)
     extra = alias.get("types", {})
+    index = {t: i for i, t in enumerate(types)}
     lines: list[str] = ["        {"]
     player_specific = {
         field: ts
@@ -165,29 +226,37 @@ def emit_targets(event: dict, alias: dict, types: list[str], audience: str) -> l
     if needs_event:
         lines.append(f"            var e = ({event['class_name']})gameEvent;")
 
+    def add_player(csharp: str, t: str) -> None:
+        lines.append(f'            if (need.Types[{index[t]}]) buffer.Add((e.{csharp}, "{t}"));')
+
     if audience == "all":
         broadcast = list(extra.get("_all", [])) if extra else list(types)
         if not broadcast and not player_specific:
             broadcast = list(types)
-        if broadcast:
-            lines.append("            foreach (var entry in Utilities.GetPlayers())")
+        if len(broadcast) == 1:
+            lines.append(f'            if (need.Types[{index[broadcast[0]]}]) Players.AddAll(buffer, "{broadcast[0]}");')
+        elif broadcast:
+            cond = " || ".join(f"need.Types[{index[t]}]" for t in broadcast)
+            lines.append(f"            if ({cond})")
             lines.append("            {")
+            lines.append("                foreach (var entry in Utilities.GetPlayers())")
+            lines.append("                {")
             for t in broadcast:
-                lines.append(f'                yield return (entry, "{t}");')
+                lines.append(f'                    if (need.Types[{index[t]}]) buffer.Add((entry, "{t}"));')
+            lines.append("                }")
             lines.append("            }")
         for prop in players:
             for t in player_specific.get(prop["field"], []):
-                lines.append(f'            yield return (e.{prop["csharp"]}, "{t}");')
+                add_player(prop["csharp"], t)
     elif extra:
         for prop in players:
             for t in extra.get(prop["field"], []):
-                lines.append(f'            yield return (e.{prop["csharp"]}, "{t}");')
+                add_player(prop["csharp"], t)
     elif len(players) == 1:
-        prop = players[0]
-        lines.append(f'            yield return (e.{prop["csharp"]}, "{types[0]}");')
+        add_player(players[0]["csharp"], types[0])
     else:
         for prop, t in zip(players, types, strict=True):
-            lines.append(f'            yield return (e.{prop["csharp"]}, "{t}");')
+            add_player(prop["csharp"], t)
 
     lines.append("        }")
     return lines
@@ -196,44 +265,42 @@ def emit_targets(event: dict, alias: dict, types: list[str], audience: str) -> l
 def generate_event_extractor(event: dict, alias: dict) -> str:
     cls = extractor_class_name(event["class_name"])
     types, audience = event_challenge_types(event, alias)
-    types_literal = ", ".join(f'"{t}"' for t in types)
     derived = alias.get("derived")
-    fill_lines = emit_fill_keys(event["properties"], alias)
-    fill_lines.extend(emit_fill_players(event["properties"], alias))
-    if derived:
-        fill_lines.append(f'            DerivedKeys.Apply("{derived}", gameEvent, d);')
+    keys, prefixes, fill_lines = emit_event_fill(event, alias)
+    derived_keys = [k for k, _ in DERIVED_KEYS.get(derived, [])] if derived else []
+    if derived and not derived_keys:
+        raise SystemExit(f"unknown derived kind {derived} in {event['class_name']}")
 
-    needs_utilities = audience == "all"
-    needs_utils = bool(fill_lines)
-    usings = ["using CounterStrikeSharp.API.Core;", "using CounterStrikeSharp.API.Modules.Events;"]
+    needs_cast = bool(fill_lines)
+    if derived:
+        fill_lines.append(
+            f'            if (need.Derived) global::Challenges.Extractors.DerivedKeys.Apply("{derived}", gameEvent, d);'
+        )
+
+    target_lines = emit_targets(event, alias, types, audience)
+    needs_utilities = any("Utilities." in line for line in target_lines)
+    usings = [
+        "using CounterStrikeSharp.API.Core;",
+        "using CounterStrikeSharp.API.Modules.Events;",
+        "using Challenges.Utils;",
+    ]
     if needs_utilities:
         usings.insert(0, "using CounterStrikeSharp.API;")
-    if needs_utils:
-        usings.append("using Challenges.Utils;")
 
-    if fill_lines:
-        body_fill = "\n".join(
-            [
-                "        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)",
-                "        {",
-                f"            var e = ({event['class_name']})gameEvent;",
-                *fill_lines,
-                "        }",
-            ]
-        )
-    else:
-        body_fill = "\n".join(
-            [
-                "        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)",
-                "        {",
-                "        }",
-            ]
-        )
+    body_fill = "\n".join(
+        [
+            FILL_SIGNATURE,
+            "        {",
+            *([f"            var e = ({event['class_name']})gameEvent;"] if needs_cast else []),
+            *fill_lines,
+            "        }",
+        ]
+    )
 
     body_targets = "\n".join(
         [
-            "        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)",
-            *emit_targets(event, alias, types, audience),
+            TARGETS_SIGNATURE,
+            *target_lines,
         ]
     )
 
@@ -249,7 +316,10 @@ def generate_event_extractor(event: dict, alias: dict) -> str:
             "    {",
             "        public ExtractorKind Kind => ExtractorKind.GameEvent;",
             f'        public string EventClassName => "{event["class_name"]}";',
-            f"        public IReadOnlyList<string> ChallengeTypes {{ get; }} = [{types_literal}];",
+            f"        public IReadOnlyList<string> ChallengeTypes {{ get; }} = {csharp_list(types)};",
+            f"        public IReadOnlyList<string> Keys {{ get; }} = {csharp_list(keys)};",
+            f"        public IReadOnlyList<string> PlayerPrefixes {{ get; }} = {csharp_list(prefixes)};",
+            f"        public IReadOnlyList<string> DerivedKeys {{ get; }} = {csharp_list(derived_keys)};",
             "",
             body_fill,
             "",
@@ -261,10 +331,10 @@ def generate_event_extractor(event: dict, alias: dict) -> str:
     )
 
 
-def generate_listener_extractor(listener: dict, alias: dict) -> str:
+def generate_listener_extractor(listener: dict, alias: dict, snapshot: dict) -> str:
     name = listener["name"]
     types = listener_challenge_types(listener, alias)
-    types_literal = ", ".join(f'"{t}"' for t in types)
+    keys, prefixes, _, _, _ = emit_listener_fill(listener, alias, snapshot)
     cls = name  # OnMapStart etc.
     return "\n".join(
         [
@@ -272,22 +342,26 @@ def generate_listener_extractor(listener: dict, alias: dict) -> str:
             "#nullable enable",
             "using CounterStrikeSharp.API.Core;",
             "using CounterStrikeSharp.API.Modules.Events;",
+            "using Challenges.Utils;",
             "",
             "namespace Challenges.Extractors",
             "{",
+            f"    /// <summary>Key layout of the <c>{name}</c> listener; filled by <c>ChallengeEngine.{name}</c>.</summary>",
             f"    public sealed class Listener{cls} : IExtractor",
             "    {",
             "        public ExtractorKind Kind => ExtractorKind.Listener;",
             f'        public string EventClassName => "{name}";',
-            f"        public IReadOnlyList<string> ChallengeTypes {{ get; }} = [{types_literal}];",
+            f"        public IReadOnlyList<string> ChallengeTypes {{ get; }} = {csharp_list(types)};",
+            f"        public IReadOnlyList<string> Keys {{ get; }} = {csharp_list(keys)};",
+            f"        public IReadOnlyList<string> PlayerPrefixes {{ get; }} = {csharp_list(prefixes)};",
+            "        public IReadOnlyList<string> DerivedKeys { get; } = [];",
             "",
-            "        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)",
+            FILL_SIGNATURE,
             "        {",
             "        }",
             "",
-            "        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)",
+            TARGETS_SIGNATURE,
             "        {",
-            "            yield break;",
             "        }",
             "    }",
             "}",
@@ -300,81 +374,78 @@ def listener_player_params(listener: dict) -> list[dict]:
     return [p for p in listener["parameters"] if p["kind"] in {"player", "pawn", "slot"}]
 
 
-def emit_listener_fill(listener: dict, alias: dict, snapshot: dict) -> tuple[list[str], list[str]]:
-    """Return (setup_lines, target_player_expr_or_empty)."""
+def emit_listener_fill(
+    listener: dict, alias: dict, snapshot: dict
+) -> tuple[list[str], list[str], list[str], list[str], list[str]]:
+    """Return (keys, prefixes, resolve_lines, target_exprs, fill_lines)."""
+    owner = listener["name"]
+    indent = "            "
     key_aliases = alias.get("key_aliases", {})
-    prefixes = alias.get("player_prefixes", {})
-    lines: list[str] = ["            Dictionary<string, string> d = [];"]
+    player_prefixes = alias.get("player_prefixes", {})
+    keys: list[str] = []
+    prefixes: list[str] = []
+    resolve: list[str] = []
+    lines: list[str] = []
     target_exprs: list[str] = []
+
+    def group(names: list[str], expr: str) -> None:
+        lines.extend(emit_key_group(names, expr, keys, owner, indent))
 
     for param in listener["parameters"]:
         kind = param["kind"]
         name = param["name"]
+        key = name.lower()
         if kind == "skip":
             continue
         if kind == "player":
-            prefix = prefixes.get("player", "player")
-            lines.append(f'            EventData.FillPlayer(d, {name}, "{prefix}");')
-            if name != prefix:
-                lines.append(f'            EventData.FillPlayer(d, {name}, "{name}");')
+            prefix = player_prefixes.get("player", "player")
+            names = [prefix] if name == prefix else [prefix, name]
+            lines.extend(emit_player_fill(name, names, prefixes, owner, indent))
             target_exprs.append(name)
         elif kind == "pawn":
-            lines.append(f"            CCSPlayerController? {name}Controller = {name}.OriginalController?.Value;")
-            lines.append(f'            EventData.FillPlayer(d, {name}Controller, "player");')
+            resolve.append(f"{indent}CCSPlayerController? {name}Controller = {name}.OriginalController?.Value;")
+            lines.extend(emit_player_fill(f"{name}Controller", ["player"], prefixes, owner, indent))
             target_exprs.append(f"{name}Controller")
         elif kind == "slot":
-            lines.append(f"            CCSPlayerController? {name}Player = Utilities.GetPlayerFromSlot({name});")
-            lines.append(f'            EventData.FillPlayer(d, {name}Player, "player");')
+            resolve.append(f"{indent}CCSPlayerController? {name}Player = Utilities.GetPlayerFromSlot({name});")
+            lines.extend(emit_player_fill(f"{name}Player", ["player"], prefixes, owner, indent))
             target_exprs.append(f"{name}Player")
         elif kind == "string":
-            lines.append(f'            d["{name.lower()}"] = {name};')
-            for alt in key_aliases.get(name.lower(), []):
-                lines.append(f'            d["{alt}"] = d["{name.lower()}"];')
+            group([key, *key_aliases.get(key, [])], name)
         elif kind == "bool":
-            lines.append(f'            d["{name.lower()}"] = EventData.Bool({name});')
-            for alt in key_aliases.get(name.lower(), []):
-                lines.append(f'            d["{alt}"] = d["{name.lower()}"];')
-        elif kind == "int":
-            lines.append(f'            d["{name.lower()}"] = EventData.Num({name});')
-        elif kind == "float":
-            lines.append(f'            d["{name.lower()}"] = EventData.Num({name});')
+            group([key, *key_aliases.get(key, [])], f"EventData.Bool({name})")
+        elif kind in {"int", "float"}:
+            group([key], f"EventData.Num({name})")
         elif kind == "steamid":
-            lines.append(f'            d["{name.lower()}"] = {name}.SteamId64.ToString();')
+            group([key], f"{name}.SteamId64.ToString()")
         elif kind == "entity":
-            lines.append(f'            d["{name}.designername"] = {name}.DesignerName;')
-            lines.append(f'            d["{name}.index"] = EventData.Num({name}.Index);')
+            group([f"{name}.designername"], f"{name}.DesignerName")
+            group([f"{name}.index"], f"EventData.Num({name}.Index)")
         elif kind == "buttons":
-            lines.append(f'            d["{name.lower()}"] = EventData.Num((ulong){name});')
-        elif kind == "damage_info":
-            prefix = "damage"
-            for field in snapshot["damage_info_fields"]:
+            group([key], f"EventData.Num((ulong){name})")
+        elif kind in {"damage_info", "damage_result"}:
+            prefix, fields = (
+                ("damage", snapshot["damage_info_fields"])
+                if kind == "damage_info"
+                else ("result", snapshot["damage_result_fields"])
+            )
+            for field in fields:
                 fk = field["field"]
                 cs = field["csharp"]
                 k = field["kind"]
                 if k == "bool":
-                    lines.append(f'            d["{prefix}.{fk}"] = EventData.Bool({name}.{cs});')
+                    expr = f"EventData.Bool({name}.{cs})"
                 elif k in {"int", "float"}:
-                    lines.append(f'            d["{prefix}.{fk}"] = EventData.Num({name}.{cs});')
+                    expr = f"EventData.Num({name}.{cs})"
                 else:
-                    lines.append(f'            d["{prefix}.{fk}"] = {name}.{cs}.ToString();')
-        elif kind == "damage_result":
-            prefix = "result"
-            for field in snapshot["damage_result_fields"]:
-                fk = field["field"]
-                cs = field["csharp"]
-                k = field["kind"]
-                if k == "bool":
-                    lines.append(f'            d["{prefix}.{fk}"] = EventData.Bool({name}.{cs});')
-                elif k in {"int", "float"}:
-                    lines.append(f'            d["{prefix}.{fk}"] = EventData.Num({name}.{cs});')
-                else:
-                    lines.append(f'            d["{prefix}.{fk}"] = {name}.{cs}.ToString();')
+                    expr = f"{name}.{cs}.ToString()"
+                group([f"{prefix}.{fk}"], expr)
         elif kind == "tostring":
-            lines.append(f'            d["{name.lower()}"] = {name}.ToString();')
+            group([key], f"{name}.ToString()")
         else:
             raise SystemExit(f"unsupported listener param kind {kind} in {listener['name']}")
 
-    return lines, target_exprs
+    return keys, prefixes, resolve, target_exprs, lines
 
 
 def generate_listener_method(listener: dict, alias: dict, snapshot: dict) -> str:
@@ -382,41 +453,54 @@ def generate_listener_method(listener: dict, alias: dict, snapshot: dict) -> str
     types = listener_challenge_types(listener, alias)
     params = ", ".join(f"{p['type']} {p['name']}" for p in listener["parameters"])
     ret = listener["return"]
-    fill_lines, target_exprs = emit_listener_fill(listener, alias, snapshot)
-
-    target_block: list[str] = []
-    if target_exprs:
-        target_block.append("            List<(CCSPlayerController? Player, string Type)> targets = [];")
-        target_block.append(f"            CCSPlayerController? targetPlayer = {target_exprs[0]};")
-        for t in types:
-            target_block.append(f'            targets.Add((targetPlayer, "{t}"));')
-        target_block.append(f'            HandleListener("{name}", d, targets);')
-    else:
-        target_block.append("            List<(CCSPlayerController? Player, string Type)> targets = [];")
-        target_block.append("            foreach (var entry in Utilities.GetPlayers())")
-        target_block.append("            {")
-        for t in types:
-            target_block.append(f'                targets.Add((entry, "{t}"));')
-        target_block.append("            }")
-        target_block.append(f'            HandleListener("{name}", d, targets);')
+    exit_line = "                return HookResult.Continue;" if ret == "HookResult" else "                return;"
+    _, _, resolve, target_exprs, fill_lines = emit_listener_fill(listener, alias, snapshot)
 
     preamble: list[str] = []
     if name == "OnPlayerButtonsChanged":
         preamble = [
             "            Situations.OnButtonsChanged(player, pressed, released);",
-            '            if (!_tasksByType.ContainsKey("on_player_buttons_changed"))',
-            "            {",
-            "                return;",
-            "            }",
-            "",
         ]
+
+    begin = [
+        f'            if (!BeginListener("{name}", out ExtractorPlan? plan, out GlobalGate closed))',
+        "            {",
+        exit_line,
+        "            }",
+        "",
+        "            FillDemand need = plan.Demand;",
+        *resolve,
+        "            List<(CCSPlayerController? Player, string Type)> targets = ListenerTargets();",
+    ]
+
+    target_block: list[str] = []
+    if target_exprs:
+        for i, t in enumerate(types):
+            target_block.append(f'            if (need.Types[{i}]) targets.Add(({target_exprs[0]}, "{t}"));')
+    elif len(types) == 1:
+        target_block.append(f'            Players.AddAll(targets, "{types[0]}");')
+    else:
+        target_block.append("            foreach (var entry in Utilities.GetPlayers())")
+        target_block.append("            {")
+        for i, t in enumerate(types):
+            target_block.append(f'                if (need.Types[{i}]) targets.Add((entry, "{t}"));')
+        target_block.append("            }")
 
     lines = [
         f"        public {ret} {name}({params})",
         "        {",
         *preamble,
-        *fill_lines,
+        *begin,
         *target_block,
+        "",
+        f'            if (FilterListenerTargets("{name}", targets, closed) is not {{ }} valid)',
+        "            {",
+        exit_line,
+        "            }",
+        "",
+        "            Dictionary<string, string> d = new(need.Capacity);",
+        *fill_lines,
+        f'            HandleListener("{name}", d, valid, closed);',
     ]
     if ret == "HookResult":
         lines.append("            return HookResult.Continue;")
@@ -450,7 +534,7 @@ def write_generated_extractors(snapshot: dict, aliases: dict) -> list[str]:
         # Also allow alias keyed by listener_name attribute
         if not alias and listener.get("listener_name"):
             alias = alias_for(aliases, listener["listener_name"])
-        source = generate_listener_extractor(listener, alias)
+        source = generate_listener_extractor(listener, alias, snapshot)
         (gen_dir / f"Listener{listener['name']}.g.cs").write_text(source, encoding="utf-8")
         registry_names.append(f"Listener{listener['name']}")
 
@@ -527,22 +611,16 @@ def write_engine_listeners(snapshot: dict, aliases: dict) -> None:
 
 
 def player_suffixes() -> list[dict]:
-    """Return [{suffix, type}, ...] inferred from EventData.FillPlayer assignments."""
+    """Return [{suffix, type}, ...] from the PlayerKeys.Suffixes table (runtime source of truth)."""
     found: list[dict] = []
     seen: set[str] = set()
-    for suffix, rhs in RE_SUFFIX.findall(EVENT_DATA.read_text(encoding="utf-8")):
+    for suffix, _field, typ in RE_SUFFIX.findall(FILL_DEMAND.read_text(encoding="utf-8")):
         if suffix in seen:
-            continue
+            raise SystemExit(f"duplicate player property suffix {suffix} in {FILL_DEMAND}")
         seen.add(suffix)
-        if "Bool(" in rhs:
-            typ = "bool"
-        elif "Num(" in rhs:
-            typ = "int"
-        else:
-            typ = "string"
         found.append({"suffix": suffix, "type": typ})
     if not found:
-        raise SystemExit(f"no player property suffixes in {EVENT_DATA}")
+        raise SystemExit(f"no player property suffixes in {FILL_DEMAND}")
     return found
 
 
@@ -586,21 +664,8 @@ def catalog_keys_for_event(event: dict, alias: dict, suffixes: list[dict]) -> li
         for alt in key_aliases.get(prop["field"], []):
             add(alt, typ)
 
-    derived = alias.get("derived")
-    if derived == "team_self_kill":
-        add("isteamkill", "bool")
-        add("isselfkill", "bool")
-    elif derived == "team_self_damage":
-        add("isteamdamage", "bool")
-        add("isselfdamage", "bool")
-    elif derived == "team_self_flash":
-        add("isteamflash", "bool")
-        add("isselfflash", "bool")
-    elif derived == "self_avenged":
-        add("isselfavenged", "bool")
-    elif derived == "player_team_names":
-        add("old_team", "string")
-        add("new_team", "string")
+    for key, typ in DERIVED_KEYS.get(alias.get("derived") or "", []):
+        add(key, typ)
 
     situation = alias.get("situation")
     if situation == "grenade_on_death":

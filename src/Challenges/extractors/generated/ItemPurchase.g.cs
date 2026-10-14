@@ -11,21 +11,23 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventItemPurchase";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["item_purchase"];
+        public IReadOnlyList<string> Keys { get; } = ["loadout", "team", "weapon"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = ["userid", "player"];
+        public IReadOnlyList<string> DerivedKeys { get; } = [];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventItemPurchase)gameEvent;
-            d["loadout"] = EventData.Num(e.Loadout);
-            d["team"] = EventData.Num(e.Team);
-            d["weapon"] = e.Weapon;
-            EventData.FillPlayer(d, e.Userid, "userid");
-            EventData.FillPlayer(d, e.Userid, "player");
+            if (need.Keys[0]) d["loadout"] = EventData.Num(e.Loadout);
+            if (need.Keys[1]) d["team"] = EventData.Num(e.Team);
+            if (need.Keys[2]) d["weapon"] = e.Weapon;
+            if ((need.Prefixes[0] | need.Prefixes[1]) != PlayerFields.None) EventData.FillPlayer(d, e.Userid, need, 0, 1);
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
             var e = (EventItemPurchase)gameEvent;
-            yield return (e.Userid, "item_purchase");
+            if (need.Types[0]) buffer.Add((e.Userid, "item_purchase"));
         }
     }
 }

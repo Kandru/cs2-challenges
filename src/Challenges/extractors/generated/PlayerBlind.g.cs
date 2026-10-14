@@ -11,24 +11,25 @@ namespace Challenges.Extractors
         public ExtractorKind Kind => ExtractorKind.GameEvent;
         public string EventClassName => "EventPlayerBlind";
         public IReadOnlyList<string> ChallengeTypes { get; } = ["player_has_blinded", "player_got_blinded"];
+        public IReadOnlyList<string> Keys { get; } = ["blind_duration", "blindduration", "entityid"];
+        public IReadOnlyList<string> PlayerPrefixes { get; } = ["attacker", "userid", "victim"];
+        public IReadOnlyList<string> DerivedKeys { get; } = ["isteamflash", "isselfflash"];
 
-        public void Fill(GameEvent gameEvent, Dictionary<string, string> d)
+        public void Fill(GameEvent gameEvent, Dictionary<string, string> d, FillDemand need)
         {
             var e = (EventPlayerBlind)gameEvent;
-            d["blind_duration"] = EventData.Num(e.BlindDuration);
-            d["blindduration"] = d["blind_duration"];
-            d["entityid"] = EventData.Num(e.Entityid);
-            EventData.FillPlayer(d, e.Attacker, "attacker");
-            EventData.FillPlayer(d, e.Userid, "userid");
-            EventData.FillPlayer(d, e.Userid, "victim");
-            DerivedKeys.Apply("team_self_flash", gameEvent, d);
+            if (need.Keys[0] || need.Keys[1]) need.WriteAliases(d, 0, "blind_duration", 1, "blindduration", EventData.Num(e.BlindDuration));
+            if (need.Keys[2]) d["entityid"] = EventData.Num(e.Entityid);
+            if (need.Prefixes[0] != PlayerFields.None) EventData.FillPlayer(d, e.Attacker, need, 0);
+            if ((need.Prefixes[1] | need.Prefixes[2]) != PlayerFields.None) EventData.FillPlayer(d, e.Userid, need, 1, 2);
+            if (need.Derived) global::Challenges.Extractors.DerivedKeys.Apply("team_self_flash", gameEvent, d);
         }
 
-        public IEnumerable<(CCSPlayerController? Player, string ChallengeType)> Targets(GameEvent gameEvent)
+        public void Targets(GameEvent gameEvent, List<(CCSPlayerController? Player, string ChallengeType)> buffer, FillDemand need)
         {
             var e = (EventPlayerBlind)gameEvent;
-            yield return (e.Attacker, "player_has_blinded");
-            yield return (e.Userid, "player_got_blinded");
+            if (need.Types[0]) buffer.Add((e.Attacker, "player_has_blinded"));
+            if (need.Types[1]) buffer.Add((e.Userid, "player_got_blinded"));
         }
     }
 }
