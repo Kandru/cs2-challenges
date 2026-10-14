@@ -1,4 +1,5 @@
 PROJECT   := src/Challenges/Challenges.csproj
+TEST_PROJECT := tests/Challenges.Tests/Challenges.Tests.csproj
 SDK_IMAGE := mcr.microsoft.com/dotnet/sdk:10.0
 UID       := $(shell id -u)
 GID       := $(shell id -g)
@@ -24,7 +25,7 @@ DOCKER_RUN = docker run --rm \
 
 .DEFAULT_GOAL := help
 
-.PHONY: help debug release restore clean dirs panorama catalog css-sync
+.PHONY: help debug release restore clean dirs panorama catalog css-sync test
 
 help: ## Show this help
 	@echo "CS2 Challenges"
@@ -56,6 +57,9 @@ restore: dirs ## Restore NuGet packages
 
 clean: dirs ## Remove build artifacts
 	$(DOCKER_RUN) dotnet clean $(PROJECT)
+
+test: dirs ## Run the unit tests (no game server needed)
+	$(DOCKER_RUN) dotnet test $(TEST_PROJECT)
 
 panorama: ## Validate HUD Panorama XML and CSS
 	python3 tools/validate_panorama.py

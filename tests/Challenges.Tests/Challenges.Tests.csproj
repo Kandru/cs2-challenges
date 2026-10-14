@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <!-- xunit.v3 defaults to Microsoft.Testing.Platform; keep VSTest so plain `dotnet test <csproj>` works
+         on the .NET 10 SDK without a global.json opt-in. -->
+    <IsTestingPlatformApplication>false</IsTestingPlatformApplication>
+    <RootNamespace>Challenges.Tests</RootNamespace>
+    <AssemblyName>Challenges.Tests</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
+    <PackageReference Include="xunit.v3" Version="4.0.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="4.0.1" />
+    <!-- The plugin compiles against CounterStrikeSharp without its runtime assembly (the game server provides
+         it). The test host needs the managed assembly to load plugin types; tests never call native code. -->
+    <PackageReference Include="CounterStrikeSharp.API" Version="1.0.376" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Challenges\Challenges.csproj" />
+    <ProjectReference Include="..\..\src\ChallengesShared\ChallengesShared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\examples\blueprints\*.yaml" LinkBase="blueprints" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>
