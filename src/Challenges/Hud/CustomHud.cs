@@ -630,12 +630,23 @@ namespace Challenges
             return false;
         }
 
+        /// <summary>
+        /// Forgets the slot entirely, including its closing grace: no transmit and no expiry write
+        /// reaches the slot afterwards (a later player in it would receive them).
+        /// </summary>
         private static void ClearSlotCaches(int slot)
         {
             _classBySlot.Remove(slot);
             _textBySlot.Remove(slot);
             _stepBySlot.Remove(slot);
             ClearVisibility(slot);
+            if ((uint)slot < MaxSlots)
+            {
+                for (int i = 0; i < _closingUntil.Length; i++)
+                {
+                    _closingUntil[i][slot] = 0;
+                }
+            }
         }
 
         private static void ClearVisibility(int slot)
