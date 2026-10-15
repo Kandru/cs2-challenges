@@ -40,7 +40,7 @@ namespace Challenges
         private const long CloseTransmitGraceMs = (long)(FadeSeconds * 1000);
 
         /// <summary>Player slots covered by the per-slot transmit tables.</summary>
-        private const int MaxSlots = 65;
+        internal const int MaxSlots = 65;
 
         private const byte ViewerUnknown = 0;
         private const byte ViewerHuman = 1;
@@ -67,6 +67,13 @@ namespace Challenges
 
         /// <summary>Earliest pending <see cref="_closingUntil"/>; <see cref="long.MaxValue"/> when nothing is closing.</summary>
         private static long _nextClosingExpiry = long.MaxValue;
+
+        /// <summary>
+        /// Per root layout and slot: the entity was spawned by us and the slot's classes were never cleared from
+        /// the caches since, so a class missing from the cache still has its XML value (<see cref="HudAuthored"/>).
+        /// Lets the first paint skip every write that would only repeat the layout's authored state.
+        /// </summary>
+        private static readonly bool[][] _pristine = SlotTable<bool>();
 
         /// <summary>Per slot: cached human check for transmit viewers. Reset with every roster rebuild and on release.</summary>
         private static readonly byte[] _viewerKind = new byte[MaxSlots];
@@ -118,6 +125,9 @@ namespace Challenges
 
             return -1;
         }
+
+        /// <summary>Spawns both layouts ahead of the first viewer (map start), never inside a client command.</summary>
+        public static void WarmUp() => EnsureLayouts();
 
         public static bool EnsureSpawned(CCSPlayerController player) =>
             Players.IsHumanViewer(player) && EnsureLayouts();
@@ -301,9 +311,17 @@ namespace Challenges
 
             if (_classBySlot.TryGetValue(player.Slot, out Dictionary<string, Dictionary<string, bool>>? byPanel)
                 && byPanel.TryGetValue(panelId, out Dictionary<string, bool>? classes)
-                && classes.TryGetValue(className, out bool prev)
-                && prev == enabled)
+                && classes.TryGetValue(className, out bool prev))
             {
+                if (prev == enabled)
+                {
+                    return true;
+                }
+            }
+            else if (IsPristine(player.Slot, panelId) && HudAuthored.HasClass(panelId, className) == enabled)
+            {
+                // The client already shows the XML value: remember it, send nothing.
+                RememberClass(player.Slot, panelId, className, enabled);
                 return true;
             }
 
@@ -313,26 +331,42 @@ namespace Challenges
             }
 
             hud.SetHasClassForPlayer(player, panelId, className, enabled);
+            RememberClass(player.Slot, panelId, className, enabled);
+            return true;
+        }
 
-            if (!_classBySlot.TryGetValue(player.Slot, out byPanel))
+        private static void RememberClass(int slot, string panelId, string className, bool enabled)
+        {
+            if (!_classBySlot.TryGetValue(slot, out Dictionary<string, Dictionary<string, bool>>? byPanel))
             {
-                _classBySlot[player.Slot] = byPanel = new Dictionary<string, Dictionary<string, bool>>(StringComparer.Ordinal);
+                _classBySlot[slot] = byPanel = new Dictionary<string, Dictionary<string, bool>>(StringComparer.Ordinal);
             }
 
-            if (!byPanel.TryGetValue(panelId, out classes))
+            if (!byPanel.TryGetValue(panelId, out Dictionary<string, bool>? classes))
             {
                 byPanel[panelId] = classes = new Dictionary<string, bool>(StringComparer.Ordinal);
             }
 
             classes[className] = enabled;
-            return true;
+        }
+
+        /// <summary>Cache misses only: true while the slot's state on this panel's layout is still the XML.</summary>
+        private static bool IsPristine(int slot, string panelId)
+        {
+            if ((uint)slot >= MaxSlots)
+            {
+                return false;
+            }
+
+            int index = LayoutIndexForPanel(panelId);
+            return index >= 0 && _pristine[index][slot];
         }
 
         /// <summary>Challenge fills: nearest 10% on the <c>p0</c>…<c>p100</c> clip ladder.</summary>
         public static void SetStepPercent(CCSPlayerController player, string panelId, int percent) =>
             WritePercent(player, panelId, (int)Math.Clamp(Math.Round(percent / 10.0) * 10, 0, 100), step: 10);
 
-        /// <summary>Timer drain: exact percent on the <c>p0</c>…<c>p100</c> clip ladder.</summary>
+        /// <summary>Exact percent on the <c>p0</c>…<c>p100</c> clip ladder (timer start position).</summary>
         public static void SetPercent(CCSPlayerController player, string panelId, int percent) =>
             WritePercent(player, panelId, Math.Clamp(percent, 0, 100), step: 1);
 
@@ -348,14 +382,21 @@ namespace Challenges
                 _stepBySlot[player.Slot] = byPanel = new Dictionary<string, int>(StringComparer.Ordinal);
             }
 
-            bool written;
-            if (byPanel.TryGetValue(panelId, out int previous))
+            // Unknown ladder on a pristine slot: start from the authored p-class instead of rewriting all of them.
+            if (!byPanel.TryGetValue(panelId, out int previous))
             {
-                if (previous == pct)
-                {
-                    return;
-                }
+                previous = IsPristine(player.Slot, panelId) ? HudAuthored.Percent(panelId) : -1;
+            }
 
+            if (previous == pct)
+            {
+                byPanel[panelId] = pct;
+                return;
+            }
+
+            bool written;
+            if (previous >= 0)
+            {
                 previous = Math.Clamp(previous, 0, 100);
                 SetHasClass(player, panelId, PercentClass[previous], false);
                 written = SetHasClass(player, panelId, PercentClass[pct], true);
@@ -662,6 +703,7 @@ namespace Challenges
                 for (int i = 0; i < _closingUntil.Length; i++)
                 {
                     _closingUntil[i][slot] = 0;
+                    _pristine[i][slot] = false;
                 }
             }
         }
@@ -687,6 +729,20 @@ namespace Challenges
                 }
             }
 
+            // A written slot whose player is gone: what its entity state holds is unknown from now on.
+            // Never-written slots stay pristine, so later joiners still get the cheap first paint.
+            for (int slot = 0; slot < MaxSlots; slot++)
+            {
+                if (!liveSlots.Contains(slot)
+                    && (_classBySlot.ContainsKey(slot) || _textBySlot.ContainsKey(slot) || _stepBySlot.ContainsKey(slot)))
+                {
+                    for (int i = 0; i < _pristine.Length; i++)
+                    {
+                        _pristine[i][slot] = false;
+                    }
+                }
+            }
+
             Purge(_classBySlot);
             Purge(_textBySlot);
             Purge(_stepBySlot);
@@ -705,11 +761,16 @@ namespace Challenges
             }
         }
 
+        /// <summary>Caches gone: a miss no longer means "never written", so no slot is pristine any more.</summary>
         private static void ClearWriteCaches()
         {
             _classBySlot.Clear();
             _textBySlot.Clear();
             _stepBySlot.Clear();
+            for (int i = 0; i < _pristine.Length; i++)
+            {
+                Array.Clear(_pristine[i]);
+            }
         }
 
         private static void ClearAllSlotState()
@@ -819,6 +880,8 @@ namespace Challenges
 
         private static void Adopt(int index, CCSCustomHudLayout layout)
         {
+            // Adopted, not spawned here: what earlier writes left on it is unknown.
+            Array.Clear(_pristine[index]);
             _layouts[index] = layout;
             _layoutVerified[index] = true;
             _layoutEntityIndex[index] = (int)layout.Index;
@@ -872,6 +935,8 @@ namespace Challenges
                 }
 
                 Adopt(index, hud);
+                // Fresh entity: every client starts from the XML of this layout.
+                Array.Fill(_pristine[index], true);
                 Console.WriteLine($"[Challenges][CustomHud] Spawned #{hud.Index} → {resource}");
                 return true;
             }

@@ -1,6 +1,7 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Extensions;
+using CounterStrikeSharp.API.Modules.Timers;
 using CssTimer = CounterStrikeSharp.API.Modules.Timers.Timer;
 
 namespace Challenges
@@ -36,13 +37,57 @@ namespace Challenges
         {
             public required HudMenuOpenOptions Options;
             public int CaptureToken;
-            public CssTimer? CaptureTimer;
         }
 
         private static readonly Dictionary<int, Session> _sessions = [];
 
+        /// <summary>Delay between a chat command and the open: spawn and first paint stay out of the command's tick.</summary>
+        private const float OpenDelaySeconds = 0.2f;
+
+        /// <summary>Per slot: token of the pending open; a newer request, a close or a release bumps it.</summary>
+        private static readonly int[] _openToken = new int[CustomHud.MaxSlots];
+        private static readonly bool[] _openPending = new bool[CustomHud.MaxSlots];
+
         public static bool IsOpen(CCSPlayerController player) =>
             player is { IsValid: true } && _sessions.ContainsKey(player.Slot);
+
+        public static bool IsOpenPending(CCSPlayerController player) =>
+            player is { IsValid: true } && (uint)player.Slot < CustomHud.MaxSlots && _openPending[player.Slot];
+
+        /// <summary>Runs <paramref name="open"/> one timer after a chat command, unless cancelled in between.</summary>
+        public static void RequestOpen(CCSPlayerController player, Action<CCSPlayerController> open)
+        {
+            int slot = player.Slot;
+            if ((uint)slot >= CustomHud.MaxSlots)
+            {
+                return;
+            }
+
+            int token = ++_openToken[slot];
+            _openPending[slot] = true;
+            _ = new CssTimer(OpenDelaySeconds, () =>
+            {
+                if (_openToken[slot] != token)
+                {
+                    return;
+                }
+
+                _openPending[slot] = false;
+                if (Utilities.GetPlayerFromSlot(slot) is { IsValid: true } live)
+                {
+                    open(live);
+                }
+            }, TimerFlags.STOP_ON_MAPCHANGE);
+        }
+
+        private static void CancelOpen(int slot)
+        {
+            if ((uint)slot < CustomHud.MaxSlots)
+            {
+                _openToken[slot]++;
+                _openPending[slot] = false;
+            }
+        }
 
         public static bool Open(CCSPlayerController player, HudMenuOpenOptions options)
         {
@@ -66,6 +111,7 @@ namespace Challenges
 
         public static void Close(CCSPlayerController player)
         {
+            CancelOpen(player.Slot);
             if (_sessions.TryGetValue(player.Slot, out Session? session))
             {
                 CloseInternal(player, session, invokeClosed: true);
@@ -74,7 +120,13 @@ namespace Challenges
 
         public static void ReleasePlayer(CCSPlayerController? player)
         {
-            if (player is not null && _sessions.TryGetValue(player.Slot, out Session? session))
+            if (player is null)
+            {
+                return;
+            }
+
+            CancelOpen(player.Slot);
+            if (_sessions.TryGetValue(player.Slot, out Session? session))
             {
                 CloseInternal(player, session, invokeClosed: false);
             }
@@ -82,6 +134,11 @@ namespace Challenges
 
         public static void Shutdown()
         {
+            for (int slot = 0; slot < CustomHud.MaxSlots; slot++)
+            {
+                CancelOpen(slot);
+            }
+
             foreach (int slot in _sessions.Keys.ToList())
             {
                 if (Utilities.GetPlayerFromSlot(slot) is { IsValid: true } player
@@ -125,10 +182,13 @@ namespace Challenges
                 return;
             }
 
+            // Cancelled by the token (and the session identity), never by Kill(): killing a one-shot timer
+            // from another one-shot timer's callback corrupts the native timer list.
             int token = ++session.CaptureToken;
-            session.CaptureTimer = new CssTimer(CaptureDelaySeconds, () =>
+            _ = new CssTimer(CaptureDelaySeconds, () =>
             {
                 if (!_sessions.TryGetValue(player.Slot, out Session? live)
+                    || live != session
                     || live.CaptureToken != token
                     || !player.IsValid
                     || !CustomHud.TryGetLayout(player, PanelId, out CCSCustomHudLayout hud))
@@ -136,16 +196,13 @@ namespace Challenges
                     return;
                 }
 
-                live.CaptureTimer = null;
                 hud.SetInputCaptureEnabled(player, true);
-            });
+            }, TimerFlags.STOP_ON_MAPCHANGE);
         }
 
         private static void CloseInternal(CCSPlayerController player, Session session, bool invokeClosed)
         {
             session.CaptureToken++;
-            session.CaptureTimer?.Kill();
-            session.CaptureTimer = null;
             _sessions.Remove(player.Slot);
 
             if (player.IsValid && CustomHud.TryGetLayout(player, PanelId, out CCSCustomHudLayout hud))

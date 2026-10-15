@@ -29,14 +29,15 @@ THEMES: list[tuple[str, str, str, str]] = [
 BEGIN = "/* >>> hud_themes:begin */"
 END = "/* <<< hud_themes:end */"
 
+# Accent only where the base sheet uses it: values next to bars, own entries, sorted column.
+# Semantic colours (done = success, broken = danger) are never themed.
 LABEL_SELECTORS = """\
 .{cls} Label.ph-stat-val,
 .{cls} Label.ScoreSelfRank,
 .{cls} Label.ScoreSelfStatVal,
-.{cls} Label.ScoreRank,
-.{cls} .ScoreRow Label.ScoreCur,
-.{cls} Label.ScoreTitlePage,
-.{cls} Label.ScoreHead.sort-active
+.{cls} Label.ScoreHead.sort-active,
+.{cls} .ScoreHeader Label.ScoreCur.sort-active,
+.{cls} .ScoreHeader Label.ScoreTot.sort-active
 {{ color: {accent}; }}
 """
 
@@ -53,8 +54,8 @@ OVERRIDE_RULES = """\
 .{cls} .ScoreRow.is-self {{ background-color: {a}22; border-bottom: 1px solid {a}44; }}
 .{cls} .ScoreRow.is-viewing {{ background-color: {a}22; border: 1px solid {accent}; border-bottom: 1px solid {accent}; }}
 .{cls} .ScoreRow.is-viewing:hover {{ background-color: {a}44; border: 1px solid {accent}; border-bottom: 1px solid {accent}; }}
-.{cls} .ScoreHeader {{ border-top: 1px solid {a}66; border-bottom: 1px solid {a}66; }}
-.{cls} .MenuTask.is-done .MenuTaskMark {{ background-color: {accent}; }}
+.{cls} .MenuTaskMark {{ background-color: {accent}; }}
+.{cls} .MenuBy.is-you {{ background-color: {a}22; border: 1px solid {accent}; }}
 """
 
 

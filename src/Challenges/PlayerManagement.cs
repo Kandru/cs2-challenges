@@ -167,14 +167,14 @@ namespace Challenges
                 return;
             }
 
-            if (HudMenu.IsOpen(player))
+            if (HudMenu.IsOpen(player) || HudMenu.IsOpenPending(player))
             {
                 HudMenu.Close(player);
                 GetPlayerState(player).ActiveMenu = ActiveMenu.None;
                 return;
             }
 
-            Menu.Open(player);
+            HudMenu.RequestOpen(player, static live => Menu.Open(live));
         }
 
         public override void Destroy()
