@@ -102,9 +102,10 @@ TRACKER_IDS = (
     | {f"ch-ttask-{i}-{t}" for i in range(TRACKER_ROWS) for t in range(MENU_TASK_SLOTS)}
 )
 TRACKER_VARS = (
-    {"tr_title", "tr_count", "tr_tasks_h", "tr_hint"}
+    {"tr_title", "tr_count", "tr_hint"}
     | {f"tr_t{i}" for i in range(TRACKER_ROWS)}
     | {f"tr_v{i}" for i in range(TRACKER_ROWS)}
+    | {f"tr_n{i}" for i in range(TRACKER_ROWS)}
     | {f"tr_{i}_t{t}" for i in range(TRACKER_ROWS) for t in range(MENU_TASK_SLOTS)}
 )
 MENU_IDS = (
@@ -139,6 +140,13 @@ MENU_IDS = (
 MENU_VARS = (
     {
         "menu_title",
+        "menu_count",
+        "menu_filter_h",
+        "menu_fc_all",
+        "menu_fc_solved",
+        "menu_fc_progress",
+        "menu_fc_ending",
+        "menu_fc_starting",
         "list_title",
         "list_page",
         "menu_f_all",
@@ -147,7 +155,6 @@ MENU_VARS = (
         "menu_f_ending",
         "menu_f_starting",
         "menu_empty",
-        "menu_tasks_h",
         "menu_by_h",
         "score_title",
         "score_page",
@@ -171,6 +178,7 @@ MENU_VARS = (
     | {f"m{i}_title" for i in range(MENU_LIST_SLOTS)}
     | {f"m{i}_when" for i in range(MENU_LIST_SLOTS)}
     | {f"m{i}_meta" for i in range(MENU_LIST_SLOTS)}
+    | {f"m{i}_n" for i in range(MENU_LIST_SLOTS)}
     | {f"m{i}_t{t}" for i in range(MENU_LIST_SLOTS) for t in range(MENU_TASK_SLOTS)}
     | {f"m{i}_by{b}" for i in range(MENU_LIST_SLOTS) for b in range(MENU_BY_SLOTS)}
     | {f"s{i}_rank" for i in range(MENU_SCORE_SLOTS)}
@@ -191,6 +199,9 @@ REQUIRED_CLASSES = {
     "empty",
     "is-self",
     "alt",
+    "rank-1",
+    "rank-2",
+    "rank-3",
     "is-running",
     "TrackerTimerFill",
     *hud_themes.class_names(),

@@ -20,6 +20,23 @@ namespace Challenges
             return ids;
         }
 
+        private static readonly string[] TwoDigits = BuildTwoDigits();
+
+        /// <summary>Card index "01" … "99" for the index box; larger numbers as they are. No allocation up to 99.</summary>
+        public static string Index(int number) =>
+            (uint)number < (uint)TwoDigits.Length ? TwoDigits[number] : number.ToString(System.Globalization.CultureInfo.InvariantCulture);
+
+        private static string[] BuildTwoDigits()
+        {
+            string[] values = new string[100];
+            for (int i = 0; i < values.Length; i++)
+            {
+                values[i] = i.ToString("00", System.Globalization.CultureInfo.InvariantCulture);
+            }
+
+            return values;
+        }
+
         public readonly record struct Slots(
             string Panel,
             Func<int, string> TaskId,

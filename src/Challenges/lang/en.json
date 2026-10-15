@@ -43,6 +43,7 @@
   "hud.tracker.up_next": "Up next",
   "hud.tracker.open": "Type {command} to open overview",
   "hud.menu.title": "Challenges",
+  "hud.menu.filter": "Filter",
   "hud.menu.list": "My challenges",
   "hud.menu.viewing": "Challenges of {name}",
   "hud.menu.filter.all": "All",

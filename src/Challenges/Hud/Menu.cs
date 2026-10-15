@@ -24,18 +24,22 @@ namespace Challenges
 
         private static readonly FilterDef[] FilterDefs =
         [
-            new(FilterAll, HudMenu.BtnFilterAll, "menu_f_all", "hud.menu.filter.all"),
-            new(FilterSolved, HudMenu.BtnFilterSolved, "menu_f_solved", "hud.menu.filter.solved"),
-            new(FilterProgress, HudMenu.BtnFilterProgress, "menu_f_progress", "hud.menu.filter.progress"),
-            new(FilterEnding, HudMenu.BtnFilterEnding, "menu_f_ending", "hud.menu.filter.ending"),
-            new(FilterStarting, HudMenu.BtnFilterStarting, "menu_f_starting", "hud.menu.filter.starting"),
+            new(FilterAll, HudMenu.BtnFilterAll, "menu_f_all", "menu_fc_all", "hud.menu.filter.all"),
+            new(FilterSolved, HudMenu.BtnFilterSolved, "menu_f_solved", "menu_fc_solved", "hud.menu.filter.solved"),
+            new(FilterProgress, HudMenu.BtnFilterProgress, "menu_f_progress", "menu_fc_progress", "hud.menu.filter.progress"),
+            new(FilterEnding, HudMenu.BtnFilterEnding, "menu_f_ending", "menu_fc_ending", "hud.menu.filter.ending"),
+            new(FilterStarting, HudMenu.BtnFilterStarting, "menu_f_starting", "menu_fc_starting", "hud.menu.filter.starting"),
         ];
+
+        /// <summary>Score row classes for the top three (medal colours).</summary>
+        private static readonly string[] RankClasses = ["rank-1", "rank-2", "rank-3"];
 
         private static readonly string[] ChromeVars =
         [
-            "menu_title", "list_title", "list_page",
+            "menu_title", "menu_count", "menu_filter_h", "list_title", "list_page",
             "menu_f_all", "menu_f_solved", "menu_f_progress", "menu_f_ending", "menu_f_starting",
-            "menu_empty", "menu_tasks_h", "menu_by_h",
+            "menu_fc_all", "menu_fc_solved", "menu_fc_progress", "menu_fc_ending", "menu_fc_starting",
+            "menu_empty", "menu_by_h",
             "score_title", "score_page", "score_prev", "score_next",
             "score_f_all", "score_f_online", "score_s_solved", "score_s_lifetime",
             "score_h_rank", "score_h_name", "score_h_cur", "score_h_tot",
@@ -45,7 +49,7 @@ namespace Challenges
         private static readonly (string Var, string Key)[] ChromeLabels =
         [
             ("menu_title", "hud.menu.title"),
-            ("menu_tasks_h", "hud.menu.tasks"),
+            ("menu_filter_h", "hud.menu.filter"),
             ("menu_by_h", "hud.menu.solved_by"),
             ("score_title", "hud.menu.scoreboard"),
             ("score_f_all", "hud.menu.scoreboard.filter.all"),
@@ -60,7 +64,7 @@ namespace Challenges
             ("spin_l_tot", "hud.menu.scoreboard.you.lifetime"),
         ];
 
-        private sealed record FilterDef(string Id, string ButtonId, string Var, string Key);
+        private sealed record FilterDef(string Id, string ButtonId, string Var, string CountVar, string Key);
 
         private static string FilterFor(string buttonId) => buttonId switch
         {
@@ -148,6 +152,7 @@ namespace Challenges
         private static readonly string[] ListTitleVars = ChallengeCardPaint.Ids("m", ListSlots, "_title");
         private static readonly string[] ListWhenVars = ChallengeCardPaint.Ids("m", ListSlots, "_when");
         private static readonly string[] ListMetaVars = ChallengeCardPaint.Ids("m", ListSlots, "_meta");
+        private static readonly string[] ListIndexVars = ChallengeCardPaint.Ids("m", ListSlots, "_n");
         private static readonly string[] ScoreRowIds = ChallengeCardPaint.Ids("ch-srow-", ScoreSlots);
         private static readonly string[] ScoreRankVars = ChallengeCardPaint.Ids("s", ScoreSlots, "_rank");
         private static readonly string[] ScoreNameVars = ChallengeCardPaint.Ids("s", ScoreSlots, "_name");
@@ -408,6 +413,16 @@ namespace Challenges
             EnsureFilterAvailable(player, state, subject.Progress, schedule);
             HudTheme.Apply(player, Panel);
             PaintChrome(player, state, subject);
+            CustomHud.SetText(
+                player,
+                Panel,
+                "menu_count",
+                schedule == null
+                    ? string.Empty
+                    : Context.FormatCount(
+                        player,
+                        ChallengeProgress.CountSolvedInSchedule(subject.Progress, schedule),
+                        schedule.Challenges.Count));
             PaintList(player, state, subject.Progress, schedule);
             PaintScoreboard(player, state, schedule);
         }
@@ -452,7 +467,8 @@ namespace Challenges
             foreach (FilterDef filter in FilterDefs)
             {
                 int count = CountFilterEntries(progress, schedule, filter.Id);
-                CustomHud.SetText(player, Panel, filter.Var, $"{Context.Text(player, filter.Key)} ({count})");
+                CustomHud.SetText(player, Panel, filter.Var, Context.Text(player, filter.Key));
+                CustomHud.SetText(player, Panel, filter.CountVar, Context.FormatNumber(player, count));
                 CustomHud.SetHasClass(player, filter.ButtonId, "is-disabled", count == 0);
                 if (count > 0)
                 {
@@ -643,6 +659,7 @@ namespace Challenges
                 bool inSchedule = scheduleOnly
                     || (schedule != null && schedule.Challenges.Contains(challenge));
                 string rowId = ListRowIds[i];
+                CustomHud.SetText(player, Panel, ListIndexVars[i], ChallengeCardPaint.Index(pageStart + i + 1));
                 CustomHud.SetText(player, Panel, ListTitleVars[i], Titles.For(player, challenge.Title));
                 CustomHud.SetText(player, Panel, ListWhenVars[i], entry.When);
                 CustomHud.SetText(player, Panel, ListMetaVars[i], Context.FormatPercent(player, entry.Percent));
@@ -682,6 +699,7 @@ namespace Challenges
 
         private static void ClearListSlot(CCSPlayerController player, int row)
         {
+            CustomHud.SetText(player, Panel, ListIndexVars[row], string.Empty);
             CustomHud.SetText(player, Panel, ListTitleVars[row], string.Empty);
             CustomHud.SetText(player, Panel, ListWhenVars[row], string.Empty);
             CustomHud.SetText(player, Panel, ListMetaVars[row], string.Empty);
@@ -896,6 +914,10 @@ namespace Challenges
                     Players.Same(entry.Player, player) || SameSteam(entry.SteamId, selfSteam));
                 CustomHud.SetHasClass(player, rowId, "is-viewing", SameSteam(entry.SteamId, viewingSteam));
                 CustomHud.SetHasClass(player, rowId, "alt", (index & 1) == 1);
+                for (int r = 0; r < RankClasses.Length; r++)
+                {
+                    CustomHud.SetHasClass(player, rowId, RankClasses[r], index == r);
+                }
             }
         }
 
@@ -993,6 +1015,10 @@ namespace Challenges
             CustomHud.SetHasClass(player, rowId, "is-self", false);
             CustomHud.SetHasClass(player, rowId, "is-viewing", false);
             CustomHud.SetHasClass(player, rowId, "alt", false);
+            foreach (string rank in RankClasses)
+            {
+                CustomHud.SetHasClass(player, rowId, rank, false);
+            }
         }
     }
 }

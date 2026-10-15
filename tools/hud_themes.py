@@ -29,12 +29,15 @@ THEMES: list[tuple[str, str, str, str]] = [
 BEGIN = "/* >>> hud_themes:begin */"
 END = "/* <<< hud_themes:end */"
 
-# Accent only where the base sheet uses it: values next to bars, own entries, sorted column.
-# Semantic colours (done = success, broken = danger) are never themed.
+# v5 "tactical" sheet: accent only on brackets, kickers, index boxes, values, active state and own
+# entries. Semantic colours (done = success, broken = danger) are never themed.
 LABEL_SELECTORS = """\
-.{cls} Label.ph-stat-val,
+.{cls} Label.TxKicker,
+.{cls} Label.TxIdxLabel,
+.{cls} Label.TxCardPct,
+.{cls} Label.TxRowPct,
+.{cls} .TxNav.active Label.TxNavCount,
 .{cls} Label.ScoreSelfRank,
-.{cls} Label.ScoreSelfStatVal,
 .{cls} Label.ScoreHead.sort-active,
 .{cls} .ScoreHeader Label.ScoreCur.sort-active,
 .{cls} .ScoreHeader Label.ScoreTot.sort-active
@@ -42,20 +45,17 @@ LABEL_SELECTORS = """\
 """
 
 OVERRIDE_RULES = """\
-.{cls} .MenuFilterBtn.active {{ background-color: {a}22; border: 1px solid {accent}; }}
-.{cls} .MenuFilterBtn.active:hover {{ background-color: {a}44; border: 1px solid {accent}; }}
-.{cls} .MenuFilterBtn:hover {{ border: 1px solid {a}66; }}
-.{cls} .MenuFilterBtn:active {{ border: 1px solid {accent}; }}
+.{cls} .TxCorner {{ border-top: 2px solid {accent}; border-left: 2px solid {accent}; }}
+.{cls} .TxIdx {{ border: 1px solid {accent}; }}
+.{cls} .TxNav.active {{ background-color: {a}1f; border-left: 3px solid {accent}; }}
+.{cls} .TxChip:hover {{ border: 1px solid {a}66; }}
+.{cls} .TxChip.active {{ background-color: {a}1f; border: 1px solid {accent}; }}
 .{cls} .MenuTitleNav:hover {{ border: 1px solid {a}66; }}
 .{cls} .MenuTitleNav:active {{ border: 1px solid {accent}; }}
-.{cls} .ScoreSelfCard {{ background-color: {a}18; border: 1px solid {accent}; }}
-.{cls} .ScoreRow:hover {{ border: 1px solid {a}66; border-bottom: 1px solid {a}66; }}
-.{cls} .ScoreRow:active {{ border: 1px solid {accent}; border-bottom: 1px solid {accent}; }}
-.{cls} .ScoreRow.is-self {{ background-color: {a}22; border-bottom: 1px solid {a}44; }}
-.{cls} .ScoreRow.is-viewing {{ background-color: {a}22; border: 1px solid {accent}; border-bottom: 1px solid {accent}; }}
-.{cls} .ScoreRow.is-viewing:hover {{ background-color: {a}44; border: 1px solid {accent}; border-bottom: 1px solid {accent}; }}
-.{cls} .MenuTaskMark {{ background-color: {accent}; }}
-.{cls} .MenuBy.is-you {{ background-color: {a}22; border: 1px solid {accent}; }}
+.{cls} .ScoreSelfCard {{ background-color: {a}14; border: 1px solid {accent}; }}
+.{cls} .ScoreRow.is-self {{ background-color: {a}1a; border-left: 3px solid {accent}; }}
+.{cls} .ScoreRow.is-viewing {{ background-color: {a}2e; border-left: 3px solid {accent}; }}
+.{cls} .MenuBy.is-you {{ background-color: {a}1f; border: 1px solid {accent}; }}
 """
 
 
@@ -76,7 +76,6 @@ def render_panorama_css() -> str:
     ]
     for name, accent, grad_from, grad_to in THEMES:
         cls = f"theme-{name}"
-        chunks.append(f".{cls} .ph-bar {{ background-color: {accent}; }}")
         chunks.append(
             f".{cls} .ph-stat-fill {{ background-color: gradient( linear, 0% 0%, 100% 0%, "
             f"from( {grad_from} ), to( {grad_to} ) ); }}"

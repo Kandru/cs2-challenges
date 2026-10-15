@@ -43,6 +43,15 @@ namespace Challenges.Tests
         }
 
         [Fact]
+        public void CardIndexIsTwoDigitsUpToNinetyNine()
+        {
+            Assert.Equal("01", ChallengeCardPaint.Index(1));
+            Assert.Equal("12", ChallengeCardPaint.Index(12));
+            Assert.Equal("100", ChallengeCardPaint.Index(100));
+            Assert.Same(ChallengeCardPaint.Index(7), ChallengeCardPaint.Index(7));
+        }
+
+        [Fact]
         public void UnknownPanelsHaveNoAuthoredState()
         {
             Assert.False(HudAuthored.HasClass("no-such-panel", "is-off"));

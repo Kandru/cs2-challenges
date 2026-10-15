@@ -8,95 +8,104 @@
 <body>
 <div class="stage" data-theme="gold">
   <div class="preview-controls preview-bar">
-    <div class="preview-note">Fullscreen menu mock (4 cards/page, no detail). Theme swatches preview <code>gui.theme</code>.</div>
+    <div class="preview-note">Menu v5 mock (filter rail, 2×2 cards, scoreboard panel). Theme swatches preview <code>gui.theme</code>.</div>
     <div id="preview-themes" class="preview-themes"></div>
   </div>
   <div id="Menu" class="MenuRoot ph-fs ph-card theme-gold">
-    <div class="ph-bg"></div>
-    <div class="ph-bar"></div>
-    <div class="MenuContent">
-      <div class="ph-titlebar">
-        <span class="ph-title">Challenges</span>
-        <button class="ph-icon-btn"><span class="ph-close-x ph-close-x-a"></span><span class="ph-close-x ph-close-x-b"></span></button>
-      </div>
-      <div class="MenuBody">
-        <div class="MenuColumns">
-          <div class="MenuList">
-            <div class="ScoreTitleBar">
-              <button type="button" class="MenuTitleNav" id="list-prev">&lt;</button>
-              <div class="ScoreTitleCenter">
-                <div class="ScoreTitleCluster">
-                  <div class="ScoreTitlePad"></div>
-                  <span class="ScoreTitle">Challenges of Alice</span>
-                  <span class="ScoreTitlePage" id="list-page">(1 / 2)</span>
-                  <div class="ScoreTitlePad"></div>
-                </div>
-              </div>
-              <button type="button" class="MenuTitleNav" id="list-next">&gt;</button>
-            </div>
-            <div class="MenuFilterBar">
-              <button class="MenuFilterBtn"><span class="MenuFilterLabel">All (20)</span></button>
-              <button class="MenuFilterBtn"><span class="MenuFilterLabel">Solved (2)</span></button>
-              <button class="MenuFilterBtn active"><span class="MenuFilterLabel">Progress (5)</span></button>
-              <button class="MenuFilterBtn"><span class="MenuFilterLabel">Ending soon (1)</span></button>
-              <button class="MenuFilterBtn is-disabled"><span class="MenuFilterLabel">Starting soon (0)</span></button>
-            </div>
-            <div class="MenuRows" id="menu-rows"></div>
+    <div class="MenuColumns">
+      <div class="TxPanel MenuMain">
+        <div class="ph-bg"></div>
+        <i class="TxCorner TxCornerTL"></i><i class="TxCorner TxCornerTR"></i><i class="TxCorner TxCornerBL"></i><i class="TxCorner TxCornerBR"></i>
+        <div class="TxPanelContent">
+          <div class="TxHead">
+            <span class="TxKicker">//</span>
+            <span class="TxTitle">Challenges</span>
+            <span class="TxHeadSub">My challenges</span>
+            <span class="TxCount">3 / 12</span>
+            <button class="ph-icon-btn TxClose"><span class="ph-close-x ph-close-x-a"></span><span class="ph-close-x ph-close-x-b"></span></button>
           </div>
-          <div id="ch-score" class="MenuScore">
-            <div class="ScoreTitleBar">
-              <button class="MenuTitleNav is-disabled">&lt;</button>
-              <div class="ScoreTitleCenter">
-                <div class="ScoreTitleCluster">
-                  <div class="ScoreTitlePad"></div>
-                  <span class="ScoreTitle">Scoreboard</span>
-                  <span class="ScoreTitlePage">(1 / 1)</span>
-                  <div class="ScoreTitlePad"></div>
+          <div class="MenuBody">
+            <div class="TxRail">
+              <span class="TxRailHead">Filter</span>
+              <button class="TxNav"><span class="TxNavLabel">All</span><span class="TxNavCount">20</span></button>
+              <button class="TxNav"><span class="TxNavLabel">Solved</span><span class="TxNavCount">2</span></button>
+              <button class="TxNav active"><span class="TxNavLabel">Progress</span><span class="TxNavCount">5</span></button>
+              <button class="TxNav"><span class="TxNavLabel">Ending soon</span><span class="TxNavCount">1</span></button>
+              <button class="TxNav is-disabled"><span class="TxNavLabel">Starting soon</span><span class="TxNavCount">0</span></button>
+            </div>
+            <div class="MenuList">
+              <div class="TxPad"></div>
+              <div class="TxListInner">
+                <div class="TxVPad"></div>
+                <div class="TxListBar">
+                  <span class="TxListPage" id="list-page">(1 / 2)</span>
+                  <button type="button" class="MenuTitleNav" id="list-prev">&lt;</button>
+                  <button type="button" class="MenuTitleNav" id="list-next">&gt;</button>
+                </div>
+                <div class="MenuRows" id="menu-rows"></div>
+                <div class="TxVPad"></div>
+              </div>
+              <div class="TxPad"></div>
+            </div>
+          </div>
+          <div class="MenuCredit">Free plugin by kandru.net. Donations are welcome if you enjoy it. More plugins: github.com/kandru</div>
+        </div>
+      </div>
+      <div class="TxColGap"></div>
+      <div id="ch-score" class="TxPanel MenuScore">
+        <div class="ph-bg"></div>
+        <i class="TxCorner TxCornerTL"></i><i class="TxCorner TxCornerTR"></i><i class="TxCorner TxCornerBL"></i><i class="TxCorner TxCornerBR"></i>
+        <div class="TxPanelContent">
+          <div class="TxHead">
+            <span class="TxKicker">//</span>
+            <span class="TxTitle">Scoreboard</span>
+            <span class="TxListPage">(1 / 1)</span>
+            <button class="MenuTitleNav is-disabled">&lt;</button>
+            <button class="MenuTitleNav is-disabled">&gt;</button>
+          </div>
+          <div class="ScoreBody">
+            <div class="TxPad"></div>
+            <div class="ScoreInner">
+              <div class="TxVPad"></div>
+              <div class="ScoreFilterBar">
+                <div class="ScoreFilterGroup">
+                  <button class="TxChip"><span class="TxChipLabel">All</span></button>
+                  <button class="TxChip active"><span class="TxChipLabel">Online</span></button>
+                </div>
+                <div class="ScoreFilterSpacer"></div>
+                <div class="ScoreFilterGroup">
+                  <button class="TxChip active"><span class="TxChipLabel">Solved</span></button>
+                  <button class="TxChip"><span class="TxChipLabel">Lifetime</span></button>
                 </div>
               </div>
-              <button class="MenuTitleNav is-disabled">&gt;</button>
-            </div>
-            <div class="ScoreFilterBar">
-              <div class="ScoreFilterGroup">
-                <button class="MenuFilterBtn"><span class="MenuFilterLabel">All</span></button>
-                <button class="MenuFilterBtn active"><span class="MenuFilterLabel">Online</span></button>
-              </div>
-              <div class="ScoreFilterSpacer"></div>
-              <div class="ScoreFilterGroup">
-                <button class="MenuFilterBtn active"><span class="MenuFilterLabel">Solved</span></button>
-                <button class="MenuFilterBtn"><span class="MenuFilterLabel">Lifetime</span></button>
-              </div>
-            </div>
-            <div class="ScoreSelfCard">
-              <div class="ScoreSelfTop">
-                <span class="ScoreSelfRank">#1</span>
-                <span class="ScoreSelfName">KalleWithAReallyLongSteamName</span>
-              </div>
-              <div class="ScoreSelfStats">
-                <div class="ScoreSelfStat">
-                  <span class="ScoreSelfStatLabel">This schedule</span>
-                  <span class="ScoreSelfStatVal">5 / 12</span>
+              <div class="ScoreSelfCard">
+                <div class="ScoreSelfTop">
+                  <span class="ScoreSelfRank">#2</span>
+                  <span class="ScoreSelfName">Alice</span>
                 </div>
-                <div class="ScoreSelfStat">
-                  <span class="ScoreSelfStatLabel">Lifetime</span>
-                  <span class="ScoreSelfStatVal">1,000</span>
+                <div class="ScoreSelfStats">
+                  <div class="ScoreSelfStat"><span class="ScoreSelfStatLabel">This schedule</span><span class="ScoreSelfStatVal">3 / 12</span></div>
+                  <div class="ScoreSelfStat"><span class="ScoreSelfStatLabel">Lifetime</span><span class="ScoreSelfStatVal">9</span></div>
                 </div>
               </div>
+              <div class="ScoreHeader">
+                <span class="ScoreRank ScoreHead">#</span>
+                <span class="ScoreName ScoreHead">Name</span>
+                <span class="ScoreCur ScoreHead sort-active">Solved</span>
+                <span class="ScoreTot ScoreHead">Lifetime</span>
+              </div>
+              <div class="ScoreRows">
+                <div class="ScoreRow rank-1"><span class="ScoreRank">#1</span><span class="ScoreName">KalleWithAReallyLongSteamName</span><span class="ScoreCur">5 / 12</span><span class="ScoreTot">1,000</span></div>
+                <div class="ScoreRow alt rank-2 is-self"><span class="ScoreRank">#2</span><span class="ScoreName">Alice</span><span class="ScoreCur">3 / 12</span><span class="ScoreTot">9</span></div>
+                <div class="ScoreRow rank-3"><span class="ScoreRank">#3</span><span class="ScoreName">Bob</span><span class="ScoreCur">2 / 12</span><span class="ScoreTot">15</span></div>
+                <div class="ScoreRow alt"><span class="ScoreRank">#4</span><span class="ScoreName">Carol</span><span class="ScoreCur">2 / 12</span><span class="ScoreTot">7</span></div>
+                <div class="ScoreRow"><span class="ScoreRank">#5</span><span class="ScoreName">Dave</span><span class="ScoreCur">1 / 12</span><span class="ScoreTot">3</span></div>
+              </div>
+              <div class="TxVPad"></div>
             </div>
-            <div class="ScoreHeader">
-              <span class="ScoreRank ScoreHead">#</span>
-              <span class="ScoreName ScoreHead">Name</span>
-              <span class="ScoreCur ScoreHead sort-active">Solved</span>
-              <span class="ScoreTot ScoreHead">Lifetime</span>
-            </div>
-            <div class="ScoreRows">
-              <div class="ScoreRow is-self"><span class="ScoreRank">#1</span><span class="ScoreName">KalleWithAReallyLongSteamName</span><span class="ScoreCur">5 / 12</span><span class="ScoreTot">1,000</span></div>
-              <div class="ScoreRow alt is-viewing"><span class="ScoreRank">#2</span><span class="ScoreName">Alice</span><span class="ScoreCur">3 / 12</span><span class="ScoreTot">9</span></div>
-              <div class="ScoreRow"><span class="ScoreRank">#3</span><span class="ScoreName">Bob</span><span class="ScoreCur">2 / 12</span><span class="ScoreTot">15</span></div>
-            </div>
+            <div class="TxPad"></div>
           </div>
         </div>
-        <div class="MenuCredit">Free plugin by kandru.net. Donations are welcome if you enjoy it. More plugins: github.com/kandru</div>
       </div>
     </div>
   </div>
@@ -123,13 +132,12 @@ const challenges = [
     when: 'this week', pct: 40,
     tasks: [
       { label: '5/5 knife kills', done: true },
-      { label: '2/10 knife kills without taking damage', done: false },
+      { label: '2/10 knife kills without taking damage', broken: true },
       { label: '0/25 knife kills', done: false },
     ],
     by: [
-      { label: 'YOU', you: true }, { label: 'BobTheBuilderExtraLong' },
-      { label: 'Carol' }, { label: 'Dave' },
-      { label: 'Eve' }, { label: '+3 more', empty: true },
+      { label: 'YOU', you: true }, { label: 'BobTheBuilderExtraLong' }, { label: 'Carol' },
+      { label: 'Dave' }, { label: 'Eve' }, { label: '+3 more', empty: true },
     ],
   },
   {
@@ -160,7 +168,7 @@ const challenges = [
       { label: '2/10 smoke blocks', done: false },
       { label: '0/15 HE kills', done: false },
     ],
-    by: [{ label: 'Alice' }, { label: 'Nobody yet', empty: true }],
+    by: [{ label: 'Alice' }],
   },
 ];
 
@@ -169,6 +177,7 @@ const rowsEl = document.getElementById('menu-rows');
 const pageEl = document.getElementById('list-page');
 const prevBtn = document.getElementById('list-prev');
 const nextBtn = document.getElementById('list-next');
+const CUTS = '<div class="TxSegCut"></div>'.repeat(10);
 
 function byHtml(entries) {
   const chips = entries.map(e => {
@@ -176,31 +185,35 @@ function byHtml(entries) {
     return `<div class="MenuBy${cls}"><span class="MenuByLabel">${e.label}</span></div>`;
   });
   let html = '';
-  for (let i = 0; i < chips.length; i += 2) {
-    html += `<div class="MenuByRow">${chips[i]}${chips[i + 1] || ''}</div>`;
+  for (let i = 0; i < chips.length; i += 3) {
+    html += `<div class="MenuByRow">${chips.slice(i, i + 3).join('')}</div>`;
   }
   return html;
 }
 
-function cardHtml(c) {
-  const tasks = c.tasks.map(t =>
-    `<div class="MenuTask${t.done ? ' is-done' : ''}"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">${t.label}</span></div>`
-  ).join('');
+function cardHtml(c, index) {
+  if (!c) {
+    return '<div class="MenuRow empty"></div>';
+  }
+  const tasks = c.tasks.map(t => {
+    const cls = t.broken ? ' is-broken' : t.done ? ' is-done' : '';
+    return `<div class="MenuTask${cls}"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">${t.label}</span></div>`;
+  }).join('');
   return `<div class="MenuRow">
-    <div class="MenuRowHead">
-      <div class="ph-stat-lab"><span class="ph-stat-name">${c.title}</span><span class="ph-stat-when">${c.when}</span><span class="ph-stat-val">${c.pct}%</span></div>
-      <div class="ph-stat-track"><div class="ph-stat-fill p${c.pct}"></div></div>
-    </div>
-    <div class="MenuRowSplit">
-      <div class="MenuTasksCol">
-        <span class="MenuColHead">Tasks</span>
-        <div class="MenuTasks">${tasks}</div>
+    <div class="TxPad"></div>
+    <div class="TxCardBody">
+      <div class="TxCardHead">
+        <div class="TxIdx"><span class="TxIdxLabel">${String(index).padStart(2, '0')}</span></div>
+        <span class="TxCardTitle">${c.title}</span>
+        <span class="TxCardPct">${c.pct}%</span>
       </div>
-      <div class="MenuByCol">
-        <span class="MenuColHead">Solved by</span>
-        <div class="MenuByList">${byHtml(c.by)}</div>
-      </div>
+      <div class="TxSeg"><div class="ph-stat-track TxSegTrack"><div class="ph-stat-fill p${Math.round(c.pct / 10) * 10}"></div></div><div class="TxSegCuts">${CUTS}</div></div>
+      <span class="TxWhen">${c.when}</span>
+      <div class="MenuTasks">${tasks}</div>
+      <span class="TxSection">Solved by</span>
+      <div class="MenuByList">${byHtml(c.by)}</div>
     </div>
+    <div class="TxPad"></div>
   </div>`;
 }
 
@@ -208,8 +221,13 @@ function paint() {
   const pages = Math.max(1, Math.ceil(challenges.length / PAGE_SIZE));
   page = Math.max(0, Math.min(page, pages - 1));
   const start = page * PAGE_SIZE;
-  const slice = challenges.slice(start, start + PAGE_SIZE);
-  rowsEl.innerHTML = slice.map(cardHtml).join('');
+  const cards = [];
+  for (let i = 0; i < PAGE_SIZE; i++) {
+    cards.push(cardHtml(challenges[start + i], start + i + 1));
+  }
+  rowsEl.innerHTML =
+    `<div class="TxGridRow">${cards[0]}<div class="TxGridGap"></div>${cards[1]}</div>` +
+    `<div class="TxGridRow">${cards[2]}<div class="TxGridGap"></div>${cards[3]}</div>`;
   pageEl.textContent = `(${page + 1} / ${pages})`;
   prevBtn.classList.toggle('is-disabled', page <= 0);
   nextBtn.classList.toggle('is-disabled', page >= pages - 1);
