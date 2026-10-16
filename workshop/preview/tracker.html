@@ -159,9 +159,12 @@ function showCard() {
 }
 
 function hideCard(done) {
-  stopTimer();
+  // The bar stays through the fade-out (mirrors Tracker.Refresh); it is reset once the card is gone.
+  clearTimeout(holdTimer);
+  holdTimer = null;
   card.classList.add('ph-fading');
   setTimeout(() => {
+    stopTimer();
     card.classList.add('ph-off');
     card.classList.remove('ph-fading');
     if (done) done();

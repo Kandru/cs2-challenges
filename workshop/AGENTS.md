@@ -33,7 +33,7 @@ No panel create / width / colour / image from C#. Layout edits need VPK republis
 
 **Round restart:** layouts survive rounds; client resets XML defaults while server keeps last classes/vars. `HudDriver.EventRoundStart` → `CustomHud.ResetRound()` → `Tracker`/`Menu`.`WriteDefaults` + drop ledger. **XML defaults must match `WriteDefaults`.** Never Kill/respawn live layouts; `Shutdown` only on map end/unload.
 
-**Fade:** show = `ph-fading` then clear next frame; hide = `ph-fading` 1s then `ph-off` (not in the same write). **Tick:** 2 slots/tick; `Tracker.Refresh` paints only in freeze or progress hold.
+**Fade:** show = `ph-fading` then clear next frame; hide = `ph-fading` 1s then `ph-off` (not in the same write). The tracker timer bar stays through the fade-out (its drain just runs out); the next show restarts or hides it. **Tick:** 2 slots/tick; `Tracker.Refresh` paints only in freeze or progress hold.
 
 ## Layouts
 

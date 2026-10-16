@@ -339,10 +339,15 @@ namespace Challenges
             {
                 if (CustomHud.IsPanelVisible(player, Panel))
                 {
+                    // The bar stays through the fade-out (its drain just runs out); the next show
+                    // restarts or hides it in PaintTimer.
                     CustomHud.HidePanel(player, Panel);
                 }
+                else
+                {
+                    HideTimer(player, state);
+                }
 
-                HideTimer(player, state);
                 state.InvalidateTracker();
                 return;
             }
