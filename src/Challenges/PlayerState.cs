@@ -12,6 +12,8 @@ namespace Challenges
         [JsonPropertyName("challenges")]
         public Dictionary<string, Dictionary<string, Dictionary<string, TaskProgress>>> Challenges { get; set; } = new();
         [JsonPropertyName("statistics")] public PlayerStatistics Statistics { get; set; } = new();
+        /// <summary>HUD preferences from the menu settings; unset fields fall back to <c>gui.*</c>.</summary>
+        [JsonPropertyName("hud")] public PlayerHudSettings Hud { get; set; } = new();
 
         [JsonIgnore] public bool Dirty;
         /// <summary>
@@ -47,6 +49,10 @@ namespace Challenges
         [JsonIgnore] public bool MenuDirty;
         /// <summary><see cref="Environment.TickCount64"/> of the last menu paint.</summary>
         [JsonIgnore] public long MenuPaintedAt;
+        /// <summary>The open menu shows the settings view instead of the list and scoreboard.</summary>
+        [JsonIgnore] public bool MenuSettings;
+        /// <summary>The settings view is open: the tracker shows the overview as a live preview.</summary>
+        [JsonIgnore] public bool TrackerPreview;
         [JsonIgnore] public bool TrackerFreezeVisible;
         [JsonIgnore] public DateTime? TrackerFreezeUntil;
         [JsonIgnore] public float TrackerFreezeDuration;
@@ -76,6 +82,7 @@ namespace Challenges
         /// <summary>Clears tracker session fields without touching menu state.</summary>
         public void ClearTrackerUi()
         {
+            TrackerPreview = false;
             TrackerFreezeVisible = false;
             TrackerFreezeUntil = null;
             TrackerFreezeDuration = 0;
@@ -110,6 +117,7 @@ namespace Challenges
             MenuListPainted = 0;
             MenuDirty = false;
             MenuPaintedAt = 0;
+            MenuSettings = false;
             Array.Clear(MenuScoreRowSteamIds);
             ClearTrackerUi();
         }
@@ -126,6 +134,24 @@ namespace Challenges
     {
         [JsonPropertyName("amount")] public int Amount { get; set; }
         [JsonPropertyName("last_update")] public long LastUpdate { get; set; }
+    }
+
+    /// <summary>Per-player HUD preferences; null = server default (<see cref="HudSettings"/>).</summary>
+    public sealed class PlayerHudSettings
+    {
+        [JsonPropertyName("tracker_visible")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public bool? TrackerVisible { get; set; }
+
+        /// <summary><c>top_right</c>, <c>right</c>, <c>top_left</c> or <c>left</c>.</summary>
+        [JsonPropertyName("tracker_position")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string? TrackerPosition { get; set; }
+
+        /// <summary>Percent, one of <see cref="HudSettings.Sizes"/>.</summary>
+        [JsonPropertyName("tracker_size")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public int? TrackerSize { get; set; }
     }
 
     public sealed class PlayerStatistics

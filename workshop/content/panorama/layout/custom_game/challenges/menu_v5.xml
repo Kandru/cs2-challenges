@@ -4,7 +4,7 @@
 		<include src="s2r://panorama/styles/custom_game/challenges/hud_v5.vcss" />
 	</styles>
 
-	<!-- Menu v5 (tactical): main panel (filter rail + 2x2 cards) and scoreboard panel. Contract: Menu.cs / HudMenu.cs. -->
+	<!-- Menu v5 (tactical): main panel (filter rail + 2x2 cards), scoreboard panel and settings view. Contract: Menu.cs / SettingsMenu.cs / HudMenu.cs. -->
 	<Panel class="HudScreen" hittest="false">
 		<Panel id="Menu" class="MenuRoot ph-fs ph-card ph-off theme-gold" hittest="false">
 			<Panel class="MenuColumns" hittest="false">
@@ -20,6 +20,9 @@
 							<Label class="TxTitle stratum-bold-tf" hittest="false" text="{s:menu_title}" />
 							<Label class="TxHeadSub stratum-bold-tf" hittest="false" text="{s:list_title}" />
 							<Label class="TxCount stratum-bold-tf" hittest="false" text="{s:menu_count}" />
+							<Button id="ch-settings" class="TxChip TxHeadBtn">
+								<Label class="TxChipLabel stratum-bold-tf" hittest="false" text="{s:menu_settings}" />
+							</Button>
 							<Button id="ph-close" class="ph-icon-btn TxClose">
 								<Panel class="ph-close-x ph-close-x-a" hittest="false" />
 								<Panel class="ph-close-x ph-close-x-b" hittest="false" />
@@ -497,6 +500,79 @@
 										<Label class="ScoreTot stratum-bold-tf" hittest="false" text="{s:s11_tot}" />
 									</Button>
 								</Panel>
+								<Panel class="TxVPad" hittest="false" />
+							</Panel>
+							<Panel class="TxPad" hittest="false" />
+						</Panel>
+					</Panel>
+				</Panel>
+			</Panel>
+			<!-- Settings view: shown instead of MenuColumns while the root has view-settings. Contract: SettingsMenu.cs. -->
+			<Panel class="SetScreen" hittest="false">
+				<Panel id="ch-set" class="TxPanel SetPanel" hittest="false">
+					<Panel class="ph-bg" hittest="false" />
+					<Panel class="TxCorner TxCornerTL" hittest="false" />
+					<Panel class="TxCorner TxCornerTR" hittest="false" />
+					<Panel class="TxCorner TxCornerBL" hittest="false" />
+					<Panel class="TxCorner TxCornerBR" hittest="false" />
+					<Panel class="TxPanelContent" hittest="false">
+						<Panel class="TxHead" hittest="false">
+							<Label class="TxKicker stratum-bold-tf" hittest="false" text="//" />
+							<Label class="TxTitle stratum-bold-tf" hittest="false" text="{s:set_title}" />
+							<Button id="ch-set-back" class="TxChip TxHeadBtn">
+								<Label class="TxChipLabel stratum-bold-tf" hittest="false" text="{s:set_back}" />
+							</Button>
+							<Button id="ch-set-close" class="ph-icon-btn TxClose">
+								<Panel class="ph-close-x ph-close-x-a" hittest="false" />
+								<Panel class="ph-close-x ph-close-x-b" hittest="false" />
+							</Button>
+						</Panel>
+						<Panel class="SetBody" hittest="false">
+							<Panel class="TxPad" hittest="false" />
+							<Panel class="SetInner" hittest="false">
+								<Panel class="TxVPad" hittest="false" />
+								<Label class="TxSection SetFirst stratum-bold-tf" hittest="false" text="{s:set_widget_h}" />
+								<Button id="ch-set-show" class="SetSwitch is-on">
+									<Label class="SetSwitchLabel stratum-bold-tf" hittest="false" text="{s:set_show}" />
+									<Label class="SetSwitchState stratum-bold-tf" hittest="false" text="{s:set_show_state}" />
+									<Panel class="SetSwitchTrack" hittest="false">
+										<Panel class="SetSwitchKnob" hittest="false" />
+									</Panel>
+								</Button>
+								<Panel class="SetDependent" hittest="false">
+									<Label class="TxSection stratum-bold-tf" hittest="false" text="{s:set_pos_h}" />
+									<Panel class="SetMap" hittest="false">
+										<Panel class="SetMapCrossH" hittest="false" />
+										<Panel class="SetMapCrossV" hittest="false" />
+										<Button id="ch-set-pos-tl" class="SetPos SetPosTL">
+											<Panel class="SetPosMark" hittest="false" />
+											<Label class="SetPosLabel stratum-bold-tf" hittest="false" text="{s:set_pos_tl}" />
+										</Button>
+										<Button id="ch-set-pos-tr" class="SetPos SetPosTR active">
+											<Panel class="SetPosMark" hittest="false" />
+											<Label class="SetPosLabel stratum-bold-tf" hittest="false" text="{s:set_pos_tr}" />
+										</Button>
+										<Button id="ch-set-pos-l" class="SetPos SetPosL">
+											<Panel class="SetPosMark" hittest="false" />
+											<Label class="SetPosLabel stratum-bold-tf" hittest="false" text="{s:set_pos_l}" />
+										</Button>
+										<Button id="ch-set-pos-r" class="SetPos SetPosR">
+											<Panel class="SetPosMark" hittest="false" />
+											<Label class="SetPosLabel stratum-bold-tf" hittest="false" text="{s:set_pos_r}" />
+										</Button>
+									</Panel>
+									<Label class="TxSection stratum-bold-tf" hittest="false" text="{s:set_size_h}" />
+									<Panel class="SetStepper" hittest="false">
+										<Button id="ch-set-size-dec" class="MenuTitleNav">
+											<Label class="ph-nav-label stratum-bold-tf" hittest="false" text="-" />
+										</Button>
+										<Label class="SetSizeValue stratum-bold-tf" hittest="false" text="{s:set_size}" />
+										<Button id="ch-set-size-inc" class="MenuTitleNav">
+											<Label class="ph-nav-label stratum-bold-tf" hittest="false" text="+" />
+										</Button>
+									</Panel>
+								</Panel>
+								<Label class="SetHint stratum-bold-tf" hittest="false" text="{s:set_hint}" />
 								<Panel class="TxVPad" hittest="false" />
 							</Panel>
 							<Panel class="TxPad" hittest="false" />

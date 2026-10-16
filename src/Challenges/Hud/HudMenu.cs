@@ -30,6 +30,16 @@ namespace Challenges
         public const string BtnScoreFilterOnline = "ch-score-f-online";
         public const string BtnScoreSortSolved = "ch-score-s-solved";
         public const string BtnScoreSortLifetime = "ch-score-s-lifetime";
+        public const string BtnSettings = "ch-settings";
+        public const string BtnSettingsBack = "ch-set-back";
+        public const string BtnSettingsClose = "ch-set-close";
+        public const string BtnSettingsShow = "ch-set-show";
+        public const string BtnSettingsPosTopLeft = "ch-set-pos-tl";
+        public const string BtnSettingsPosTopRight = "ch-set-pos-tr";
+        public const string BtnSettingsPosLeft = "ch-set-pos-l";
+        public const string BtnSettingsPosRight = "ch-set-pos-r";
+        public const string BtnSettingsSizeDown = "ch-set-size-dec";
+        public const string BtnSettingsSizeUp = "ch-set-size-inc";
 
         private const float CaptureDelaySeconds = 0.2f;
 

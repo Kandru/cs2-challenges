@@ -32,6 +32,7 @@ namespace Challenges
 
             state.Challenges ??= new Dictionary<string, Dictionary<string, Dictionary<string, TaskProgress>>>();
             state.Statistics ??= new PlayerStatistics();
+            state.Hud ??= new PlayerHudSettings();
             state.Username ??= string.Empty;
             state.SteamId ??= string.Empty;
             state.Language ??= string.Empty;

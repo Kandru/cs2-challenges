@@ -18,12 +18,14 @@ EXAMPLE_VCSS = WORKSHOP / "example" / "hud.vcss"
 PREVIEW = WORKSHOP / "preview"
 HUD_DIR = ROOT / "src" / "Challenges" / "Hud"
 HUD_THEME_CS = HUD_DIR / "HudTheme.cs"
+HUD_SETTINGS_CS = HUD_DIR / "HudSettings.cs"
 VERSION_CS = ROOT / "src" / "Challenges" / "Version.cs"
 THEME_DATA_JS = PREVIEW / "theme-data.js"
 
 if str(TOOLS) not in sys.path:
     sys.path.insert(0, str(TOOLS))
 import hud_themes  # noqa: E402
+import hud_scales  # noqa: E402
 
 INCLUDE_RE = re.compile(r"s2r://panorama/styles/custom_game/challenges/([A-Za-z0-9_]+\.vcss)")
 VAR_RE = re.compile(r"\{s:([A-Za-z0-9_]+)\}")
@@ -130,6 +132,17 @@ MENU_IDS = (
         "ch-menu-empty",
         "ch-spin",
         "ch-score",
+        "ch-settings",
+        "ch-set",
+        "ch-set-back",
+        "ch-set-close",
+        "ch-set-show",
+        "ch-set-pos-tl",
+        "ch-set-pos-tr",
+        "ch-set-pos-l",
+        "ch-set-pos-r",
+        "ch-set-size-dec",
+        "ch-set-size-inc",
     }
     | {f"ch-mrow-{i}" for i in range(MENU_LIST_SLOTS)}
     | {f"ch-mfill-{i}" for i in range(MENU_LIST_SLOTS)}
@@ -174,6 +187,20 @@ MENU_VARS = (
         "spin_rank",
         "spin_l_cur",
         "spin_l_tot",
+        "menu_settings",
+        "set_title",
+        "set_back",
+        "set_widget_h",
+        "set_show",
+        "set_show_state",
+        "set_pos_h",
+        "set_pos_tl",
+        "set_pos_tr",
+        "set_pos_l",
+        "set_pos_r",
+        "set_size_h",
+        "set_size",
+        "set_hint",
     }
     | {f"m{i}_title" for i in range(MENU_LIST_SLOTS)}
     | {f"m{i}_when" for i in range(MENU_LIST_SLOTS)}
@@ -204,7 +231,14 @@ REQUIRED_CLASSES = {
     "rank-3",
     "is-running",
     "TrackerTimerFill",
+    "view-settings",
+    "tracker-off",
+    "is-on",
+    "pos-r",
+    "pos-tl",
+    "pos-l",
     *hud_themes.class_names(),
+    *hud_scales.class_names(),
     *(f"p{p}" for p in range(0, 101, 10)),
 }
 
@@ -354,6 +388,21 @@ def check_hud_theme_cs(failures: list[str]) -> None:
         )
 
 
+def check_hud_settings_cs(failures: list[str]) -> None:
+    if not HUD_SETTINGS_CS.is_file():
+        failures.append(f"missing {HUD_SETTINGS_CS.relative_to(ROOT)}")
+        return
+    text = HUD_SETTINGS_CS.read_text(encoding="utf-8")
+    sizes = re.search(r"int\[\]\s+Sizes\s*=\s*\[([^\]]*)\]", text)
+    default = re.search(r"const\s+int\s+DefaultSize\s*=\s*(\d+)", text)
+    found = [int(v) for v in re.findall(r"\d+", sizes.group(1))] if sizes else []
+    if found != hud_scales.SIZES or not default or int(default.group(1)) != hud_scales.DEFAULT:
+        failures.append(
+            f"HudSettings.cs Sizes / DefaultSize must match tools/hud_scales.py "
+            f"({hud_scales.SIZES}, default {hud_scales.DEFAULT})"
+        )
+
+
 def render_authored_cs() -> str:
     """HudAuthored.g.cs: classes of every id'd panel in the current layouts (the client state before any write)."""
     rows: list[str] = []
@@ -392,7 +441,7 @@ def sync_generated() -> list[str]:
     written: list[str] = []
     if hud_themes.sync_file(AUTHORED_CS, render_authored_cs()):
         written.append(str(AUTHORED_CS.relative_to(ROOT)))
-    if hud_themes.sync_vcss_section(HUD_VCSS):
+    if hud_scales.sync_vcss_section(HUD_VCSS) | hud_themes.sync_vcss_section(HUD_VCSS):
         written.append(str(HUD_VCSS.relative_to(ROOT)))
     if hud_themes.sync_file(THEME_DATA_JS, hud_themes.render_theme_data_js()):
         written.append(str(THEME_DATA_JS.relative_to(ROOT)))
@@ -413,6 +462,7 @@ def main() -> int:
     check_layout(MENU_FILE, MENU_IDS, MENU_VARS, failures)
     check_preview(failures)
     check_hud_theme_cs(failures)
+    check_hud_settings_cs(failures)
 
     if failures:
         print("Panorama validation failed:")
