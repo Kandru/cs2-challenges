@@ -4,7 +4,7 @@ What players see and what the plugin stores. Config knobs that change this behav
 
 ## Tracker
 
-During freeze time the plugin can show a small card (top-right):
+During freeze time the plugin can show a small card (top-right by default, see [Settings in the menu](#settings-in-the-menu)):
 
 - Only when `mp_freezetime` is above 0.
 - Only for players on Terrorist or Counter-Terrorist.
@@ -35,6 +35,20 @@ Scoreboard:
 - Filter all players or online only.
 - Sort by solved in this schedule, or by lifetime solved count.
 - Click a name to view that player’s challenges (list title becomes “Challenges of …”).
+
+### Settings in the menu
+
+The **Settings** button in the menu header opens a settings page for the tracker. Each player sets it for themselves:
+
+| Setting | Choices |
+|---------|---------|
+| Show widget | On / off. Off: no freeze overview and no progress popups (chat notifications stay). |
+| Position | Top right, right, top left, left. Right and left are vertically centred, away from the kill feed. |
+| Size | 80 %, 90 %, 100 %, 110 %, 120 %. |
+
+While the page is open, the tracker shows the overview as a preview, so changes are visible at once. **Back** returns to the challenge list.
+
+Choices are saved in the player file (`hud` block) and kept across reconnects and maps. Until a player changes them, `gui.tracker_position` and `gui.tracker_size` apply.
 
 Challenge and task titles use the player’s language (`!lang`), then the two-letter code, then the **first language** in the YAML map. Schedule titles are not shown in the menu or tracker — see [Schedules](../howto/schedules.md).
 

@@ -38,6 +38,7 @@ namespace Challenges
             ["ch-ttimer"] = ["TrackerTimerRow", "is-off"],
             ["ch-ttimer-fill"] = ["ph-stat-fill", "TrackerTimerFill", "p100"],
             ["Menu"] = ["MenuRoot", "ph-fs", "ph-card", "ph-off", "theme-gold"],
+            ["ch-settings"] = ["TxChip", "TxHeadBtn"],
             ["ph-close"] = ["ph-icon-btn", "TxClose"],
             ["ch-filter-all"] = ["TxNav"],
             ["ch-filter-solved"] = ["TxNav"],
@@ -113,6 +114,16 @@ namespace Challenges
             ["ch-srow-9"] = ["ScoreRow", "empty"],
             ["ch-srow-10"] = ["ScoreRow", "empty"],
             ["ch-srow-11"] = ["ScoreRow", "empty"],
+            ["ch-set"] = ["TxPanel", "SetPanel"],
+            ["ch-set-back"] = ["TxChip", "TxHeadBtn"],
+            ["ch-set-close"] = ["ph-icon-btn", "TxClose"],
+            ["ch-set-show"] = ["SetSwitch", "is-on"],
+            ["ch-set-pos-tl"] = ["SetPos", "SetPosTL"],
+            ["ch-set-pos-tr"] = ["SetPos", "SetPosTR", "active"],
+            ["ch-set-pos-l"] = ["SetPos", "SetPosL"],
+            ["ch-set-pos-r"] = ["SetPos", "SetPosR"],
+            ["ch-set-size-dec"] = ["MenuTitleNav"],
+            ["ch-set-size-inc"] = ["MenuTitleNav"],
         };
     }
 }

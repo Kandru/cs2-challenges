@@ -40,7 +40,8 @@ LABEL_SELECTORS = """\
 .{cls} Label.ScoreSelfRank,
 .{cls} Label.ScoreHead.sort-active,
 .{cls} .ScoreHeader Label.ScoreCur.sort-active,
-.{cls} .ScoreHeader Label.ScoreTot.sort-active
+.{cls} .ScoreHeader Label.ScoreTot.sort-active,
+.{cls} .SetSwitch.is-on Label.SetSwitchState
 {{ color: {accent}; }}
 """
 
@@ -56,6 +57,11 @@ OVERRIDE_RULES = """\
 .{cls} .ScoreRow.is-self {{ background-color: {a}1a; border-left: 3px solid {accent}; }}
 .{cls} .ScoreRow.is-viewing {{ background-color: {a}2e; border-left: 3px solid {accent}; }}
 .{cls} .MenuBy.is-you {{ background-color: {a}1f; border: 1px solid {accent}; }}
+.{cls} .SetSwitch.is-on .SetSwitchTrack {{ background-color: {a}33; border: 1px solid {accent}; }}
+.{cls} .SetSwitch.is-on .SetSwitchKnob {{ background-color: {accent}; }}
+.{cls} .SetPos:hover {{ border: 1px solid {a}66; }}
+.{cls} .SetPos.active {{ background-color: {a}1f; border: 1px solid {accent}; }}
+.{cls} .SetPos.active .SetPosMark {{ background-color: {accent}; border: 2px solid {accent}; }}
 """
 
 

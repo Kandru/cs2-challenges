@@ -16,6 +16,20 @@
     <button type="button" data-mode="ruleBroken">Rule broken queue</button>
     <button type="button" data-mode="multi">Two challenges</button>
     <button type="button" data-mode="hide">Hide (fade out)</button>
+    <div class="preview-note">Player position and size (menu settings).</div>
+    <div class="preview-row">
+      <button type="button" data-pos="tl">Top left</button>
+      <button type="button" data-pos="tr">Top right</button>
+      <button type="button" data-pos="l">Left</button>
+      <button type="button" data-pos="r">Right</button>
+    </div>
+    <div class="preview-row">
+      <button type="button" data-size="80">80%</button>
+      <button type="button" data-size="90">90%</button>
+      <button type="button" data-size="100">100%</button>
+      <button type="button" data-size="110">110%</button>
+      <button type="button" data-size="120">120%</button>
+    </div>
     <div id="preview-themes" class="preview-themes"></div>
   </div>
 
@@ -210,8 +224,26 @@ document.querySelectorAll('.preview-controls button[data-mode]').forEach(btn => 
   btn.addEventListener('click', () => setMode(btn.dataset.mode));
 });
 // ?mode=<data-mode> starts in that mode (screenshots); default freeze.
-const startMode = new URLSearchParams(window.location.search).get('mode');
+const params = new URLSearchParams(window.location.search);
+const startMode = params.get('mode');
 setMode((scenes[startMode] || startMode === 'hide') ? startMode : 'freeze');
+
+// Player settings: ?pos=tr|r|tl|l and ?size=80|90|100|110|120 (HudSettings → pos-* / size-* on the root).
+function setPlacement(pos, size) {
+  card.classList.remove('pos-r', 'pos-tl', 'pos-l', 'size-80', 'size-90', 'size-110', 'size-120');
+  if (pos && pos !== 'tr') card.classList.add(`pos-${pos}`);
+  if (size && size !== '100') card.classList.add(`size-${size}`);
+  document.querySelectorAll('.preview-controls button[data-pos]').forEach(b => b.classList.toggle('active', b.dataset.pos === (pos || 'tr')));
+  document.querySelectorAll('.preview-controls button[data-size]').forEach(b => b.classList.toggle('active', b.dataset.size === (size || '100')));
+}
+let placement = { pos: params.get('pos') || 'tr', size: params.get('size') || '100' };
+document.querySelectorAll('.preview-controls button[data-pos]').forEach(btn => {
+  btn.addEventListener('click', () => { placement.pos = btn.dataset.pos; setPlacement(placement.pos, placement.size); });
+});
+document.querySelectorAll('.preview-controls button[data-size]').forEach(btn => {
+  btn.addEventListener('click', () => { placement.size = btn.dataset.size; setPlacement(placement.pos, placement.size); });
+});
+setPlacement(placement.pos, placement.size);
 </script>
 <script src="theme-data.js"></script>
 <script src="theme.js"></script>

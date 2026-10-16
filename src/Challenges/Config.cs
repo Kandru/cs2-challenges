@@ -40,6 +40,10 @@ namespace Challenges
         [JsonPropertyName("tracker_rows")] public int TrackerRows { get; set; } = 3;
         /// <summary>Accent theme name (<c>gui.theme</c>); see <c>HudTheme</c> / <c>tools/hud_themes.py</c>.</summary>
         [JsonPropertyName("theme")] public string Theme { get; set; } = "gold";
+        /// <summary>Default tracker position: <c>top_right</c>, <c>right</c>, <c>top_left</c> or <c>left</c>. Players can override it in the menu.</summary>
+        [JsonPropertyName("tracker_position")] public string TrackerPosition { get; set; } = "top_right";
+        /// <summary>Default tracker size in percent (80, 90, 100, 110 or 120). Players can override it in the menu.</summary>
+        [JsonPropertyName("tracker_size")] public int TrackerSize { get; set; } = 100;
     }
 
     public class PluginConfigNotifications

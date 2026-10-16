@@ -49,15 +49,15 @@ body {
 }
 .TxKicker { margin-right: 10px; font-size: 16px; letter-spacing: 1px; color: var(--accent); }
 .TxTitle { font-size: 20px; letter-spacing: 2px; text-transform: uppercase; color: #f5f7fa; white-space: nowrap; }
-.TxHeadSub { flex: 1; min-width: 0; margin-left: 16px; font-size: 16px; letter-spacing: 1px; color: #a3acb6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.TxHeadSub { flex: 1; min-width: 0; margin-left: 16px; font-size: 20px; letter-spacing: 1px; color: #a3acb6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .TxCount { margin-left: 16px; font-size: 28px; letter-spacing: 1px; color: #f5f7fa; }
 .TxClose { margin-left: 16px; }
 .ph-icon-btn {
-  position: relative; width: 32px; height: 32px; flex: none; background: #ffffff08; border: 1px solid #ffffff33;
+  position: relative; width: 38px; height: 38px; flex: none; background: #ffffff08; border: 1px solid #ffffff33;
   cursor: pointer; transition: background-color .15s, border-color .15s;
 }
 .ph-icon-btn:hover { background: #e05a5a44; border-color: #e05a5a; }
-.ph-close-x { position: absolute; left: 8px; top: 14px; width: 14px; height: 2px; background: #f5f7fa; }
+.ph-close-x { position: absolute; left: 10px; top: 17px; width: 16px; height: 2px; background: #f5f7fa; }
 .ph-close-x-a { transform: rotate(45deg); }
 .ph-close-x-b { transform: rotate(-45deg); }
 
@@ -105,7 +105,7 @@ body {
 .TrackerRow { display: flex; padding: 12px 0 10px; border-bottom: 1px solid #ffffff10; }
 .TrackerRow.is-off { display: none; }
 .TxCardBody { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-.TxCardHead { display: flex; align-items: center; height: 28px; flex: none; }
+.TxCardHead { display: flex; align-items: center; height: 34px; flex: none; }
 .TrackerRow .TxCardHead { height: 24px; }
 .TrackerRow .TxIdx { width: 28px; height: 20px; margin-right: 10px; }
 .TrackerRow .TxSeg { margin: 8px 0; }
@@ -126,34 +126,34 @@ body {
 .TxPanel { position: relative; height: 100%; }
 .MenuMain { flex: 1; min-width: 0; }
 .TxColGap { width: 16px; flex: none; }
-.MenuScore { width: 420px; flex: none; }
+.MenuScore { width: 440px; flex: none; }
 .TxPanelContent { position: relative; z-index: 2; display: flex; flex-direction: column; height: 100%; }
 .MenuBody { flex: 1; min-height: 0; display: flex; }
 
 /* Rail */
-.TxRail { width: 220px; flex: none; padding-top: 16px; display: flex; flex-direction: column; }
-.TxRailHead { margin: 0 0 8px 16px; font-size: 14px; letter-spacing: 3px; text-transform: uppercase; color: #a3acb6; }
+.TxRail { width: 240px; flex: none; padding-top: 16px; display: flex; flex-direction: column; }
+.TxRailHead { margin: 0 0 8px 16px; font-size: 16px; letter-spacing: 3px; text-transform: uppercase; color: #a3acb6; }
 .TxNav {
-  display: flex; align-items: center; height: 36px; padding: 0 16px 0 13px; margin-bottom: 2px;
+  display: flex; align-items: center; height: 44px; padding: 0 16px 0 13px; margin-bottom: 2px;
   background: transparent; border: 0; border-left: 3px solid transparent; color: inherit; font: inherit; cursor: pointer;
   transition: background-color .15s;
 }
 .TxNav:hover { background: #ffffff0d; }
 .TxNav.active { background: var(--accent-22); border-left-color: var(--accent); }
 .TxNav.is-disabled { opacity: .4; pointer-events: none; }
-.TxNavLabel { flex: 1; text-align: left; font-size: 16px; letter-spacing: 2px; text-transform: uppercase; color: #e8eef4; }
-.TxNavCount { margin-left: 8px; font-size: 16px; color: #a3acb6; }
+.TxNavLabel { flex: 1; text-align: left; font-size: 20px; letter-spacing: 1px; text-transform: uppercase; color: #e8eef4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.TxNavCount { margin-left: 8px; font-size: 20px; color: #a3acb6; }
 .TxNav.active .TxNavLabel { color: #f5f7fa; }
 .TxNav.active .TxNavCount { color: var(--accent); }
 
 /* Card grid */
 .MenuList { flex: 1; min-width: 0; display: flex; border-left: 1px solid #ffffff14; }
 .TxListInner { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-.TxListBar { display: flex; align-items: center; height: 32px; margin-bottom: 12px; flex: none; }
-.TxListPage { flex: 1; font-size: 14px; letter-spacing: 3px; text-transform: uppercase; color: #a3acb6; }
+.TxListBar { display: flex; align-items: center; height: 36px; margin-bottom: 12px; flex: none; }
+.TxListPage { flex: 1; font-size: 16px; letter-spacing: 3px; text-transform: uppercase; color: #a3acb6; }
 .MenuTitleNav {
-  width: 36px; height: 28px; flex: none; margin-left: 8px; background: #ffffff08; border: 1px solid #ffffff1f;
-  color: #e8eef4; font: inherit; font-size: 16px; cursor: pointer; transition: background-color .15s, border-color .15s;
+  width: 44px; height: 34px; flex: none; margin-left: 8px; background: #ffffff08; border: 1px solid #ffffff1f;
+  color: #e8eef4; font: inherit; font-size: 20px; cursor: pointer; transition: background-color .15s, border-color .15s;
 }
 .MenuTitleNav:hover { background: #ffffff14; border-color: var(--accent-66); }
 .MenuTitleNav.is-disabled { opacity: .4; pointer-events: none; }
@@ -164,20 +164,20 @@ body {
   flex: 1 1 0; min-width: 0; display: flex; padding: 14px 0; background: #ffffff08; border: 1px solid #ffffff14; overflow: hidden;
 }
 .MenuRow.empty { opacity: 0; }
-.TxCardTitle { flex: 1; min-width: 0; font-size: 18px; letter-spacing: 2px; text-transform: uppercase; color: #f5f7fa; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.TxCardPct { margin-left: 12px; font-size: 24px; color: var(--accent); }
-.TxWhen { margin-bottom: 10px; font-size: 14px; color: #a3acb6; }
-.TxSection { margin: 12px 0 6px; font-size: 14px; letter-spacing: 3px; text-transform: uppercase; color: #a3acb6; }
+.TxCardTitle { flex: 1; min-width: 0; font-size: 22px; letter-spacing: 2px; text-transform: uppercase; color: #f5f7fa; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.TxCardPct { margin-left: 12px; font-size: 28px; color: var(--accent); }
+.TxWhen { margin-bottom: 10px; font-size: 18px; color: #a3acb6; }
+.TxSection { margin: 12px 0 6px; font-size: 16px; letter-spacing: 3px; text-transform: uppercase; color: #a3acb6; }
 .MenuByList { display: flex; flex-direction: column; }
 .MenuByRow { display: flex; margin-bottom: 6px; }
-.MenuBy { display: flex; align-items: center; height: 24px; padding: 0 10px; margin-right: 6px; background: #ffffff08; border: 1px solid #ffffff1f; }
+.MenuBy { display: flex; align-items: center; height: 30px; padding: 0 10px; margin-right: 6px; background: #ffffff08; border: 1px solid #ffffff1f; }
 .MenuBy.is-off { display: none; }
 .MenuBy.is-empty { padding-left: 0; background: transparent; border-color: transparent; }
 .MenuBy.is-you { background: var(--accent-22); border-color: var(--accent); }
-.MenuByLabel { max-width: 160px; font-size: 14px; color: #e8eef4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.MenuByLabel { max-width: 190px; font-size: 18px; color: #e8eef4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .MenuBy.is-empty .MenuByLabel { color: #a3acb6; }
 .MenuBy.is-you .MenuByLabel { color: #f5f7fa; }
-.MenuCredit { flex: none; padding: 8px 0; border-top: 1px solid #ffffff14; font-size: 14px; color: #a3acb6; text-align: center; }
+.MenuCredit { flex: none; padding: 8px 0; border-top: 1px solid #ffffff14; font-size: 16px; color: #a3acb6; text-align: center; }
 
 /* Scoreboard */
 .MenuScore .TxTitle { flex: 1; }
@@ -188,42 +188,42 @@ body {
 .ScoreFilterGroup { display: flex; }
 .ScoreFilterSpacer { flex: 1; }
 .TxChip {
-  height: 28px; padding: 0 12px; margin-right: 6px; background: #ffffff08; border: 1px solid #ffffff1f;
+  height: 34px; padding: 0 12px; margin-right: 6px; background: #ffffff08; border: 1px solid #ffffff1f;
   color: #e8eef4; font: inherit; cursor: pointer; transition: background-color .15s, border-color .15s;
 }
 .TxChip:last-child { margin-right: 0; }
 .TxChip:hover { background: #ffffff14; border-color: var(--accent-66); }
 .TxChip.active { background: var(--accent-22); border-color: var(--accent); color: #f5f7fa; }
-.TxChipLabel { font-size: 14px; letter-spacing: 1px; text-transform: uppercase; }
+.TxChipLabel { font-size: 16px; letter-spacing: 1px; text-transform: uppercase; }
 .ScoreSelfCard { padding: 12px 14px; margin-bottom: 14px; background: var(--accent-18); border: 1px solid var(--accent); flex: none; }
 .ScoreSelfCard.empty { display: none; }
 .ScoreSelfTop { display: flex; align-items: center; margin-bottom: 8px; }
-.ScoreSelfRank { width: 64px; font-size: 28px; color: var(--accent); }
-.ScoreSelfName { flex: 1; min-width: 0; font-size: 18px; letter-spacing: 2px; text-transform: uppercase; color: #f5f7fa; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ScoreSelfRank { width: 64px; font-size: 32px; color: var(--accent); }
+.ScoreSelfName { flex: 1; min-width: 0; font-size: 22px; letter-spacing: 2px; text-transform: uppercase; color: #f5f7fa; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ScoreSelfStats { display: flex; gap: 8px; }
 .ScoreSelfStat { flex: 1; padding: 8px 12px; background: #0a0d11aa; display: flex; flex-direction: column; }
-.ScoreSelfStatLabel { margin-bottom: 4px; font-size: 14px; letter-spacing: 2px; text-transform: uppercase; color: #a3acb6; }
-.ScoreSelfStatVal { font-size: 18px; color: #f5f7fa; }
-.ScoreHeader { display: flex; align-items: center; height: 32px; padding: 0 12px; border-bottom: 1px solid #ffffff1f; flex: none; }
-.ScoreHead { font-size: 14px; letter-spacing: 1px; text-transform: uppercase; color: #a3acb6; }
+.ScoreSelfStatLabel { margin-bottom: 4px; font-size: 16px; letter-spacing: 2px; text-transform: uppercase; color: #a3acb6; }
+.ScoreSelfStatVal { font-size: 22px; color: #f5f7fa; }
+.ScoreHeader { display: flex; align-items: center; height: 38px; padding: 0 12px; border-bottom: 1px solid #ffffff1f; flex: none; }
+.ScoreHead { font-size: 16px; letter-spacing: 1px; text-transform: uppercase; color: #a3acb6; }
 .ScoreHead.sort-active { color: var(--accent); }
 .ScoreRows { flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; }
 .ScoreRow {
-  display: flex; align-items: center; height: 36px; flex: none; padding: 0 12px 0 9px;
+  display: flex; align-items: center; height: 42px; flex: none; padding: 0 12px 0 9px;
   border-left: 3px solid transparent; border-bottom: 1px solid #ffffff10; cursor: pointer; transition: background-color .15s;
 }
 .ScoreRow.alt { background: #ffffff05; }
 .ScoreRow:hover { background: #ffffff0d; }
 .ScoreRow.is-self { background: var(--accent-22); border-left-color: var(--accent); }
 .ScoreRow.is-viewing { background: var(--accent-44); border-left-color: var(--accent); }
-.ScoreRank { width: 36px; font-size: 16px; color: #a3acb6; }
+.ScoreRank { width: 44px; font-size: 20px; color: #a3acb6; }
 .ScoreRow.rank-1 .ScoreRank { color: #f0c64a; }
 .ScoreRow.rank-2 .ScoreRank { color: #c9d2dc; }
 .ScoreRow.rank-3 .ScoreRank { color: #d08a4e; }
-.ScoreName { flex: 1; min-width: 0; font-size: 16px; color: #e8eef4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.ScoreCur { width: 72px; margin-right: 12px; text-align: right; font-size: 16px; color: #f5f7fa; }
-.ScoreTot { width: 64px; text-align: right; font-size: 16px; color: #a3acb6; }
-.ScoreHeader .ScoreRank, .ScoreHeader .ScoreName, .ScoreHeader .ScoreCur, .ScoreHeader .ScoreTot { font-size: 14px; color: #a3acb6; }
+.ScoreName { flex: 1; min-width: 0; font-size: 20px; color: #e8eef4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ScoreCur { width: 84px; margin-right: 12px; text-align: right; font-size: 20px; color: #f5f7fa; }
+.ScoreTot { width: 76px; text-align: right; font-size: 20px; color: #a3acb6; }
+.ScoreHeader .ScoreRank, .ScoreHeader .ScoreName, .ScoreHeader .ScoreCur, .ScoreHeader .ScoreTot { font-size: 16px; color: #a3acb6; }
 .ScoreHeader .ScoreCur.sort-active, .ScoreHeader .ScoreTot.sort-active { color: var(--accent); }
 
 /* Preview chrome: theme picker (mirrors gui.theme). ?shot hides it for screenshots. */
@@ -233,13 +233,13 @@ body {
   position: absolute; left: 20px; top: 20px; z-index: 200;
   display: flex; flex-direction: column; gap: 8px; max-width: 280px;
 }
-.preview-controls button[data-mode] {
+.preview-controls button:is([data-mode], [data-pos], [data-size]) {
   font: 700 13px "Barlow Condensed", sans-serif; letter-spacing: 1px; text-transform: uppercase;
   padding: 8px 12px; border: 1px solid #ffffff22;
   background: #ffffff0d; color: #e8eef4; cursor: pointer; text-align: left;
 }
-.preview-controls button[data-mode]:hover { border-color: #ffffff44; background: #ffffff1c; }
-.preview-controls button[data-mode].active { border-color: var(--preview-accent); color: var(--preview-accent); background: #ffffff14; }
+.preview-controls button:is([data-mode], [data-pos], [data-size]):hover { border-color: #ffffff44; background: #ffffff1c; }
+.preview-controls button:is([data-mode], [data-pos], [data-size]).active { border-color: var(--preview-accent); color: var(--preview-accent); background: #ffffff14; }
 .preview-note { font-size: 12px; font-weight: 500; color: #a3acb6; line-height: 1.4; }
 .preview-bar {
   left: 16px; right: 16px; top: 18px; max-width: none;
@@ -252,3 +252,76 @@ body {
 .preview-theme { width: 28px; height: 28px; padding: 0; border: 2px solid #ffffff33; cursor: pointer; background: #666; }
 .preview-theme:hover { border-color: #ffffff88; }
 .preview-theme.active { border-color: #ffffff; box-shadow: 0 0 0 1px #00000088, 0 0 0 3px var(--swatch, #fff); }
+
+/* Menu type scale (shared classes; the tracker keeps the base sizes) */
+.MenuRoot .TxHead { height: 60px; }
+.MenuRoot .TxKicker { font-size: 20px; }
+.MenuRoot .TxTitle { font-size: 24px; }
+.MenuRoot .TxCount { font-size: 32px; }
+.MenuRoot .TxIdx { width: 40px; height: 30px; }
+.MenuRoot .TxIdxLabel { font-size: 18px; }
+.MenuRoot .MenuTask { height: 28px; }
+.MenuRoot .MenuTaskMark { width: 14px; height: 14px; }
+.MenuRoot .MenuTaskLabel { font-size: 18px; }
+.TxHeadBtn { flex: none; margin-left: 16px; }
+
+/* Settings view (view-settings on the root) */
+.SetScreen { display: none; position: absolute; inset: 0; align-items: center; justify-content: center; }
+.MenuRoot.view-settings .SetScreen { display: flex; }
+.MenuRoot.view-settings .MenuColumns { display: none; }
+.SetPanel { width: 600px; height: 600px; flex: none; }
+.SetPanel .TxTitle { flex: 1; }
+.SetBody { flex: 1; min-height: 0; display: flex; }
+.SetInner { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.SetInner .TxSection { margin: 20px 0 10px; }
+.SetInner .TxSection.SetFirst { margin-top: 4px; }
+.SetSwitch {
+  display: flex; align-items: center; width: 100%; height: 56px; flex: none; padding: 0 16px;
+  background: #ffffff08; border: 1px solid #ffffff1f; color: inherit; font: inherit; cursor: pointer;
+  transition: background-color .15s, border-color .15s;
+}
+.SetSwitch:hover { background: #ffffff14; }
+.SetSwitchLabel { flex: 1; text-align: left; font-size: 20px; letter-spacing: 1px; text-transform: uppercase; color: #f5f7fa; }
+.SetSwitchState { margin-right: 14px; font-size: 18px; letter-spacing: 2px; text-transform: uppercase; color: #a3acb6; }
+.SetSwitch.is-on .SetSwitchState { color: var(--accent); }
+.SetSwitchTrack { position: relative; width: 48px; height: 24px; flex: none; background: #ffffff14; border: 1px solid #ffffff33; transition: background-color .15s, border-color .15s; }
+.SetSwitch.is-on .SetSwitchTrack { background: var(--accent-22); border-color: var(--accent); }
+.SetSwitchKnob { position: absolute; left: 3px; top: 3px; width: 16px; height: 16px; background: #a3acb6; transition: transform .15s ease-out, background-color .15s; }
+.SetSwitch.is-on .SetSwitchKnob { background: var(--accent); transform: translateX(24px); }
+.SetDependent { display: flex; flex-direction: column; transition: opacity .15s; }
+.SetPanel.tracker-off .SetDependent { opacity: .4; }
+.SetMap { position: relative; height: 210px; flex: none; background: #0000004d; border: 1px solid #ffffff1f; }
+.SetMapCrossH, .SetMapCrossV { position: absolute; left: 50%; top: 50%; background: #ffffff26; transform: translate(-50%, -50%); }
+.SetMapCrossH { width: 18px; height: 2px; }
+.SetMapCrossV { width: 2px; height: 18px; }
+.SetPos {
+  position: absolute; display: flex; align-items: center; width: 184px; height: 48px; padding: 0 12px;
+  background: #ffffff08; border: 1px solid #ffffff26; color: inherit; font: inherit; cursor: pointer;
+  transition: background-color .15s, border-color .15s;
+}
+.SetPos:hover { background: #ffffff14; border-color: var(--accent-66); }
+.SetPos.active { background: var(--accent-22); border-color: var(--accent); }
+.SetPosTL { left: 12px; top: 12px; }
+.SetPosTR { right: 12px; top: 12px; }
+.SetPosL { left: 12px; top: 50%; transform: translateY(-50%); }
+.SetPosR { right: 12px; top: 50%; transform: translateY(-50%); }
+.SetPosMark { width: 14px; height: 14px; flex: none; margin-right: 10px; border: 2px solid #ffffff55; }
+.SetPos.active .SetPosMark { background: var(--accent); border-color: var(--accent); }
+.SetPosLabel { flex: 1; text-align: left; font-size: 18px; letter-spacing: 1px; text-transform: uppercase; color: #e8eef4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.SetPos.active .SetPosLabel { color: #f5f7fa; }
+.SetStepper { display: flex; align-items: center; height: 44px; flex: none; }
+.SetStepper .MenuTitleNav { width: 52px; height: 40px; margin-left: 0; }
+.SetSizeValue { width: 120px; text-align: center; font-size: 24px; color: #f5f7fa; }
+.SetHint { margin-top: 24px; font-size: 16px; color: #a3acb6; }
+
+/* Tracker position (pos-*) and size (size-*): the sheet scales each metric; zoom approximates that here. */
+.Tracker.pos-r { top: 50%; transform: translateY(-50%); }
+.Tracker.pos-tl { right: auto; left: 10px; }
+.Tracker.pos-l { right: auto; left: 10px; top: 50%; transform: translateY(-50%); }
+.Tracker.size-80 { zoom: .8; }
+.Tracker.size-90 { zoom: .9; }
+.Tracker.size-110 { zoom: 1.1; }
+.Tracker.size-120 { zoom: 1.2; }
+.preview-row { display: flex; flex-wrap: wrap; gap: 4px; }
+.preview-row button { flex: 1; text-align: center !important; }
+.stage:not(.settings-open) .preview-tracker { display: none; }

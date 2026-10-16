@@ -5,7 +5,10 @@ using CounterStrikeSharp.API.Modules.Cvars;
 
 namespace Challenges
 {
-    /// <summary>Top-right challenge tracker: freeze-time overview and compact progress popups.</summary>
+    /// <summary>
+    /// Challenge tracker: freeze-time overview and compact progress popups. Top-right at 100% unless the player
+    /// moved or resized it (<see cref="HudSettings"/>).
+    /// </summary>
     public static class Tracker
     {
         public const string Panel = "Tracker";
@@ -74,9 +77,14 @@ namespace Challenges
 
         private static float ProgressSeconds => Math.Max(1f, Context.Config.Gui.ProgressDuration);
 
+        /// <summary>Freeze overview or settings preview: the card stays up between progress popups.</summary>
+        private static bool IsHolding(PlayerState state) => state.TrackerFreezeVisible || state.TrackerPreview;
+
         public static void ShowFreeze(CCSPlayerController player)
         {
-            if (!Players.IsHumanViewer(player) || Context.GetState(player) is not { } state)
+            if (!Players.IsHumanViewer(player)
+                || Context.GetState(player) is not { } state
+                || !HudSettings.TrackerVisible(state))
             {
                 return;
             }
@@ -119,9 +127,55 @@ namespace Challenges
             CustomHud.HidePanel(player, Panel);
         }
 
+        /// <summary>Settings view opened: show the overview so position and size changes are visible at once.</summary>
+        public static void BeginPreview(CCSPlayerController player)
+        {
+            if (Context.GetState(player) is not { } state)
+            {
+                return;
+            }
+
+            state.TrackerPreview = true;
+            state.InvalidateTracker();
+            Refresh(player);
+        }
+
+        public static void EndPreview(CCSPlayerController player)
+        {
+            if (Context.GetState(player) is not { TrackerPreview: true } state)
+            {
+                return;
+            }
+
+            state.TrackerPreview = false;
+            state.InvalidateTracker();
+            Refresh(player);
+        }
+
+        /// <summary>A tracker setting changed: repaint so classes and visibility follow it.</summary>
+        public static void ApplySettings(CCSPlayerController player)
+        {
+            if (Context.GetState(player) is not { } state)
+            {
+                return;
+            }
+
+            if (!HudSettings.TrackerVisible(state))
+            {
+                ClearProgressState(state);
+                state.TrackerRuleBrokenQueue.Clear();
+            }
+
+            state.InvalidateTracker();
+            Refresh(player);
+        }
+
         public static void ShowProgress(CCSPlayerController player, IReadOnlyList<TrackerProgressItem> items)
         {
-            if (!Players.IsHumanViewer(player) || Context.GetState(player) is not { } state || items.Count == 0)
+            if (items.Count == 0
+                || !Players.IsHumanViewer(player)
+                || Context.GetState(player) is not { } state
+                || !HudSettings.TrackerVisible(state))
             {
                 return;
             }
@@ -131,7 +185,9 @@ namespace Challenges
 
         public static void ShowRuleBroken(CCSPlayerController player, string challengeId, string taskId)
         {
-            if (!Players.IsHumanViewer(player) || Context.GetState(player) is not { } state)
+            if (!Players.IsHumanViewer(player)
+                || Context.GetState(player) is not { } state
+                || !HudSettings.TrackerVisible(state))
             {
                 return;
             }
@@ -190,8 +246,15 @@ namespace Challenges
                 return;
             }
 
+            // A menu released without its close callback (new open, round reset) must not keep the preview up.
+            if (state.TrackerPreview && !HudMenu.IsOpen(player))
+            {
+                state.TrackerPreview = false;
+                state.InvalidateTracker();
+            }
+
             // Idle: nothing to show, time or hide. Every path that shows the card again invalidates it first.
-            if (!state.TrackerFreezeVisible
+            if (!IsHolding(state)
                 && state.TrackerProgressUntil == null
                 && state.TrackerFadeUntil == null
                 && !CustomHud.IsPanelVisible(player, Panel))
@@ -222,7 +285,7 @@ namespace Challenges
                     return;
                 }
 
-                if (!state.TrackerFreezeVisible)
+                if (!IsHolding(state))
                 {
                     CustomHud.FinishFadeOut(player, Panel);
                     state.InvalidateTracker();
@@ -263,7 +326,7 @@ namespace Challenges
                     return;
                 }
 
-                if (!state.TrackerFreezeVisible)
+                if (!IsHolding(state))
                 {
                     BeginFadeOut(player, state, upNext: false);
                     return;
@@ -272,7 +335,7 @@ namespace Challenges
                 state.InvalidateTracker();
             }
 
-            if (!state.TrackerFreezeVisible && state.TrackerProgressUntil == null)
+            if (!IsHolding(state) && state.TrackerProgressUntil == null)
             {
                 if (CustomHud.IsPanelVisible(player, Panel))
                 {
@@ -294,6 +357,7 @@ namespace Challenges
             CustomHud.SetText(player, Panel, VarCount, string.Empty);
             PaintHint(player, string.Empty);
             HudTheme.Apply(player, Panel);
+            HudSettings.WriteDefaults(player);
             HideTimer(player, Context.GetState(player));
             CustomHud.SetPercent(player, TimerFillId, 100);
             for (int i = 0; i < MaxRows; i++)
@@ -472,7 +536,7 @@ namespace Challenges
             }
 
             RunningSchedule? schedule = Context.Schedule;
-            if (schedule == null || schedule.Challenges.Count == 0)
+            if (schedule == null || schedule.Challenges.Count == 0 || !HudSettings.TrackerVisible(state))
             {
                 if (CustomHud.IsPanelVisible(player, Panel))
                 {
@@ -553,6 +617,7 @@ namespace Challenges
 
             state.TrackerFingerprint = key;
             HudTheme.Apply(player, Panel);
+            HudSettings.ApplyTracker(player, state);
             CustomHud.ShowPanel(player, Panel);
             CustomHud.SetText(player, Panel, VarTitle, heading);
             CustomHud.SetText(player, Panel, VarCount, count);

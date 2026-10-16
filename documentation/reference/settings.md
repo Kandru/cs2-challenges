@@ -20,7 +20,9 @@ Created on first start. Example:
     "show_on_progress": true,
     "progress_duration": 5,
     "tracker_rows": 3,
-    "theme": "gold"
+    "theme": "gold",
+    "tracker_position": "top_right",
+    "tracker_size": 100
   },
   "notifications": {
     "notify_player_on_challenge_progress": true,
@@ -62,6 +64,8 @@ Created on first start. Example:
 | `gui.progress_duration` | Seconds the progress tracker stays up (minimum 1). |
 | `gui.tracker_rows` | Rows on the tracker (clamped 1–5). |
 | `gui.theme` | Accent color: `red`, `coral`, `orange`, `copper`, `gold`, `t`, `lime`, `green`, `teal`, `cyan`, `blue`, `ct`, `purple`, `magenta`, `pink`, `silver`. Unknown names become `gold`. |
+| `gui.tracker_position` | Default tracker position: `top_right`, `right`, `top_left` or `left` (`right` / `left` = vertically centred). Unknown names become `top_right`. Players can choose their own in the menu settings. |
+| `gui.tracker_size` | Default tracker size in percent: `80`, `90`, `100`, `110` or `120`. Other values snap to the nearest step. Players can choose their own in the menu settings. |
 | `notifications.*` | Chat and sound on progress / complete / rule broken. Empty sound string = no sound. A value starting with `sounds/` is a client-only `play`. Any other value is a sound event (`EmitSound`). With `notify_other_on_challenge_complete`, several completions from one progress update reach the other players as a single message. |
 | `discord.language` | Language for Discord embed titles, field labels, and dates (`en`, `de`, …). Challenge/task names use the matching title from the challenge file. |
 | `discord.timezone` | Timezone for schedule start/end (IANA/Windows id, e.g. `Europe/Berlin`). Empty = server local. |

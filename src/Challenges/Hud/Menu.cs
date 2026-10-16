@@ -39,7 +39,7 @@ namespace Challenges
             "menu_title", "menu_count", "menu_filter_h", "list_title", "list_page",
             "menu_f_all", "menu_f_solved", "menu_f_progress", "menu_f_ending", "menu_f_starting",
             "menu_fc_all", "menu_fc_solved", "menu_fc_progress", "menu_fc_ending", "menu_fc_starting",
-            "menu_empty", "menu_by_h",
+            "menu_empty", "menu_by_h", "menu_settings",
             "score_title", "score_page", "score_prev", "score_next",
             "score_f_all", "score_f_online", "score_s_solved", "score_s_lifetime",
             "score_h_rank", "score_h_name", "score_h_cur", "score_h_tot",
@@ -51,6 +51,7 @@ namespace Challenges
             ("menu_title", "hud.menu.title"),
             ("menu_filter_h", "hud.menu.filter"),
             ("menu_by_h", "hud.menu.solved_by"),
+            ("menu_settings", "hud.menu.settings"),
             ("score_title", "hud.menu.scoreboard"),
             ("score_f_all", "hud.menu.scoreboard.filter.all"),
             ("score_f_online", "hud.menu.scoreboard.filter.online"),
@@ -195,6 +196,8 @@ namespace Challenges
             state.ScoreboardSort = ScoreboardSort.Solved;
             state.ScoreboardFilter = ScoreboardFilter.Online;
             state.MenuSubjectSteamId = null;
+            state.MenuSettings = false;
+            Tracker.EndPreview(player);
             // Force the first paint to clear any rows left from a previous open.
             state.MenuListPainted = ListSlots;
             Array.Clear(state.MenuScoreRowSteamIds);
@@ -209,6 +212,10 @@ namespace Challenges
                     if (Context.GetState(closed) is { } s)
                     {
                         s.ActiveMenu = ActiveMenu.None;
+                        if (s.MenuSettings)
+                        {
+                            SettingsMenu.Close(closed, s);
+                        }
                     }
                 },
             });
@@ -240,6 +247,9 @@ namespace Challenges
                 case HudMenu.BtnClose:
                     HudMenu.Close(player);
                     return;
+                case HudMenu.BtnSettings:
+                    SettingsMenu.Open(player, state);
+                    break;
                 case HudMenu.BtnScorePrev:
                     state.ScoreboardPage = Math.Max(0, state.ScoreboardPage - 1);
                     break;
@@ -277,6 +287,16 @@ namespace Challenges
                     state.MenuListPage = 0;
                     break;
                 default:
+                    if (SettingsMenu.Owns(buttonId))
+                    {
+                        if (!SettingsMenu.OnButton(player, state, buttonId))
+                        {
+                            return;
+                        }
+
+                        break;
+                    }
+
                     if (TrySelectScoreRow(player, state, buttonId))
                     {
                         break;
@@ -361,6 +381,8 @@ namespace Challenges
             CustomHud.SetHasClass(player, PinnedRowId, "empty", true);
             CustomHud.SetHasClass(player, ScoreHeadCurId, "sort-active", false);
             CustomHud.SetHasClass(player, ScoreHeadTotId, "sort-active", false);
+            CustomHud.SetHasClass(player, Panel, SettingsMenu.ViewClass, false);
+            SettingsMenu.WriteDefaults(player);
         }
 
         /// <summary>
@@ -408,10 +430,18 @@ namespace Challenges
 
             state.MenuDirty = false;
             state.MenuPaintedAt = Environment.TickCount64;
+            HudTheme.Apply(player, Panel);
+            CustomHud.SetHasClass(player, Panel, SettingsMenu.ViewClass, state.MenuSettings);
+            if (state.MenuSettings)
+            {
+                // The list and scoreboard are collapsed: paint the settings only.
+                SettingsMenu.Paint(player, state);
+                return;
+            }
+
             RunningSchedule? schedule = Context.Schedule;
             MenuSubject subject = ResolveSubject(player, state);
             EnsureFilterAvailable(player, state, subject.Progress, schedule);
-            HudTheme.Apply(player, Panel);
             PaintChrome(player, state, subject);
             CustomHud.SetText(
                 player,

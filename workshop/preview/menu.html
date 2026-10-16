@@ -8,8 +8,30 @@
 <body>
 <div class="stage" data-theme="gold">
   <div class="preview-controls preview-bar">
-    <div class="preview-note">Menu v5 mock (filter rail, 2×2 cards, scoreboard panel). Theme swatches preview <code>gui.theme</code>.</div>
+    <div class="preview-note">Menu v5 mock (filter rail, 2×2 cards, scoreboard panel, settings view). Theme swatches preview <code>gui.theme</code>; <code>?view=settings</code> opens the settings.</div>
     <div id="preview-themes" class="preview-themes"></div>
+  </div>
+  <!-- Tracker live preview: only visible while the settings view is open. -->
+  <div id="Tracker" class="Tracker ph-card preview-tracker">
+    <div class="ph-bg"></div>
+    <i class="TxCorner TxCornerTL"></i><i class="TxCorner TxCornerTR"></i><i class="TxCorner TxCornerBL"></i><i class="TxCorner TxCornerBR"></i>
+    <div class="TrackerContent">
+      <div class="TxHead"><span class="TxKicker">//</span><span class="TxTitle">Challenges</span><span class="TxCount">2 / 12</span></div>
+      <div class="TrackerBody">
+        <div class="TrackerRow"><div class="TxPad"></div><div class="TxCardBody">
+          <div class="TxCardHead"><div class="TxIdx"><span class="TxIdxLabel">01</span></div><span class="TxRowTitle">Sharp and Deadly</span><span class="TxRowPct">40%</span></div>
+          <div class="TxSeg"><div class="ph-stat-track TxSegTrack"><div class="ph-stat-fill p40"></div></div><div class="TxSegCuts"><div class="TxSegCut"></div><div class="TxSegCut"></div><div class="TxSegCut"></div><div class="TxSegCut"></div><div class="TxSegCut"></div><div class="TxSegCut"></div><div class="TxSegCut"></div><div class="TxSegCut"></div><div class="TxSegCut"></div><div class="TxSegCut"></div></div></div>
+          <div class="MenuTasks"><div class="MenuTask"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">2/10 knife kills while flashing</span></div><div class="MenuTask"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">0/25 knife kills</span></div></div>
+        </div><div class="TxPad"></div></div>
+        <div class="TrackerRow"><div class="TxPad"></div><div class="TxCardBody">
+          <div class="TxCardHead"><div class="TxIdx"><span class="TxIdxLabel">02</span></div><span class="TxRowTitle">Headshots in a row</span><span class="TxRowPct">30%</span></div>
+          <div class="TxSeg"><div class="ph-stat-track TxSegTrack"><div class="ph-stat-fill p30"></div></div><div class="TxSegCuts"><div class="TxSegCut"></div><div class="TxSegCut"></div><div class="TxSegCut"></div><div class="TxSegCut"></div><div class="TxSegCut"></div><div class="TxSegCut"></div><div class="TxSegCut"></div><div class="TxSegCut"></div><div class="TxSegCut"></div><div class="TxSegCut"></div></div></div>
+          <div class="MenuTasks"><div class="MenuTask"><span class="MenuTaskMark"></span><span class="MenuTaskLabel">3/10 headshots through smoke</span></div></div>
+        </div><div class="TxPad"></div></div>
+      </div>
+      <span class="TrackerHint">Type !c to open overview</span>
+      <div class="TxVPad"></div>
+    </div>
   </div>
   <div id="Menu" class="MenuRoot ph-fs ph-card theme-gold">
     <div class="MenuColumns">
@@ -22,6 +44,7 @@
             <span class="TxTitle">Challenges</span>
             <span class="TxHeadSub">My challenges</span>
             <span class="TxCount">3 / 12</span>
+            <button type="button" class="TxChip TxHeadBtn" id="open-settings"><span class="TxChipLabel">Settings</span></button>
             <button class="ph-icon-btn TxClose"><span class="ph-close-x ph-close-x-a"></span><span class="ph-close-x ph-close-x-b"></span></button>
           </div>
           <div class="MenuBody">
@@ -101,6 +124,51 @@
                 <div class="ScoreRow alt"><span class="ScoreRank">#4</span><span class="ScoreName">Carol</span><span class="ScoreCur">2 / 12</span><span class="ScoreTot">7</span></div>
                 <div class="ScoreRow"><span class="ScoreRank">#5</span><span class="ScoreName">Dave</span><span class="ScoreCur">1 / 12</span><span class="ScoreTot">3</span></div>
               </div>
+              <div class="TxVPad"></div>
+            </div>
+            <div class="TxPad"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="SetScreen">
+      <div id="ch-set" class="TxPanel SetPanel">
+        <div class="ph-bg"></div>
+        <i class="TxCorner TxCornerTL"></i><i class="TxCorner TxCornerTR"></i><i class="TxCorner TxCornerBL"></i><i class="TxCorner TxCornerBR"></i>
+        <div class="TxPanelContent">
+          <div class="TxHead">
+            <span class="TxKicker">//</span>
+            <span class="TxTitle">Settings</span>
+            <button type="button" class="TxChip TxHeadBtn" id="set-back"><span class="TxChipLabel">Back</span></button>
+            <button class="ph-icon-btn TxClose"><span class="ph-close-x ph-close-x-a"></span><span class="ph-close-x ph-close-x-b"></span></button>
+          </div>
+          <div class="SetBody">
+            <div class="TxPad"></div>
+            <div class="SetInner">
+              <div class="TxVPad"></div>
+              <span class="TxSection SetFirst">Widget</span>
+              <button type="button" class="SetSwitch is-on" id="set-show">
+                <span class="SetSwitchLabel">Show widget</span>
+                <span class="SetSwitchState" id="set-show-state">On</span>
+                <span class="SetSwitchTrack"><span class="SetSwitchKnob"></span></span>
+              </button>
+              <div class="SetDependent">
+                <span class="TxSection">Position</span>
+                <div class="SetMap">
+                  <i class="SetMapCrossH"></i><i class="SetMapCrossV"></i>
+                  <button type="button" class="SetPos SetPosTL" data-set-pos="tl"><span class="SetPosMark"></span><span class="SetPosLabel">Top left</span></button>
+                  <button type="button" class="SetPos SetPosTR active" data-set-pos="tr"><span class="SetPosMark"></span><span class="SetPosLabel">Top right</span></button>
+                  <button type="button" class="SetPos SetPosL" data-set-pos="l"><span class="SetPosMark"></span><span class="SetPosLabel">Left</span></button>
+                  <button type="button" class="SetPos SetPosR" data-set-pos="r"><span class="SetPosMark"></span><span class="SetPosLabel">Right</span></button>
+                </div>
+                <span class="TxSection">Size</span>
+                <div class="SetStepper">
+                  <button type="button" class="MenuTitleNav" id="set-size-dec">-</button>
+                  <span class="SetSizeValue" id="set-size">100%</span>
+                  <button type="button" class="MenuTitleNav" id="set-size-inc">+</button>
+                </div>
+              </div>
+              <span class="SetHint">The widget shows a preview while this page is open. Saved for you only.</span>
               <div class="TxVPad"></div>
             </div>
             <div class="TxPad"></div>
@@ -239,6 +307,54 @@ nextBtn.addEventListener('click', () => {
   if (page < pages - 1) { page++; paint(); }
 });
 paint();
+
+// Settings view (SettingsMenu): view-settings on the root, live tracker preview behind it.
+// ?view=settings opens it; ?pos=tr|r|tl|l, ?size=80..120 and ?widget=off preset the choices.
+const SIZES = [80, 90, 100, 110, 120];
+const menuRoot = document.getElementById('Menu');
+const stage = document.querySelector('.stage');
+const tracker = document.getElementById('Tracker');
+const query = new URLSearchParams(window.location.search);
+const settings = {
+  show: query.get('widget') !== 'off',
+  pos: query.get('pos') || 'tr',
+  size: SIZES.includes(Number(query.get('size'))) ? Number(query.get('size')) : 100,
+};
+
+function setView(open) {
+  menuRoot.classList.toggle('view-settings', open);
+  stage.classList.toggle('settings-open', open);
+}
+
+function paintSettings() {
+  document.getElementById('set-show').classList.toggle('is-on', settings.show);
+  document.getElementById('set-show-state').textContent = settings.show ? 'On' : 'Off';
+  document.getElementById('ch-set').classList.toggle('tracker-off', !settings.show);
+  document.querySelectorAll('[data-set-pos]').forEach(b => b.classList.toggle('active', b.dataset.setPos === settings.pos));
+  document.getElementById('set-size').textContent = `${settings.size}%`;
+  const index = SIZES.indexOf(settings.size);
+  document.getElementById('set-size-dec').classList.toggle('is-disabled', index === 0);
+  document.getElementById('set-size-inc').classList.toggle('is-disabled', index === SIZES.length - 1);
+  tracker.classList.remove('pos-r', 'pos-tl', 'pos-l', 'size-80', 'size-90', 'size-110', 'size-120');
+  if (settings.pos !== 'tr') tracker.classList.add(`pos-${settings.pos}`);
+  if (settings.size !== 100) tracker.classList.add(`size-${settings.size}`);
+  tracker.classList.toggle('ph-off', !settings.show);
+}
+
+document.getElementById('open-settings').addEventListener('click', () => setView(true));
+document.getElementById('set-back').addEventListener('click', () => setView(false));
+document.getElementById('set-show').addEventListener('click', () => { settings.show = !settings.show; paintSettings(); });
+document.querySelectorAll('[data-set-pos]').forEach(b => b.addEventListener('click', () => { settings.pos = b.dataset.setPos; paintSettings(); }));
+document.getElementById('set-size-dec').addEventListener('click', () => {
+  const i = SIZES.indexOf(settings.size);
+  if (i > 0) { settings.size = SIZES[i - 1]; paintSettings(); }
+});
+document.getElementById('set-size-inc').addEventListener('click', () => {
+  const i = SIZES.indexOf(settings.size);
+  if (i < SIZES.length - 1) { settings.size = SIZES[i + 1]; paintSettings(); }
+});
+paintSettings();
+setView(query.get('view') === 'settings');
 </script>
 </body>
 </html>

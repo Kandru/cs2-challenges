@@ -10,7 +10,8 @@
    Language: square corners, accent corner brackets, "//" kickers, segmented bars,
    checkbox task marks (open = empty box, done = filled, broken = red box on a red line).
    Accent only for: brackets, kickers, index boxes, values, active state, own entries.
-   Semantic colours never follow the theme. Type scale 14 / 16 / 18 / 20 / 28.
+   Semantic colours never follow the theme. Type scale: tracker 14 / 16 / 18 / 22 at 100%
+   (size-* steps scale it), menu 16 / 18 / 20 / 24 / 32.
    Spacing on a 4px grid; horizontal insets are TxPad spacers (width:100% children
    ignore padding). Motion: hover 0.15s, menu 0.25s in / 0.18s out, tracker 1.0s.
    ============================================================================ */
@@ -174,7 +175,7 @@ Label.TxHeadSub
 	width: fill-parent-flow( 1.0 );
 	vertical-align: middle;
 	margin-left: 16px;
-	font-size: 16;
+	font-size: 20;
 	letter-spacing: 1px;
 	color: #a3acb6;
 	text-overflow: ellipsis;
@@ -197,8 +198,8 @@ Label.TxCount
 
 .ph-icon-btn
 {
-	width: 32px;
-	height: 32px;
+	width: 38px;
+	height: 38px;
 	flow-children: none;
 	vertical-align: middle;
 	background-color: #ffffff08;
@@ -224,7 +225,7 @@ Label.TxCount
 
 .ph-close-x
 {
-	width: 14px;
+	width: 16px;
 	height: 2px;
 	horizontal-align: center;
 	vertical-align: middle;
@@ -247,7 +248,7 @@ Label.ph-nav-label
 	horizontal-align: center;
 	vertical-align: middle;
 	text-align: center;
-	font-size: 16;
+	font-size: 20;
 	color: #e8eef4;
 }
 
@@ -468,7 +469,7 @@ Label.MenuTaskLabel
 .TxCardHead
 {
 	width: 100%;
-	height: 28px;
+	height: 34px;
 	flow-children: right;
 }
 
@@ -588,7 +589,7 @@ Label.TrackerHint.is-off
 
 .MenuScore
 {
-	width: 420px;
+	width: 440px;
 }
 
 .MenuScore.is-off
@@ -615,7 +616,7 @@ Label.TrackerHint.is-off
 
 .TxRail
 {
-	width: 220px;
+	width: 240px;
 	height: 100%;
 	flow-children: down;
 	padding-top: 16px;
@@ -625,7 +626,7 @@ Label.TxRailHead
 {
 	margin-left: 16px;
 	margin-bottom: 8px;
-	font-size: 14;
+	font-size: 16;
 	letter-spacing: 3px;
 	text-transform: uppercase;
 	color: #a3acb6;
@@ -634,7 +635,7 @@ Label.TxRailHead
 .TxNav
 {
 	width: 100%;
-	height: 36px;
+	height: 44px;
 	flow-children: right;
 	padding-left: 13px;
 	padding-right: 16px;
@@ -681,8 +682,8 @@ Label.TxNavLabel
 {
 	width: fill-parent-flow( 1.0 );
 	vertical-align: middle;
-	font-size: 16;
-	letter-spacing: 2px;
+	font-size: 20;
+	letter-spacing: 1px;
 	text-transform: uppercase;
 	color: #e8eef4;
 	text-overflow: ellipsis;
@@ -693,7 +694,7 @@ Label.TxNavCount
 {
 	vertical-align: middle;
 	margin-left: 8px;
-	font-size: 16;
+	font-size: 20;
 	color: #a3acb6;
 }
 
@@ -727,7 +728,7 @@ Label.TxNavCount
 .TxListBar
 {
 	width: 100%;
-	height: 32px;
+	height: 36px;
 	flow-children: right;
 	margin-bottom: 12px;
 }
@@ -736,7 +737,7 @@ Label.TxListPage
 {
 	width: fill-parent-flow( 1.0 );
 	vertical-align: middle;
-	font-size: 14;
+	font-size: 16;
 	letter-spacing: 3px;
 	text-transform: uppercase;
 	color: #a3acb6;
@@ -744,8 +745,8 @@ Label.TxListPage
 
 .MenuTitleNav
 {
-	width: 36px;
-	height: 28px;
+	width: 44px;
+	height: 34px;
 	flow-children: none;
 	vertical-align: middle;
 	margin-left: 8px;
@@ -829,7 +830,7 @@ Label.TxCardTitle
 {
 	width: fill-parent-flow( 1.0 );
 	vertical-align: middle;
-	font-size: 18;
+	font-size: 22;
 	letter-spacing: 2px;
 	text-transform: uppercase;
 	color: #f5f7fa;
@@ -841,14 +842,14 @@ Label.TxCardPct
 {
 	vertical-align: middle;
 	margin-left: 12px;
-	font-size: 24;
+	font-size: 28;
 	color: #f0a531;
 }
 
 Label.TxWhen
 {
 	margin-bottom: 10px;
-	font-size: 14;
+	font-size: 18;
 	color: #a3acb6;
 }
 
@@ -856,7 +857,7 @@ Label.TxSection
 {
 	margin-top: 12px;
 	margin-bottom: 6px;
-	font-size: 14;
+	font-size: 16;
 	letter-spacing: 3px;
 	text-transform: uppercase;
 	color: #a3acb6;
@@ -880,7 +881,7 @@ Label.TxSection
 .MenuBy
 {
 	width: fit-children;
-	height: 24px;
+	height: 30px;
 	flow-children: right;
 	padding-left: 10px;
 	padding-right: 10px;
@@ -909,9 +910,9 @@ Label.TxSection
 
 Label.MenuByLabel
 {
-	max-width: 160px;
+	max-width: 190px;
 	vertical-align: middle;
-	font-size: 14;
+	font-size: 18;
 	color: #e8eef4;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -931,7 +932,7 @@ Label.MenuEmpty
 {
 	width: 100%;
 	margin-top: 24px;
-	font-size: 16;
+	font-size: 20;
 	text-align: center;
 	color: #a3acb6;
 }
@@ -948,7 +949,7 @@ Label.MenuCredit
 	padding-top: 8px;
 	padding-bottom: 8px;
 	border-top: 1px solid #ffffff14;
-	font-size: 14;
+	font-size: 16;
 	color: #a3acb6;
 	text-align: center;
 	text-overflow: shrink;
@@ -1004,7 +1005,7 @@ Label.MenuCredit
 
 .TxChip
 {
-	height: 28px;
+	height: 34px;
 	flow-children: none;
 	padding-left: 12px;
 	padding-right: 12px;
@@ -1044,7 +1045,7 @@ Label.MenuCredit
 Label.TxChipLabel
 {
 	vertical-align: middle;
-	font-size: 14;
+	font-size: 16;
 	letter-spacing: 1px;
 	text-transform: uppercase;
 	color: #e8eef4;
@@ -1087,15 +1088,15 @@ Label.ScoreSelfRank
 {
 	width: 64px;
 	vertical-align: middle;
-	font-size: 28;
+	font-size: 32;
 	color: #f0a531;
 }
 
 Label.ScoreSelfName
 {
-	width: 280px;
+	width: 300px;
 	vertical-align: middle;
-	font-size: 18;
+	font-size: 22;
 	letter-spacing: 2px;
 	text-transform: uppercase;
 	color: #f5f7fa;
@@ -1113,7 +1114,7 @@ Label.ScoreSelfName
 
 .ScoreSelfStat
 {
-	width: 168px;
+	width: 180px;
 	height: fit-children;
 	flow-children: down;
 	padding: 8px 12px 8px 12px;
@@ -1124,7 +1125,7 @@ Label.ScoreSelfName
 Label.ScoreSelfStatLabel
 {
 	margin-bottom: 4px;
-	font-size: 14;
+	font-size: 16;
 	letter-spacing: 2px;
 	text-transform: uppercase;
 	color: #a3acb6;
@@ -1132,14 +1133,14 @@ Label.ScoreSelfStatLabel
 
 Label.ScoreSelfStatVal
 {
-	font-size: 18;
+	font-size: 22;
 	color: #f5f7fa;
 }
 
 .ScoreHeader
 {
 	width: 100%;
-	height: 32px;
+	height: 38px;
 	flow-children: right;
 	padding-left: 12px;
 	padding-right: 12px;
@@ -1148,7 +1149,7 @@ Label.ScoreSelfStatVal
 
 Label.ScoreHead
 {
-	font-size: 14;
+	font-size: 16;
 	letter-spacing: 1px;
 	text-transform: uppercase;
 	color: #a3acb6;
@@ -1171,7 +1172,7 @@ Label.ScoreHead.sort-active
 .ScoreRow
 {
 	width: 100%;
-	height: 36px;
+	height: 42px;
 	flow-children: right;
 	padding-left: 9px;
 	padding-right: 12px;
@@ -1221,9 +1222,9 @@ Label.ScoreHead.sort-active
 
 Label.ScoreRank
 {
-	width: 36px;
+	width: 44px;
 	vertical-align: middle;
-	font-size: 16;
+	font-size: 20;
 	color: #a3acb6;
 }
 
@@ -1246,7 +1247,7 @@ Label.ScoreName
 {
 	width: fill-parent-flow( 1.0 );
 	vertical-align: middle;
-	font-size: 16;
+	font-size: 20;
 	color: #e8eef4;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -1254,19 +1255,19 @@ Label.ScoreName
 
 Label.ScoreCur
 {
-	width: 72px;
+	width: 84px;
 	vertical-align: middle;
 	margin-right: 12px;
-	font-size: 16;
+	font-size: 20;
 	text-align: right;
 	color: #f5f7fa;
 }
 
 Label.ScoreTot
 {
-	width: 64px;
+	width: 76px;
 	vertical-align: middle;
-	font-size: 16;
+	font-size: 20;
 	text-align: right;
 	color: #a3acb6;
 }
@@ -1276,7 +1277,7 @@ Label.ScoreTot
 .ScoreHeader Label.ScoreCur,
 .ScoreHeader Label.ScoreTot
 {
-	font-size: 14;
+	font-size: 16;
 	color: #a3acb6;
 }
 
@@ -1285,6 +1286,490 @@ Label.ScoreTot
 {
 	color: #f0a531;
 }
+
+/* Menu: type scale 16 / 18 / 20 / 24 / 32 (floor 16). Shared classes get their menu size here;
+   the tracker keeps the base scale and its size-* steps. ----------------------------------- */
+
+.MenuRoot .TxHead
+{
+	height: 60px;
+}
+
+.MenuRoot Label.TxKicker
+{
+	font-size: 20;
+}
+
+.MenuRoot Label.TxTitle
+{
+	font-size: 24;
+}
+
+.MenuRoot Label.TxCount
+{
+	font-size: 32;
+}
+
+.MenuRoot .TxIdx
+{
+	width: 40px;
+	height: 30px;
+}
+
+.MenuRoot Label.TxIdxLabel
+{
+	font-size: 18;
+}
+
+.MenuRoot .MenuTask
+{
+	height: 28px;
+}
+
+.MenuRoot .MenuTaskMark
+{
+	width: 14px;
+	height: 14px;
+}
+
+.MenuRoot Label.MenuTaskLabel
+{
+	font-size: 18;
+}
+
+/* Head button ("Settings", "Back"): a chip before the close X. */
+.TxHeadBtn
+{
+	vertical-align: middle;
+	margin-left: 16px;
+}
+
+/* Menu: settings view. view-settings on the root swaps the columns for one centred panel,
+   so the tracker preview stays visible at the screen edges. ------------------------------ */
+
+.SetScreen
+{
+	width: 100%;
+	height: 100%;
+	flow-children: none;
+	visibility: collapse;
+}
+
+.MenuRoot.view-settings .SetScreen
+{
+	visibility: visible;
+}
+
+.MenuRoot.view-settings .MenuColumns
+{
+	visibility: collapse;
+}
+
+.SetPanel
+{
+	width: 600px;
+	height: 600px;
+	horizontal-align: center;
+	vertical-align: middle;
+}
+
+.SetPanel Label.TxTitle
+{
+	width: fill-parent-flow( 1.0 );
+}
+
+.SetBody
+{
+	width: 100%;
+	height: fill-parent-flow( 1.0 );
+	flow-children: right;
+}
+
+.SetInner
+{
+	width: fill-parent-flow( 1.0 );
+	height: 100%;
+	flow-children: down;
+}
+
+.SetInner Label.TxSection
+{
+	margin-top: 20px;
+	margin-bottom: 10px;
+}
+
+.SetInner Label.TxSection.SetFirst
+{
+	margin-top: 4px;
+}
+
+/* Switch row: the label names the thing; knob, track and ON/OFF word show the state. */
+.SetSwitch
+{
+	width: 100%;
+	height: 56px;
+	flow-children: right;
+	padding-left: 16px;
+	padding-right: 16px;
+	background-color: #ffffff08;
+	border: 1px solid #ffffff1f;
+	wash-color: none;
+	transition-property: background-color, border;
+	transition-duration: 0.15s;
+}
+
+.SetSwitch:hover
+{
+	background-color: #ffffff14;
+	cursor: pointer;
+	sound: "UIPanorama.generic_button_rollover";
+}
+
+.SetSwitch:active
+{
+	background-color: #ffffff24;
+	sound: "UIPanorama.generic_button_press";
+}
+
+Label.SetSwitchLabel
+{
+	width: fill-parent-flow( 1.0 );
+	vertical-align: middle;
+	font-size: 20;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	color: #f5f7fa;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+Label.SetSwitchState
+{
+	vertical-align: middle;
+	margin-right: 14px;
+	font-size: 18;
+	letter-spacing: 2px;
+	text-transform: uppercase;
+	color: #a3acb6;
+}
+
+.SetSwitch.is-on Label.SetSwitchState
+{
+	color: #f0a531;
+}
+
+.SetSwitchTrack
+{
+	width: 48px;
+	height: 24px;
+	flow-children: none;
+	vertical-align: middle;
+	background-color: #ffffff14;
+	border: 1px solid #ffffff33;
+	transition-property: background-color, border;
+	transition-duration: 0.15s;
+}
+
+.SetSwitch.is-on .SetSwitchTrack
+{
+	background-color: #f0a53133;
+	border: 1px solid #f0a531;
+}
+
+.SetSwitchKnob
+{
+	width: 16px;
+	height: 16px;
+	margin-left: 3px;
+	vertical-align: middle;
+	background-color: #a3acb6;
+	transform: translateX( 0px );
+	transition-property: transform, background-color;
+	transition-duration: 0.15s;
+	transition-timing-function: ease-out;
+}
+
+.SetSwitch.is-on .SetSwitchKnob
+{
+	background-color: #f0a531;
+	transform: translateX( 24px );
+}
+
+/* Position and size only matter while the widget is on. */
+.SetDependent
+{
+	width: 100%;
+	height: fit-children;
+	flow-children: down;
+	transition-property: opacity;
+	transition-duration: 0.15s;
+}
+
+.SetPanel.tracker-off .SetDependent
+{
+	opacity: 0.4;
+}
+
+/* Position picker: a small screen with one button per spot (radio mark = state by shape). */
+.SetMap
+{
+	width: 100%;
+	height: 210px;
+	flow-children: none;
+	background-color: #0000004d;
+	border: 1px solid #ffffff1f;
+}
+
+.SetMapCrossH
+{
+	width: 18px;
+	height: 2px;
+	horizontal-align: center;
+	vertical-align: middle;
+	background-color: #ffffff26;
+}
+
+.SetMapCrossV
+{
+	width: 2px;
+	height: 18px;
+	horizontal-align: center;
+	vertical-align: middle;
+	background-color: #ffffff26;
+}
+
+.SetPos
+{
+	width: 184px;
+	height: 48px;
+	flow-children: right;
+	padding-left: 12px;
+	padding-right: 12px;
+	background-color: #ffffff08;
+	border: 1px solid #ffffff26;
+	wash-color: none;
+	transition-property: background-color, border;
+	transition-duration: 0.15s;
+}
+
+.SetPos:hover
+{
+	background-color: #ffffff14;
+	border: 1px solid #f0a53166;
+	cursor: pointer;
+	sound: "UIPanorama.generic_button_rollover";
+}
+
+.SetPos:active
+{
+	background-color: #ffffff24;
+	sound: "UIPanorama.generic_button_press";
+}
+
+.SetPos.active
+{
+	background-color: #f0a5311f;
+	border: 1px solid #f0a531;
+}
+
+.SetPosTL
+{
+	horizontal-align: left;
+	vertical-align: top;
+	margin-top: 12px;
+	margin-left: 12px;
+}
+
+.SetPosTR
+{
+	horizontal-align: right;
+	vertical-align: top;
+	margin-top: 12px;
+	margin-right: 12px;
+}
+
+.SetPosL
+{
+	horizontal-align: left;
+	vertical-align: middle;
+	margin-left: 12px;
+}
+
+.SetPosR
+{
+	horizontal-align: right;
+	vertical-align: middle;
+	margin-right: 12px;
+}
+
+.SetPosMark
+{
+	width: 14px;
+	height: 14px;
+	margin-right: 10px;
+	vertical-align: middle;
+	background-color: none;
+	border: 2px solid #ffffff55;
+}
+
+.SetPos.active .SetPosMark
+{
+	background-color: #f0a531;
+	border: 2px solid #f0a531;
+}
+
+Label.SetPosLabel
+{
+	width: fill-parent-flow( 1.0 );
+	vertical-align: middle;
+	font-size: 18;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	color: #e8eef4;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.SetPos.active Label.SetPosLabel
+{
+	color: #f5f7fa;
+}
+
+/* Size stepper: - 100% + */
+.SetStepper
+{
+	width: 100%;
+	height: 44px;
+	flow-children: right;
+}
+
+.SetStepper .MenuTitleNav
+{
+	width: 52px;
+	height: 40px;
+	margin-left: 0px;
+}
+
+Label.SetSizeValue
+{
+	width: 120px;
+	vertical-align: middle;
+	text-align: center;
+	font-size: 24;
+	color: #f5f7fa;
+}
+
+Label.SetHint
+{
+	width: 100%;
+	margin-top: 24px;
+	font-size: 16;
+	color: #a3acb6;
+}
+
+/* Tracker: player position (HudSettings). Top-right is the base rule above; sizes are generated below. */
+
+.Tracker.pos-r
+{
+	vertical-align: middle;
+	margin-top: 0px;
+}
+
+.Tracker.pos-tl
+{
+	horizontal-align: left;
+	margin-right: 0px;
+	margin-left: 10px;
+}
+
+.Tracker.pos-l
+{
+	horizontal-align: left;
+	vertical-align: middle;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-left: 10px;
+}
+
+/* >>> hud_scales:begin */
+/* Tracker sizes (player setting / gui.tracker_size). Generated from tools/hud_scales.py - do not edit by hand. */
+
+.Tracker.size-80 { width: 336px; }
+.Tracker.size-80 .TxHead { height: 38px; padding-left: 13px; padding-right: 13px; }
+.Tracker.size-80 Label.TxKicker { font-size: 13; margin-right: 8px; }
+.Tracker.size-80 Label.TxTitle { font-size: 14; }
+.Tracker.size-80 Label.TxCount { font-size: 18; }
+.Tracker.size-80 .TxPad { width: 13px; }
+.Tracker.size-80 .TrackerRow { padding-top: 10px; padding-bottom: 8px; }
+.Tracker.size-80 .TrackerRow .TxCardHead { height: 19px; }
+.Tracker.size-80 .TrackerRow .TxIdx { width: 22px; height: 16px; margin-right: 8px; }
+.Tracker.size-80 Label.TxIdxLabel { font-size: 11; }
+.Tracker.size-80 .TrackerRow .TxSeg { margin-top: 6px; margin-bottom: 6px; }
+.Tracker.size-80 .TrackerRow .MenuTask { height: 18px; }
+.Tracker.size-80 .MenuTaskMark { width: 10px; height: 10px; margin-right: 8px; }
+.Tracker.size-80 Label.MenuTaskLabel { font-size: 12; }
+.Tracker.size-80 Label.TxRowTitle { font-size: 13; }
+.Tracker.size-80 Label.TxRowPct { font-size: 14; margin-left: 10px; }
+.Tracker.size-80 Label.TrackerHint { font-size: 11; margin-top: 8px; margin-left: 13px; }
+.Tracker.size-80 .TrackerTimerRow { margin-top: 8px; margin-bottom: 10px; }
+
+.Tracker.size-90 { width: 378px; }
+.Tracker.size-90 .TxHead { height: 43px; padding-left: 14px; padding-right: 14px; }
+.Tracker.size-90 Label.TxKicker { font-size: 14; margin-right: 9px; }
+.Tracker.size-90 Label.TxTitle { font-size: 16; }
+.Tracker.size-90 Label.TxCount { font-size: 20; }
+.Tracker.size-90 .TxPad { width: 14px; }
+.Tracker.size-90 .TrackerRow { padding-top: 11px; padding-bottom: 9px; }
+.Tracker.size-90 .TrackerRow .TxCardHead { height: 22px; }
+.Tracker.size-90 .TrackerRow .TxIdx { width: 25px; height: 18px; margin-right: 9px; }
+.Tracker.size-90 Label.TxIdxLabel { font-size: 13; }
+.Tracker.size-90 .TrackerRow .TxSeg { margin-top: 7px; margin-bottom: 7px; }
+.Tracker.size-90 .TrackerRow .MenuTask { height: 20px; }
+.Tracker.size-90 .MenuTaskMark { width: 11px; height: 11px; margin-right: 9px; }
+.Tracker.size-90 Label.MenuTaskLabel { font-size: 14; }
+.Tracker.size-90 Label.TxRowTitle { font-size: 14; }
+.Tracker.size-90 Label.TxRowPct { font-size: 16; margin-left: 11px; }
+.Tracker.size-90 Label.TrackerHint { font-size: 13; margin-top: 9px; margin-left: 14px; }
+.Tracker.size-90 .TrackerTimerRow { margin-top: 9px; margin-bottom: 11px; }
+
+.Tracker.size-110 { width: 462px; }
+.Tracker.size-110 .TxHead { height: 53px; padding-left: 18px; padding-right: 18px; }
+.Tracker.size-110 Label.TxKicker { font-size: 18; margin-right: 11px; }
+.Tracker.size-110 Label.TxTitle { font-size: 20; }
+.Tracker.size-110 Label.TxCount { font-size: 24; }
+.Tracker.size-110 .TxPad { width: 18px; }
+.Tracker.size-110 .TrackerRow { padding-top: 13px; padding-bottom: 11px; }
+.Tracker.size-110 .TrackerRow .TxCardHead { height: 26px; }
+.Tracker.size-110 .TrackerRow .TxIdx { width: 31px; height: 22px; margin-right: 11px; }
+.Tracker.size-110 Label.TxIdxLabel { font-size: 15; }
+.Tracker.size-110 .TrackerRow .TxSeg { margin-top: 9px; margin-bottom: 9px; }
+.Tracker.size-110 .TrackerRow .MenuTask { height: 24px; }
+.Tracker.size-110 .MenuTaskMark { width: 13px; height: 13px; margin-right: 11px; }
+.Tracker.size-110 Label.MenuTaskLabel { font-size: 17; }
+.Tracker.size-110 Label.TxRowTitle { font-size: 18; }
+.Tracker.size-110 Label.TxRowPct { font-size: 20; margin-left: 13px; }
+.Tracker.size-110 Label.TrackerHint { font-size: 15; margin-top: 11px; margin-left: 18px; }
+.Tracker.size-110 .TrackerTimerRow { margin-top: 11px; margin-bottom: 13px; }
+
+.Tracker.size-120 { width: 504px; }
+.Tracker.size-120 .TxHead { height: 58px; padding-left: 19px; padding-right: 19px; }
+.Tracker.size-120 Label.TxKicker { font-size: 19; margin-right: 12px; }
+.Tracker.size-120 Label.TxTitle { font-size: 22; }
+.Tracker.size-120 Label.TxCount { font-size: 26; }
+.Tracker.size-120 .TxPad { width: 19px; }
+.Tracker.size-120 .TrackerRow { padding-top: 14px; padding-bottom: 12px; }
+.Tracker.size-120 .TrackerRow .TxCardHead { height: 29px; }
+.Tracker.size-120 .TrackerRow .TxIdx { width: 34px; height: 24px; margin-right: 12px; }
+.Tracker.size-120 Label.TxIdxLabel { font-size: 17; }
+.Tracker.size-120 .TrackerRow .TxSeg { margin-top: 10px; margin-bottom: 10px; }
+.Tracker.size-120 .TrackerRow .MenuTask { height: 26px; }
+.Tracker.size-120 .MenuTaskMark { width: 14px; height: 14px; margin-right: 12px; }
+.Tracker.size-120 Label.MenuTaskLabel { font-size: 18; }
+.Tracker.size-120 Label.TxRowTitle { font-size: 19; }
+.Tracker.size-120 Label.TxRowPct { font-size: 22; margin-left: 14px; }
+.Tracker.size-120 Label.TrackerHint { font-size: 17; margin-top: 12px; margin-left: 19px; }
+.Tracker.size-120 .TrackerTimerRow { margin-top: 12px; margin-bottom: 14px; }
+/* <<< hud_scales:end */
 
 /* Clip ladder (SetPercent / SetStepPercent), then the client-drained timer. ------ */
 
@@ -1474,7 +1959,8 @@ Label.ScoreTot
 .theme-red Label.ScoreSelfRank,
 .theme-red Label.ScoreHead.sort-active,
 .theme-red .ScoreHeader Label.ScoreCur.sort-active,
-.theme-red .ScoreHeader Label.ScoreTot.sort-active
+.theme-red .ScoreHeader Label.ScoreTot.sort-active,
+.theme-red .SetSwitch.is-on Label.SetSwitchState
 { color: #e05a5a; }
 .theme-red .TxCorner { border-top: 2px solid #e05a5a; border-left: 2px solid #e05a5a; }
 .theme-red .TxIdx { border: 1px solid #e05a5a; }
@@ -1487,6 +1973,11 @@ Label.ScoreTot
 .theme-red .ScoreRow.is-self { background-color: #e05a5a1a; border-left: 3px solid #e05a5a; }
 .theme-red .ScoreRow.is-viewing { background-color: #e05a5a2e; border-left: 3px solid #e05a5a; }
 .theme-red .MenuBy.is-you { background-color: #e05a5a1f; border: 1px solid #e05a5a; }
+.theme-red .SetSwitch.is-on .SetSwitchTrack { background-color: #e05a5a33; border: 1px solid #e05a5a; }
+.theme-red .SetSwitch.is-on .SetSwitchKnob { background-color: #e05a5a; }
+.theme-red .SetPos:hover { border: 1px solid #e05a5a66; }
+.theme-red .SetPos.active { background-color: #e05a5a1f; border: 1px solid #e05a5a; }
+.theme-red .SetPos.active .SetPosMark { background-color: #e05a5a; border: 2px solid #e05a5a; }
 
 .theme-coral .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #c44830 ), to( #ff7a59 ) ); }
 .theme-coral Label.TxKicker,
@@ -1497,7 +1988,8 @@ Label.ScoreTot
 .theme-coral Label.ScoreSelfRank,
 .theme-coral Label.ScoreHead.sort-active,
 .theme-coral .ScoreHeader Label.ScoreCur.sort-active,
-.theme-coral .ScoreHeader Label.ScoreTot.sort-active
+.theme-coral .ScoreHeader Label.ScoreTot.sort-active,
+.theme-coral .SetSwitch.is-on Label.SetSwitchState
 { color: #ff7a59; }
 .theme-coral .TxCorner { border-top: 2px solid #ff7a59; border-left: 2px solid #ff7a59; }
 .theme-coral .TxIdx { border: 1px solid #ff7a59; }
@@ -1510,6 +2002,11 @@ Label.ScoreTot
 .theme-coral .ScoreRow.is-self { background-color: #ff7a591a; border-left: 3px solid #ff7a59; }
 .theme-coral .ScoreRow.is-viewing { background-color: #ff7a592e; border-left: 3px solid #ff7a59; }
 .theme-coral .MenuBy.is-you { background-color: #ff7a591f; border: 1px solid #ff7a59; }
+.theme-coral .SetSwitch.is-on .SetSwitchTrack { background-color: #ff7a5933; border: 1px solid #ff7a59; }
+.theme-coral .SetSwitch.is-on .SetSwitchKnob { background-color: #ff7a59; }
+.theme-coral .SetPos:hover { border: 1px solid #ff7a5966; }
+.theme-coral .SetPos.active { background-color: #ff7a591f; border: 1px solid #ff7a59; }
+.theme-coral .SetPos.active .SetPosMark { background-color: #ff7a59; border: 2px solid #ff7a59; }
 
 .theme-orange .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #c45a1a ), to( #ff8a3d ) ); }
 .theme-orange Label.TxKicker,
@@ -1520,7 +2017,8 @@ Label.ScoreTot
 .theme-orange Label.ScoreSelfRank,
 .theme-orange Label.ScoreHead.sort-active,
 .theme-orange .ScoreHeader Label.ScoreCur.sort-active,
-.theme-orange .ScoreHeader Label.ScoreTot.sort-active
+.theme-orange .ScoreHeader Label.ScoreTot.sort-active,
+.theme-orange .SetSwitch.is-on Label.SetSwitchState
 { color: #ff8a3d; }
 .theme-orange .TxCorner { border-top: 2px solid #ff8a3d; border-left: 2px solid #ff8a3d; }
 .theme-orange .TxIdx { border: 1px solid #ff8a3d; }
@@ -1533,6 +2031,11 @@ Label.ScoreTot
 .theme-orange .ScoreRow.is-self { background-color: #ff8a3d1a; border-left: 3px solid #ff8a3d; }
 .theme-orange .ScoreRow.is-viewing { background-color: #ff8a3d2e; border-left: 3px solid #ff8a3d; }
 .theme-orange .MenuBy.is-you { background-color: #ff8a3d1f; border: 1px solid #ff8a3d; }
+.theme-orange .SetSwitch.is-on .SetSwitchTrack { background-color: #ff8a3d33; border: 1px solid #ff8a3d; }
+.theme-orange .SetSwitch.is-on .SetSwitchKnob { background-color: #ff8a3d; }
+.theme-orange .SetPos:hover { border: 1px solid #ff8a3d66; }
+.theme-orange .SetPos.active { background-color: #ff8a3d1f; border: 1px solid #ff8a3d; }
+.theme-orange .SetPos.active .SetPosMark { background-color: #ff8a3d; border: 2px solid #ff8a3d; }
 
 .theme-copper .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #a85a30 ), to( #e08a5a ) ); }
 .theme-copper Label.TxKicker,
@@ -1543,7 +2046,8 @@ Label.ScoreTot
 .theme-copper Label.ScoreSelfRank,
 .theme-copper Label.ScoreHead.sort-active,
 .theme-copper .ScoreHeader Label.ScoreCur.sort-active,
-.theme-copper .ScoreHeader Label.ScoreTot.sort-active
+.theme-copper .ScoreHeader Label.ScoreTot.sort-active,
+.theme-copper .SetSwitch.is-on Label.SetSwitchState
 { color: #e08a5a; }
 .theme-copper .TxCorner { border-top: 2px solid #e08a5a; border-left: 2px solid #e08a5a; }
 .theme-copper .TxIdx { border: 1px solid #e08a5a; }
@@ -1556,6 +2060,11 @@ Label.ScoreTot
 .theme-copper .ScoreRow.is-self { background-color: #e08a5a1a; border-left: 3px solid #e08a5a; }
 .theme-copper .ScoreRow.is-viewing { background-color: #e08a5a2e; border-left: 3px solid #e08a5a; }
 .theme-copper .MenuBy.is-you { background-color: #e08a5a1f; border: 1px solid #e08a5a; }
+.theme-copper .SetSwitch.is-on .SetSwitchTrack { background-color: #e08a5a33; border: 1px solid #e08a5a; }
+.theme-copper .SetSwitch.is-on .SetSwitchKnob { background-color: #e08a5a; }
+.theme-copper .SetPos:hover { border: 1px solid #e08a5a66; }
+.theme-copper .SetPos.active { background-color: #e08a5a1f; border: 1px solid #e08a5a; }
+.theme-copper .SetPos.active .SetPosMark { background-color: #e08a5a; border: 2px solid #e08a5a; }
 
 .theme-gold .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #f0a531 ), to( #ffd27a ) ); }
 
@@ -1568,7 +2077,8 @@ Label.ScoreTot
 .theme-t Label.ScoreSelfRank,
 .theme-t Label.ScoreHead.sort-active,
 .theme-t .ScoreHeader Label.ScoreCur.sort-active,
-.theme-t .ScoreHeader Label.ScoreTot.sort-active
+.theme-t .ScoreHeader Label.ScoreTot.sort-active,
+.theme-t .SetSwitch.is-on Label.SetSwitchState
 { color: #eabe54; }
 .theme-t .TxCorner { border-top: 2px solid #eabe54; border-left: 2px solid #eabe54; }
 .theme-t .TxIdx { border: 1px solid #eabe54; }
@@ -1581,6 +2091,11 @@ Label.ScoreTot
 .theme-t .ScoreRow.is-self { background-color: #eabe541a; border-left: 3px solid #eabe54; }
 .theme-t .ScoreRow.is-viewing { background-color: #eabe542e; border-left: 3px solid #eabe54; }
 .theme-t .MenuBy.is-you { background-color: #eabe541f; border: 1px solid #eabe54; }
+.theme-t .SetSwitch.is-on .SetSwitchTrack { background-color: #eabe5433; border: 1px solid #eabe54; }
+.theme-t .SetSwitch.is-on .SetSwitchKnob { background-color: #eabe54; }
+.theme-t .SetPos:hover { border: 1px solid #eabe5466; }
+.theme-t .SetPos.active { background-color: #eabe541f; border: 1px solid #eabe54; }
+.theme-t .SetPos.active .SetPosMark { background-color: #eabe54; border: 2px solid #eabe54; }
 
 .theme-lime .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #7aa81a ), to( #c6f04a ) ); }
 .theme-lime Label.TxKicker,
@@ -1591,7 +2106,8 @@ Label.ScoreTot
 .theme-lime Label.ScoreSelfRank,
 .theme-lime Label.ScoreHead.sort-active,
 .theme-lime .ScoreHeader Label.ScoreCur.sort-active,
-.theme-lime .ScoreHeader Label.ScoreTot.sort-active
+.theme-lime .ScoreHeader Label.ScoreTot.sort-active,
+.theme-lime .SetSwitch.is-on Label.SetSwitchState
 { color: #c6f04a; }
 .theme-lime .TxCorner { border-top: 2px solid #c6f04a; border-left: 2px solid #c6f04a; }
 .theme-lime .TxIdx { border: 1px solid #c6f04a; }
@@ -1604,6 +2120,11 @@ Label.ScoreTot
 .theme-lime .ScoreRow.is-self { background-color: #c6f04a1a; border-left: 3px solid #c6f04a; }
 .theme-lime .ScoreRow.is-viewing { background-color: #c6f04a2e; border-left: 3px solid #c6f04a; }
 .theme-lime .MenuBy.is-you { background-color: #c6f04a1f; border: 1px solid #c6f04a; }
+.theme-lime .SetSwitch.is-on .SetSwitchTrack { background-color: #c6f04a33; border: 1px solid #c6f04a; }
+.theme-lime .SetSwitch.is-on .SetSwitchKnob { background-color: #c6f04a; }
+.theme-lime .SetPos:hover { border: 1px solid #c6f04a66; }
+.theme-lime .SetPos.active { background-color: #c6f04a1f; border: 1px solid #c6f04a; }
+.theme-lime .SetPos.active .SetPosMark { background-color: #c6f04a; border: 2px solid #c6f04a; }
 
 .theme-green .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #3d8f45 ), to( #6fdc78 ) ); }
 .theme-green Label.TxKicker,
@@ -1614,7 +2135,8 @@ Label.ScoreTot
 .theme-green Label.ScoreSelfRank,
 .theme-green Label.ScoreHead.sort-active,
 .theme-green .ScoreHeader Label.ScoreCur.sort-active,
-.theme-green .ScoreHeader Label.ScoreTot.sort-active
+.theme-green .ScoreHeader Label.ScoreTot.sort-active,
+.theme-green .SetSwitch.is-on Label.SetSwitchState
 { color: #6fdc78; }
 .theme-green .TxCorner { border-top: 2px solid #6fdc78; border-left: 2px solid #6fdc78; }
 .theme-green .TxIdx { border: 1px solid #6fdc78; }
@@ -1627,6 +2149,11 @@ Label.ScoreTot
 .theme-green .ScoreRow.is-self { background-color: #6fdc781a; border-left: 3px solid #6fdc78; }
 .theme-green .ScoreRow.is-viewing { background-color: #6fdc782e; border-left: 3px solid #6fdc78; }
 .theme-green .MenuBy.is-you { background-color: #6fdc781f; border: 1px solid #6fdc78; }
+.theme-green .SetSwitch.is-on .SetSwitchTrack { background-color: #6fdc7833; border: 1px solid #6fdc78; }
+.theme-green .SetSwitch.is-on .SetSwitchKnob { background-color: #6fdc78; }
+.theme-green .SetPos:hover { border: 1px solid #6fdc7866; }
+.theme-green .SetPos.active { background-color: #6fdc781f; border: 1px solid #6fdc78; }
+.theme-green .SetPos.active .SetPosMark { background-color: #6fdc78; border: 2px solid #6fdc78; }
 
 .theme-teal .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #17856c ), to( #2ec9a6 ) ); }
 .theme-teal Label.TxKicker,
@@ -1637,7 +2164,8 @@ Label.ScoreTot
 .theme-teal Label.ScoreSelfRank,
 .theme-teal Label.ScoreHead.sort-active,
 .theme-teal .ScoreHeader Label.ScoreCur.sort-active,
-.theme-teal .ScoreHeader Label.ScoreTot.sort-active
+.theme-teal .ScoreHeader Label.ScoreTot.sort-active,
+.theme-teal .SetSwitch.is-on Label.SetSwitchState
 { color: #2ec9a6; }
 .theme-teal .TxCorner { border-top: 2px solid #2ec9a6; border-left: 2px solid #2ec9a6; }
 .theme-teal .TxIdx { border: 1px solid #2ec9a6; }
@@ -1650,6 +2178,11 @@ Label.ScoreTot
 .theme-teal .ScoreRow.is-self { background-color: #2ec9a61a; border-left: 3px solid #2ec9a6; }
 .theme-teal .ScoreRow.is-viewing { background-color: #2ec9a62e; border-left: 3px solid #2ec9a6; }
 .theme-teal .MenuBy.is-you { background-color: #2ec9a61f; border: 1px solid #2ec9a6; }
+.theme-teal .SetSwitch.is-on .SetSwitchTrack { background-color: #2ec9a633; border: 1px solid #2ec9a6; }
+.theme-teal .SetSwitch.is-on .SetSwitchKnob { background-color: #2ec9a6; }
+.theme-teal .SetPos:hover { border: 1px solid #2ec9a666; }
+.theme-teal .SetPos.active { background-color: #2ec9a61f; border: 1px solid #2ec9a6; }
+.theme-teal .SetPos.active .SetPosMark { background-color: #2ec9a6; border: 2px solid #2ec9a6; }
 
 .theme-cyan .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #1a9bb0 ), to( #3ee0f0 ) ); }
 .theme-cyan Label.TxKicker,
@@ -1660,7 +2193,8 @@ Label.ScoreTot
 .theme-cyan Label.ScoreSelfRank,
 .theme-cyan Label.ScoreHead.sort-active,
 .theme-cyan .ScoreHeader Label.ScoreCur.sort-active,
-.theme-cyan .ScoreHeader Label.ScoreTot.sort-active
+.theme-cyan .ScoreHeader Label.ScoreTot.sort-active,
+.theme-cyan .SetSwitch.is-on Label.SetSwitchState
 { color: #3ee0f0; }
 .theme-cyan .TxCorner { border-top: 2px solid #3ee0f0; border-left: 2px solid #3ee0f0; }
 .theme-cyan .TxIdx { border: 1px solid #3ee0f0; }
@@ -1673,6 +2207,11 @@ Label.ScoreTot
 .theme-cyan .ScoreRow.is-self { background-color: #3ee0f01a; border-left: 3px solid #3ee0f0; }
 .theme-cyan .ScoreRow.is-viewing { background-color: #3ee0f02e; border-left: 3px solid #3ee0f0; }
 .theme-cyan .MenuBy.is-you { background-color: #3ee0f01f; border: 1px solid #3ee0f0; }
+.theme-cyan .SetSwitch.is-on .SetSwitchTrack { background-color: #3ee0f033; border: 1px solid #3ee0f0; }
+.theme-cyan .SetSwitch.is-on .SetSwitchKnob { background-color: #3ee0f0; }
+.theme-cyan .SetPos:hover { border: 1px solid #3ee0f066; }
+.theme-cyan .SetPos.active { background-color: #3ee0f01f; border: 1px solid #3ee0f0; }
+.theme-cyan .SetPos.active .SetPosMark { background-color: #3ee0f0; border: 2px solid #3ee0f0; }
 
 .theme-blue .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #2d56c4 ), to( #5b8cff ) ); }
 .theme-blue Label.TxKicker,
@@ -1683,7 +2222,8 @@ Label.ScoreTot
 .theme-blue Label.ScoreSelfRank,
 .theme-blue Label.ScoreHead.sort-active,
 .theme-blue .ScoreHeader Label.ScoreCur.sort-active,
-.theme-blue .ScoreHeader Label.ScoreTot.sort-active
+.theme-blue .ScoreHeader Label.ScoreTot.sort-active,
+.theme-blue .SetSwitch.is-on Label.SetSwitchState
 { color: #5b8cff; }
 .theme-blue .TxCorner { border-top: 2px solid #5b8cff; border-left: 2px solid #5b8cff; }
 .theme-blue .TxIdx { border: 1px solid #5b8cff; }
@@ -1696,6 +2236,11 @@ Label.ScoreTot
 .theme-blue .ScoreRow.is-self { background-color: #5b8cff1a; border-left: 3px solid #5b8cff; }
 .theme-blue .ScoreRow.is-viewing { background-color: #5b8cff2e; border-left: 3px solid #5b8cff; }
 .theme-blue .MenuBy.is-you { background-color: #5b8cff1f; border: 1px solid #5b8cff; }
+.theme-blue .SetSwitch.is-on .SetSwitchTrack { background-color: #5b8cff33; border: 1px solid #5b8cff; }
+.theme-blue .SetSwitch.is-on .SetSwitchKnob { background-color: #5b8cff; }
+.theme-blue .SetPos:hover { border: 1px solid #5b8cff66; }
+.theme-blue .SetPos.active { background-color: #5b8cff1f; border: 1px solid #5b8cff; }
+.theme-blue .SetPos.active .SetPosMark { background-color: #5b8cff; border: 2px solid #5b8cff; }
 
 .theme-ct .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #5a9fd4 ), to( #96c8fa ) ); }
 .theme-ct Label.TxKicker,
@@ -1706,7 +2251,8 @@ Label.ScoreTot
 .theme-ct Label.ScoreSelfRank,
 .theme-ct Label.ScoreHead.sort-active,
 .theme-ct .ScoreHeader Label.ScoreCur.sort-active,
-.theme-ct .ScoreHeader Label.ScoreTot.sort-active
+.theme-ct .ScoreHeader Label.ScoreTot.sort-active,
+.theme-ct .SetSwitch.is-on Label.SetSwitchState
 { color: #96c8fa; }
 .theme-ct .TxCorner { border-top: 2px solid #96c8fa; border-left: 2px solid #96c8fa; }
 .theme-ct .TxIdx { border: 1px solid #96c8fa; }
@@ -1719,6 +2265,11 @@ Label.ScoreTot
 .theme-ct .ScoreRow.is-self { background-color: #96c8fa1a; border-left: 3px solid #96c8fa; }
 .theme-ct .ScoreRow.is-viewing { background-color: #96c8fa2e; border-left: 3px solid #96c8fa; }
 .theme-ct .MenuBy.is-you { background-color: #96c8fa1f; border: 1px solid #96c8fa; }
+.theme-ct .SetSwitch.is-on .SetSwitchTrack { background-color: #96c8fa33; border: 1px solid #96c8fa; }
+.theme-ct .SetSwitch.is-on .SetSwitchKnob { background-color: #96c8fa; }
+.theme-ct .SetPos:hover { border: 1px solid #96c8fa66; }
+.theme-ct .SetPos.active { background-color: #96c8fa1f; border: 1px solid #96c8fa; }
+.theme-ct .SetPos.active .SetPosMark { background-color: #96c8fa; border: 2px solid #96c8fa; }
 
 .theme-purple .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #7a4fc4 ), to( #b07cff ) ); }
 .theme-purple Label.TxKicker,
@@ -1729,7 +2280,8 @@ Label.ScoreTot
 .theme-purple Label.ScoreSelfRank,
 .theme-purple Label.ScoreHead.sort-active,
 .theme-purple .ScoreHeader Label.ScoreCur.sort-active,
-.theme-purple .ScoreHeader Label.ScoreTot.sort-active
+.theme-purple .ScoreHeader Label.ScoreTot.sort-active,
+.theme-purple .SetSwitch.is-on Label.SetSwitchState
 { color: #b07cff; }
 .theme-purple .TxCorner { border-top: 2px solid #b07cff; border-left: 2px solid #b07cff; }
 .theme-purple .TxIdx { border: 1px solid #b07cff; }
@@ -1742,6 +2294,11 @@ Label.ScoreTot
 .theme-purple .ScoreRow.is-self { background-color: #b07cff1a; border-left: 3px solid #b07cff; }
 .theme-purple .ScoreRow.is-viewing { background-color: #b07cff2e; border-left: 3px solid #b07cff; }
 .theme-purple .MenuBy.is-you { background-color: #b07cff1f; border: 1px solid #b07cff; }
+.theme-purple .SetSwitch.is-on .SetSwitchTrack { background-color: #b07cff33; border: 1px solid #b07cff; }
+.theme-purple .SetSwitch.is-on .SetSwitchKnob { background-color: #b07cff; }
+.theme-purple .SetPos:hover { border: 1px solid #b07cff66; }
+.theme-purple .SetPos.active { background-color: #b07cff1f; border: 1px solid #b07cff; }
+.theme-purple .SetPos.active .SetPosMark { background-color: #b07cff; border: 2px solid #b07cff; }
 
 .theme-magenta .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #a030c0 ), to( #e85dff ) ); }
 .theme-magenta Label.TxKicker,
@@ -1752,7 +2309,8 @@ Label.ScoreTot
 .theme-magenta Label.ScoreSelfRank,
 .theme-magenta Label.ScoreHead.sort-active,
 .theme-magenta .ScoreHeader Label.ScoreCur.sort-active,
-.theme-magenta .ScoreHeader Label.ScoreTot.sort-active
+.theme-magenta .ScoreHeader Label.ScoreTot.sort-active,
+.theme-magenta .SetSwitch.is-on Label.SetSwitchState
 { color: #e85dff; }
 .theme-magenta .TxCorner { border-top: 2px solid #e85dff; border-left: 2px solid #e85dff; }
 .theme-magenta .TxIdx { border: 1px solid #e85dff; }
@@ -1765,6 +2323,11 @@ Label.ScoreTot
 .theme-magenta .ScoreRow.is-self { background-color: #e85dff1a; border-left: 3px solid #e85dff; }
 .theme-magenta .ScoreRow.is-viewing { background-color: #e85dff2e; border-left: 3px solid #e85dff; }
 .theme-magenta .MenuBy.is-you { background-color: #e85dff1f; border: 1px solid #e85dff; }
+.theme-magenta .SetSwitch.is-on .SetSwitchTrack { background-color: #e85dff33; border: 1px solid #e85dff; }
+.theme-magenta .SetSwitch.is-on .SetSwitchKnob { background-color: #e85dff; }
+.theme-magenta .SetPos:hover { border: 1px solid #e85dff66; }
+.theme-magenta .SetPos.active { background-color: #e85dff1f; border: 1px solid #e85dff; }
+.theme-magenta .SetPos.active .SetPosMark { background-color: #e85dff; border: 2px solid #e85dff; }
 
 .theme-pink .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #c43a68 ), to( #ff6b9a ) ); }
 .theme-pink Label.TxKicker,
@@ -1775,7 +2338,8 @@ Label.ScoreTot
 .theme-pink Label.ScoreSelfRank,
 .theme-pink Label.ScoreHead.sort-active,
 .theme-pink .ScoreHeader Label.ScoreCur.sort-active,
-.theme-pink .ScoreHeader Label.ScoreTot.sort-active
+.theme-pink .ScoreHeader Label.ScoreTot.sort-active,
+.theme-pink .SetSwitch.is-on Label.SetSwitchState
 { color: #ff6b9a; }
 .theme-pink .TxCorner { border-top: 2px solid #ff6b9a; border-left: 2px solid #ff6b9a; }
 .theme-pink .TxIdx { border: 1px solid #ff6b9a; }
@@ -1788,6 +2352,11 @@ Label.ScoreTot
 .theme-pink .ScoreRow.is-self { background-color: #ff6b9a1a; border-left: 3px solid #ff6b9a; }
 .theme-pink .ScoreRow.is-viewing { background-color: #ff6b9a2e; border-left: 3px solid #ff6b9a; }
 .theme-pink .MenuBy.is-you { background-color: #ff6b9a1f; border: 1px solid #ff6b9a; }
+.theme-pink .SetSwitch.is-on .SetSwitchTrack { background-color: #ff6b9a33; border: 1px solid #ff6b9a; }
+.theme-pink .SetSwitch.is-on .SetSwitchKnob { background-color: #ff6b9a; }
+.theme-pink .SetPos:hover { border: 1px solid #ff6b9a66; }
+.theme-pink .SetPos.active { background-color: #ff6b9a1f; border: 1px solid #ff6b9a; }
+.theme-pink .SetPos.active .SetPosMark { background-color: #ff6b9a; border: 2px solid #ff6b9a; }
 
 .theme-silver .ph-stat-fill { background-color: gradient( linear, 0% 0%, 100% 0%, from( #8a96a6 ), to( #c9d2dc ) ); }
 .theme-silver Label.TxKicker,
@@ -1798,7 +2367,8 @@ Label.ScoreTot
 .theme-silver Label.ScoreSelfRank,
 .theme-silver Label.ScoreHead.sort-active,
 .theme-silver .ScoreHeader Label.ScoreCur.sort-active,
-.theme-silver .ScoreHeader Label.ScoreTot.sort-active
+.theme-silver .ScoreHeader Label.ScoreTot.sort-active,
+.theme-silver .SetSwitch.is-on Label.SetSwitchState
 { color: #c9d2dc; }
 .theme-silver .TxCorner { border-top: 2px solid #c9d2dc; border-left: 2px solid #c9d2dc; }
 .theme-silver .TxIdx { border: 1px solid #c9d2dc; }
@@ -1811,5 +2381,10 @@ Label.ScoreTot
 .theme-silver .ScoreRow.is-self { background-color: #c9d2dc1a; border-left: 3px solid #c9d2dc; }
 .theme-silver .ScoreRow.is-viewing { background-color: #c9d2dc2e; border-left: 3px solid #c9d2dc; }
 .theme-silver .MenuBy.is-you { background-color: #c9d2dc1f; border: 1px solid #c9d2dc; }
+.theme-silver .SetSwitch.is-on .SetSwitchTrack { background-color: #c9d2dc33; border: 1px solid #c9d2dc; }
+.theme-silver .SetSwitch.is-on .SetSwitchKnob { background-color: #c9d2dc; }
+.theme-silver .SetPos:hover { border: 1px solid #c9d2dc66; }
+.theme-silver .SetPos.active { background-color: #c9d2dc1f; border: 1px solid #c9d2dc; }
+.theme-silver .SetPos.active .SetPosMark { background-color: #c9d2dc; border: 2px solid #c9d2dc; }
 
 /* <<< hud_themes:end */
