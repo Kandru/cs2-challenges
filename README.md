@@ -10,6 +10,7 @@
 [![](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/donate/?hosted_button_id=C2AVYKGVP9TRG)
 
 ![Challenges menu](media/challenges_menu.png)
+![Challenges menu](media/challenges_tracker.png)
 
 Create time-limited challenges for players. Each challenge is a YAML file with tasks that listen for game events (for example three headshots in a row). This plugin tracks progress. It does not grant rewards on its own - wire another plugin via server commands or `ChallengesShared` ([Plugin API](https://kandru.github.io/cs2-challenges/docs/reference/integration/)).
 
